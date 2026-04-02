@@ -1,33 +1,84 @@
-# Common
-composer.phar
-.DS_Store
-.vite
-.claude
-.idea
+# Secrets / environment
 .env
 .env.*.php
 .env.php
 auth.json
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+nbproject
+.claude
+
+# PHP / composer
+composer.phar
+/vendor
+/vendor_drm
+.phpunit.result.cache
+_ide_helper.php
+.phpstorm.meta.php
+
+# JS / node
+/node_modules
+/modules/system/node_modules
+package-lock.json
+.vite
+
+# Logs / server-local
 php_errors.log
+php-errors.log
 nginx-error.log
 nginx-access.log
 nginx-ssl.access.log
 nginx-ssl.error.log
-php-errors.log
 sftp-config.json
 .ftpconfig
-.vscode/
 selenium.php
-composer.lock
-package-lock.json
-/node_modules
-/modules/system/node_modules
-_ide_helper.php
-.phpunit.result.cache
-nbproject
-.phpstorm.meta.php
 
-# Project
+# Server-specific local config
+php.ini
+.user.ini
+
+# Build / runtime
 /bootstrap/compiled.php
-/vendor
-/vendor_drm
+
+# Storage runtime content
+/storage/logs/*
+!/storage/logs/.gitignore
+
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+
+/storage/temp/*
+!/storage/temp/.gitignore
+!/storage/temp/public/
+/storage/temp/public/*
+!/storage/temp/public/.gitignore
+
+/storage/cms/cache/*
+!/storage/cms/cache/.gitignore
+/storage/cms/twig/*
+!/storage/cms/twig/.gitignore
+/storage/cms/combiner/*
+!/storage/cms/combiner/.gitignore
+
+# Keep only storage skeleton
+/storage/app/resources/resize/*
+!/storage/app/.gitignore
+!/storage/app/media/.gitignore
+!/storage/app/uploads/.gitignore
+!/storage/app/resources/.gitignore
+!/storage/framework/.gitignore
+!/storage/cms/.gitignore
+!/storage/.gitignore
+
+# Archives / dumps
+*.zip
+*.sql
