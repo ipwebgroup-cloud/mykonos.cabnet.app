@@ -1,27 +1,25 @@
-# Mykonos Cabnet Repo Publishing Notes
+Mykonos Cabnet OctoberCMS inquiry platform
+Repo-ready package based on the latest live v2.5.2 update-screen polish state.
 
-This package is prepared for creating a Git repository from the live OctoberCMS project source.
+Included
+- app/
+- bootstrap/
+- config/
+- modules/
+- plugins/
+- themes/
+- tests/
+- root project files such as artisan, composer.json, composer.lock, index.php
 
-Included:
-- application source
-- plugins
-- themes
-- modules
-- composer files
-- safe storage skeleton
-
-Excluded:
-- `.env`
-- `auth.json`
-- `vendor/`
+Excluded
+- .env
+- auth.json
+- php.ini
+- .user.ini
+- vendor/
+- node_modules/
 - runtime storage contents
-- `php.ini`
-- `.user.ini`
 - SQL dumps
-- zip archives
+- ZIP archives
 
-Recommended first steps:
-1. Initialize the repo from this folder.
-2. Review `.gitignore`.
-3. Commit the current application baseline.
-4. Keep the repository private unless you intentionally remove any proprietary content.
+Storage is intentionally reduced to a Git-safe skeleton with .gitignore placeholder files.

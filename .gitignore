@@ -1,17 +1,15 @@
-# Secrets / environment
 .env
 .env.*.php
 .env.php
 auth.json
 
-# OS / editor
 .DS_Store
 .idea/
 .vscode/
 nbproject
 .claude
+.cpanel/
 
-# PHP / composer
 composer.phar
 /vendor
 /vendor_drm
@@ -19,13 +17,11 @@ composer.phar
 _ide_helper.php
 .phpstorm.meta.php
 
-# JS / node
 /node_modules
 /modules/system/node_modules
 package-lock.json
 .vite
 
-# Logs / server-local
 php_errors.log
 php-errors.log
 nginx-error.log
@@ -36,49 +32,31 @@ sftp-config.json
 .ftpconfig
 selenium.php
 
-# Server-specific local config
 php.ini
 .user.ini
 
-# Build / runtime
 /bootstrap/compiled.php
 
-# Storage runtime content
 /storage/logs/*
 !/storage/logs/.gitignore
 
 /storage/framework/views/*
-!/storage/framework/views/.gitignore
-
 /storage/framework/cache/*
-!/storage/framework/cache/.gitignore
-
 /storage/framework/sessions/*
-!/storage/framework/sessions/.gitignore
+!/storage/framework/.gitignore
 
 /storage/temp/*
 !/storage/temp/.gitignore
-!/storage/temp/public/
-/storage/temp/public/*
-!/storage/temp/public/.gitignore
 
 /storage/cms/cache/*
-!/storage/cms/cache/.gitignore
 /storage/cms/twig/*
-!/storage/cms/twig/.gitignore
 /storage/cms/combiner/*
-!/storage/cms/combiner/.gitignore
+!/storage/cms/.gitignore
 
-# Keep only storage skeleton
 /storage/app/resources/resize/*
 !/storage/app/.gitignore
 !/storage/app/media/.gitignore
-!/storage/app/uploads/.gitignore
-!/storage/app/resources/.gitignore
-!/storage/framework/.gitignore
-!/storage/cms/.gitignore
-!/storage/.gitignore
+!/storage/app/uploads/public/.gitignore
 
-# Archives / dumps
 *.zip
 *.sql
