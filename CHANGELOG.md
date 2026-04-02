@@ -1,9 +1,31 @@
 # Changelog
 
+## v2.5.6 — Stable Checkpoint
+- consolidates the current safe operator workflow line
+- includes list queue snapshot visibility above the backend inquiry list
+- keeps conservative list filtering and introduces no schema change
+- intended as the current production checkpoint for inquiry operations
+
 ## v2.5.6 — List Queue Snapshot
 - added read-only queue snapshot cards to the backend inquiry list toolbar
 - surfaces active, unassigned, needs-first-touch, due-today, and overdue counts
 - preserves conservative list filters and introduces no schema change
+
+## v2.5.5.3 — History Partial Restore Hotfix
+- restored missing `_history_timeline.htm` backend partial
+- resolved inquiry update screen failure caused by missing history partial
+
+## v2.5.5.2 — Workflow Continuity Hotfix
+- fixed undefined variable usage in workflow continuity partial
+- restored backend inquiry update screen rendering
+
+## v2.5.5.1 — Follow-up Queue Hotfix
+- fixed parse error caused by unescaped apostrophe in follow-up guidance text
+- no behavior change beyond syntax correction
+
+## v2.5.5 — Follow-up Queue Clarity
+- added explicit follow-up queue states to the inquiry update surface
+- improved follow-up posture and next-action guidance for operators
 
 ## v2.5.4 — Stable Checkpoint
 - added assignment / status continuity polish on the backend inquiry update screen
@@ -15,36 +37,3 @@
 - replaced plain history preview with a card-based timeline view
 - preserved append-only internal note workflow
 - improved operator scan speed for timeline entries
-
-## v2.5.2 — Update Screen Polish
-- upgraded the inquiry update header into a stronger operator summary surface
-- improved quick action presentation
-- refined backend form labels and screen structure
-
-## v2.5.1 — List Hotfix
-- simplified list filters to restore reliable backend inquiry list rendering
-- avoided aggressive queue bucket definitions that could blank the list view
-
-## v2.5.0 — Backend Queue Actions
-- added quick workflow actions for assignment, contact, follow-up, reopen, and close states
-- ensured quick actions append explicit system history entries
-
-## v2.4.0 — Backend Detail Polish
-- improved overview summaries and payload readability
-- surfaced more operator-friendly list information
-
-## v2.3.0 — Plan Bridge Standardization
-- standardized `/plan` around `mykonosPlanBridge`
-- tightened continuity between saved server response and frontend success state
-
-## v2.2.0 — Concierge Workflow Patch
-- added lifecycle workflow fields such as `last_contacted_at`, `closed_at`, and `closed_reason`
-- expanded system history logging for key workflow transitions
-
-## v2.1.0 — Operator Workflow Patch
-- added inquiry priority
-- added history/notes table and initial system notes
-- added append-only internal note handling
-
-## v2.0 / v41 integration line
-- established the first real bridge between the public `/plan` flow and plugin-backed database persistence
