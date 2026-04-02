@@ -23,7 +23,6 @@
 
     $tone = $record->continuity_tone ?? 'neutral';
     $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
-    $queuePalette = $toneStyles[$followUpTone] ?? $toneStyles['neutral'];
 
     $owner = trim((string) ($record->owner_name ?: ''));
     $owner = $owner !== '' ? $owner : 'Unassigned';
@@ -34,6 +33,7 @@
     $nextAction = $record->continuity_next_action ?? 'Keep the internal summary current for the next operator.';
     $followUpState = $record->follow_up_queue_state ?? 'Unscheduled';
     $followUpTone = $record->follow_up_queue_tone ?? 'neutral';
+    $queuePalette = $toneStyles[$followUpTone] ?? $toneStyles['neutral'];
     $followUpQueueNote = $record->follow_up_queue_note ?? 'No follow-up date is currently set.';
     $followUpQueueAction = $record->follow_up_queue_action ?? 'Set the next follow-up date so queue ownership remains explicit.';
 

@@ -306,7 +306,7 @@ class Inquiry extends Model
         }
 
         if ($state === 'Due today') {
-            return 'Complete today's checkpoint and update the operator summary.';
+            return "Complete today's checkpoint and update the operator summary.";
         }
 
         if ($state === 'Scheduled') {
