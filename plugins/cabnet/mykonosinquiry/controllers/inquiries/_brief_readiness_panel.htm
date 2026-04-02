@@ -1,0 +1,124 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Brief readiness signals become available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $normalize = function ($value, $fallback = 'Not captured') {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d H:i');
+        }
+
+        if (is_array($value)) {
+            $value = implode(', ', array_filter(array_map('trim', $value)));
+        }
+
+        $value = trim((string) $value);
+
+        return $value !== '' ? $value : $fallback;
+    };
+
+    $details = trim((string) ($record->details ?: ''));
+    $briefLength = mb_strlen($details);
+
+    $signals = [
+        'contact' => trim((string) ($record->email ?: '')) !== '' || trim((string) ($record->phone ?: '')) !== '',
+        'dates' => !empty($record->arrival_date) || !empty($record->departure_date),
+        'services' => trim((string) ($record->services_inline ?? '')) !== '' && trim((string) ($record->services_inline ?? '')) !== 'General planning',
+        'preferences' => trim((string) ($record->travel_style ?: '')) !== ''
+            || trim((string) ($record->stay_mood ?: '')) !== ''
+            || trim((string) ($record->privacy_level ?: '')) !== ''
+            || trim((string) ($record->arrival_mode ?: '')) !== '',
+        'brief' => $briefLength >= 120,
+    ];
+
+    $signalCount = count(array_filter($signals));
+
+    if ($signalCount >= 5 || ($signalCount >= 4 && $briefLength >= 220)) {
+        $state = 'Rich brief';
+        $tone = ['#198754', '#eaf7ef', '#cfe9d8'];
+        $summary = 'This inquiry already contains enough detail for confident concierge planning and smoother hand-off between operators.';
+        $next = 'Move quickly into assignment, outreach, and concrete planning steps without waiting for a longer discovery pass.';
+    } elseif ($signalCount >= 3) {
+        $state = 'Operator-ready';
+        $tone = ['#0d6efd', '#e7f1ff', '#bfdbfe'];
+        $summary = 'The brief contains enough structure to start operator handling, even if some lifestyle or planning details are still light.';
+        $next = 'Begin contact and fill the remaining gaps during the first concierge touchpoint.';
+    } else {
+        $state = 'Starter brief';
+        $tone = ['#fd7e14', '#fff3e8', '#fed7aa'];
+        $summary = 'This inquiry is usable as a starting point, but it still relies on first-touch discovery to complete the planning picture.';
+        $next = 'Prioritize early outreach and capture the missing stay, service, and preference details during first contact.';
+    }
+
+    $arrival = $record->arrival_date ? $record->arrival_date->format('Y-m-d') : 'Not captured';
+    $departure = $record->departure_date ? $record->departure_date->format('Y-m-d') : 'Not captured';
+    $services = $normalize($record->services_inline ?? '', 'General planning');
+    $budget = $normalize($record->budget ?? '', 'Not captured');
+    $guests = $normalize($record->guests ?? '', 'Not captured');
+    $group = $normalize($record->group_composition ?? '', 'Not captured');
+    $style = $normalize($record->travel_style ?? '', 'Not captured');
+    $mood = $normalize($record->stay_mood ?? '', 'Not captured');
+    $privacy = $normalize($record->privacy_level ?? '', 'Not captured');
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($tone[2]) ?>;background:<?= e($tone[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Brief readiness</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Operator scan of how complete the guest brief is before working field-by-field.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($tone[0]) ?>;background:#fff;border:1px solid <?= e($tone[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Next move:</strong> <?= e($next) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Core trip signals</div>
+        <div style="font-size:14px;line-height:1.7;color:#111827;">
+            <strong>Arrival:</strong> <?= e($arrival) ?><br>
+            <strong>Departure:</strong> <?= e($departure) ?><br>
+            <strong>Guests:</strong> <?= e($guests) ?><br>
+            <strong>Group:</strong> <?= e($group) ?><br>
+            <strong>Budget:</strong> <?= e($budget) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Planning signals</div>
+        <div style="font-size:14px;line-height:1.7;color:#111827;">
+            <strong>Focus:</strong> <?= e($services) ?><br>
+            <strong>Travel style:</strong> <?= e($style) ?><br>
+            <strong>Stay mood:</strong> <?= e($mood) ?><br>
+            <strong>Privacy:</strong> <?= e($privacy) ?><br>
+            <strong>Brief length:</strong> <?= e((string) $briefLength) ?> characters
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Signal coverage</div>
+        <div style="font-size:14px;line-height:1.8;color:#111827;">
+            <strong>Contact route:</strong> <?= $signals['contact'] ? 'Captured' : 'Missing' ?><br>
+            <strong>Trip dates:</strong> <?= $signals['dates'] ? 'Captured' : 'Missing' ?><br>
+            <strong>Service focus:</strong> <?= $signals['services'] ? 'Captured' : 'Light' ?><br>
+            <strong>Preferences:</strong> <?= $signals['preferences'] ? 'Captured' : 'Light' ?><br>
+            <strong>Written brief:</strong> <?= $signals['brief'] ? 'Usable' : 'Needs more detail' ?>
+        </div>
+    </div>
+</div>

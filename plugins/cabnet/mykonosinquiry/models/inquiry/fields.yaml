@@ -145,6 +145,13 @@ tabs:
             readOnly: true
             comment: Consolidated operator-ready summary of services, preferences, and guest brief.
 
+        brief_readiness_panel:
+            label: Brief Readiness
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_brief_readiness_panel.htm
+            tab: Request
+            comment: Read-only operator scan of how complete the guest brief is before working through the detailed request fields.
+
         services_list:
             label: Requested Services
             type: textarea

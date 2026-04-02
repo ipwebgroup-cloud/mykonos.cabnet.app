@@ -1,3 +1,10 @@
+## v2.5.9 — Brief Readiness Panel
+- added a read-only Brief Readiness panel at the top of the Request tab
+- surfaces trip, planning, and signal-coverage indicators before the operator works field-by-field
+- preserves the existing editable request fields underneath
+- no schema change
+- no public theme change
+
 ## v2.5.8 — Preference Signal Panel
 - added a read-only Preference Signals panel at the top of the Preferences tab
 - surfaces contact route, stay signals, and experience signals in one operator scan block
