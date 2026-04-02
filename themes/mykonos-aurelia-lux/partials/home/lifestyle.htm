@@ -1,0 +1,26 @@
+description = "Lifestyle"
+==
+<section class="section-block alt-block" id="lifestyle">
+    <div class="container residence-grid">
+        <div class="residence-media-stack">
+            <div class="residence-media large" style="background-image:url('{{ 'assets/images/mykonos-luxury-villas2.png'|theme }}');"></div>
+            <div class="residence-media" style="background-image:url('{{ 'assets/images/mykonos-luxury-villas.png'|theme }}');"></div>
+        </div>
+        <div class="residence-copy dark-panel">
+            <span class="section-tag">Lifestyle continuity</span>
+            <h2>{% content 'home/lifestyle-heading.htm' %}</h2>
+            <div class="content-block">{% content 'home/lifestyle-copy.htm' %}</div>
+            <div class="benefit-list">
+                {% if lifestyleEntries is defined and lifestyleEntries|length %}
+                    {% for item in lifestyleEntries %}
+                        <div><strong>{{ item.badge ?: item.title }}</strong><span>{{ item.teaser }}</span></div>
+                    {% endfor %}
+                {% else %}
+                    <div><strong>Chef and dining support</strong><span>{% content 'home/lifestyle-dining.htm' %}</span></div>
+                    <div><strong>Wellness and privacy</strong><span>{% content 'home/lifestyle-wellness.htm' %}</span></div>
+                    <div><strong>Family and hosted stays</strong><span>{% content 'home/lifestyle-family.htm' %}</span></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

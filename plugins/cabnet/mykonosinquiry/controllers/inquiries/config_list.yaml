@@ -1,0 +1,69 @@
+list: $/cabnet/mykonosinquiry/models/inquiry/columns.yaml
+modelClass: Cabnet\MykonosInquiry\Models\Inquiry
+title: Mykonos Inquiries
+recordUrl: cabnet/mykonosinquiry/inquiries/update/:id
+noRecordsMessage: No inquiries found
+showSetup: true
+showCheckboxes: false
+defaultSort:
+    column: created_at
+    direction: desc
+toolbar:
+    buttons: $/cabnet/mykonosinquiry/controllers/inquiries/_list_toolbar.htm
+    search:
+        prompt: Search inquiries
+filter:
+    scopes:
+        status:
+            label: Status
+            type: group
+            conditions: status in (:filtered)
+            options:
+                new: New brief
+                reviewed: Reviewed
+                contacted: Contacted
+                proposal_sent: Proposal sent
+                awaiting_guest: Awaiting guest
+                confirmed: Confirmed
+                closed_won: Closed won
+                closed_lost: Closed lost
+                spam: Spam
+                triage: Triage (legacy)
+                proposal: Proposal shaping (legacy)
+                closed: Closed (legacy)
+        priority:
+            label: Priority
+            type: group
+            conditions: priority in (:filtered)
+            options:
+                low: Low
+                normal: Normal
+                high: High
+                vip: VIP
+                urgent: Urgent
+        urgency_hint:
+            label: Urgency Hint
+            type: group
+            conditions: urgency_hint in (:filtered)
+            options:
+                urgent: Urgent
+                near-term: Near Term
+        source_type:
+            label: Source Type
+            type: group
+            conditions: source_type in (:filtered)
+            options:
+                service: Service
+                experience: Experience
+                pathway: Pathway
+                guest_pathway: Guest pathway
+                stay_design: Stay design
+        requested_mode:
+            label: Mode
+            type: group
+            conditions: requested_mode in (:filtered)
+            options:
+                quick: Quick
+                detailed: Detailed
+                executive: Executive
+                celebration: Celebration

@@ -1,0 +1,449 @@
+url = "/plan"
+layout = "default"
+title = "Plan Your Stay"
+meta_title = "Configure Your Plan | Mykonos Tours Luxury Services"
+meta_description = "Configure your bespoke Mykonos luxury plan with private transfers, curated experiences, accommodation, events, concierge, wellness, and premium lifestyle support."
+==
+<?php
+function onSubmitPlan()
+{
+    $data = post();
+
+    $validator = \Validator::make($data, [
+        'full_name' => 'required|min:2|max:120',
+        'email' => 'required|email|max:120',
+        'phone' => 'nullable|max:60',
+        'country' => 'nullable|max:120',
+        'arrival_date' => 'nullable|date',
+        'departure_date' => 'nullable|date',
+        'guests' => 'nullable|integer|min:1',
+        'details' => 'required|min:10',
+    ]);
+
+    if ($validator->fails()) {
+        throw new \October\Rain\Exception\ValidationException($validator);
+    }
+
+    $services = post('services', []);
+    $servicesText = is_array($services) ? implode(', ', $services) : '';
+
+    $messageBody =
+        "New Mykonos plan request\n\n" .
+        "Full Name: " . ($data['full_name'] ?? '') . "\n" .
+        "Email: " . ($data['email'] ?? '') . "\n" .
+        "Phone: " . ($data['phone'] ?? '') . "\n" .
+        "Country: " . ($data['country'] ?? '') . "\n" .
+        "Arrival Date: " . ($data['arrival_date'] ?? '') . "\n" .
+        "Departure Date: " . ($data['departure_date'] ?? '') . "\n" .
+        "Guests: " . ($data['guests'] ?? '') . "\n" .
+        "Budget: " . ($data['budget'] ?? '') . "\n" .
+        "Stay Type: " . ($data['stay_type'] ?? '') . "\n" .
+        "Services: " . $servicesText . "\n" .
+        "Travel Vibe: " . ($data['travel_vibe'] ?? '') . "\n" .
+        "Luxury Level: " . ($data['luxury_level'] ?? '') . "\n" .
+        "Privacy Needs: " . ($data['privacy_needs'] ?? '') . "\n" .
+        "Preferred Contact: " . ($data['preferred_contact'] ?? '') . "\n" .
+        "Special Moments: " . ($data['special_moments'] ?? '') . "\n" .
+        "Arrival Method: " . ($data['arrival_mode'] ?? '') . "\n" .
+        "Stay Area: " . ($data['stay_location'] ?? '') . "\n" .
+        "Accommodation Status: " . ($data['lodging_status'] ?? '') . "\n" .
+        "Dietary Needs: " . ($data['dietary_needs'] ?? '') . "\n" .
+        "Company / Property: " . ($data['company_name'] ?? '') . "\n" .
+        "Partner Role: " . ($data['partner_role'] ?? '') . "\n\n" .
+        "Trip Details:\n" . ($data['details'] ?? '') . "\n\n" .
+        "Partner Notes:\n" . ($data['partner_notes'] ?? '');
+
+    \Mail::raw($messageBody, function ($message) use ($data) {
+        $message->to('mykonos@cabnet.app', 'Mykonos Tours');
+        $message->subject('New Plan Request - ' . ($data['full_name'] ?? 'Guest'));
+
+        if (!empty($data['email'])) {
+            $message->replyTo($data['email'], $data['full_name'] ?? 'Guest');
+        }
+    });
+
+    \Flash::success('Your request has been sent successfully. We will contact you shortly.');
+}
+?>
+==
+<section class="hero plan-hero">
+    <div class="container">
+        <div class="hero-panel">
+            <div class="hero-copy">
+                <div class="eyebrow">Configure your bespoke inquiry</div>
+                <h1>Build your Mykonos plan.</h1>
+                <p>
+                    This expanded template is designed for premium trip requests, concierge planning,
+                    hotel partnerships, villa inquiries, and event-led travel. Use it as a luxury intake page,
+                    a CRM capture form, or a frontend step before live concierge contact.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#plan-form">Start configuration</a>
+                    <a class="btn btn-secondary" href="mailto:mykonos@cabnet.app">Direct contact</a>
+                </div>
+            </div>
+
+            <aside class="hero-note">
+                <div class="hero-note-grid">
+                    <span class="hero-chip">Transfers · Tours · Villas · Events</span>
+                    <div>
+                        <strong>What this page does</strong>
+                        <p>
+                            It helps guests define priorities before your team prepares a tailored plan.
+                            You can connect it later to Mail, a CRM, admin review workflows, or a dedicated plugin.
+                        </p>
+                    </div>
+                    <div>
+                        <strong>Ideal use cases</strong>
+                        <p>VIP stays, couples, families, groups, executive travel, proposals, weddings, brand activations, and luxury hospitality partnerships.</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container main-layout">
+        <aside class="sidebar">
+            <div class="panel process-panel">
+                <span class="section-tag">Process</span>
+                <h3>How the planning flow works</h3>
+                <p class="small-copy">Guide users with a structured premium intake before a tailored follow-up.</p>
+
+                <div class="process-list">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <span class="step-title">Share the basics</span>
+                            <div class="step-description">Arrival dates, group size, travel style, and the purpose of the stay.</div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <span class="step-title">Select priorities</span>
+                            <div class="step-description">Transfers, experiences, accommodation, events, dining, wellness, and support services.</div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <span class="step-title">Describe preferences</span>
+                            <div class="step-description">Vibe, luxury level, privacy needs, special moments, and operational details.</div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <span class="step-title">Prepare the plan</span>
+                            <div class="step-description">Review requests and return a custom itinerary, quote, or concierge callback.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel summary-panel">
+                <span class="section-tag">Popular requests</span>
+                <div class="summary-stack">
+                    <div class="summary-item">
+                        <span class="label">VIP arrivals</span>
+                        <span class="value">Airport meet &amp; greet, luggage, chauffeur, villa drop-off</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Couple escapes</span>
+                        <span class="value">Private tours, chef dinner, sunset yacht, wellness planning</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Celebration stays</span>
+                        <span class="value">Boat parties, event coordination, premium transport, concierge support</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel contact-panel">
+                <span class="section-tag">Need help first?</span>
+                <h4>Speak with concierge</h4>
+                <div class="contact-stack">
+                    <div class="contact-item">
+                        <span class="label">Email</span>
+                        <span class="value"><a href="mailto:mykonos@cabnet.app">mykonos@cabnet.app</a></span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="label">Base</span>
+                        <span class="value">Mykonos, Cyclades, Greece</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="label">Availability</span>
+                        <span class="value">24/7 premium concierge planning</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="panel form-panel" id="plan-form">
+            <div class="form-header">
+                <span class="section-tag">Planning form</span>
+                <h2>Tell us what you need</h2>
+                <p class="section-copy">This version expands the template into a fuller planning intake with guest profile, stay goals, services, style, logistics, and notes.</p>
+            </div>
+
+            <form data-request="onSubmitPlan" data-request-flash data-request-validate novalidate>
+                <section class="form-section">
+                    <div class="form-section-header">
+                        <h3>Guest profile</h3>
+                        <p class="field-note">Capture the core details needed to begin a tailored proposal.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="full_name">Full Name</label>
+                            <input type="text" id="full_name" name="full_name" placeholder="Your full name" />
+                            <p class="validation-error" data-validate-for="full_name"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" />
+                            <p class="validation-error" data-validate-for="email"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="phone">Phone / WhatsApp</label>
+                            <input type="text" id="phone" name="phone" placeholder="+30 or international number" />
+                        </div>
+
+                        <div class="field">
+                            <label for="country">Country</label>
+                            <input type="text" id="country" name="country" placeholder="Country of residence" />
+                        </div>
+
+                        <div class="field">
+                            <label for="arrival_date">Arrival Date</label>
+                            <input type="date" id="arrival_date" name="arrival_date" />
+                        </div>
+
+                        <div class="field">
+                            <label for="departure_date">Departure Date</label>
+                            <input type="date" id="departure_date" name="departure_date" />
+                        </div>
+
+                        <div class="field">
+                            <label for="guests">Number of Guests</label>
+                            <input type="number" id="guests" name="guests" min="1" placeholder="2" />
+                        </div>
+
+                        <div class="field">
+                            <label for="budget">Budget Range</label>
+                            <select id="budget" name="budget">
+                                <option value="">Select range</option>
+                                <option>Under €2,000</option>
+                                <option>€2,000 - €5,000</option>
+                                <option>€5,000 - €10,000</option>
+                                <option>€10,000 - €25,000</option>
+                                <option>€25,000+</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-header">
+                        <h3>Type of stay</h3>
+                        <p class="field-note">Let guests define the context so the plan feels personal from the start.</p>
+                    </div>
+
+                    <div class="choice-grid two-col">
+                        <label class="choice-item">
+                            <input type="radio" name="stay_type" value="couple_escape" />
+                            <span class="choice-copy"><strong>Couple Escape</strong><span>Romantic stays, privacy, chef dinners, sea moments, wellness, proposals.</span></span>
+                        </label>
+                        <label class="choice-item">
+                            <input type="radio" name="stay_type" value="family_holiday" />
+                            <span class="choice-copy"><strong>Family Holiday</strong><span>Easy logistics, trusted support, comfort, child-friendly planning.</span></span>
+                        </label>
+                        <label class="choice-item">
+                            <input type="radio" name="stay_type" value="group_stay" />
+                            <span class="choice-copy"><strong>Group Luxury Stay</strong><span>Friends, villa coordination, shared transport, beach and nightlife planning.</span></span>
+                        </label>
+                        <label class="choice-item">
+                            <input type="radio" name="stay_type" value="vip_visit" />
+                            <span class="choice-copy"><strong>VIP / Celebrity Visit</strong><span>Privacy, security, discretion, premium access, operational precision.</span></span>
+                        </label>
+                        <label class="choice-item">
+                            <input type="radio" name="stay_type" value="corporate" />
+                            <span class="choice-copy"><strong>Corporate / Executive</strong><span>Business travel, hosted meetings, premium guest handling, events.</span></span>
+                        </label>
+                        <label class="choice-item">
+                            <input type="radio" name="stay_type" value="celebration" />
+                            <span class="choice-copy"><strong>Celebration / Event</strong><span>Birthdays, anniversaries, wedding support, proposals, branded moments.</span></span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-header">
+                        <h3>Services of interest</h3>
+                        <p class="field-note">This section can later map to service IDs or database categories.</p>
+                    </div>
+
+                    <div class="checkbox-grid">
+                        <label class="check-item"><input type="checkbox" name="services[]" value="transfers" /><span class="check-copy"><strong>Private Transfers</strong><span>Airport, port, point-to-point, disposal, VIP transport.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="tours" /><span class="check-copy"><strong>Curated Experiences</strong><span>Sightseeing, sea journeys, local experiences, culinary and adventure.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="accommodation" /><span class="check-copy"><strong>Accommodation</strong><span>Luxury villas, exclusive stays, location and style preferences.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="events" /><span class="check-copy"><strong>Events / Weddings</strong><span>Corporate gatherings, intimate events, celebrations, wedding support.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="concierge" /><span class="check-copy"><strong>Concierge</strong><span>Reservations, last-minute handling, island coordination and support.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="chef" /><span class="check-copy"><strong>Private Chef</strong><span>Breakfasts, chef dinners, BBQs, wellness menus, and catering.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="security" /><span class="check-copy"><strong>Security</strong><span>Personal protection, discreet movement, villa and event security.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="wellness" /><span class="check-copy"><strong>Wellness &amp; Beauty</strong><span>Massage, training, yoga, hair, grooming, and in-villa treatments.</span></span></label>
+                        <label class="check-item"><input type="checkbox" name="services[]" value="family" /><span class="check-copy"><strong>Family Assistance</strong><span>Babysitting, trusted support, and family-friendly planning.</span></span></label>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-header">
+                        <h3>Style &amp; preferences</h3>
+                        <p class="field-note">Useful for building a more personal and premium response.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="travel_vibe">Preferred Vibe</label>
+                            <select id="travel_vibe" name="travel_vibe">
+                                <option value="">Select option</option>
+                                <option>Relaxed &amp; private</option>
+                                <option>Romantic &amp; cinematic</option>
+                                <option>Social &amp; celebratory</option>
+                                <option>Family-friendly &amp; easy</option>
+                                <option>Adventure &amp; exploration</option>
+                                <option>Executive &amp; discreet</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="luxury_level">Luxury Level</label>
+                            <select id="luxury_level" name="luxury_level">
+                                <option value="">Select option</option>
+                                <option>Premium</option>
+                                <option>High Luxury</option>
+                                <option>Ultra Luxury</option>
+                                <option>Best Available</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="privacy_needs">Privacy / Security Needs</label>
+                            <select id="privacy_needs" name="privacy_needs">
+                                <option value="">Select option</option>
+                                <option>Standard</option>
+                                <option>Private arrangements preferred</option>
+                                <option>High discretion required</option>
+                                <option>Security support required</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="preferred_contact">Preferred Contact Method</label>
+                            <select id="preferred_contact" name="preferred_contact">
+                                <option value="">Select option</option>
+                                <option>Email</option>
+                                <option>Phone Call</option>
+                                <option>WhatsApp</option>
+                                <option>Video Call</option>
+                            </select>
+                        </div>
+
+                        <div class="field-full">
+                            <label for="special_moments">Special Moments to Plan</label>
+                            <input type="text" id="special_moments" name="special_moments" placeholder="Proposal, anniversary dinner, birthday, corporate hosting, VIP arrival, family celebration..." />
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-header">
+                        <h3>Operational details</h3>
+                        <p class="field-note">This helps your team quote and prepare without extra back-and-forth.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="arrival_mode">Arrival Method</label>
+                            <select id="arrival_mode" name="arrival_mode">
+                                <option value="">Select option</option>
+                                <option>Flight</option>
+                                <option>Ferry / Boat</option>
+                                <option>Helicopter</option>
+                                <option>Private Jet</option>
+                                <option>Already on island</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="stay_location">Preferred Stay Area</label>
+                            <input type="text" id="stay_location" name="stay_location" placeholder="Ornos, Psarou, Chora, Elia, Super Paradise..." />
+                        </div>
+
+                        <div class="field">
+                            <label for="lodging_status">Accommodation Status</label>
+                            <select id="lodging_status" name="lodging_status">
+                                <option value="">Select option</option>
+                                <option>I need accommodation options</option>
+                                <option>I already have a villa / hotel</option>
+                                <option>I am comparing options</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="dietary_needs">Dietary Preferences</label>
+                            <input type="text" id="dietary_needs" name="dietary_needs" placeholder="Vegan, gluten-free, allergies, wellness meals..." />
+                        </div>
+
+                        <div class="field-full">
+                            <label for="details">Trip Details</label>
+                            <textarea id="details" name="details" placeholder="Tell us what the ideal stay looks like. Mention transport timing, beach preferences, villa atmosphere, dining plans, event details, wellness requests, family needs, or anything else important."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-header">
+                        <h3>Partner / business use</h3>
+                        <p class="field-note">Optional section for hotels, agencies, villa managers, and corporate clients.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="company_name">Company / Property Name</label>
+                            <input type="text" id="company_name" name="company_name" placeholder="Hotel, villa brand, agency, corporate entity" />
+                        </div>
+
+                        <div class="field">
+                            <label for="partner_role">Role</label>
+                            <input type="text" id="partner_role" name="partner_role" placeholder="Concierge, travel designer, villa manager, EA..." />
+                        </div>
+
+                        <div class="field-full">
+                            <label for="partner_notes">Partner Notes</label>
+                            <textarea id="partner_notes" name="partner_notes" placeholder="Add internal handling notes, preferred billing flow, partner expectations, guest sensitivity, or operational instructions."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="summary-banner">
+                    <strong>Implementation note</strong>
+                    <div class="summary-value">This template is wired to an October AJAX form handler for demo validation only. Connect it next to Mail, a CRM, or a custom plugin.</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Send Request</button>
+                    <a href="mailto:mykonos@cabnet.app" class="btn btn-secondary">Contact Instead</a>
+                    <a href="{{ 'index'|page }}" class="btn btn-secondary">Back to Home</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,25 @@
+description = "Why us"
+==
+<section class="section-block" id="why-us">
+    <div class="container">
+        <div class="section-heading split light">
+            <div>
+                <span class="section-tag">Why this version matters</span>
+                <h2>It is now easier to run, easier to edit, and easier for guests to use.</h2>
+            </div>
+            <div class="content-block slim-copy">{% content 'home/why-intro.htm' %}</div>
+        </div>
+        <div class="pillar-grid">
+            {% if reasonEntries is defined and reasonEntries|length %}
+                {% for item in reasonEntries %}
+                    <article class="service-card dark-card accent-top"><h3>{{ item.title }}</h3><p>{{ item.teaser }}</p></article>
+                {% endfor %}
+            {% else %}
+                <article class="service-card dark-card accent-top"><h3>{% content 'home/why-card-1-title.htm' %}</h3><p>{% content 'home/why-card-1-copy.htm' %}</p></article>
+                <article class="service-card dark-card accent-top"><h3>{% content 'home/why-card-2-title.htm' %}</h3><p>{% content 'home/why-card-2-copy.htm' %}</p></article>
+                <article class="service-card dark-card accent-top"><h3>{% content 'home/why-card-3-title.htm' %}</h3><p>{% content 'home/why-card-3-copy.htm' %}</p></article>
+                <article class="service-card dark-card accent-top"><h3>{% content 'home/why-card-4-title.htm' %}</h3><p>{% content 'home/why-card-4-copy.htm' %}</p></article>
+            {% endif %}
+        </div>
+    </div>
+</section>

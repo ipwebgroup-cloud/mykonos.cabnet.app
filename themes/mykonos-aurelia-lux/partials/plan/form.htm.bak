@@ -1,0 +1,350 @@
+description = "Plan form"
+==
+<div class="plan-form-panel v12-plan-form-panel">
+            <form id="luxury-plan-form" data-request="onSubmitPlan" data-request-flash data-request-validate data-request-success="window.NocturnePlan && window.NocturnePlan.onSuccess()" novalidate>
+                <div class="plan-mobile-intro mobile-only">
+                    <span class="section-tag">Start here</span>
+                    <h2>{{ this.theme.plan_mobile_title ?: 'Plan your stay first.' }}</h2>
+                    <p>{{ this.theme.plan_mobile_intro ?: 'On mobile, the form stays first so guests can enquire without being forced through the supporting brand story first.' }}</p>
+                    <div class="subhero-pills compact-pills">
+                        <span class="chip">Fast to complete</span>
+                        <span class="chip">Touch-friendly</span>
+                        <span class="chip">Luxury brief</span>
+                    </div>
+                </div>
+
+                <div class="plan-draft-note">{% content 'plan/draft-note.htm' %} <button class="draft-reset-link" type="button" data-reset-draft>{{ this.theme.plan_reset_label ?: 'Clear saved draft' }}</button></div>
+
+                <div class="quick-start-bar" aria-label="Quick start help">
+                    <div class="quick-start-item">
+                        <strong>About 2 min</strong>
+                        <span>Typical mobile completion</span>
+                    </div>
+                    <div class="quick-start-item">
+                        <strong>3 key items</strong>
+                        <span>Name, email, and your stay brief are enough to begin</span>
+                    </div>
+                    <div class="quick-start-item">
+                        <strong>Optional detail later</strong>
+                        <span>You can skip deeper trip-profile details and refine them after follow-up</span>
+                    </div>
+                </div>
+
+                <div class="plan-mode-toggle" data-plan-mode-toggle>
+                    <button class="mode-chip is-active" type="button" data-plan-mode="quick">{{ this.theme.plan_quick_mode_label ?: 'Quick inquiry' }}</button>
+                    <button class="mode-chip" type="button" data-plan-mode="detailed">{{ this.theme.plan_detailed_mode_label ?: 'Detailed brief' }}</button>
+                </div>
+                <div class="plan-mode-note">{{ this.theme.plan_quick_note ?: 'Quick inquiry hides secondary fields so guests can send the essentials first and refine the brief after follow-up.' }}</div>
+                {% if planContext.source_title %}<div class="plan-context-inline-action"><strong>{{ this.theme.plan_context_cta_label ?: 'Continue from this context' }}</strong><span>{{ planContext.source_title }}</span></div>{% endif %}
+
+                {% if planContext.source_title or planContext.focus %}
+                <div class="plan-context-banner">
+                    <span class="section-tag">Context carried into this brief</span>
+                    <h3>{{ this.theme.plan_context_title ?: 'You are starting from a specific part of the stay.' }}</h3>
+                    <p>
+                        {% if planContext.source_title %}
+                            {{ this.theme.plan_context_copy ?: 'We carried over the source of interest so the concierge team can understand what sparked this request.' }}
+                            <strong>{{ planContext.source_title }}</strong>
+                        {% else %}
+                            {{ this.theme.plan_context_copy ?: 'We carried over the source of interest so the concierge team can understand what sparked this request.' }}
+                        {% endif %}
+                    </p>
+                    <div class="subhero-pills compact-pills">
+                        {% if planContext.source_type %}<span class="chip">{{ planContext.source_type|replace({'_':' '})|title }}</span>{% endif %}
+                        {% if planContext.mode %}<span class="chip">{{ planContext.mode|title }} mode</span>{% endif %}
+                        {% if planContext.focus %}<span class="chip">Focus: {{ planContext.focus }}</span>{% endif %}
+                        {% if planContext.source_url %}<a class="chip chip-link" href="{{ planContext.source_url }}">Back to source</a>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="plan-live-summary" aria-live="polite">
+                    <div class="summary-head">
+                        <div>
+                            <span class="section-tag">{{ this.theme.plan_summary_title ?: 'Live request summary' }}</span>
+                            <p class="summary-intro">{{ this.theme.plan_summary_intro ?: 'This updates as the guest fills out the form so the brief feels clearer before submitting.' }}</p>
+                        </div>
+                        <span class="summary-status">Updating as you type</span>
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-row"><span class="summary-label">{% content 'plan/summary-focus-label.htm' %}</span><strong id="summaryFocus">Not chosen yet</strong></div>
+                        <div class="summary-row"><span class="summary-label">{% content 'plan/summary-timing-label.htm' %}</span><strong id="summaryTiming">Dates can be added later</strong></div>
+                        <div class="summary-row"><span class="summary-label">{% content 'plan/summary-guest-label.htm' %}</span><strong id="summaryGuests">Guest count can stay flexible</strong></div>
+                        <div class="summary-row"><span class="summary-label">{% content 'plan/summary-style-label.htm' %}</span><strong id="summaryStyle">A short stay brief will complete the picture</strong></div>
+                    </div>
+                    <p class="summary-empty-note" id="summaryEmptyNote">{% content 'plan/summary-empty.htm' %}</p>
+                </div>
+
+                <div class="plan-shortcuts mobile-only">
+                    <a class="btn btn-secondary btn-compact" href="#plan-response-step">Skip to final step</a>
+                    <button class="btn btn-secondary btn-compact" type="button" data-open-optional="optional-trip-profile">Add optional details</button>
+                </div>
+
+                <div class="plan-progress mobile-only" aria-label="Form steps">
+                    <span class="is-active" data-step="1">1. Essentials</span>
+                    <span data-step="2">2. Optional details</span>
+                    <span data-step="3">3. Send</span>
+                </div>
+
+                <div class="plan-success-panel" id="planSuccessPanel" hidden>
+                    <span class="section-tag">Request sent</span>
+                    <h2>{{ this.theme.plan_success_title ?: 'Thank you. Your request is on its way.' }}</h2>
+                    <p>{{ this.theme.plan_success_text ?: 'We have received your enquiry and will review it shortly. If your stay is time-sensitive, you can also email us directly.' }}</p>
+                    <div class="request-reference-card">Reference <strong id="successRequestReference">—</strong></div>
+                    <div class="success-points">
+                        <div class="side-panel"><strong>{% content 'plan/success-next-step-1.htm' %}</strong></div>
+                        <div class="side-panel"><strong>{% content 'plan/success-next-step-2.htm' %}</strong></div>
+                    </div>
+                    <div class="hero-actions" style="margin-top:1rem;">
+                        <a class="btn btn-secondary" href="mailto:{{ this.theme.contact_email ?: 'mykonos@cabnet.app' }}">Email concierge</a>
+                        <a class="btn btn-primary" id="successRequestCareLink" href="{{ 'request-care'|page }}">{{ this.theme.plan_request_care_label ?: 'Open request care' }}</a>
+                        <a class="btn btn-secondary" id="successRequestPacketLink" href="{{ 'request-packet'|page }}">{{ this.theme.request_packet_button_label ?: 'Open request packet' }}</a>
+                        <button class="btn btn-secondary" type="button" data-reset-plan>{{ this.theme.plan_restart_label ?: 'Start another request' }}</button>
+                    </div>
+                    <p class="success-follow-line">{{ this.theme.plan_success_follow_line ?: 'Your reference, context, and planning mode can now carry into the next step.' }}</p>
+                </div>
+
+                <div class="essentials-note"><strong>{% content 'plan/essentials-title.htm' %}</strong> {% content 'plan/essentials-copy.htm' %}<span class="helper-inline">{% content 'plan/essentials-helper.htm' %}</span></div>
+
+                <div class="form-section-title">
+                    <span class="section-tag">Step 1</span>
+                    <h2>Guest details <span class="optional-tag">essentials first</span></h2>
+                    <p class="form-helper">We keep the key fields at the top so the form stays fast to complete on phones.</p>
+                </div>
+
+                <div class="form-grid two v12-essentials-grid">
+                    <div class="field">
+                        <label for="full_name">Full Name</label>
+                        <input id="full_name" type="text" name="full_name" placeholder="Your full name" autocomplete="name" data-progress="essential">
+                        <p class="validation-error" data-validate-for="full_name"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" data-progress="essential">
+                        <p class="validation-error" data-validate-for="email"></p>
+                    </div>
+
+                    <div class="field quick-hide">
+                        <label for="phone">Phone / WhatsApp</label>
+                        <input id="phone" type="text" name="phone" placeholder="+30 or international number" autocomplete="tel">
+                    </div>
+
+                    <div class="field quick-hide">
+                        <label for="guests">Guests</label>
+                        <input id="guests" type="number" name="guests" min="1" placeholder="2">
+                    </div>
+
+                    <div class="field quick-hide">
+                        <label for="arrival_date">Arrival Date</label>
+                        <input id="arrival_date" type="date" name="arrival_date">
+                    </div>
+
+                    <div class="field quick-hide">
+                        <label for="departure_date">Departure Date</label>
+                        <input id="departure_date" type="date" name="departure_date">
+                    </div>
+
+                    <div class="field full">
+                        <label>What should we focus on first?</label>
+                        <div class="focus-grid" data-focus-grid>
+                            <label class="focus-chip"><input type="checkbox" name="services[]" value="transfers"> <span>Transfers</span></label>
+                            <label class="focus-chip"><input type="checkbox" name="services[]" value="villas"> <span>Villa stay</span></label>
+                            <label class="focus-chip"><input type="checkbox" name="services[]" value="yachts"> <span>Sea day</span></label>
+                            <label class="focus-chip"><input type="checkbox" name="services[]" value="dining"> <span>Dining</span></label>
+                            <label class="focus-chip"><input type="checkbox" name="services[]" value="celebration"> <span>Celebration</span></label>
+                            <label class="focus-chip"><input type="checkbox" name="services[]" value="wellness"> <span>Wellness</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <details id="optional-trip-profile" class="plan-accordion optional-accordion">
+                    <summary>
+                        <span>
+                            <span class="section-tag">Step 2</span>
+                            <strong>Trip profile</strong>
+                        </span>
+                        <span class="optional-tag">mostly optional</span>
+                    </summary>
+                    <div class="accordion-body">
+                        <div class="form-section-title compact-title">
+                            <h2>Trip profile <span class="optional-tag">mostly optional</span></h2>
+                            <p class="form-helper">Share only what you know now. The rest can be refined by email or WhatsApp.</p>
+                        </div>
+                        <div class="form-grid two">
+                            <div class="field">
+                                <label for="country">Country</label>
+                                <input id="country" type="text" name="country" placeholder="Country of residence" autocomplete="country-name">
+                            </div>
+                            <div class="field">
+                                <label for="group_composition">Group composition</label>
+                                <input id="group_composition" type="text" name="group_composition" placeholder="Couple, family, hosted friends, executive guests...">
+                            </div>
+                            <div class="field">
+                                <label for="children_travelling">Children travelling?</label>
+                                <select id="children_travelling" name="children_travelling">
+                                    <option value="">Select option</option>
+                                    <option>No</option>
+                                    <option>Yes, one child</option>
+                                    <option>Yes, two or more children</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="arrival_window">Arrival time window</label>
+                                <select id="arrival_window" name="arrival_window">
+                                    <option value="">Select option</option>
+                                    <option>Morning</option>
+                                    <option>Midday</option>
+                                    <option>Afternoon</option>
+                                    <option>Evening</option>
+                                    <option>Late night</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="budget">Budget</label>
+                                <select id="budget" name="budget">
+                                    <option value="">Select range</option>
+                                    <option>Under €2,000</option>
+                                    <option>€2,000 - €5,000</option>
+                                    <option>€5,000 - €10,000</option>
+                                    <option>€10,000 - €25,000</option>
+                                    <option>€25,000+</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="travel_style">Travel Style</label>
+                                <select id="travel_style" name="travel_style">
+                                    <option value="">Select style</option>
+                                    <option>Couple escape</option>
+                                    <option>Family villa stay</option>
+                                    <option>Executive hosting</option>
+                                    <option>Celebration-led travel</option>
+                                    <option>Quiet luxury break</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="stay_mood">Stay mood</label>
+                                <select id="stay_mood" name="stay_mood">
+                                    <option value="">Select mood</option>
+                                    <option>Relaxed and private</option>
+                                    <option>Social and elevated</option>
+                                    <option>Romantic and cinematic</option>
+                                    <option>Hosted and polished</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="arrival_mode">Arrival method</label>
+                                <select id="arrival_mode" name="arrival_mode">
+                                    <option value="">Select option</option>
+                                    <option>Flight</option>
+                                    <option>Ferry / Boat</option>
+                                    <option>Helicopter</option>
+                                    <option>Private Jet</option>
+                                    <option>Already on island</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="privacy_level">Privacy level</label>
+                                <select id="privacy_level" name="privacy_level">
+                                    <option value="">Select option</option>
+                                    <option>Standard private travel</option>
+                                    <option>Higher discretion preferred</option>
+                                    <option>Security support may be needed</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="villa_area">Preferred villa area</label>
+                                <input id="villa_area" type="text" name="villa_area" placeholder="Psarou, Ornos, Elia, Agios Ioannis...">
+                            </div>
+                            <div class="field">
+                                <label for="occasion_type">Occasion</label>
+                                <select id="occasion_type" name="occasion_type">
+                                    <option value="">Select option</option>
+                                    <option>Just the stay itself</option>
+                                    <option>Birthday</option>
+                                    <option>Anniversary</option>
+                                    <option>Proposal</option>
+                                    <option>Wedding / pre-wedding</option>
+                                    <option>Executive hosting</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="special_moments">Special moments</label>
+                                <input id="special_moments" type="text" name="special_moments" placeholder="Sunset dinner, hosted arrival, villa setup, surprise plan...">
+                            </div>
+                            <div class="field">
+                                <label for="accommodation_status">Accommodation status</label>
+                                <select id="accommodation_status" name="accommodation_status">
+                                    <option value="">Select option</option>
+                                    <option>I need villa or hotel options</option>
+                                    <option>I already have my residence</option>
+                                    <option>I am still comparing</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="dining_style">Preferred dining style</label>
+                                <input id="dining_style" type="text" name="dining_style" placeholder="Chef dinner, beach lunch, tasting night, elegant casual...">
+                            </div>
+                            <div class="field">
+                                <label for="nightlife_interest">Nightlife interest</label>
+                                <select id="nightlife_interest" name="nightlife_interest">
+                                    <option value="">Select option</option>
+                                    <option>None / very low</option>
+                                    <option>A little</option>
+                                    <option>Selective high-end venues</option>
+                                    <option>Important part of the trip</option>
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label for="dietary_needs">Dietary needs</label>
+                                <input id="dietary_needs" type="text" name="dietary_needs" placeholder="Vegan, allergies, wellness meals, child-friendly dining...">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <div class="form-section-title" id="plan-response-step">
+                    <span class="section-tag">Step 3</span>
+                    <h2>Stay brief <span class="optional-tag">required</span></h2>
+                    <p class="form-helper">A short clear brief is enough. We can refine the rest after follow-up.</p>
+                </div>
+
+                <div class="form-grid two">
+                    <div class="field full">
+                        <label for="details">Tell us what the ideal stay should feel like</label>
+                        <textarea id="details" name="details" placeholder="Share the type of stay, key movement needs, villa expectations, sea plans, dining moments, celebration details, privacy needs, or anything else that matters."></textarea>
+                        <p class="validation-error" data-validate-for="details"></p>
+                    </div>
+                    <div class="field quick-hide">
+                        <label for="contact_preference">Preferred follow-up</label>
+                        <select id="contact_preference" name="contact_preference">
+                            <option value="">Select option</option>
+                            <option>Email</option>
+                            <option>WhatsApp</option>
+                            <option>Phone call</option>
+                        </select>
+                    </div>
+                    <div class="field quick-hide">
+                        <label>Submission note</label>
+                        <div class="side-panel plan-reassurance">
+                            <strong>{{ this.theme.plan_reassurance_title ?: 'We only need a strong starting brief.' }}</strong>
+                            <span class="label">{{ this.theme.plan_reassurance_text ?: 'Optional detail can always be added after first contact.' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <input type="hidden" name="request_reference" id="request_reference" value="">
+                    <input type="hidden" name="source_type" id="source_type" value="{{ planContext.source_type ?? "" }}">
+                    <input type="hidden" name="source_slug" id="source_slug" value="{{ planContext.source_slug ?? "" }}">
+                    <input type="hidden" name="source_title" id="source_title" value="{{ planContext.source_title ?? "" }}">
+                    <input type="hidden" name="source_url" id="source_url" value="{{ planContext.source_url ?? "" }}">
+                    <input type="hidden" name="requested_mode" id="requested_mode" value="{{ planContext.mode ?? "" }}">
+                    <input type="text" name="website" value="" class="hp-field" tabindex="-1" autocomplete="off">
+                    <button type="submit" class="btn btn-primary">{{ this.theme.plan_submit_label ?: 'Send request' }}</button>
+                    <a href="mailto:{{ this.theme.contact_email ?: 'mykonos@cabnet.app' }}" class="btn btn-secondary">{{ this.theme.plan_email_label ?: 'Email instead' }}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

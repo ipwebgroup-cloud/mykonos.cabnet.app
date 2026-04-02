@@ -1,0 +1,39 @@
+description = "Home hero"
+==
+{% set heroImage = this.theme.hero_image ? this.theme.hero_image|media : 'assets/images/mykonos-luxury-villas2.png'|theme %}
+<section class="hero nocturne-hero system-hero">
+    <div class="hero-backdrop" style="background-image:linear-gradient(180deg, rgba(6,10,18,.08), rgba(6,10,18,.95)), url('{{ heroImage }}');"></div>
+    <div class="container hero-shell">
+        <div class="hero-main">
+            <span class="eyebrow">{{ this.theme.brand_full ?: 'Mykonos Nocturne Luxe' }}</span>
+            <h1>{{ this.theme.hero_title ?: 'Luxury that feels composed from first arrival to the final evening.' }}</h1>
+            <p class="lead">{{ this.theme.hero_lead ?: 'A calmer, darker luxury theme for Mykonos villa stays, sea days, private dining, hosted arrivals, and concierge-led planning.' }}</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{{ 'plan'|page }}">{{ this.theme.hero_primary_cta ?: 'Start planning' }}</a>
+                <a class="btn btn-secondary" href="#services">{{ this.theme.hero_secondary_cta ?: 'Explore the integrated experience' }}</a>
+            </div>
+            <div class="hero-badges">
+                <span class="chip">Modular October theme</span>
+                <span class="chip">Mobile-first enquiry flow</span>
+                <span class="chip">Editable settings and content blocks</span>
+            </div>
+        </div>
+        <div class="hero-side">
+            <div class="hero-note-card">
+                <span class="chip">{{ this.theme.hero_badge_title ?: 'Mobile-first luxury planning' }}</span>
+                <p>{{ this.theme.hero_badge_text ?: 'The form flow, content rhythm, and section hierarchy are tuned to help guests act quickly on mobile without losing the premium feel.' }}</p>
+                <ul class="clean-list">
+                    <li>{% content 'home/hero-badge-1.htm' %}</li>
+                    <li>{% content 'home/hero-badge-2.htm' %}</li>
+                    <li>{% content 'home/hero-badge-3.htm' %}</li>
+                    <li>{% content 'home/hero-badge-4.htm' %}</li>
+                </ul>
+            </div>
+            <div class="metric-row">
+                <div class="metric-card"><strong>01</strong><span>Systemized layout and SEO</span></div>
+                <div class="metric-card"><strong>02</strong><span>Form-first mobile planning</span></div>
+                <div class="metric-card"><strong>03</strong><span>Backend-ready content model</span></div>
+            </div>
+        </div>
+    </div>
+</section>

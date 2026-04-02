@@ -1,0 +1,75 @@
+title = "Service Detail"
+url = "/services/:slug"
+layout = "default"
+meta_title = "Service Detail | Mykonos Nocturne Luxe"
+meta_description = "Integrated Mykonos luxury service detail page for arrivals, residences, sea days, and concierge support."
+==
+function onStart()
+{
+    $slug = $this->param('slug');
+    $this['entry'] = null;
+    $this['fallback'] = null;
+    $this['detailNotFound'] = false;
+
+    if (!$slug) {
+        return 
+            \Redirect::to($this->pageUrl('services'));
+    }
+
+    if (class_exists('\\Tailor\\Models\\EntryRecord')) {
+        try {
+            $this['entry'] = \Tailor\Models\EntryRecord::inSection('Mykonos\\Service')
+                ->where('slug', $slug)
+                ->first();
+        }
+        catch (\Throwable $e) {
+            $this['entry'] = null;
+        }
+    }
+
+    $fallbacks = [
+        'hosted-arrivals' => [
+            'title' => 'Hosted Arrivals',
+            'badge' => 'Arrival & movement',
+            'teaser' => 'Airport, port, helipad, and residence movement designed as one polished sequence.',
+            'best_for' => 'Guests who need the first hours of the stay to feel calm, precise, and hosted.',
+            'image' => 'assets/images/mykonos-luxury-transfers.png',
+            'body_file' => 'services/detail-hosted-arrivals.htm',
+            'points' => ['Meet-and-greet pacing', 'Luggage continuity', 'First-stop coordination']
+        ],
+        'villa-living' => [
+            'title' => 'Villa Living',
+            'badge' => 'Residence',
+            'teaser' => 'Residence support, private staff, and on-site continuity built around how the guest wants the villa to feel.',
+            'best_for' => 'Villa-based stays where service should feel present but never intrusive.',
+            'image' => 'assets/images/mykonos-luxury-villas2.png',
+            'body_file' => 'services/detail-villa-living.htm',
+            'points' => ['Arrival-ready residences', 'Chef and staff timing', 'Guest comfort continuity']
+        ],
+        'sea-days' => [
+            'title' => 'Sea Days',
+            'badge' => 'Sea & island',
+            'teaser' => 'Private yacht and boat time structured around privacy, beauty, and the rhythm of the stay.',
+            'best_for' => 'Guests who want the water to feel like part of the stay, not a separate booking.',
+            'image' => 'assets/images/mykonos-luxury-boat-trips.png',
+            'body_file' => 'services/detail-sea-days.htm',
+            'points' => ['Island pacing', 'Beauty-led routes', 'Smooth land-to-sea transitions']
+        ],
+        'concierge-support' => [
+            'title' => 'Concierge Support',
+            'badge' => '24/7 support',
+            'teaser' => 'Dining, wellness, childcare, security, and last-minute handling kept discreet and guest-centered.',
+            'best_for' => 'Stays that need quiet operational support behind the scenes.',
+            'image' => 'assets/images/mykonos-luxury-sightseeing.png',
+            'body_file' => 'services/detail-concierge-support.htm',
+            'points' => ['Dining continuity', 'Wellness coordination', 'Last-minute handling']
+        ],
+    ];
+
+    if (!$this['entry']) {
+        $this['fallback'] = $fallbacks[$slug] ?? null;
+        $this['detailNotFound'] = $this['fallback'] ? false : true;
+    }
+}
+==
+{% partial 'services/detail' %}

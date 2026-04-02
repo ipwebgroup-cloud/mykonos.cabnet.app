@@ -1,0 +1,64 @@
+title = "Home"
+url = "/"
+layout = "default"
+meta_title = "Mykonos Nocturne Luxe | Backend-integrated luxury planning for Mykonos"
+meta_description = "A major integrated Mykonos luxury theme update with Tailor-powered homepage sections, editable settings, and a refined mobile-first enquiry flow."
+==
+function onStart()
+{
+    $this['servicesEntries'] = [];
+    $this['experienceEntries'] = [];
+    $this['lifestyleEntries'] = [];
+    $this['reasonEntries'] = [];
+    $this['homepageUsesTailor'] = false;
+
+    if (!class_exists('\\Tailor\\Models\\EntryRecord')) {
+        return;
+    }
+
+    try {
+        $services = \Tailor\Models\EntryRecord::inSection('Mykonos\Service')
+            ->where('is_featured', true)
+            ->orderBy('sort_order')
+            ->take(4)
+            ->get();
+
+        $experiences = \Tailor\Models\EntryRecord::inSection('Mykonos\Experience')
+            ->where('is_featured', true)
+            ->orderBy('sort_order')
+            ->take(4)
+            ->get();
+
+        $lifestyle = \Tailor\Models\EntryRecord::inSection('Mykonos\Lifestyle')
+            ->orderBy('sort_order')
+            ->take(3)
+            ->get();
+
+        $reasons = \Tailor\Models\EntryRecord::inSection('Mykonos\Reason')
+            ->orderBy('sort_order')
+            ->take(4)
+            ->get();
+
+        $this['servicesEntries'] = $services;
+        $this['experienceEntries'] = $experiences;
+        $this['lifestyleEntries'] = $lifestyle;
+        $this['reasonEntries'] = $reasons;
+        $this['homepageUsesTailor'] = ($services->count() + $experiences->count() + $lifestyle->count() + $reasons->count()) > 0;
+    }
+    catch (\Throwable $e) {
+        $this['servicesEntries'] = [];
+        $this['experienceEntries'] = [];
+        $this['lifestyleEntries'] = [];
+        $this['reasonEntries'] = [];
+        $this['homepageUsesTailor'] = false;
+    }
+}
+==
+{% partial 'home/hero' %}
+{% partial 'home/ribbon' %}
+{% partial 'home/services' %}
+{% partial 'home/editorial' %}
+{% partial 'home/experiences' %}
+{% partial 'home/lifestyle' %}
+{% partial 'home/why' %}
+{% partial 'home/cta' %}
