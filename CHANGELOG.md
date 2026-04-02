@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.5.6 — List Queue Snapshot
+- added read-only queue snapshot cards to the backend inquiry list toolbar
+- surfaces active, unassigned, needs-first-touch, due-today, and overdue counts
+- preserves conservative list filters and introduces no schema change
+
 ## v2.5.4 — Stable Checkpoint
 - added assignment / status continuity polish on the backend inquiry update screen
 - improved owner, queue posture, next action, follow-up, and closure readability
