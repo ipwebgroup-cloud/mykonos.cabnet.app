@@ -1,8 +1,0 @@
-{
-    "name": "devv1_cabnet.app/v1_mykonos.cabnet.app-theme",
-    "type": "october-theme",
-    "description": "Mykonos Tours",
-    "require": {
-        "composer/installers": "~1.0"
-    }
-}
