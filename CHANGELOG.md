@@ -1,3 +1,10 @@
+# Changelog
+
+## v2.6.9 — Next-Step Framing Panel
+- added a read-only Next-Step Framing panel to the Internal tab
+- surfaces the most appropriate next move from the current workflow, ownership, contact, and follow-up posture
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 
 ## v2.6.7 - Source & Entry Posture Panel
 - added a read-only **Source & Entry Posture** panel to the Internal tab
@@ -31,8 +38,6 @@
 - follow-up column now mirrors queue language used on the detail screen
 - no schema change
 - no public theme change
-
-# Changelog
 
 ## v2.6.8 — Coverage & Gaps Panel
 - added a read-only Coverage & Gaps panel to the Internal tab

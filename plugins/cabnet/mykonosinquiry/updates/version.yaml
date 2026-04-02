@@ -38,3 +38,5 @@
     - 'Add source and entry posture scan panel to the operator workspace consolidation line'
 1.1.6:
     - 'Add coverage and gaps scan panel to the operator workspace consolidation line'
+1.1.7:
+    - 'Add next-step framing scan panel to the operator workspace consolidation line'

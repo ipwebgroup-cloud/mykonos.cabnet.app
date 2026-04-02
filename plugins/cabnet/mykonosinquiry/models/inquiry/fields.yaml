@@ -321,6 +321,13 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of missing brief and workflow coverage before the next hand-off or guest touch.
 
+        next_step_framing_panel:
+            label: Next-Step Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_step_framing_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of the most appropriate next move based on live workflow, contact posture, and follow-up discipline.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

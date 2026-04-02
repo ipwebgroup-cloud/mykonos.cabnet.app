@@ -1,0 +1,113 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Next-step framing becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $status = (string) ($record->status ?? 'new');
+    $owner = trim((string) ($record->owner_name ?: ''));
+    $hasOwner = $owner !== '';
+    $hasFollowUp = !empty($record->follow_up_date);
+    $hasContacted = !empty($record->last_contacted_at);
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+    $services = trim((string) ($record->services_inline ?? ''));
+    $hasBrief = trim((string) ($record->details ?: '')) !== '';
+
+    if ($isClosed) {
+        $tone = 'neutral';
+        $state = 'Closed track';
+        $summary = 'This inquiry is already in a closed state, so the main operator task is preserving a clean factual record rather than shaping a new guest move.';
+        $nextMove = 'Only reopen when there is a real operational reason, otherwise keep the closure notes concise and trustworthy.';
+    } elseif (!$hasOwner) {
+        $tone = 'critical';
+        $state = 'Assign before action';
+        $summary = 'The inquiry still lacks a named owner, which makes the next guest move ambiguous even if the brief itself is workable.';
+        $nextMove = 'Assign an operator first, then decide whether the immediate move is first contact, clarification, or proposal shaping.';
+    } elseif (!$hasContacted && $hasBrief && $services !== '') {
+        $tone = 'warning';
+        $state = 'Ready for first touch';
+        $summary = 'The inquiry already carries enough trip and service context for an operator to make a confident first outreach without rebuilding the picture.';
+        $nextMove = 'Use the preferred contact route, confirm the key service intent, and set an explicit follow-up checkpoint after the first touch.';
+    } elseif (!$hasContacted) {
+        $tone = 'warning';
+        $state = 'Clarify before shaping';
+        $summary = 'The inquiry is still pre-contact and the current brief is lighter, so the next move should be to tighten the picture before shaping a concierge plan.';
+        $nextMove = 'Make first contact, confirm dates / guest shape / service focus, and avoid over-committing the next internal handler to assumptions.';
+    } elseif ($hasContacted && !$hasFollowUp) {
+        $tone = 'critical';
+        $state = 'Contacted without checkpoint';
+        $summary = 'A guest touch is logged, but there is no explicit follow-up checkpoint, which weakens continuity for the next operator looking at the queue.';
+        $nextMove = 'Set the next follow-up date and capture the current working picture so the next hand-off is time-aware and easy to resume.';
+    } elseif (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+        $tone = 'positive';
+        $state = 'Awaiting guest response';
+        $summary = 'The inquiry is already in a guest-response stage, so the operator focus should stay on timing discipline and clean follow-up posture rather than reshaping the brief.';
+        $nextMove = 'Keep the follow-up checkpoint explicit, preserve the current commercial picture, and only reopen brief discovery if the guest direction changes.';
+    } else {
+        $tone = 'positive';
+        $state = 'Active operator path';
+        $summary = 'The inquiry has an owner, at least one live contact signal, and a scheduled checkpoint, so the current working picture is stable enough for confident continuation.';
+        $nextMove = 'Use the working summary to keep the next guest move crisp, then update the checkpoint immediately after the touch.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+    $contactRoute = trim((string) ($record->contact_preference ?: ''));
+    $contactRoute = $contactRoute !== '' ? $contactRoute : 'No explicit preference';
+    $statusLabel = method_exists($record, 'getStatusLabelAttribute') ? ($record->status_label ?? ucfirst(str_replace('_', ' ', $status))) : ucfirst(str_replace('_', ' ', $status));
+    $followUpText = !empty($record->follow_up_date) ? date('M j, Y', strtotime((string) $record->follow_up_date)) : 'Not scheduled';
+    $contactedText = !empty($record->last_contacted_at) ? date('M j, Y H:i', strtotime((string) $record->last_contacted_at)) : 'No outreach logged';
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Next-step framing</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator framing for the most appropriate next move based on ownership, live contact posture, status, and follow-up discipline.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Next move:</strong> <?= e($nextMove) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Workflow picture</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Status:</strong> <?= e($statusLabel) ?><br>
+            <strong>Owner:</strong> <?= e($hasOwner ? $owner : 'Unassigned') ?><br>
+            <strong>Follow-up:</strong> <?= e($followUpText) ?><br>
+            <strong>Last contacted:</strong> <?= e($contactedText) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Guest path</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Preferred route:</strong> <?= e($contactRoute) ?><br>
+            <strong>Service focus:</strong> <?= e($services !== '' ? $services : 'No explicit service cluster yet') ?><br>
+            <strong>Brief depth:</strong> <?= e($hasBrief ? 'Free-text brief present' : 'Light free-text brief') ?>
+        </div>
+    </div>
+</div>
