@@ -1,3 +1,8 @@
+## v2.6.10 — Risk & Sensitivity Panel
+- added a read-only **Risk & Sensitivity** panel to the Internal tab
+- surfaces urgency, privacy, family, and dietary signals for safer hand-off continuity
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 # Changelog
 
 ## v2.6.9 — Next-Step Framing Panel

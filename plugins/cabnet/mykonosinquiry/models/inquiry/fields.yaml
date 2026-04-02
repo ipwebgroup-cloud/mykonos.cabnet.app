@@ -328,6 +328,13 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of the most appropriate next move based on live workflow, contact posture, and follow-up discipline.
 
+        risk_sensitivity_panel:
+            label: Risk & Sensitivity
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_risk_sensitivity_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of urgency, privacy, family, and dietary signals that should remain visible in hand-off and follow-up handling.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

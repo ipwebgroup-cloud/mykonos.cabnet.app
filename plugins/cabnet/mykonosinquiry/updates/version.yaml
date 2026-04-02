@@ -40,3 +40,5 @@
     - 'Add coverage and gaps scan panel to the operator workspace consolidation line'
 1.1.7:
     - 'Add next-step framing scan panel to the operator workspace consolidation line'
+1.1.8:
+    - 'Add risk and sensitivity scan panel to the operator workspace consolidation line'
