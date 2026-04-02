@@ -72,6 +72,30 @@ class Inquiry extends Model
         return $options[$this->priority] ?? $this->humanizeValue($this->priority) ?? 'Normal';
     }
 
+    public function getOwnerDisplayAttribute(): string
+    {
+        return $this->normalizeDisplayValue($this->owner_name) ?? 'Unassigned';
+    }
+
+    public function getSourceDisplayAttribute(): string
+    {
+        return $this->normalizeDisplayValue($this->source_title)
+            ?? $this->humanizeValue($this->source_type)
+            ?? 'Direct / unspecified';
+    }
+
+    public function getFollowUpQueueSummaryAttribute(): string
+    {
+        $state = $this->follow_up_queue_state;
+        $date = $this->formatDateValue($this->follow_up_date, 'Y-m-d');
+
+        if ($date) {
+            return sprintf('%s · %s', $state, $date);
+        }
+
+        return $state;
+    }
+
     public function getContinuityToneAttribute(): string
     {
         if ($this->isClosedStatus($this->status)) {

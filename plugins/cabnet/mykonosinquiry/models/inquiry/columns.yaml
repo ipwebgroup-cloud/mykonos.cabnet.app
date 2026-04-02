@@ -2,12 +2,10 @@ columns:
     request_reference:
         label: Reference
         searchable: true
-    status:
+    status_label:
         label: Status
-        searchable: true
-    priority:
+    priority_label:
         label: Priority
-        searchable: true
     full_name:
         label: Guest
         searchable: true
@@ -21,14 +19,12 @@ columns:
         type: date
     services_inline:
         label: Focus
-    source_title:
+    source_display:
         label: Source
-        searchable: true
-    owner_name:
+    owner_display:
         label: Owner
-    follow_up_date:
-        label: Follow Up
-        type: date
+    follow_up_queue_summary:
+        label: Queue / Follow Up
     last_contacted_at:
         label: Last Contacted
         type: datetime

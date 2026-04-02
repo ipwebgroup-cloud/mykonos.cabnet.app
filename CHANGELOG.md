@@ -1,3 +1,12 @@
+## v2.5.7 - List / Detail Consistency Polish
+- aligned backend list wording with detail screen workflow labels
+- list now shows operator-friendly status and priority labels
+- source column now falls back safely instead of showing blank values
+- owner column now shows "Unassigned" instead of an empty value
+- follow-up column now mirrors queue language used on the detail screen
+- no schema change
+- no public theme change
+
 # Changelog
 
 ## v2.5.6 — List Queue Snapshot
