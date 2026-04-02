@@ -46,11 +46,16 @@ class Inquiries extends Controller
             return $this->dispatchQuickActionFromUpdate($recordId);
         }
 
+        $this->asExtension('FormController')->update($recordId, $context);
+
+        if (!$this->formWidget && $recordId) {
+            $model = Inquiry::findOrFail($recordId);
+            $this->asExtension('FormController')->initForm($model, $context);
+        }
+
         $inquiry = $recordId ? Inquiry::find($recordId) : null;
         $reference = $inquiry && $inquiry->request_reference ? $inquiry->request_reference : 'Update Inquiry';
-
         $this->pageTitle = 'Inquiry · ' . $reference;
-        return $this->asExtension('FormController')->update($recordId, $context);
     }
 
     public function formBeforeSave($model): void
