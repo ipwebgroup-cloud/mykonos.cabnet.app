@@ -1,0 +1,147 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Proposal readiness becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $status = (string) ($record->status ?? 'new');
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+    $hasOwner = trim((string) ($record->owner_name ?: '')) !== '';
+    $hasContact = !empty($record->last_contacted_at);
+    $hasFollowUp = !empty($record->follow_up_date);
+    $details = trim((string) ($record->details ?: ''));
+    $services = trim((string) ($record->services_inline ?? ''));
+    $budget = trim((string) ($record->budget ?: ''));
+    $requestedMode = trim((string) ($record->requested_mode ?: ''));
+    $preferenceSignals = array_filter([
+        trim((string) ($record->travel_style ?: '')),
+        trim((string) ($record->stay_mood ?: '')),
+        trim((string) ($record->privacy_level ?: '')),
+        trim((string) ($record->dining_style ?: '')),
+        trim((string) ($record->nightlife_interest ?: '')),
+    ]);
+
+    $briefRich = mb_strlen($details) >= 320;
+    $serviceRich = $services !== '';
+    $commercialSignal = $budget !== '' || $requestedMode !== '';
+    $preferenceDepth = count($preferenceSignals) >= 2;
+
+    if ($isClosed) {
+        $tone = 'neutral';
+        $state = 'Closed';
+        $summary = 'The inquiry is closed, so proposal shaping is no longer the active concern.';
+        $decision = 'Keep the record factual and only reopen if the guest thread genuinely restarts.';
+    } elseif (!$hasOwner) {
+        $tone = 'critical';
+        $state = 'Assign first';
+        $summary = 'Proposal readiness is still blocked by missing ownership. A package should not outrun clear operator accountability.';
+        $decision = 'Assign the inquiry before turning the brief into a guest-facing package.';
+    } elseif (!$hasContact) {
+        $tone = 'warning';
+        $state = 'First touch first';
+        $summary = 'The inquiry may already have useful signals, but a real guest touch has not happened yet.';
+        $decision = 'Use the first outreach to confirm direction before escalating into a structured proposal or heavy package.';
+    } elseif (!$hasFollowUp) {
+        $tone = 'critical';
+        $state = 'Checkpoint missing';
+        $summary = 'A live thread exists, but proposal continuity is still weak because the next checkpoint is not anchored.';
+        $decision = 'Set the follow-up date before committing to deeper shaping or wider guest-facing promises.';
+    } elseif ($briefRich && $serviceRich && $commercialSignal && $preferenceDepth) {
+        $tone = 'positive';
+        $state = 'Proposal-ready';
+        $summary = 'The inquiry has enough operating depth to support structured proposal shaping with confidence.';
+        $decision = 'Shape a fuller package or proposal response anchored on the guest\'s service picture, timing, and commercial posture.';
+    } elseif ($briefRich || $serviceRich) {
+        $tone = 'warning';
+        $state = 'Starter-package ready';
+        $summary = 'There is enough signal for a curated starter package, but the brief is still not rich enough for deeper proposal confidence.';
+        $decision = 'Send a starter package or clarification-led response rather than a fully shaped proposal.';
+    } else {
+        $tone = 'warning';
+        $state = 'Clarify before packaging';
+        $summary = 'The inquiry still needs stronger operating detail before even a starter package will feel deliberate.';
+        $decision = 'Keep the next move focused on signal capture, not commercial depth.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $anchors = [];
+    $anchors[] = 'Brief depth: ' . ($briefRich ? 'Rich enough for shaping' : 'Still light');
+    $anchors[] = 'Service picture: ' . ($serviceRich ? $services : 'No clear service cluster yet');
+    $anchors[] = 'Budget posture: ' . ($budget !== '' ? $budget : 'Not captured');
+    $anchors[] = 'Requested mode: ' . ($requestedMode !== '' ? $requestedMode : 'Not specified');
+    $anchors[] = 'Preference depth: ' . ($preferenceDepth ? 'Multi-signal' : 'Light');
+
+    $guidance = [];
+    if (!$hasOwner) {
+        $guidance[] = 'Ownership is missing, so no package should become more detailed than the operating accountability behind it.';
+    }
+    if (!$hasContact) {
+        $guidance[] = 'No confirmed guest touch exists yet, so use the next move to validate direction before packaging depth increases.';
+    } else {
+        $guidance[] = 'Guest contact has already started, so continuity now matters as much as content richness.';
+    }
+    if ($briefRich || $serviceRich) {
+        $guidance[] = 'There is enough substance to shape a starter package with intent rather than sending a generic response.';
+    } else {
+        $guidance[] = 'Keep the next move clarification-led because the request still lacks enough shape for confident packaging.';
+    }
+    if ($commercialSignal) {
+        $guidance[] = 'Commercial posture exists, so package framing can be more deliberate.';
+    } else {
+        $guidance[] = 'Commercial posture is still thin, so avoid overcommitting in the next guest-facing package.';
+    }
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Proposal readiness</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator framing of whether this inquiry is ready for a starter package, deeper proposal shaping, or one more clarification pass.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Next packaging move:</strong> <?= e($decision) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Readiness anchors</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($anchors as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Packaging guidance</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($guidance as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

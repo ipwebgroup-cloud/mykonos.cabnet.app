@@ -1,3 +1,9 @@
+## v2.6.14 — Proposal Readiness Panel
+- added a read-only Proposal Readiness panel to the Internal tab
+- surfaces package readiness, clarification posture, and the safest next proposal-shaping move
+- keeps the patch backend-only with no schema or public theme change
+
+
 ## v2.6.13 - Decision Posture Panel
 - added a read-only **Decision Posture** panel to the Internal tab
 - frames the safest next operator decision across assignment, contact, package shaping, and commercial pacing

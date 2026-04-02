@@ -335,6 +335,14 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of what should go into the next guest-facing package or clarification response.
 
+
+        proposal_readiness_panel:
+            label: Proposal Readiness
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_readiness_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of whether the inquiry is ready for a starter package, structured proposal shaping, or one more clarification pass.
+
         commercial_posture_panel:
             label: Commercial Posture
             type: partial
