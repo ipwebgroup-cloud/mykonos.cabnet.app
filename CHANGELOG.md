@@ -1,45 +1,45 @@
-# Mykonos Cabnet Project Changelog
+# Changelog
 
-## v2.5.4 — Assignment & Status Continuity
-- added a read-only **Workflow Continuity** panel on the inquiry update screen
-- surfaces owner / assignee continuity, queue posture, next action guidance, follow-up visibility, and closure readability
-- refined operator-facing labels and comments in the inquiry form layout
-- no schema change
-- no public theme flow change
+## v2.5.4 — Stable Checkpoint
+- added assignment / status continuity polish on the backend inquiry update screen
+- improved owner, queue posture, next action, follow-up, and closure readability
+- kept plugin-only scope with no schema change
+- no public theme disruption introduced
 
 ## v2.5.3 — History Timeline Usability
-- replaced the large history textarea preview with a card-based timeline
-- shows note type, author, timestamp, and full body more clearly
-- preserves append-only internal note workflow
-- no schema change
-- no public theme flow change
+- replaced plain history preview with a card-based timeline view
+- preserved append-only internal note workflow
+- improved operator scan speed for timeline entries
 
-## v2.5.2 — Backend Update Screen Polish
-- improved the inquiry update header and operator summary area
-- tightened field layout and operator-facing readability
-- polished quick workflow action presentation
-- no schema change
-- no public theme flow change
+## v2.5.2 — Update Screen Polish
+- upgraded the inquiry update header into a stronger operator summary surface
+- improved quick action presentation
+- refined backend form labels and screen structure
 
-## v2.5.1 — Backend List Hotfix
-- stabilized backend inquiry list rendering with conservative list filter config
-- retained safe core filters while avoiding blank list regressions
+## v2.5.1 — List Hotfix
+- simplified list filters to restore reliable backend inquiry list rendering
+- avoided aggressive queue bucket definitions that could blank the list view
 
 ## v2.5.0 — Backend Queue Actions
-- added quick workflow actions for assignment, contact, follow-up, reopen, and closing states
+- added quick workflow actions for assignment, contact, follow-up, reopen, and close states
+- ensured quick actions append explicit system history entries
 
 ## v2.4.0 — Backend Detail Polish
-- improved inquiry overview readability and operator-facing backend summaries
+- improved overview summaries and payload readability
+- surfaced more operator-friendly list information
 
 ## v2.3.0 — Plan Bridge Standardization
-- tightened the theme/plugin bridge for `/plan`
-- improved server-confirmed continuity payload handling
+- standardized `/plan` around `mykonosPlanBridge`
+- tightened continuity between saved server response and frontend success state
 
-## v2.2.0 — Concierge Workflow
-- added workflow timestamps and automatic timeline logging
+## v2.2.0 — Concierge Workflow Patch
+- added lifecycle workflow fields such as `last_contacted_at`, `closed_at`, and `closed_reason`
+- expanded system history logging for key workflow transitions
 
-## v2.1.0 — Operator Workflow Foundation
-- added priority support and inquiry notes history
+## v2.1.0 — Operator Workflow Patch
+- added inquiry priority
+- added history/notes table and initial system notes
+- added append-only internal note handling
 
-## v2.0.0 / v41 integration line
-- established the first real plugin-backed bridge between the public Nocturne flow and the backend inquiry system
+## v2.0 / v41 integration line
+- established the first real bridge between the public `/plan` flow and plugin-backed database persistence

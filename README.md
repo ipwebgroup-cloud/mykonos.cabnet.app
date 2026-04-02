@@ -1,98 +1,84 @@
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 
-This repository contains the live source for the **Mykonos Cabnet inquiry platform** built on OctoberCMS.
+Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow and operator-focused backend handling.
 
-## Current direction
+## Project purpose
 
-This project is no longer a theme-only luxury site experiment.
-It is now a real inquiry workflow platform with:
-
+This repository tracks the production-safe source for:
 - luxury public frontend
 - mobile-first `/plan` inquiry flow
-- DB-backed `Cabnet.MykonosInquiry` persistence
+- DB-backed persistence through `Cabnet.MykonosInquiry`
 - backend inquiry queue and operator workflow
-- safe theme / plugin integration
-- safe incremental production-first changes
+- safe incremental plugin/theme integration
 
-## Active lines
+## Current active line
 
 ### Theme
-- active theme directory: `themes/mykonos-aurelia-lux`
-- public `/plan` is wired through the plugin bridge
+- Active live theme directory: `themes/mykonos-aurelia-lux`
+- Branding/content line: **Mykonos Nocturne Luxe**
 
 ### Plugin
-- plugin: `plugins/cabnet/mykonosinquiry`
-- backend menu: **Mykonos Inquiries**
-- persistence table: `cabnet_mykonos_inquiries`
-- notes/history table: `cabnet_mykonos_inquiry_notes`
+- Plugin: `plugins/cabnet/mykonosinquiry`
+- Backend label: **Mykonos Inquiries**
+- Public bridge component: `mykonosPlanBridge`
 
-## Current stable workflow line
+## Stable workflow direction
 
-The current stable operator workflow line includes:
+The working production line preserves:
+- `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
+- inquiry persistence into `cabnet_mykonos_inquiries`
+- backend inquiry list and detail handling
+- generated request reference shown after successful submit
+- safe email notification handling
+- operator workflow actions, notes, and continuity improvements
 
-- plugin-backed `/plan` persistence
-- safe mail handling in the inquiry manager
-- backend inquiry list stability hotfix baseline
-- detail screen polish
-- history timeline readability
-- assignment / status continuity readability
+## Current stable checkpoint
 
-## Version checkpoints
+### v2.5.4 — Stable Checkpoint
+Included in the current stable operator workflow line:
+- v2.5.2 update screen polish
+- v2.5.3 history timeline usability
+- v2.5.4 assignment / status continuity polish
 
-### v2.5.2
-Backend inquiry update-screen polish:
-- stronger inquiry header
-- clearer operator summary
-- tighter quick-action presentation
+## Repository rules
 
-### v2.5.3
-History timeline usability:
-- card-based readable history timeline
-- easier operator scanning of note type, author, time, and body
+### Commit
+Commit source code and documentation for:
+- `app/`
+- `bootstrap/`
+- `config/`
+- `modules/`
+- `plugins/`
+- `themes/`
+- `tests/`
+- root project files such as `artisan`, `composer.json`, `composer.lock`, `.htaccess`
 
-### v2.5.4
-Assignment and status continuity:
-- workflow continuity panel
-- clearer owner, queue posture, next action, follow-up, and closure readability
-
-## Safe working rules
-
-- inspect first, change second
-- prefer plugin-side operator improvements over theme drift
-- avoid schema changes unless clearly justified
-- keep public `/plan` stable
-- keep backend list rendering conservative and reliable
-- package work as small rooted patches whenever possible
-
-## Local patch workflow
-
-Recommended workflow for this repository:
-
-1. keep a clean local working copy of `mykonos.cabnet.app`
-2. extract rooted patch zips directly over the local repo root
-3. review changes in GitHub Desktop
-4. commit and push from GitHub Desktop
-5. tag stable checkpoints after meaningful operator-facing improvements
-
-## Important paths
-
-- `plugins/cabnet/mykonosinquiry/classes/InquiryManager.php`
-- `plugins/cabnet/mykonosinquiry/components/PlanBridge.php`
-- `plugins/cabnet/mykonosinquiry/controllers/Inquiries.php`
-- `plugins/cabnet/mykonosinquiry/controllers/inquiries/update.htm`
-- `plugins/cabnet/mykonosinquiry/models/Inquiry.php`
-- `plugins/cabnet/mykonosinquiry/models/inquiry/fields.yaml`
-- `themes/mykonos-aurelia-lux/pages/plan.htm`
-- `themes/mykonos-aurelia-lux/partials/plan/form.htm`
-
-## Notes
-
-This repo intentionally excludes:
-
+### Do not commit
+Do not commit live/server-local artifacts such as:
 - `.env`
 - `auth.json`
 - `vendor/`
-- runtime storage contents
+- `node_modules/`
+- runtime `storage` contents
+- `php.ini`
+- `.user.ini`
 - SQL dumps
-- zip artifacts
-- server-local config such as `.user.ini` and `php.ini`
+- zip exports
+- cPanel-local files
+
+## Deployment philosophy
+
+This project follows:
+- inspect first, change second
+- small production-safe patches
+- preserve working routes and business continuity
+- avoid schema drift unless clearly justified
+- keep public theme flow stable
+- improve operator workflow incrementally
+
+## Release documentation
+
+See:
+- `CHANGELOG.md`
+- `docs/releases/MYKONOS_V254_STABLE_CHECKPOINT.md`
+- patch note files delivered with each rooted patch zip

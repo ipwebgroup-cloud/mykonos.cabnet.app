@@ -1,52 +1,46 @@
-# Mykonos Inquiry Workflow Stable Checkpoint — v2.5.4
+# Mykonos Inquiry Platform v2.5.4 — Stable Checkpoint
+
+## Summary
+
+This checkpoint marks the current stable operator workflow line for the Mykonos Cabnet OctoberCMS inquiry project.
+
+## Included in this checkpoint
+- plugin-backed `/plan` persistence remains intact
+- backend inquiry update screen polish from v2.5.2
+- history timeline usability from v2.5.3
+- assignment / status continuity polish from v2.5.4
+- append-only internal note workflow preserved
+- no schema change
+- no public theme disruption
+- no aggressive backend list regression risk introduced
+
+## Operational focus
+- operator usability
+- faster inquiry scanning
+- clearer owner / follow-up / continuity handling
+- safer patch discipline for ongoing production work
 
 ## Release title
-**Mykonos Inquiry Platform v2.5.4 — Stable Operator Workflow Checkpoint**
+**Mykonos Inquiry Platform v2.5.4 — Stable Checkpoint**
 
-## What this checkpoint represents
-This checkpoint captures the current stable inquiry workflow line after the backend operator usability improvements delivered through:
+## Suggested tag
+`v2.5.4`
 
-- v2.5.2 update screen polish
-- v2.5.3 history timeline usability
-- v2.5.4 assignment and status continuity
-
-## Included capabilities
-- public `/plan` submits through `mykonosPlanBridge::onSubmitInquiry`
-- inquiries persist to `cabnet_mykonos_inquiries`
-- initial inquiry history notes are created automatically
-- email notification remains active with safe handling
-- backend inquiry list remains on the conservative stable baseline
-- backend detail screen is operator-oriented and easier to scan
-- history is readable as a timeline
-- workflow continuity is easier to hand off between operators
-
-## Safety notes
-- no schema change introduced in the v2.5.2 → v2.5.4 line
-- no public theme regression should be required for these steps
-- list filter stability was intentionally preserved
-
-## Suggested GitHub release notes
-This release continues the stable Mykonos inquiry workflow line.
+## Recommended GitHub release notes
+This release marks the current stable checkpoint for the Mykonos Cabnet OctoberCMS inquiry workflow line.
 
 Included in this checkpoint:
-- backend inquiry detail screen polish
-- History tab upgraded to a readable timeline view
-- workflow continuity panel for owner / status / follow-up clarity
+- plugin-backed `/plan` inquiry persistence remains intact
+- backend inquiry update screen polish from v2.5.2
+- History tab upgraded to a more readable timeline flow from v2.5.3
+- assignment / status continuity improvements from v2.5.4
 - append-only internal note workflow preserved
 - no schema change
 - no public theme flow disruption
-- no backend list regression risk intentionally introduced
+- no aggressive backend list changes
 
-Focus of this checkpoint:
+Operational focus of this checkpoint:
 - operator usability
-- faster note scanning
-- cleaner backend inquiry handling
+- faster inquiry scanning
+- clearer owner / follow-up / continuity handling
 - safer patch discipline for ongoing production work
-
-## Suggested next implementation bias
-After this checkpoint, the next safe implementation target should only proceed if clearly needed from real operator usage:
-
-- conservative follow-up queue clarity improvements
-- or a plugin-only dashboard/summary refinement
-
-Do not drift into theme-only expansion unless it directly supports the inquiry workflow.
