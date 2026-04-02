@@ -34,6 +34,13 @@
 
 # Changelog
 
+## v2.6.8 — Coverage & Gaps Panel
+- added a read-only Coverage & Gaps panel to the Internal tab
+- surfaces missing brief coverage, missing workflow coverage, and an overall hand-off readiness posture in one scan-first block
+- keeps the patch backend-only with no schema or public theme change
+
+
+
 ## v2.6.4 — Service Posture Panel
 - added a read-only Service Posture panel to the Internal tab
 - surfaces service intent, experience-specific signals, and planning continuity in one scan-first block

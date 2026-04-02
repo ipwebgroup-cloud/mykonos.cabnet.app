@@ -314,6 +314,13 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of where the inquiry entered, how it was framed, and whether the source context is rich enough for the next hand-off.
 
+        coverage_gaps_panel:
+            label: Coverage & Gaps
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_coverage_gaps_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of missing brief and workflow coverage before the next hand-off or guest touch.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

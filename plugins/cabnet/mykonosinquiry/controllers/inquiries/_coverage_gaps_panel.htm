@@ -1,0 +1,134 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Coverage and gap signals become available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $briefSignals = [
+        'Guest name' => trim((string) ($record->full_name ?: '')) !== '',
+        'Contact route' => trim((string) ($record->email ?: '')) !== '' || trim((string) ($record->phone ?: '')) !== '',
+        'Trip dates' => !empty($record->arrival_date) || !empty($record->departure_date),
+        'Guest count / shape' => !empty($record->guests) || trim((string) ($record->group_composition ?: '')) !== '',
+        'Service focus' => trim((string) ($record->services_inline ?? '')) !== '',
+        'Budget or planning level' => trim((string) ($record->budget ?: '')) !== '',
+        'Contact preference' => trim((string) ($record->contact_preference ?: '')) !== '',
+        'Free-text brief' => trim((string) ($record->details ?: '')) !== '',
+    ];
+
+    $workflowSignals = [
+        'Owner assigned' => trim((string) ($record->owner_name ?: '')) !== '',
+        'Follow-up scheduled' => !empty($record->follow_up_date),
+        'Last contacted logged' => !empty($record->last_contacted_at),
+        'Working summary present' => trim((string) ($record->guest_summary ?: '')) !== '' || trim((string) ($record->internal_notes ?: '')) !== '',
+    ];
+
+    $briefCount = 0;
+    foreach ($briefSignals as $present) {
+        if ($present) {
+            $briefCount++;
+        }
+    }
+
+    $workflowCount = 0;
+    foreach ($workflowSignals as $present) {
+        if ($present) {
+            $workflowCount++;
+        }
+    }
+
+    $totalCount = $briefCount + $workflowCount;
+
+    if ($totalCount >= 10) {
+        $tone = 'positive';
+        $state = 'Strong coverage';
+        $summary = 'The inquiry carries enough guest, request, and workflow coverage for a confident operator hand-off without much reconstruction.';
+        $nextMove = 'Use the working summary to keep the current direction crisp, then focus on execution and follow-up discipline.';
+    } elseif ($totalCount >= 7) {
+        $tone = 'warning';
+        $state = 'Workable coverage';
+        $summary = 'The inquiry is workable, but there are still a few soft spots that may slow the next operator unless the current handler closes them.';
+        $nextMove = 'Tighten the missing coverage items during the next touch so the brief becomes easier to carry forward.';
+    } else {
+        $tone = 'neutral';
+        $state = 'Light coverage';
+        $summary = 'The inquiry can move forward, but the next operator will still need to infer parts of the picture from scattered fields.';
+        $nextMove = 'Use the next contact or internal update to strengthen the missing coverage signals before shaping the next step.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $missingBrief = [];
+    foreach ($briefSignals as $label => $present) {
+        if (!$present) {
+            $missingBrief[] = $label;
+        }
+    }
+
+    $missingWorkflow = [];
+    foreach ($workflowSignals as $label => $present) {
+        if (!$present) {
+            $missingWorkflow[] = $label;
+        }
+    }
+
+    $missingBriefText = count($missingBrief) ? implode(', ', $missingBrief) : 'No major brief gaps';
+    $missingWorkflowText = count($missingWorkflow) ? implode(', ', $missingWorkflow) : 'No major workflow gaps';
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Coverage &amp; gaps</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator scan of what is already covered in the brief and workflow picture versus what still needs tightening for the next hand-off.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Next move:</strong> <?= e($nextMove) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 240px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Coverage score</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Brief signals:</strong> <?= e((string) $briefCount) ?>/8<br>
+            <strong>Workflow signals:</strong> <?= e((string) $workflowCount) ?>/4<br>
+            <strong>Total coverage:</strong> <?= e((string) $totalCount) ?>/12
+        </div>
+    </div>
+
+    <div style="flex:1 1 320px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Brief gaps</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <?= e($missingBriefText) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 320px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Workflow gaps</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <?= e($missingWorkflowText) ?>
+        </div>
+    </div>
+</div>
