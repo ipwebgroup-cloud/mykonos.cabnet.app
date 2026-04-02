@@ -9,7 +9,7 @@ fields:
         label: Status
         type: dropdown
         span: right
-        comment: Keep this aligned with the current concierge handling stage.
+        comment: Keep this aligned with the live concierge stage so the queue and history remain trustworthy.
         options:
             new: New brief
             reviewed: Reviewed
@@ -37,9 +37,9 @@ fields:
             urgent: Urgent
 
     owner_name:
-        label: Owner
+        label: Owner / Assignee
         span: right
-        comment: Current operator or assignee responsible for next action.
+        comment: Use a real assignee name so hand-off continuity stays clear.
 
     quick_actions:
         label: Quick Actions
@@ -47,19 +47,26 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_quick_actions.htm
         span: full
 
+    workflow_continuity:
+        label: Workflow Continuity
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_workflow_continuity.htm
+        span: full
+        comment: Read-only queue, assignment, and next-action summary for cleaner operator hand-off.
+
     follow_up_date:
         label: Follow Up Date
         type: datepicker
         mode: date
         span: left
-        comment: Next operator checkpoint.
+        comment: Next operator checkpoint. Set this whenever the guest is waiting on your next touch.
 
     last_contacted_at:
         label: Last Contacted
         type: datepicker
         mode: datetime
         span: right
-        comment: Most recent successful outreach to the guest.
+        comment: Most recent successful outreach to the guest. Use this with Follow Up Date for continuity.
 
     full_name:
         label: Full Name
@@ -263,7 +270,7 @@ tabs:
             type: textarea
             size: large
             tab: Internal
-            comment: Current working summary for the operator handling this inquiry.
+            comment: One-screen operator synopsis for the active handler or the next assignee.
 
         closed_at:
             label: Closed At
@@ -278,10 +285,11 @@ tabs:
             size: small
             tab: Internal
             span: right
+            comment: Keep this concise and factual so reopen and hand-off decisions stay readable.
 
         internal_notes:
             label: Working Notes
-            comment: Use this for the current operator summary. For timeline-style updates, add a history note in the History tab.
+            comment: Current rolling operator summary. Use this for the latest working picture, not the historical timeline.
             type: textarea
             size: giant
             tab: Internal

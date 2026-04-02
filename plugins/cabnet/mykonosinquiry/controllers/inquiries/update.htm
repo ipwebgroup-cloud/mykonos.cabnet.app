@@ -5,6 +5,11 @@
     $guest = $model && !empty($model->full_name) ? $model->full_name : 'Guest not set';
     $status = $model && !empty($model->status) ? $model->status : 'new';
     $priority = $model && !empty($model->priority) ? $model->priority : 'normal';
+    $statusLabel = $model && method_exists($model, 'getStatusLabelAttribute') ? $model->status_label : ucwords(str_replace('_', ' ', $status));
+    $priorityLabel = $model && method_exists($model, 'getPriorityLabelAttribute') ? $model->priority_label : strtoupper($priority);
+    $queuePosture = $model && method_exists($model, 'getQueuePostureAttribute') ? $model->queue_posture : 'Workflow is active; keep assignment and next action explicit.';
+    $nextAction = $model && method_exists($model, 'getContinuityNextActionAttribute') ? $model->continuity_next_action : 'Keep the internal summary current for the next operator.';
+    $continuityTone = $model && method_exists($model, 'getContinuityToneAttribute') ? $model->continuity_tone : 'neutral';
     $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Unassigned';
     $email = $model && !empty($model->email) ? $model->email : 'No email provided';
     $phone = $model && !empty($model->phone) ? $model->phone : 'No phone provided';
@@ -42,8 +47,16 @@
         'urgent' => ['#b02a37', '#fdebec'],
     ];
 
+    $continuityPalette = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
     $statusColors = $statusPalette[$status] ?? ['#0d6efd', '#e7f1ff'];
     $priorityColors = $priorityPalette[$priority] ?? ['#0d6efd', '#e7f1ff'];
+    $continuityColors = $continuityPalette[$continuityTone] ?? $continuityPalette['neutral'];
 
     $badgeStyle = function ($colors) {
         return sprintf(
@@ -87,8 +100,8 @@
             <div class="row" style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;">
                 <div class="col-md-8" style="flex:1 1 460px;min-width:280px;">
                     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;">
-                        <span style="<?= $badgeStyle($statusColors) ?>">Status: <?= e(ucwords(str_replace('_', ' ', $status))) ?></span>
-                        <span style="<?= $badgeStyle($priorityColors) ?>">Priority: <?= e(strtoupper($priority)) ?></span>
+                        <span style="<?= $badgeStyle($statusColors) ?>">Status: <?= e($statusLabel) ?></span>
+                        <span style="<?= $badgeStyle($priorityColors) ?>">Priority: <?= e($priorityLabel) ?></span>
                         <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:#334155;background:#f8fafc;border:1px solid #e2e8f0;">Owner: <?= e($owner) ?></span>
                     </div>
 
@@ -116,6 +129,13 @@
                         <div style="margin-top:12px;font-size:13px;line-height:1.6;color:<?= e($followUpTone) ?>;">
                             <strong>Follow-up:</strong> <?= e($followUp) ?><br>
                             <?= e($followUpNote) ?>
+                        </div>
+                        <div style="margin-top:12px;border-radius:12px;padding:12px 13px;border:1px solid <?= e($continuityColors[2]) ?>;background:<?= e($continuityColors[1]) ?>;color:<?= e($continuityColors[0]) ?>;">
+                            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">Queue posture</div>
+                            <div style="font-size:13px;line-height:1.55;font-weight:600;"><?= e($queuePosture) ?></div>
+                            <div style="margin-top:8px;font-size:12px;line-height:1.6;">
+                                <strong>Next action:</strong> <?= e($nextAction) ?>
+                            </div>
                         </div>
                     </div>
                 </div>

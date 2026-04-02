@@ -57,6 +57,156 @@ class Inquiry extends Model
         ];
     }
 
+
+    public function getStatusLabelAttribute(): string
+    {
+        $options = $this->getStatusOptions();
+
+        return $options[$this->status] ?? $this->humanizeValue($this->status) ?? 'Unknown';
+    }
+
+    public function getPriorityLabelAttribute(): string
+    {
+        $options = $this->getPriorityOptions();
+
+        return $options[$this->priority] ?? $this->humanizeValue($this->priority) ?? 'Normal';
+    }
+
+    public function getContinuityToneAttribute(): string
+    {
+        if ($this->isClosedStatus($this->status)) {
+            return 'positive';
+        }
+
+        if (!$this->normalizeDisplayValue($this->owner_name)) {
+            return 'critical';
+        }
+
+        if ($this->follow_up_date instanceof \DateTimeInterface) {
+            $today = Carbon::today();
+
+            if ($this->follow_up_date->lt($today)) {
+                return 'critical';
+            }
+
+            if ($this->follow_up_date->equalTo($today)) {
+                return 'warning';
+            }
+
+            return 'positive';
+        }
+
+        if (in_array((string) $this->status, ['awaiting_guest', 'proposal_sent', 'contacted'], true)) {
+            return 'warning';
+        }
+
+        return 'neutral';
+    }
+
+    public function getQueuePostureAttribute(): string
+    {
+        if ($this->isClosedStatus($this->status)) {
+            return $this->normalizeDisplayValue($this->closed_reason)
+                ? 'Closed outcome is recorded and ready for reference.'
+                : 'Closed outcome is recorded, but a short closure reason would improve continuity.';
+        }
+
+        if (!$this->normalizeDisplayValue($this->owner_name)) {
+            return 'This inquiry is unassigned and needs a clear owner.';
+        }
+
+        if ($this->follow_up_date instanceof \DateTimeInterface) {
+            $today = Carbon::today();
+
+            if ($this->follow_up_date->lt($today)) {
+                return 'Follow-up is overdue and needs operator attention.';
+            }
+
+            if ($this->follow_up_date->equalTo($today)) {
+                return 'Follow-up is due today.';
+            }
+
+            return 'A future follow-up checkpoint is already scheduled.';
+        }
+
+        if ($this->status === 'awaiting_guest') {
+            return 'Waiting on guest response; keep the next review point explicit.';
+        }
+
+        if ($this->status === 'proposal_sent') {
+            return 'Proposal has been sent; track guest response and the next touchpoint.';
+        }
+
+        if ($this->status === 'contacted') {
+            return 'Guest has been contacted; add the next checkpoint so the inquiry does not drift.';
+        }
+
+        if ($this->status === 'new') {
+            return 'Fresh inquiry needs first operator touch.';
+        }
+
+        if ($this->status === 'reviewed') {
+            return 'Reviewed inquiry should have a named owner and next checkpoint.';
+        }
+
+        if ($this->status === 'confirmed') {
+            return 'Confirmed inquiry is active; keep owner and guest-facing next action explicit.';
+        }
+
+        return 'Workflow is active; keep assignment and next action explicit.';
+    }
+
+    public function getContinuityNextActionAttribute(): string
+    {
+        if ($this->isClosedStatus($this->status)) {
+            return 'Leave a concise closure context for future reference, or reopen if active work resumes.';
+        }
+
+        if (!$this->normalizeDisplayValue($this->owner_name)) {
+            return 'Assign a named owner before the next hand-off.';
+        }
+
+        if ($this->follow_up_date instanceof \DateTimeInterface) {
+            $today = Carbon::today();
+
+            if ($this->follow_up_date->lt($today)) {
+                return 'Update the guest or reschedule the next touchpoint now.';
+            }
+
+            if ($this->follow_up_date->equalTo($today)) {
+                return 'Handle today\'s checkpoint and keep the working summary current.';
+            }
+
+            return 'Keep the working summary current until the next scheduled checkpoint.';
+        }
+
+        if ($this->status === 'new') {
+            return 'Assign the inquiry and perform the first review or outreach.';
+        }
+
+        if ($this->status === 'reviewed') {
+            return 'Set the next follow-up date or move the inquiry to the next live status.';
+        }
+
+        if ($this->status === 'contacted') {
+            return 'Set the next follow-up date so the inquiry stays owned.';
+        }
+
+        if ($this->status === 'proposal_sent') {
+            return 'Track the guest response window and set the next review checkpoint.';
+        }
+
+        if ($this->status === 'awaiting_guest') {
+            return 'Keep the waiting status accurate and schedule the next review date.';
+        }
+
+        if ($this->status === 'confirmed') {
+            return 'Keep owner responsibility and guest-facing next action explicit.';
+        }
+
+        return 'Keep the internal summary current for the next operator.';
+    }
+
     public function getServicesListAttribute(): string
     {
         $services = (array) ($this->services_json ?: []);
