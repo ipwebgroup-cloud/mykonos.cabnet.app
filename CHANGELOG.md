@@ -147,3 +147,8 @@
 - added a read-only **Fulfillment Readiness** panel to the Internal tab
 - surfaces execution readiness, sourcing posture, and what still needs confirmation before concrete supplier or itinerary shaping
 - keeps operator workspace consolidation moving without schema or public-flow changes
+
+## v2.6.16 — Working Summary Framing Panel
+- added a read-only **Working Summary Framing** panel to the Internal tab
+- surfaces the safest summary anchors, write checks, and hand-off framing guidance before updating operator notes
+- keeps operator workspace consolidation moving without schema or public-flow changes

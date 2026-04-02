@@ -1,0 +1,115 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Working summary framing becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning'  => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral'  => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $status = (string) ($record->status ?? 'new');
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+    $hasOwner = trim((string) ($record->owner_name ?: '')) !== '';
+    $hasContact = !empty($record->last_contacted_at);
+    $hasFollowUp = !empty($record->follow_up_date);
+    $hasGuestSummary = trim((string) ($record->guest_summary ?: '')) !== '';
+    $hasInternalNotes = trim((string) ($record->internal_notes ?: '')) !== '';
+    $hasIntent = trim((string) ($record->operator_intent ?: '')) !== '';
+    $services = trim((string) ($record->services_inline ?? ''));
+    $details = trim((string) ($record->details ?: ''));
+
+    if ($isClosed) {
+        $tone = 'neutral';
+        $state = 'Closed record framing';
+        $summary = 'The inquiry is closed, so the working summary should now preserve the final factual picture rather than drive active coordination.';
+        $guidance = 'Keep the summary concise: closure result, final guest posture, and any reopen trigger worth remembering.';
+    } elseif (!$hasOwner) {
+        $tone = 'critical';
+        $state = 'Owner-first summary';
+        $summary = 'The summary should first make ownership and the safest next move unmistakable, because the thread is still exposed between operators.';
+        $guidance = 'Lead with assignment need, current queue posture, and the exact next hand-off action.';
+    } elseif (!$hasContact) {
+        $tone = 'warning';
+        $state = 'Pre-contact framing';
+        $summary = 'The working summary should frame what is known before first outreach and protect the first-touch moment from drift or over-promising.';
+        $guidance = 'Lead with guest need, timing, service cluster, and what must be clarified on first contact.';
+    } elseif (!$hasFollowUp) {
+        $tone = 'critical';
+        $state = 'Checkpoint gap';
+        $summary = 'The guest thread has started, but the next checkpoint is missing, so the summary must stabilize continuity until a follow-up date is set.';
+        $guidance = 'Lead with last guest touch, current posture, and the next checkpoint that still needs to be created.';
+    } else {
+        $tone = 'positive';
+        $state = 'Live hand-off summary';
+        $summary = 'The inquiry is active and structured enough for a strong working summary that keeps the next operator aligned without rereading the full record.';
+        $guidance = 'Lead with current posture, next move, service direction, and the exact follow-up commitment.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $summaryAnchors = [
+        'Guest picture: ' . (trim((string) ($record->full_name ?: '')) !== '' ? trim((string) $record->full_name) : 'Unnamed guest'),
+        'Stay timing: ' . (($record->arrival_date ?: null) ? (string) $record->arrival_date : 'No arrival date yet') . (($record->departure_date ?: null) ? ' → ' . (string) $record->departure_date : ''),
+        'Service direction: ' . ($services !== '' ? $services : 'No clear service cluster yet'),
+        'Brief depth: ' . (mb_strlen($details) >= 280 ? 'Rich brief' : (trim($details) !== '' ? 'Starter brief' : 'Very light brief')),
+        'Operator intent: ' . ($hasIntent ? trim((string) $record->operator_intent) : 'Not captured'),
+    ];
+
+    $writeChecks = [
+        $hasGuestSummary ? 'Operator working summary already exists and can be refined.' : 'Operator working summary is still blank and should be created.',
+        $hasInternalNotes ? 'Working notes already exist and can be tightened into a cleaner hand-off picture.' : 'Working notes are still blank, so continuity depends on this update.',
+        $hasOwner ? 'Named owner is visible.' : 'No named owner is visible yet.',
+        $hasContact ? 'Last guest contact is recorded.' : 'No guest contact has been recorded yet.',
+        $hasFollowUp ? 'Next checkpoint is scheduled.' : 'Next checkpoint is not scheduled yet.',
+    ];
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Working Summary Framing</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator guidance for what the rolling summary should say before the next hand-off or guest touch.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Framing guidance:</strong> <?= e($guidance) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Summary anchors</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($summaryAnchors as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Write checks</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($writeChecks as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

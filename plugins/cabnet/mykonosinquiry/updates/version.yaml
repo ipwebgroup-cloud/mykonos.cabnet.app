@@ -52,3 +52,5 @@
     - 'Add proposal readiness scan panel to the operator workspace consolidation line'
 1.1.13:
     - 'Add fulfillment readiness scan panel to the operator workspace consolidation line'
+1.1.14:
+    - 'Add working summary framing scan panel to the operator workspace consolidation line'

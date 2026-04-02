@@ -389,6 +389,13 @@ tabs:
             tab: Internal
             comment: Read-only queue checkpoint summary for follow-up state, due date, and operator action.
 
+        working_summary_framing_panel:
+            label: Working Summary Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_working_summary_framing_panel.htm
+            tab: Internal
+            comment: Read-only operator guidance for shaping the rolling summary and notes before the next hand-off.
+
         guest_summary:
             label: Operator Working Summary
             type: textarea
