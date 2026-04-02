@@ -1,6 +1,6 @@
 <?php namespace Cabnet\MykonosInquiry\Controllers;
 
-use Backend\Auth\Facade as BackendAuth;
+use BackendAuth;
 use Backend\Behaviors\FormController;
 use Backend\Behaviors\ListController;
 use Backend\Classes\Controller;
