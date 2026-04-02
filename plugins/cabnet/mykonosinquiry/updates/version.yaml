@@ -46,3 +46,5 @@
     - 'Add response packaging scan panel to the operator workspace consolidation line'
 1.1.10:
     - 'Add commercial posture scan panel to the operator workspace consolidation line'
+1.1.11:
+    - 'Add decision posture scan panel to the operator workspace consolidation line'

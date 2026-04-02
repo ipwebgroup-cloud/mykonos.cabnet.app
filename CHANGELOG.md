@@ -1,3 +1,8 @@
+## v2.6.13 - Decision Posture Panel
+- added a read-only **Decision Posture** panel to the Internal tab
+- frames the safest next operator decision across assignment, contact, package shaping, and commercial pacing
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 ## v2.6.12 - Commercial Posture Panel
 - added a read-only **Commercial Posture** panel on the backend inquiry **Internal** tab
 - surfaces budget framing, package depth, pace, and commercial next-move posture for faster operator scan

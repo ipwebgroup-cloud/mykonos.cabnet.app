@@ -1,0 +1,131 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Decision posture becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $status = (string) ($record->status ?? 'new');
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+    $hasOwner = trim((string) ($record->owner_name ?: '')) !== '';
+    $hasContact = !empty($record->last_contacted_at);
+    $hasFollowUp = !empty($record->follow_up_date);
+    $details = trim((string) ($record->details ?: ''));
+    $services = trim((string) ($record->services_inline ?? ''));
+    $budget = trim((string) ($record->budget ?: ''));
+    $requestedMode = trim((string) ($record->requested_mode ?: ''));
+    $priority = trim((string) ($record->priority_label ?? 'Normal'));
+    $privacy = trim((string) ($record->privacy_level ?: ''));
+    $hasRichBrief = mb_strlen($details) >= 280 || $services !== '';
+
+    if ($isClosed) {
+        $tone = 'neutral';
+        $state = 'Closed decision path';
+        $summary = 'The inquiry is already closed, so the next decision is record-quality stewardship rather than active guest handling.';
+        $decision = 'Leave the inquiry parked unless there is a deliberate reopen decision.';
+    } elseif (!$hasOwner) {
+        $tone = 'critical';
+        $state = 'Assign first';
+        $summary = 'The safest next move is still ownership assignment, because every later step depends on a named operator carrying the thread.';
+        $decision = 'Assign the inquiry before adding commercial weight, outreach promises, or deeper package shaping.';
+    } elseif (!$hasContact && !$hasRichBrief) {
+        $tone = 'warning';
+        $state = 'Clarify before shaping';
+        $summary = 'There is enough to begin handling the inquiry, but the brief is still too light for a confident package or proposal decision.';
+        $decision = 'Use the first touch to confirm the guest\'s core need, timing, and service priority before expanding scope.';
+    } elseif (!$hasContact && $hasRichBrief) {
+        $tone = 'warning';
+        $state = 'First touch with confidence';
+        $summary = 'The brief is rich enough to support a more confident first guest touch, but contact continuity has not started yet.';
+        $decision = 'Use the first outreach to confirm direction and open the path toward a starter package or curated next-step response.';
+    } elseif ($hasContact && !$hasFollowUp) {
+        $tone = 'critical';
+        $state = 'Checkpoint missing';
+        $summary = 'A live guest thread exists, but the next checkpoint is missing, which makes every later decision less stable.';
+        $decision = 'Set the next follow-up date before adding more package depth or widening the guest-facing promise.';
+    } else {
+        $tone = 'positive';
+        $state = 'Decision-ready';
+        $summary = 'Ownership, contact posture, and brief depth are now strong enough to support a deliberate next decision instead of defensive triage.';
+        $decision = 'Choose the cleanest next move: clarification, starter package, fuller shaping, or confirmation pacing.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $anchors = [];
+    $anchors[] = 'Priority posture: ' . ($priority !== '' ? $priority : 'Normal');
+    $anchors[] = 'Requested mode: ' . ($requestedMode !== '' ? $requestedMode : 'Not specified');
+    $anchors[] = 'Budget signal: ' . ($budget !== '' ? $budget : 'Not captured');
+    $anchors[] = 'Privacy posture: ' . ($privacy !== '' ? $privacy : 'Standard handling');
+    $anchors[] = 'Service anchors: ' . ($services !== '' ? $services : 'No clear service cluster yet');
+
+    $decisionGuidance = [];
+    if (!$hasOwner) {
+        $decisionGuidance[] = 'No owner is visible, so assignment is the real next decision.';
+    }
+    if (!$hasContact) {
+        $decisionGuidance[] = 'No confirmed contact point exists yet, so the next move should still protect the first-touch moment.';
+    } else {
+        $decisionGuidance[] = 'A guest touch has already happened, so continuity now matters as much as content.';
+    }
+    if (!$hasFollowUp && !$isClosed) {
+        $decisionGuidance[] = 'No follow-up checkpoint is set, so the operating thread is still exposed.';
+    }
+    if ($hasRichBrief) {
+        $decisionGuidance[] = 'Brief depth is strong enough to support more deliberate shaping instead of generic clarification.';
+    } else {
+        $decisionGuidance[] = 'Brief depth is still light, so keep the next move anchored on clarification and signal capture.';
+    }
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Decision posture</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator framing of the safest next decision before outreach, package shaping, or deeper proposal work.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Decision framing:</strong> <?= e($decision) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Decision anchors</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($anchors as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Decision guidance</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($decisionGuidance as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

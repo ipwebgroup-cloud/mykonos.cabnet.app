@@ -342,6 +342,13 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of budget, pace, package depth, and commercial framing before shaping the next offer or clarification move.
 
+        decision_posture_panel:
+            label: Decision Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_decision_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of the safest next decision before outreach, packaging, or deeper proposal shaping.
+
         risk_sensitivity_panel:
             label: Risk & Sensitivity
             type: partial
