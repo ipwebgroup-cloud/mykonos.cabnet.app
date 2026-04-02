@@ -23,6 +23,12 @@
 
 # Changelog
 
+## v2.6.1 — Operator Workspace Summary
+- started the v2.6 operator workspace consolidation line
+- added a unified read-only operator workspace summary panel to the Internal tab
+- consolidated workflow posture, guest brief readiness, and preference depth into a single scan-first surface
+- kept the patch backend-only with no schema or public theme change
+
 ## v2.5.6 — List Queue Snapshot
 - added read-only queue snapshot cards to the backend inquiry list toolbar
 - surfaces active, unassigned, needs-first-touch, due-today, and overdue counts

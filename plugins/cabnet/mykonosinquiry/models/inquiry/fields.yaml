@@ -270,6 +270,13 @@ tabs:
             tab: Preferences
             span: left
 
+        operator_workspace_summary:
+            label: Operator Workspace Summary
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_workspace_summary.htm
+            tab: Internal
+            comment: Consolidated read-only scan of workflow, brief quality, and preference depth before editing the detailed internal fields.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal
