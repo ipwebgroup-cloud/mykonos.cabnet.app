@@ -1,0 +1,132 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Contact posture becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $contactPreference = trim((string) ($record->contact_preference ?: ''));
+    $contactPreference = $contactPreference !== '' ? $contactPreference : 'Not specified';
+
+    $email = trim((string) ($record->email ?: ''));
+    $phone = trim((string) ($record->phone ?: ''));
+
+    $routeParts = [];
+    if ($email !== '') {
+        $routeParts[] = $email;
+    }
+    if ($phone !== '') {
+        $routeParts[] = $phone;
+    }
+    $contactRoute = !empty($routeParts) ? implode(' · ', $routeParts) : 'No direct contact details captured';
+
+    $lastContacted = $record->last_contacted_at ? $record->last_contacted_at->format('Y-m-d H:i') : 'Not logged';
+    $followUpDate = $record->follow_up_date ? $record->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+    $status = $record->status_label ?? 'Unknown';
+    $owner = trim((string) ($record->owner_name ?: ''));
+    $owner = $owner !== '' ? $owner : 'Unassigned';
+
+    $hasRoute = $email !== '' || $phone !== '';
+    $queueState = $record->follow_up_queue_state ?? 'Unscheduled';
+
+    if (!$hasRoute) {
+        $tone = 'critical';
+        $state = 'Route missing';
+        $summary = 'The inquiry has no direct contact route visible yet, so first outreach depends on recovering guest contact details.';
+        $nextMove = 'Confirm at least one active guest contact route before the next hand-off.';
+    } elseif ($queueState === 'Overdue') {
+        $tone = 'critical';
+        $state = 'Follow-up overdue';
+        $summary = 'A valid contact route exists, but the follow-up checkpoint has already slipped past the expected date.';
+        $nextMove = 'Use the preferred route now and set the next checkpoint explicitly.';
+    } elseif ($queueState === 'Due today') {
+        $tone = 'warning';
+        $state = 'Checkpoint due today';
+        $summary = 'Contact posture is live and the inquiry needs a same-day touchpoint or checkpoint decision.';
+        $nextMove = 'Handle the guest touchpoint today and leave a clean next-step note.';
+    } elseif ($record->last_contacted_at) {
+        $tone = 'positive';
+        $state = 'Recently touched';
+        $summary = 'This inquiry already shows a recorded outreach point, which gives the next operator a cleaner continuity picture.';
+        $nextMove = 'Keep the next touchpoint aligned with the guest route and follow-up date.';
+    } elseif ($status === 'New brief' || $queueState === 'Needs first touch') {
+        $tone = 'warning';
+        $state = 'First touch pending';
+        $summary = 'The contact route is usable, but the first operator touch is not yet visible in the workflow history.';
+        $nextMove = 'Perform first outreach using the preferred route and capture the next checkpoint.';
+    } else {
+        $tone = 'neutral';
+        $state = 'Contact route ready';
+        $summary = 'The inquiry has enough route information for the next operator to continue without searching for guest contact details.';
+        $nextMove = 'Keep the route, status, and next checkpoint aligned as the inquiry moves forward.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $workingSummary = trim((string) ($record->internal_notes ?: ''));
+    $summaryState = $workingSummary !== '' ? 'Working notes present' : 'Working notes light';
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Contact posture</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only scan of preferred route, latest outreach posture, and the next communication move before editing workflow fields.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Next move:</strong> <?= e($nextMove) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Preferred route</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Preference:</strong> <?= e($contactPreference) ?><br>
+            <strong>Route:</strong> <?= e($contactRoute) ?><br>
+            <strong>Owner:</strong> <?= e($owner) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Live contact posture</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Status:</strong> <?= e($status) ?><br>
+            <strong>Last contacted:</strong> <?= e($lastContacted) ?><br>
+            <strong>Follow-up:</strong> <?= e($followUpDate) ?><br>
+            <strong>Queue state:</strong> <?= e($queueState) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Continuity check</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Working notes:</strong> <?= e($summaryState) ?><br>
+            <strong>Email present:</strong> <?= $email !== '' ? 'Yes' : 'No' ?><br>
+            <strong>Phone present:</strong> <?= $phone !== '' ? 'Yes' : 'No' ?><br>
+            <strong>Route usable:</strong> <?= $hasRoute ? 'Yes' : 'No' ?>
+        </div>
+    </div>
+</div>

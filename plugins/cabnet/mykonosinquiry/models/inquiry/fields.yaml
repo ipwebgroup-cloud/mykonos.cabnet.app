@@ -277,12 +277,12 @@ tabs:
             tab: Internal
             comment: Consolidated read-only scan of workflow, brief quality, and preference depth before editing the detailed internal fields.
 
-        handoff_focus_panel:
-            label: Handoff Focus
+        contact_posture_panel:
+            label: Contact Posture
             type: partial
-            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_focus_panel.htm
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_contact_posture_panel.htm
             tab: Internal
-            comment: Read-only hand-off cues for the next operator before editing the detailed internal fields.
+            comment: Read-only operator scan of preferred route, live contact posture, and the next communication move before editing workflow fields.
 
         urgency_hint:
             label: Urgency Hint
