@@ -1,3 +1,9 @@
+
+## v2.6.7 - Source & Entry Posture Panel
+- added a read-only **Source & Entry Posture** panel to the Internal tab
+- surfaces request reference, source context, planning mode, and entry richness in one operator scan
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 ## v2.5.9 — Brief Readiness Panel
 - added a read-only Brief Readiness panel at the top of the Request tab
 - surfaces trip, planning, and signal-coverage indicators before the operator works field-by-field

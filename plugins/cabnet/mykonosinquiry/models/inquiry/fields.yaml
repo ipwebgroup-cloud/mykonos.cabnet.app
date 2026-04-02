@@ -306,6 +306,14 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of celebration intent, dining posture, nightlife appetite, and special-moment signals before shaping the guest experience plan.
 
+
+        source_entry_panel:
+            label: Source & Entry Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_source_entry_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of where the inquiry entered, how it was framed, and whether the source context is rich enough for the next hand-off.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal
