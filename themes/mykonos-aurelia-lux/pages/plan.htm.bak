@@ -1,0 +1,145 @@
+title = "Plan Your Stay"
+url = "/plan"
+layout = "default"
+meta_title = "Plan Your Stay | Mykonos Nocturne Luxe"
+meta_description = "A refined Mykonos luxury planning form for villa stays, private transfers, sea journeys, hosted arrivals, dining moments, and concierge-led support."
+==
+function onStart()
+{
+    $sourceType = trim((string) request()->query('source_type'));
+    if (!in_array($sourceType, ['service', 'experience', 'pathway', 'guest_pathway', 'stay_design'])) {
+        $sourceType = '';
+    }
+
+    $this['planContext'] = [
+        'focus' => trim((string) request()->query('focus')),
+        'mode' => trim((string) request()->query('mode')),
+        'travel_style' => trim((string) request()->query('travel_style')),
+        'occasion_type' => trim((string) request()->query('occasion_type')),
+        'group_composition' => trim((string) request()->query('group_composition')),
+
+        'source_type' => $sourceType,
+        'source_slug' => trim((string) request()->query('source_slug')),
+        'source_title' => trim((string) request()->query('source_title')),
+        'source_url' => trim((string) request()->query('source_url')),
+    ];
+}
+
+function onSubmitPlan()
+{
+    $data = post();
+
+    if (!empty($data['website'])) {
+        return;
+    }
+
+    $validator = \Validator::make($data, [
+        'full_name' => 'required|min:2|max:120',
+        'email' => 'required|email|max:120',
+        'guests' => 'nullable|integer|min:1',
+        'details' => 'required|min:10',
+    ]);
+
+    if ($validator->fails()) {
+        throw new \October\Rain\Exception\ValidationException($validator);
+    }
+
+    $services = post('services', []);
+    if (is_array($services)) {
+        $services = array_values(array_unique(array_filter($services)));
+    }
+    $servicesText = is_array($services) ? implode(', ', $services) : '';
+
+    $requestReference = trim((string) ($data['request_reference'] ?? ''));
+    if (!$requestReference) {
+        $requestReference = strtoupper('MNL-' . date('ymd') . '-' . substr(md5(uniqid('', true)), 0, 6));
+    }
+
+    $arrivalDate = trim((string) ($data['arrival_date'] ?? ''));
+    $urgencyHint = 'Date not supplied';
+    if ($arrivalDate) {
+        try {
+            $now = new \DateTime('today');
+            $arrival = new \DateTime($arrivalDate);
+            $days = (int) $now->diff($arrival)->format('%r%a');
+            if ($days <= 14) {
+                $urgencyHint = 'High - arrival within 14 days';
+            } elseif ($days <= 45) {
+                $urgencyHint = 'Active planning window';
+            } else {
+                $urgencyHint = 'Standard planning horizon';
+            }
+        } catch (\Exception $e) {
+            $urgencyHint = 'Date supplied - verify manually';
+        }
+    }
+
+    $focusList = [];
+    foreach ($services as $service) {
+        if ($service) {
+            $focusList[] = $service;
+        }
+    }
+    $operatorIntent = $servicesText ?: (trim((string) ($data['source_title'] ?? '')) ?: 'General luxury stay planning');
+
+    $messageBody =
+        "New Mykonos inquiry - System Integrated v25\n\n" .
+        "REQUEST PACKET\n" .
+        "Reference: " . $requestReference . "\n" .
+        "Urgency Hint: " . $urgencyHint . "\n" .
+        "Operator Intent: " . $operatorIntent . "\n" .
+        "Requested Mode: " . ($data['requested_mode'] ?? '') . "\n" .
+        "Source Type: " . ($data['source_type'] ?? '') . "\n" .
+        "Source Title: " . ($data['source_title'] ?? '') . "\n" .
+        "Source URL: " . ($data['source_url'] ?? '') . "\n\n" .
+        "GUEST BRIEF\n" .
+        "Full Name: " . ($data['full_name'] ?? '') . "\n" .
+        "Email: " . ($data['email'] ?? '') . "\n" .
+        "Phone: " . ($data['phone'] ?? '') . "\n" .
+        "Country: " . ($data['country'] ?? '') . "\n" .
+        "Guests: " . ($data['guests'] ?? '') . "\n" .
+        "Group Composition: " . ($data['group_composition'] ?? '') . "\n" .
+        "Children Travelling: " . ($data['children_travelling'] ?? '') . "\n" .
+        "Arrival Date: " . ($data['arrival_date'] ?? '') . "\n" .
+        "Departure Date: " . ($data['departure_date'] ?? '') . "\n" .
+        "Arrival Window: " . ($data['arrival_window'] ?? '') . "\n" .
+        "Budget: " . ($data['budget'] ?? '') . "\n" .
+        "Travel Style: " . ($data['travel_style'] ?? '') . "\n" .
+        "Stay Mood: " . ($data['stay_mood'] ?? '') . "\n" .
+        "Privacy Level: " . ($data['privacy_level'] ?? '') . "\n" .
+        "Villa Area: " . ($data['villa_area'] ?? '') . "\n" .
+        "Occasion: " . ($data['occasion_type'] ?? '') . "\n" .
+        "Special Moments: " . ($data['special_moments'] ?? '') . "\n" .
+        "Accommodation Status: " . ($data['accommodation_status'] ?? '') . "\n" .
+        "Dining Style: " . ($data['dining_style'] ?? '') . "\n" .
+        "Nightlife Interest: " . ($data['nightlife_interest'] ?? '') . "\n" .
+        "Dietary Needs: " . ($data['dietary_needs'] ?? '') . "\n" .
+        "Contact Preference: " . ($data['contact_preference'] ?? '') . "\n" .
+        "Services: " . $servicesText . "\n\n" .
+        "DETAILS\n" .
+        ($data['details'] ?? '') . "\n\n" .
+        "SYSTEM METADATA\n" .
+        "Page: /plan\n" .
+        "Submitted At: " . date('c') . "\n" .
+        "User Agent: " . request()->userAgent() . "\n" .
+        "IP: " . request()->ip();
+
+    \Mail::raw($messageBody, function ($message) use ($data, $requestReference) {
+        $message->to('mykonos@cabnet.app', 'Mykonos Nocturne Luxe');
+        $message->subject($requestReference . ' - New Plan Request - ' . ($data['full_name'] ?? 'Guest'));
+        if (!empty($data['email'])) {
+            $message->replyTo($data['email'], $data['full_name'] ?? 'Guest');
+        }
+    });
+
+    \Flash::success('Your request has been sent successfully. Reference: ' . $requestReference . '. Your request packet is ready for follow-up.');
+}
+==
+{% partial 'plan/subhero' %}
+
+<section class="plan-section">
+    <div class="container plan-layout v12">
+        {% partial 'plan/sidebar' %}
+        {% partial 'plan/form' %}
+    </div>
+</section>

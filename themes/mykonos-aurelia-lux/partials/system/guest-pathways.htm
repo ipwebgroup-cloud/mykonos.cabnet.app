@@ -1,0 +1,89 @@
+description = "Guest pathways"
+==
+<section class="subhero section-block page-intro-block">
+    <div class="container page-intro-shell">
+        <span class="section-tag">{{ this.theme.pathways_eyebrow ?: 'Guest pathways' }}</span>
+        <h1 class="page-title">{{ this.theme.pathways_title ?: 'Choose the kind of stay you are shaping, then move into the right brief.' }}</h1>
+        <p class="page-lead">{{ this.theme.pathways_intro ?: 'This page gives different guest types a faster entry into the system so they can move from inspiration into a more relevant planning flow without guessing where to start.' }}</p>
+        <div class="hero-actions compact-actions">
+            <a class="btn btn-primary" href="{{ 'plan'|page }}?mode=quick&source_type=pathway&source_slug=guest-pathways&source_title={{ 'Guest pathways'|url_encode }}&source_url={{ this.page.url|url_encode }}">{{ this.theme.header_cta_label ?: 'Plan your stay' }}</a>
+            <a class="btn btn-secondary" href="{{ 'stay-design'|page }}">Open stay design</a>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container pathways-major-grid">
+        <article class="dark-panel pathway-major-card">
+            <span class="chip">Couples</span>
+            <h3>{% content 'pathways/couple-title.htm' %}</h3>
+            <p>{% content 'pathways/couple-copy.htm' %}</p>
+            <div class="pathway-meta">Sea time · Chef dinner · Slow rhythm</div>
+            <div class="hero-actions compact-actions">
+                <a class="btn btn-primary" href="{{ 'plan'|page }}?mode=quick&focus=chef-dinner-tasting-night&source_type=guest_pathway&source_slug=couple-escape&source_title={{ 'Couple escape'|url_encode }}&source_url={{ this.page.url|url_encode }}">Start couple brief</a>
+                <a class="detail-link" href="{{ 'experience-detail'|page({ slug: 'chef-dinner-tasting-night' }) }}">See dining-led experience →</a>
+            </div>
+        </article>
+
+        <article class="dark-panel pathway-major-card">
+            <span class="chip">Families</span>
+            <h3>{% content 'pathways/family-title.htm' %}</h3>
+            <p>{% content 'pathways/family-copy.htm' %}</p>
+            <div class="pathway-meta">Villa continuity · Hosted arrivals · Child-friendly rhythm</div>
+            <div class="hero-actions compact-actions">
+                <a class="btn btn-primary" href="{{ 'plan'|page }}?mode=quick&focus=villa-living&source_type=guest_pathway&source_slug=family-villa-stay&source_title={{ 'Family villa stay'|url_encode }}&source_url={{ this.page.url|url_encode }}">Start family brief</a>
+                <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'villa-living' }) }}">See villa service →</a>
+            </div>
+        </article>
+
+        <article class="dark-panel pathway-major-card">
+            <span class="chip">Hosted groups</span>
+            <h3>{% content 'pathways/group-title.htm' %}</h3>
+            <p>{% content 'pathways/group-copy.htm' %}</p>
+            <div class="pathway-meta">Arrival handling · Sea day coordination · Multi-point movement</div>
+            <div class="hero-actions compact-actions">
+                <a class="btn btn-primary" href="{{ 'plan'|page }}?mode=detailed&focus=hosted-arrivals&source_type=guest_pathway&source_slug=hosted-group&source_title={{ 'Hosted group'|url_encode }}&source_url={{ this.page.url|url_encode }}">Start group brief</a>
+                <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'hosted-arrivals' }) }}">See arrivals service →</a>
+            </div>
+        </article>
+
+        <article class="dark-panel pathway-major-card">
+            <span class="chip">Celebrations</span>
+            <h3>{% content 'pathways/celebration-title.htm' %}</h3>
+            <p>{% content 'pathways/celebration-copy.htm' %}</p>
+            <div class="pathway-meta">Special moments · Dinner atmosphere · Sea-led memory</div>
+            <div class="hero-actions compact-actions">
+                <a class="btn btn-primary" href="{{ 'plan'|page }}?mode=quick&focus=celebration&source_type=guest_pathway&source_slug=celebration-stay&source_title={{ 'Celebration stay'|url_encode }}&source_url={{ this.page.url|url_encode }}">Start celebration brief</a>
+                <a class="detail-link" href="{{ 'experiences'|page }}">See celebration-friendly experiences →</a>
+            </div>
+        </article>
+
+        <article class="dark-panel pathway-major-card">
+            <span class="chip">Executive</span>
+            <h3>{% content 'pathways/executive-title.htm' %}</h3>
+            <p>{% content 'pathways/executive-copy.htm' %}</p>
+            <div class="pathway-meta">Discretion · Timing precision · Quiet operational support</div>
+            <div class="hero-actions compact-actions">
+                <a class="btn btn-primary" href="{{ 'plan'|page }}?mode=detailed&focus=hosted-arrivals&source_type=guest_pathway&source_slug=executive-hosting&source_title={{ 'Executive hosting'|url_encode }}&source_url={{ this.page.url|url_encode }}">Start executive brief</a>
+                <a class="detail-link" href="{{ 'stay-design'|page }}">Open connected system →</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container related-system-grid">
+        <article class="dark-panel related-system-card">
+            <span class="section-tag">Still unsure?</span>
+            <h3>{% content 'pathways/fallback-title.htm' %}</h3>
+            <p>{% content 'pathways/fallback-copy.htm' %}</p>
+            <a class="detail-link" href="{{ 'plan'|page }}?mode=quick&source_type=guest_pathway&source_slug=general-guest-pathway&source_title={{ 'General guest pathway'|url_encode }}&source_url={{ this.page.url|url_encode }}">Open the quick brief →</a>
+        </article>
+        <article class="dark-panel related-system-card">
+            <span class="section-tag">System bridge</span>
+            <h3>See how the pieces connect before briefing.</h3>
+            <p>Use the stay design page to move through arrivals, residence rhythm, sea time, and dining before opening the full request.</p>
+            <a class="detail-link" href="{{ 'stay-design'|page }}">Open stay design →</a>
+        </article>
+    </div>
+</section>

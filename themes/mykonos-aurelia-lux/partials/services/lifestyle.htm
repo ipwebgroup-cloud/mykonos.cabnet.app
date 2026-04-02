@@ -1,0 +1,41 @@
+
+description = "Services lifestyle support"
+==
+<section class="section-block alt-block" id="service-support">
+    <div class="container">
+        <div class="section-heading split light">
+            <div>
+                <span class="section-tag">Support layer</span>
+                <h2>The best support services feel invisible until the moment they are needed.</h2>
+            </div>
+            <div class="content-block slim-copy">{% content 'services/support-copy.htm' %}</div>
+        </div>
+        <div class="audience-grid listing-grid">
+            {% if lifestyleEntries is defined and lifestyleEntries|length %}
+                {% for item in lifestyleEntries %}
+                    <article class="occasion-card dark-card accent-top">
+                        <span class="chip">{{ item.badge ?: 'Support' }}</span>
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.teaser }}</p>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <article class="occasion-card dark-card accent-top">
+                    <span class="chip">Dining</span>
+                    <h3>Private chefs, breakfast service, and hosted dinners that match the residence</h3>
+                    <p>{% content 'home/lifestyle-dining.htm' %}</p>
+                </article>
+                <article class="occasion-card dark-card accent-top">
+                    <span class="chip">Wellness</span>
+                    <h3>Massage, recovery, movement, and beauty arranged without friction</h3>
+                    <p>{% content 'home/lifestyle-wellness.htm' %}</p>
+                </article>
+                <article class="occasion-card dark-card accent-top">
+                    <span class="chip">Family</span>
+                    <h3>Family and hosted guest support that keeps timing under control</h3>
+                    <p>{% content 'home/lifestyle-family.htm' %}</p>
+                </article>
+            {% endif %}
+        </div>
+    </div>
+</section>

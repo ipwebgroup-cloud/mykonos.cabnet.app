@@ -1,0 +1,52 @@
+
+description = "Services listing"
+==
+<section class="section-block" id="service-catalogue">
+    <div class="container">
+        <div class="section-heading split light">
+            <div>
+                <span class="section-tag">Service catalogue</span>
+                <h2>Operational luxury should feel seamless to the guest and easy to evolve in the backend.</h2>
+            </div>
+            <div class="content-block slim-copy">{% content 'services/page-copy.htm' %}</div>
+        </div>
+
+        <div class="suite-grid listing-grid">
+            {% if servicesEntries is defined and servicesEntries|length %}
+                {% for item in servicesEntries %}
+                    <article class="service-card dark-card accent-top suite-card">
+                        <span class="chip">{{ item.badge ?: 'Luxury service' }}</span>
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.teaser }}</p>
+                        <a class="detail-link" href="{{ 'service-detail'|page({ slug: item.slug }) }}">Explore service →</a>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <article class="service-card dark-card accent-top suite-card">
+                    <span class="chip">Arrivals</span>
+                    <h3>Hosted movement across airport, port, villa, and dining moments</h3>
+                    <p>{% content 'home/service-arrivals.htm' %}</p>
+                    <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'hosted-arrivals' }) }}">Explore service →</a>
+                </article>
+                <article class="service-card dark-card accent-top suite-card">
+                    <span class="chip">Residences</span>
+                    <h3>Villa support shaped around how guests actually use the residence</h3>
+                    <p>{% content 'home/service-residences.htm' %}</p>
+                    <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'villa-living' }) }}">Explore service →</a>
+                </article>
+                <article class="service-card dark-card accent-top suite-card">
+                    <span class="chip">Sea days</span>
+                    <h3>Private yacht and island pacing that feels part of the stay</h3>
+                    <p>{% content 'home/service-seadays.htm' %}</p>
+                    <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'sea-days' }) }}">Explore service →</a>
+                </article>
+                <article class="service-card dark-card accent-top suite-card">
+                    <span class="chip">Support</span>
+                    <h3>Dining, wellness, security, and concierge continuity</h3>
+                    <p>{% content 'home/service-support.htm' %}</p>
+                    <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'concierge-support' }) }}">Explore service →</a>
+                </article>
+            {% endif %}
+        </div>
+    </div>
+</section>

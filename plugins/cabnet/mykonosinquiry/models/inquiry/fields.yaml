@@ -1,0 +1,309 @@
+fields:
+    request_reference:
+        label: Request Reference
+        disabled: true
+        span: left
+        comment: Server-confirmed inquiry reference used across guest and operator follow-up.
+
+    status:
+        label: Status
+        type: dropdown
+        span: right
+        comment: Keep this aligned with the current concierge handling stage.
+        options:
+            new: New brief
+            reviewed: Reviewed
+            contacted: Contacted
+            proposal_sent: Proposal sent
+            awaiting_guest: Awaiting guest
+            confirmed: Confirmed
+            closed_won: Closed won
+            closed_lost: Closed lost
+            spam: Spam
+            triage: Triage (legacy)
+            proposal: Proposal shaping (legacy)
+            closed: Closed (legacy)
+
+    priority:
+        label: Priority
+        type: dropdown
+        span: left
+        comment: Use urgent and VIP sparingly so the queue remains meaningful.
+        options:
+            low: Low
+            normal: Normal
+            high: High
+            vip: VIP
+            urgent: Urgent
+
+    owner_name:
+        label: Owner
+        span: right
+        comment: Current operator or assignee responsible for next action.
+
+    quick_actions:
+        label: Quick Actions
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_quick_actions.htm
+        span: full
+
+    follow_up_date:
+        label: Follow Up Date
+        type: datepicker
+        mode: date
+        span: left
+        comment: Next operator checkpoint.
+
+    last_contacted_at:
+        label: Last Contacted
+        type: datepicker
+        mode: datetime
+        span: right
+        comment: Most recent successful outreach to the guest.
+
+    full_name:
+        label: Full Name
+        span: left
+
+    email:
+        label: Email
+        span: right
+
+    phone:
+        label: Phone
+        span: left
+
+    country:
+        label: Country
+        span: right
+
+    guests:
+        label: Guests
+        type: number
+        span: left
+
+    budget:
+        label: Budget
+        span: right
+
+    arrival_date:
+        label: Arrival Date
+        type: datepicker
+        mode: date
+        span: left
+
+    departure_date:
+        label: Departure Date
+        type: datepicker
+        mode: date
+        span: right
+
+    details:
+        label: Guest Brief
+        type: textarea
+        size: giant
+        comment: Primary free-text brief captured from the guest-facing inquiry flow.
+
+tabs:
+    fields:
+        guest_snapshot:
+            label: Guest Snapshot
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            comment: Fast operator view of guest identity and contact details.
+
+        stay_snapshot:
+            label: Stay Snapshot
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            comment: Trip timing, guest count, and general stay profile.
+
+        source_snapshot:
+            label: Source Snapshot
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            comment: Where this inquiry came from and how it entered the system.
+
+        concierge_brief:
+            label: Concierge Brief
+            type: textarea
+            size: giant
+            tab: Overview
+            readOnly: true
+            comment: Consolidated operator-ready summary of services, preferences, and guest brief.
+
+        services_list:
+            label: Requested Services
+            type: textarea
+            size: small
+            tab: Request
+            readOnly: true
+            comment: Readable service summary captured from the public plan flow.
+
+        source_type:
+            label: Source Type
+            tab: Source
+            span: left
+
+        source_slug:
+            label: Source Slug
+            tab: Source
+            span: right
+
+        source_title:
+            label: Source Title
+            tab: Source
+            span: left
+
+        source_url:
+            label: Source URL
+            tab: Source
+            span: right
+
+        requested_mode:
+            label: Requested Mode
+            tab: Source
+            span: left
+
+        arrival_window:
+            label: Arrival Window
+            tab: Preferences
+            span: left
+
+        group_composition:
+            label: Group Composition
+            tab: Preferences
+            span: right
+
+        children_travelling:
+            label: Children Travelling
+            tab: Preferences
+            span: left
+
+        travel_style:
+            label: Travel Style
+            tab: Preferences
+            span: right
+
+        stay_mood:
+            label: Stay Mood
+            tab: Preferences
+            span: left
+
+        arrival_mode:
+            label: Arrival Mode
+            tab: Preferences
+            span: right
+
+        privacy_level:
+            label: Privacy Level
+            tab: Preferences
+            span: left
+
+        villa_area:
+            label: Villa Area
+            tab: Preferences
+            span: right
+
+        occasion_type:
+            label: Occasion Type
+            tab: Preferences
+            span: left
+
+        special_moments:
+            label: Special Moments
+            type: textarea
+            tab: Preferences
+            span: right
+
+        accommodation_status:
+            label: Accommodation Status
+            tab: Preferences
+            span: left
+
+        dining_style:
+            label: Dining Style
+            tab: Preferences
+            span: right
+
+        nightlife_interest:
+            label: Nightlife Interest
+            tab: Preferences
+            span: left
+
+        dietary_needs:
+            label: Dietary Needs
+            type: textarea
+            tab: Preferences
+            span: right
+
+        contact_preference:
+            label: Contact Preference
+            tab: Preferences
+            span: left
+
+        urgency_hint:
+            label: Urgency Hint
+            tab: Internal
+            span: left
+
+        operator_intent:
+            label: Operator Intent
+            tab: Internal
+            span: right
+
+        guest_summary:
+            label: Operator Working Summary
+            type: textarea
+            size: large
+            tab: Internal
+            comment: Current working summary for the operator handling this inquiry.
+
+        closed_at:
+            label: Closed At
+            type: datepicker
+            mode: datetime
+            tab: Internal
+            span: left
+
+        closed_reason:
+            label: Closed Reason
+            type: textarea
+            size: small
+            tab: Internal
+            span: right
+
+        internal_notes:
+            label: Working Notes
+            comment: Use this for the current operator summary. For timeline-style updates, add a history note in the History tab.
+            type: textarea
+            size: giant
+            tab: Internal
+
+        history_preview:
+            label: History Timeline
+            type: textarea
+            size: giant
+            tab: History
+            readOnly: true
+            comment: Latest entries appear first. A more scannable timeline view should be the next patch.
+
+        new_internal_note:
+            label: Add Internal Note
+            type: textarea
+            size: large
+            tab: History
+            comment: This will be saved as a new append-only history entry when you click Save.
+
+        payload_pretty_json:
+            label: Raw Payload
+            type: textarea
+            size: giant
+            tab: Raw
+            readOnly: true

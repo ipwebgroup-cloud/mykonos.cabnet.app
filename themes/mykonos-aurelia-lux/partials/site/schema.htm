@@ -1,0 +1,25 @@
+description = "Structured data"
+==
+{% set schemaName = this.theme.seo_organization_name ?: this.theme.brand_full ?: 'Mykonos Nocturne Luxe' %}
+{% set schemaDesc = this.page.meta_description ?: this.theme.seo_default_description ?: 'Luxury transfers, villas, concierge, and custom Mykonos planning.' %}
+{% set schemaImage = this.theme.seo_og_image ? (this.theme.seo_og_image|media) : ('assets/images/theme-preview.png'|theme) %}
+{% set schemaUrl = this.page.url ? (this.site.url ~ this.page.url) : this.site.url %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  "name": {{ schemaName|json_encode|raw }},
+  "description": {{ schemaDesc|json_encode|raw }},
+  "url": {{ this.site.url|json_encode|raw }},
+  "image": {{ schemaImage|json_encode|raw }},
+  "email": {{ (this.theme.contact_email ?: 'mykonos@cabnet.app')|json_encode|raw }},
+  "telephone": {{ (this.theme.contact_phone ?: '')|json_encode|raw }},
+  "areaServed": "Mykonos",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": {{ (this.theme.contact_location ?: 'Mykonos, Cyclades, Greece')|json_encode|raw }},
+    "addressCountry": "GR"
+  },
+  "sameAs": [{% if this.theme.seo_instagram %}{{ this.theme.seo_instagram|json_encode|raw }}{% endif %}{% if this.theme.seo_instagram and this.theme.seo_facebook %}, {% endif %}{% if this.theme.seo_facebook %}{{ this.theme.seo_facebook|json_encode|raw }}{% endif %}]
+}
+</script>

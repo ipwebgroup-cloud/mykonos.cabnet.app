@@ -1,0 +1,39 @@
+
+title = "Experiences"
+url = "/experiences"
+layout = "default"
+meta_title = "Experiences | Mykonos Nocturne Luxe"
+meta_description = "Curated Mykonos experiences for sea days, island pacing, private dining, and concierge-led movement."
+==
+function onStart()
+{
+    $this['experienceEntries'] = [];
+
+    if (!class_exists('\Tailor\Models\EntryRecord')) {
+        return;
+    }
+
+    try {
+        $this['experienceEntries'] = \Tailor\Models\EntryRecord::inSection('Mykonos\Experience')
+            ->orderBy('sort_order')
+            ->get();
+    }
+    catch (\Throwable $e) {
+        $this['experienceEntries'] = [];
+    }
+}
+==
+<section class="subhero section-block page-intro-block">
+    <div class="container page-intro-shell">
+        <span class="section-tag">{{ this.theme.experiences_page_eyebrow ?: 'Curated experiences' }}</span>
+        <h1 class="page-title">{{ this.theme.experiences_page_title ?: 'Experiences should read like hospitality memory, not a stacked list of excursions.' }}</h1>
+        <p class="page-lead">{{ this.theme.experiences_page_intro ?: 'The experiences page gives the system a clearer editorial surface for sea days, island pacing, dining moments, and private movement, while staying safe even before Tailor records are seeded.' }}</p>
+        <div class="hero-actions compact-actions">
+            <a class="btn btn-primary" href="{{ 'plan'|page }}">{{ this.theme.header_cta_label ?: 'Plan your stay' }}</a>
+            <a class="btn btn-secondary" href="mailto:{{ this.theme.contact_email ?: 'mykonos@cabnet.app' }}">Email concierge</a>
+        </div>
+    </div>
+</section>
+
+{% partial 'experiences/listing' %}
+{% partial 'home/cta' %}

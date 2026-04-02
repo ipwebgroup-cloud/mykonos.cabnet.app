@@ -1,0 +1,40 @@
+columns:
+    request_reference:
+        label: Reference
+        searchable: true
+    status:
+        label: Status
+        searchable: true
+    priority:
+        label: Priority
+        searchable: true
+    full_name:
+        label: Guest
+        searchable: true
+    email:
+        label: Email
+        searchable: true
+    guests:
+        label: Guests
+    arrival_date:
+        label: Arrival
+        type: date
+    services_inline:
+        label: Focus
+    source_title:
+        label: Source
+        searchable: true
+    owner_name:
+        label: Owner
+    follow_up_date:
+        label: Follow Up
+        type: date
+    last_contacted_at:
+        label: Last Contacted
+        type: datetime
+    closed_at:
+        label: Closed
+        type: datetime
+    created_at:
+        label: Created
+        type: datetime

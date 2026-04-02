@@ -1,0 +1,21 @@
+description = "Plan sidebar"
+==
+<aside class="plan-side dark-card side-stack">
+    <div>
+        <h3>{{ this.theme.plan_sidebar_title ?: 'How this stays easy to use' }}</h3>
+        <ul class="feature-list">
+            <li>{% content 'plan/sidebar-point-1.htm' %}</li>
+            <li>{% content 'plan/sidebar-point-2.htm' %}</li>
+            <li>{% content 'plan/sidebar-point-3.htm' %}</li>
+            <li>{% content 'plan/sidebar-point-4.htm' %}</li>
+        </ul>
+    </div>
+    <div class="side-panel">
+        <span class="label">Direct email</span>
+        <strong><a href="mailto:{{ this.theme.contact_email ?: 'mykonos@cabnet.app' }}">{{ this.theme.contact_email ?: 'mykonos@cabnet.app' }}</a></strong>
+    </div>
+    <div class="side-panel">
+        <span class="label">Best for</span>
+        <strong>{{ this.theme.plan_sidebar_best_for ?: 'Villa stays, couple escapes, hosted arrivals, private sea days, celebrations, and dinner-led luxury itineraries' }}</strong>
+    </div>
+</aside>

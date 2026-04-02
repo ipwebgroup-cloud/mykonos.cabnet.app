@@ -1,0 +1,59 @@
+description = "Stay design hub"
+==
+<section class="subhero section-block page-intro-block">
+    <div class="container page-intro-shell">
+        <span class="section-tag">{{ this.theme.stay_design_eyebrow ?: 'Connected stay design' }}</span>
+        <h1 class="page-title">{{ this.theme.stay_design_title ?: 'See the whole stay as one connected luxury system.' }}</h1>
+        <p class="page-lead">{{ this.theme.stay_design_intro ?: 'This page connects the major pieces of the stay — arrival, residence, sea, dining, and the final planning brief — so users can move through the system without guessing where to go next.' }}</p>
+        <div class="hero-actions compact-actions">
+            <a class="btn btn-primary" href="{{ 'plan'|page }}?source_type=pathway&source_slug=stay-design&source_title={{ (this.theme.stay_design_title ?: 'Stay Design')|url_encode }}&source_url={{ this.page.url|url_encode }}">{{ this.theme.header_cta_label ?: 'Plan your stay' }}</a>
+            <a class="btn btn-secondary" href="{{ 'guest-pathways'|page }}">{{ this.theme.pathways_primary_cta ?: 'Open guest pathways' }}</a>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container pathway-grid">
+        <article class="dark-panel pathway-card">
+            <span class="chip">Arrival & movement</span>
+            <h3>{% content 'system/pathway-1-title.htm' %}</h3>
+            <p>{% content 'system/pathway-1-copy.htm' %}</p>
+            <div class="hero-actions compact-actions">
+                <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'hosted-arrivals' }) }}">View service →</a>
+                <a class="detail-link" href="{{ 'plan'|page }}?focus=hosted-arrivals&source_type=pathway&source_slug=arrival-movement&source_title={{ 'Arrival & movement'|url_encode }}&source_url={{ this.page.url|url_encode }}">Brief this pathway →</a>
+            </div>
+        </article>
+        <article class="dark-panel pathway-card">
+            <span class="chip">Residence rhythm</span>
+            <h3>{% content 'system/pathway-2-title.htm' %}</h3>
+            <p>{% content 'system/pathway-2-copy.htm' %}</p>
+            <div class="hero-actions compact-actions">
+                <a class="detail-link" href="{{ 'service-detail'|page({ slug: 'villa-living' }) }}">View service →</a>
+                <a class="detail-link" href="{{ 'plan'|page }}?focus=villa-living&source_type=pathway&source_slug=residence-rhythm&source_title={{ 'Residence rhythm'|url_encode }}&source_url={{ this.page.url|url_encode }}">Brief this pathway →</a>
+            </div>
+        </article>
+        <article class="dark-panel pathway-card">
+            <span class="chip">Sea & dining</span>
+            <h3>{% content 'system/pathway-3-title.htm' %}</h3>
+            <p>{% content 'system/pathway-3-copy.htm' %}</p>
+            <div class="hero-actions compact-actions">
+                <a class="detail-link" href="{{ 'experience-detail'|page({ slug: 'private-sea-day' }) }}">View experience →</a>
+                <a class="detail-link" href="{{ 'plan'|page }}?focus=private-sea-day&source_type=pathway&source_slug=sea-dining&source_title={{ 'Sea & dining'|url_encode }}&source_url={{ this.page.url|url_encode }}">Brief this pathway →</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container inline-cta-panel dark-panel">
+        <div>
+            <span class="section-tag">System next step</span>
+            <h2>{% content 'system/final-cta-title.htm' %}</h2>
+            <p>{% content 'system/final-cta-copy.htm' %}</p>
+        </div>
+        <div class="hero-actions compact-actions">
+            <a class="btn btn-primary" href="{{ 'plan'|page }}?source_type=pathway&source_slug=stay-design&source_title={{ (this.theme.stay_design_title ?: 'Stay Design')|url_encode }}&source_url={{ this.page.url|url_encode }}">{{ this.theme.plan_submit_label ?: 'Send request' }}</a>
+            <a class="btn btn-secondary" href="{{ 'experiences'|page }}">Explore experiences</a>
+        </div>
+    </div>
+</section>
