@@ -25,9 +25,21 @@
 
     $services = [];
     if (!empty($record->services_json)) {
-        $decoded = json_decode((string) $record->services_json, true);
+        $decoded = is_array($record->services_json)
+            ? $record->services_json
+            : json_decode((string) $record->services_json, true);
+
         if (is_array($decoded)) {
-            $services = array_values(array_filter(array_map('trim', $decoded)));
+            $collected = [];
+            array_walk_recursive($decoded, function ($value) use (&$collected) {
+                if (is_scalar($value)) {
+                    $value = trim((string) $value);
+                    if ($value !== '') {
+                        $collected[] = $value;
+                    }
+                }
+            });
+            $services = array_values(array_unique($collected));
         }
     }
 
