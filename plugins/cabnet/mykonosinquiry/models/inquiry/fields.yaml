@@ -288,11 +288,10 @@ tabs:
 
         history_preview:
             label: History Timeline
-            type: textarea
-            size: giant
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_history_timeline.htm
             tab: History
-            readOnly: true
-            comment: Latest entries appear first. A more scannable timeline view should be the next patch.
+            comment: Latest entries appear first in a card-based timeline for faster operator scanning.
 
         new_internal_note:
             label: Add Internal Note

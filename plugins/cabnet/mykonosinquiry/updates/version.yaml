@@ -16,3 +16,6 @@
     - 'Improve backend inquiry readability and active queue filtering'
 1.0.8:
     - 'Add backend quick workflow actions for assignment, contact, follow-up, and closing'
+
+1.0.9:
+    - 'Improve backend history timeline readability for operators'
