@@ -178,6 +178,14 @@ tabs:
             tab: Source
             span: left
 
+        preference_signal_panel:
+            label: Preference Signals
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_preference_signal_panel.htm
+            tab: Preferences
+            comment: Read-only operator scan of guest preferences, contact route, and experience signals before editing individual fields.
+
+
         arrival_window:
             label: Arrival Window
             tab: Preferences

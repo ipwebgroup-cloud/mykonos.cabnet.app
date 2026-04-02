@@ -1,3 +1,10 @@
+## v2.5.8 — Preference Signal Panel
+- added a read-only Preference Signals panel at the top of the Preferences tab
+- surfaces contact route, stay signals, and experience signals in one operator scan block
+- preserves the existing editable preference fields underneath
+- no schema change
+- no public theme change
+
 ## v2.5.7 - List / Detail Consistency Polish
 - aligned backend list wording with detail screen workflow labels
 - list now shows operator-friendly status and priority labels

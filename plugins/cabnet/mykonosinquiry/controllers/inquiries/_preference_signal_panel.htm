@@ -1,0 +1,96 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Preference signals become available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $normalize = function ($value, $fallback = 'Not specified') {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d H:i');
+        }
+
+        if (is_array($value)) {
+            $value = implode(', ', array_filter(array_map('trim', $value)));
+        }
+
+        $value = trim((string) $value);
+
+        return $value !== '' ? $value : $fallback;
+    };
+
+    $services = $normalize($record->services_inline ?? '', 'General planning');
+    $contactPreference = $normalize($record->contact_preference ?? '', 'Not specified');
+    $country = $normalize($record->country ?? '', 'Not specified');
+    $budget = $normalize($record->budget ?? '', 'Not specified');
+    $privacy = $normalize($record->privacy_level ?? '', 'Not specified');
+    $accommodation = $normalize($record->accommodation_status ?? '', 'Not specified');
+    $occasion = $normalize($record->occasion_type ?? '', 'Not specified');
+    $specialMoments = $normalize($record->special_moments ?? '', 'None captured');
+    $dietary = $normalize($record->dietary_needs ?? '', 'None captured');
+    $nightlife = $normalize($record->nightlife_interest ?? '', 'Not specified');
+    $travelStyle = $normalize($record->travel_style ?? '', 'Not specified');
+    $stayMood = $normalize($record->stay_mood ?? '', 'Not specified');
+    $arrivalMode = $normalize($record->arrival_mode ?? '', 'Not specified');
+
+    $email = trim((string) ($record->email ?: ''));
+    $phone = trim((string) ($record->phone ?: ''));
+    $contactRoute = [];
+    if ($email !== '') {
+        $contactRoute[] = $email;
+    }
+    if ($phone !== '') {
+        $contactRoute[] = $phone;
+    }
+    $contactRouteText = !empty($contactRoute) ? implode(' · ', $contactRoute) : 'No direct contact details captured';
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <p style="margin:0 0 4px 0;"><strong>Preference signals</strong></p>
+        <p class="help-block" style="margin-bottom:0;">Read-only operator scan of the guest's stated route, preferences, and experience signals before editing field-by-field.</p>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Contact route</div>
+        <div style="font-size:14px;line-height:1.7;color:#111827;">
+            <strong>Preference:</strong> <?= e($contactPreference) ?><br>
+            <strong>Route:</strong> <?= e($contactRouteText) ?><br>
+            <strong>Country:</strong> <?= e($country) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Stay signals</div>
+        <div style="font-size:14px;line-height:1.7;color:#111827;">
+            <strong>Budget:</strong> <?= e($budget) ?><br>
+            <strong>Privacy:</strong> <?= e($privacy) ?><br>
+            <strong>Accommodation:</strong> <?= e($accommodation) ?><br>
+            <strong>Travel style:</strong> <?= e($travelStyle) ?><br>
+            <strong>Stay mood:</strong> <?= e($stayMood) ?><br>
+            <strong>Arrival mode:</strong> <?= e($arrivalMode) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Experience signals</div>
+        <div style="font-size:14px;line-height:1.7;color:#111827;">
+            <strong>Focus:</strong> <?= e($services) ?><br>
+            <strong>Occasion:</strong> <?= e($occasion) ?><br>
+            <strong>Special moments:</strong> <?= e($specialMoments) ?><br>
+            <strong>Dietary:</strong> <?= e($dietary) ?><br>
+            <strong>Nightlife:</strong> <?= e($nightlife) ?>
+        </div>
+    </div>
+</div>
