@@ -1,0 +1,115 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Stay logistics become available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $arrival = $record->arrival_date ? $record->arrival_date->format('Y-m-d') : 'Not set';
+    $departure = $record->departure_date ? $record->departure_date->format('Y-m-d') : 'Not set';
+    $arrivalWindow = trim((string) ($record->arrival_window ?: '')) ?: 'Not set';
+    $arrivalMode = trim((string) ($record->arrival_mode ?: '')) ?: 'Not set';
+    $guests = trim((string) ($record->guests ?: '')) ?: 'Not set';
+    $group = trim((string) ($record->group_composition ?: '')) ?: 'Not set';
+    $children = trim((string) ($record->children_travelling ?: '')) ?: 'Not set';
+    $accommodation = trim((string) ($record->accommodation_status ?: '')) ?: 'Not set';
+    $villaArea = trim((string) ($record->villa_area ?: '')) ?: 'Not set';
+    $privacy = trim((string) ($record->privacy_level ?: '')) ?: 'Not set';
+
+    $hasDates = !empty($record->arrival_date) || !empty($record->departure_date);
+    $hasArrivalShape = trim((string) ($record->arrival_window ?: '')) !== '' || trim((string) ($record->arrival_mode ?: '')) !== '';
+    $hasAccommodation = trim((string) ($record->accommodation_status ?: '')) !== '' || trim((string) ($record->villa_area ?: '')) !== '';
+    $hasGroup = trim((string) ($record->group_composition ?: '')) !== '' || trim((string) ($record->children_travelling ?: '')) !== '' || trim((string) ($record->guests ?: '')) !== '';
+
+    $signalCount = 0;
+    foreach ([$hasDates, $hasArrivalShape, $hasAccommodation, $hasGroup] as $signal) {
+        if ($signal) {
+            $signalCount++;
+        }
+    }
+
+    if ($signalCount >= 4) {
+        $state = 'Logistics ready';
+        $tone = 'positive';
+        $summary = 'Trip timing and on-island logistics are already clear enough for operator planning and hand-off.';
+        $next = 'Keep the working summary aligned as vendors, accommodation, and arrival handling are confirmed.';
+    } elseif ($signalCount >= 2) {
+        $state = 'Usable logistics';
+        $tone = 'warning';
+        $summary = 'The inquiry has enough timing and stay structure to move forward, but some logistics are still light.';
+        $next = 'Clarify the missing arrival or accommodation details during the next operator touchpoint.';
+    } else {
+        $state = 'Light logistics';
+        $tone = 'neutral';
+        $summary = 'Stay logistics are still sparse, so the next operator will need to discover timing and accommodation posture early.';
+        $next = 'Use first contact to lock the stay window, arrival handling, and accommodation picture.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Stay logistics</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator scan of timing, arrival shape, accommodation posture, and planning readiness.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;">
+                <?= e($state) ?>
+            </span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Next move:</strong> <?= e($next) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Trip timing</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Arrival:</strong> <?= e($arrival) ?><br>
+            <strong>Departure:</strong> <?= e($departure) ?><br>
+            <strong>Arrival window:</strong> <?= e($arrivalWindow) ?><br>
+            <strong>Arrival mode:</strong> <?= e($arrivalMode) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Guest shape</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Guests:</strong> <?= e($guests) ?><br>
+            <strong>Group:</strong> <?= e($group) ?><br>
+            <strong>Children:</strong> <?= e($children) ?><br>
+            <strong>Privacy:</strong> <?= e($privacy) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Accommodation posture</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Status:</strong> <?= e($accommodation) ?><br>
+            <strong>Preferred area:</strong> <?= e($villaArea) ?><br>
+            <strong>Signals captured:</strong> <?= e((string) $signalCount) ?>/4<br>
+            <strong>Planning readiness:</strong> <?= e($state) ?>
+        </div>
+    </div>
+</div>

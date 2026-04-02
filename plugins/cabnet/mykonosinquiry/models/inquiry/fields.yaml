@@ -291,6 +291,13 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of service intent, experience-specific signals, and planning continuity before editing detailed request fields.
 
+        stay_logistics_panel:
+            label: Stay Logistics
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_stay_logistics_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of timing, arrival shape, accommodation posture, and on-island planning readiness before touching detailed stay fields.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

@@ -5,6 +5,11 @@
 - no schema change
 - no public theme change
 
+## v2.6.5 — Stay Logistics Panel
+- added a read-only Stay Logistics panel to the Internal tab
+- surfaced trip timing, arrival posture, accommodation posture, and planning readiness in one operator scan surface
+- kept the patch backend-only with no schema or public theme change
+
 ## v2.5.8 — Preference Signal Panel
 - added a read-only Preference Signals panel at the top of the Preferences tab
 - surfaces contact route, stay signals, and experience signals in one operator scan block
