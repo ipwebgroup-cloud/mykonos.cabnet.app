@@ -93,3 +93,8 @@
 
 ## v2.0 / v41 integration line
 - established the first real bridge between the public `/plan` flow and plugin-backed database persistence
+
+## v2.6.6 - Occasion & Lifestyle Panel
+- added a read-only **Occasion & Lifestyle** panel to the Internal tab
+- surfaces celebration intent, dining posture, nightlife appetite, and special-moment signals
+- keeps operator workspace consolidation moving without schema or public-flow changes

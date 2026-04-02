@@ -298,6 +298,14 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of timing, arrival shape, accommodation posture, and on-island planning readiness before touching detailed stay fields.
 
+
+        occasion_lifestyle_panel:
+            label: Occasion & Lifestyle
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_occasion_lifestyle_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of celebration intent, dining posture, nightlife appetite, and special-moment signals before shaping the guest experience plan.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal
