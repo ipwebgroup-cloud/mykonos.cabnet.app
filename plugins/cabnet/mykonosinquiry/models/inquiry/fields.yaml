@@ -59,7 +59,7 @@ fields:
         type: datepicker
         mode: date
         span: left
-        comment: Next operator checkpoint. Set this whenever the guest is waiting on your next touch.
+        comment: Next operator checkpoint. Keep this explicit so overdue and due-today inquiries stay visible.
 
     last_contacted_at:
         label: Last Contacted
@@ -264,6 +264,13 @@ tabs:
             label: Operator Intent
             tab: Internal
             span: right
+
+        follow_up_queue_panel:
+            label: Follow-up Queue
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_queue_panel.htm
+            tab: Internal
+            comment: Read-only queue checkpoint summary for follow-up state, due date, and operator action.
 
         guest_summary:
             label: Operator Working Summary

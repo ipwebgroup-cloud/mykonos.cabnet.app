@@ -70,22 +70,11 @@
     $labelStyle = 'display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;';
     $valueStyle = 'display:block;font-size:15px;font-weight:600;color:#111827;line-height:1.4;';
 
-    $followUpTone = '#6b7280';
-    $followUpNote = 'No follow-up date is currently set.';
-
-    if ($model && !empty($model->follow_up_date)) {
-        $today = \Carbon\Carbon::today();
-        if ($model->follow_up_date->lt($today)) {
-            $followUpTone = '#b02a37';
-            $followUpNote = 'Follow-up is overdue and should be reviewed.';
-        } elseif ($model->follow_up_date->equalTo($today)) {
-            $followUpTone = '#fd7e14';
-            $followUpNote = 'Follow-up is due today.';
-        } else {
-            $followUpTone = '#198754';
-            $followUpNote = 'A future follow-up is scheduled.';
-        }
-    }
+    $followUpState = $model && method_exists($model, 'getFollowUpQueueStateAttribute') ? $model->follow_up_queue_state : 'Unscheduled';
+    $followUpQueueTone = $model && method_exists($model, 'getFollowUpQueueToneAttribute') ? $model->follow_up_queue_tone : 'neutral';
+    $followUpQueueNote = $model && method_exists($model, 'getFollowUpQueueNoteAttribute') ? $model->follow_up_queue_note : 'No follow-up date is currently set.';
+    $followUpQueueAction = $model && method_exists($model, 'getFollowUpQueueActionAttribute') ? $model->follow_up_queue_action : 'Set the next follow-up date so queue ownership remains explicit.';
+    $followUpColors = $continuityPalette[$followUpQueueTone] ?? $continuityPalette['neutral'];
 ?>
 <div class="control-breadcrumb">
     <ul>
@@ -103,6 +92,7 @@
                         <span style="<?= $badgeStyle($statusColors) ?>">Status: <?= e($statusLabel) ?></span>
                         <span style="<?= $badgeStyle($priorityColors) ?>">Priority: <?= e($priorityLabel) ?></span>
                         <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:#334155;background:#f8fafc;border:1px solid #e2e8f0;">Owner: <?= e($owner) ?></span>
+                        <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($followUpColors[0]) ?>;background:<?= e($followUpColors[1]) ?>;border:1px solid <?= e($followUpColors[2]) ?>;">Follow-up: <?= e($followUpState) ?></span>
                     </div>
 
                     <h2 style="margin:0 0 8px 0;font-size:28px;font-weight:700;line-height:1.2;"><?= e($guest) ?></h2>
@@ -126,9 +116,13 @@
                     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:16px;">
                         <div style="<?= $labelStyle ?>">Operator focus</div>
                         <div style="<?= $valueStyle ?>"><?= e($focus) ?></div>
-                        <div style="margin-top:12px;font-size:13px;line-height:1.6;color:<?= e($followUpTone) ?>;">
-                            <strong>Follow-up:</strong> <?= e($followUp) ?><br>
-                            <?= e($followUpNote) ?>
+                        <div style="margin-top:12px;border-radius:12px;padding:12px 13px;border:1px solid <?= e($followUpColors[2]) ?>;background:<?= e($followUpColors[1]) ?>;color:<?= e($followUpColors[0]) ?>;">
+                            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">Follow-up queue</div>
+                            <div style="font-size:13px;line-height:1.55;font-weight:700;"><?= e($followUpState) ?> · <?= e($followUp) ?></div>
+                            <div style="margin-top:8px;font-size:12px;line-height:1.6;">
+                                <?= e($followUpQueueNote) ?><br>
+                                <strong>Action:</strong> <?= e($followUpQueueAction) ?>
+                            </div>
                         </div>
                         <div style="margin-top:12px;border-radius:12px;padding:12px 13px;border:1px solid <?= e($continuityColors[2]) ?>;background:<?= e($continuityColors[1]) ?>;color:<?= e($continuityColors[0]) ?>;">
                             <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">Queue posture</div>

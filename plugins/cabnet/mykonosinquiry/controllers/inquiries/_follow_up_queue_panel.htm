@@ -1,0 +1,62 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Follow-up queue guidance becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $state = $record->follow_up_queue_state ?? 'Unscheduled';
+    $tone = $record->follow_up_queue_tone ?? 'neutral';
+    $note = $record->follow_up_queue_note ?? 'No follow-up date is currently set.';
+    $action = $record->follow_up_queue_action ?? 'Set the next follow-up date so queue ownership remains explicit.';
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $followUp = $record->follow_up_date ? $record->follow_up_date->format('Y-m-d') : 'Not scheduled';
+    $lastContacted = $record->last_contacted_at ? $record->last_contacted_at->format('Y-m-d H:i') : 'Not contacted yet';
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Follow-up queue clarity</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only checkpoint summary for the current queue state, next follow-up date, and operator action.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;">
+                <?= e($state) ?>
+            </span>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <div style="flex:1 1 220px;background:#fff;border:1px solid rgba(148,163,184,.22);border-radius:12px;padding:12px 14px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Follow-up date</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;"><?= e($followUp) ?></div>
+            </div>
+            <div style="flex:1 1 220px;background:#fff;border:1px solid rgba(148,163,184,.22);border-radius:12px;padding:12px 14px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Last contacted</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;"><?= e($lastContacted) ?></div>
+            </div>
+        </div>
+
+        <div style="margin-top:12px;font-size:13px;line-height:1.65;color:#334155;">
+            <?= e($note) ?><br>
+            <strong>Action:</strong> <?= e($action) ?>
+        </div>
+    </div>
+</div>

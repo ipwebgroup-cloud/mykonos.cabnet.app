@@ -207,6 +207,119 @@ class Inquiry extends Model
         return 'Keep the internal summary current for the next operator.';
     }
 
+
+    public function getFollowUpQueueStateAttribute(): string
+    {
+        if ($this->isClosedStatus($this->status)) {
+            return 'Closed';
+        }
+
+        if (!$this->normalizeDisplayValue($this->owner_name)) {
+            return 'Unassigned';
+        }
+
+        if ($this->follow_up_date instanceof \DateTimeInterface) {
+            $today = Carbon::today();
+
+            if ($this->follow_up_date->lt($today)) {
+                return 'Overdue';
+            }
+
+            if ($this->follow_up_date->equalTo($today)) {
+                return 'Due today';
+            }
+
+            return 'Scheduled';
+        }
+
+        if ($this->status === 'new') {
+            return 'Needs first touch';
+        }
+
+        return 'Unscheduled';
+    }
+
+    public function getFollowUpQueueToneAttribute(): string
+    {
+        $state = $this->follow_up_queue_state;
+
+        if (in_array($state, ['Closed', 'Scheduled'], true)) {
+            return 'positive';
+        }
+
+        if (in_array($state, ['Unassigned', 'Overdue'], true)) {
+            return 'critical';
+        }
+
+        if (in_array($state, ['Due today', 'Unscheduled'], true)) {
+            return 'warning';
+        }
+
+        return 'neutral';
+    }
+
+    public function getFollowUpQueueNoteAttribute(): string
+    {
+        $state = $this->follow_up_queue_state;
+
+        if ($state === 'Closed') {
+            return 'This inquiry is closed. Keep closure context readable in case it needs to be reopened.';
+        }
+
+        if ($state === 'Unassigned') {
+            return 'No named owner is visible yet, so the next follow-up could drift between operators.';
+        }
+
+        if ($state === 'Overdue') {
+            return 'The follow-up date has already passed and this inquiry should be brought back into an active checkpoint now.';
+        }
+
+        if ($state === 'Due today') {
+            return 'This inquiry needs attention today. Handle the checkpoint and leave clear context for the next operator.';
+        }
+
+        if ($state === 'Scheduled') {
+            return 'A future checkpoint is already on the calendar. Keep the working summary aligned until then.';
+        }
+
+        if ($state === 'Needs first touch') {
+            return 'This is still a fresh inquiry. The first owner and first outreach checkpoint should be made explicit.';
+        }
+
+        return 'The inquiry is active but no next checkpoint is currently set.';
+    }
+
+    public function getFollowUpQueueActionAttribute(): string
+    {
+        $state = $this->follow_up_queue_state;
+
+        if ($state === 'Closed') {
+            return 'Leave a concise closure reason, or reopen the inquiry if active work resumes.';
+        }
+
+        if ($state === 'Unassigned') {
+            return 'Assign a named owner before the next hand-off.';
+        }
+
+        if ($state === 'Overdue') {
+            return 'Contact the guest or reschedule the next checkpoint now.';
+        }
+
+        if ($state === 'Due today') {
+            return 'Complete today's checkpoint and update the operator summary.';
+        }
+
+        if ($state === 'Scheduled') {
+            return 'Keep the brief and internal notes current until the scheduled date.';
+        }
+
+        if ($state === 'Needs first touch') {
+            return 'Perform first review or outreach and add the first follow-up date.';
+        }
+
+        return 'Set the next follow-up date so queue ownership remains explicit.';
+    }
+
     public function getServicesListAttribute(): string
     {
         $services = (array) ($this->services_json ?: []);

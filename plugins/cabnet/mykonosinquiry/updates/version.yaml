@@ -21,3 +21,6 @@
     - 'Improve backend history timeline readability for operators'
 1.0.10:
     - 'Improve assignment and status continuity readability for operators'
+
+1.0.11:
+    - 'Improve follow-up queue clarity for overdue, due-today, and unscheduled inquiries'
