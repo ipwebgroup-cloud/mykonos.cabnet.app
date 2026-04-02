@@ -1,0 +1,156 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Response packaging becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $status = (string) ($record->status ?? 'new');
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+    $hasOwner = trim((string) ($record->owner_name ?: '')) !== '';
+    $hasContact = !empty($record->last_contacted_at);
+    $hasFollowUp = !empty($record->follow_up_date);
+    $services = trim((string) ($record->services_inline ?? ''));
+    $hasServices = $services !== '';
+    $accommodation = trim((string) ($record->accommodation_status ?: ''));
+    $villaArea = trim((string) ($record->villa_area ?: ''));
+    $dining = trim((string) ($record->dining_style ?: ''));
+    $nightlife = trim((string) ($record->nightlife_interest ?: ''));
+    $occasion = trim((string) ($record->occasion_type ?: ''));
+    $privacy = trim((string) ($record->privacy_level ?: ''));
+
+    if ($isClosed) {
+        $tone = 'neutral';
+        $state = 'Closed track';
+        $summary = 'This inquiry is already closed, so the response-packaging lens is only useful for record quality rather than shaping a new outbound guest move.';
+        $nextPack = 'No active package needed unless the inquiry is intentionally reopened.';
+    } elseif (!$hasOwner) {
+        $tone = 'critical';
+        $state = 'Assign before packaging';
+        $summary = 'A response package should not be shaped before the inquiry has a clear owner, otherwise the next hand-off stays ambiguous.';
+        $nextPack = 'Assign an operator first, then decide whether the first guest reply should clarify, propose, or confirm service scope.';
+    } elseif (!$hasContact && !$hasServices) {
+        $tone = 'warning';
+        $state = 'Clarify before packaging';
+        $summary = 'The inquiry still lacks both a live contact signal and a clear service cluster, so packaging a response too early risks adding assumptions.';
+        $nextPack = 'Use the first touch to confirm dates, guest shape, and the top service priority before assembling any curated options.';
+    } elseif (!$hasContact) {
+        $tone = 'warning';
+        $state = 'Starter package possible';
+        $summary = 'There is enough visible request intent to prepare a starter internal package, but the first outbound move should still prioritize confirmation over a heavy proposal.';
+        $nextPack = 'Prepare a light first-touch package around the clearest service signals, then schedule the next checkpoint immediately after outreach.';
+    } elseif ($hasContact && !$hasFollowUp) {
+        $tone = 'critical';
+        $state = 'Package without checkpoint';
+        $summary = 'The inquiry has already been touched, but the next checkpoint is missing, which weakens continuity for any response package you build now.';
+        $nextPack = 'Set the next follow-up date before expanding the guest package so the next operator knows exactly when the commercial thread should move.';
+    } else {
+        $tone = 'positive';
+        $state = 'Package shaping ready';
+        $summary = 'The inquiry has enough active workflow continuity for an operator to shape the next guest-facing package without rebuilding the context first.';
+        $nextPack = 'Use the strongest service and lifestyle signals to prepare the next outbound package, then keep the checkpoint and working summary aligned.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $packageItems = [];
+    if ($hasServices) {
+        $packageItems[] = 'Service cluster: ' . $services;
+    }
+    if ($accommodation !== '') {
+        $packageItems[] = 'Accommodation posture: ' . $accommodation;
+    }
+    if ($villaArea !== '') {
+        $packageItems[] = 'Preferred area: ' . $villaArea;
+    }
+    if ($dining !== '') {
+        $packageItems[] = 'Dining cue: ' . $dining;
+    }
+    if ($nightlife !== '') {
+        $packageItems[] = 'Nightlife cue: ' . $nightlife;
+    }
+    if ($occasion !== '') {
+        $packageItems[] = 'Occasion cue: ' . $occasion;
+    }
+    if ($privacy !== '') {
+        $packageItems[] = 'Privacy posture: ' . $privacy;
+    }
+    if (!$packageItems) {
+        $packageItems[] = 'No clear package anchors yet — clarify the guest picture before shaping curated options.';
+    }
+
+    $confirmItems = [];
+    if (!$hasServices) {
+        $confirmItems[] = 'Confirm the main service focus';
+    }
+    if ($accommodation === '') {
+        $confirmItems[] = 'Confirm accommodation posture';
+    }
+    if ($villaArea === '') {
+        $confirmItems[] = 'Confirm preferred area if accommodation is relevant';
+    }
+    if ($occasion === '') {
+        $confirmItems[] = 'Confirm whether there is a celebration or special-moment trigger';
+    }
+    if (!$hasContact) {
+        $confirmItems[] = 'Use the first guest touch to validate the internal package assumptions';
+    }
+    if (!$hasFollowUp && !$isClosed) {
+        $confirmItems[] = 'Set an explicit next checkpoint';
+    }
+    if (!$confirmItems) {
+        $confirmItems[] = 'Current package signals are strong enough for the next curated reply.';
+    }
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Response packaging</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator framing for what should go into the next guest-facing package or clarification response.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Packaging move:</strong> <?= e($nextPack) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">What to package</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($packageItems as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">What to confirm</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($confirmItems as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

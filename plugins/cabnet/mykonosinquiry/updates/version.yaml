@@ -42,3 +42,5 @@
     - 'Add next-step framing scan panel to the operator workspace consolidation line'
 1.1.8:
     - 'Add risk and sensitivity scan panel to the operator workspace consolidation line'
+1.1.9:
+    - 'Add response packaging scan panel to the operator workspace consolidation line'

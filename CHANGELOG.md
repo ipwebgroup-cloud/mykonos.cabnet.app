@@ -1,3 +1,8 @@
+## v2.6.11 — Response Packaging Panel
+- added a read-only **Response Packaging** panel to the Internal tab
+- surfaces what should be packaged versus what still needs confirmation before the next guest-facing move
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 ## v2.6.10 — Risk & Sensitivity Panel
 - added a read-only **Risk & Sensitivity** panel to the Internal tab
 - surfaces urgency, privacy, family, and dietary signals for safer hand-off continuity
