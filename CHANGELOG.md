@@ -1,3 +1,8 @@
+## v2.6.17 — Reply Tone Guidance Panel
+- added a read-only **Reply Tone Guidance** panel to the Internal tab
+- surfaces the safest tone, pacing, route, and reply shape for the next guest-facing message
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 ## v2.6.14 — Proposal Readiness Panel
 - added a read-only Proposal Readiness panel to the Internal tab
 - surfaces package readiness, clarification posture, and the safest next proposal-shaping move

@@ -1,0 +1,77 @@
+<?php
+use Carbon\Carbon;
+
+$priority = strtolower((string) ($record->priority ?? 'normal'));
+$status = strtolower((string) ($record->status ?? 'new'));
+$privacy = strtolower((string) ($record->privacy_level ?? ''));
+$contact = strtolower((string) ($record->contact_preference ?? ''));
+$budget = strtolower((string) ($record->budget ?? ''));
+$followUp = $record->follow_up_date ? Carbon::parse($record->follow_up_date) : null;
+$lastContacted = $record->last_contacted_at ? Carbon::parse($record->last_contacted_at) : null;
+
+$tone = 'Warm and composed';
+$pacing = 'Steady';
+$shape = 'Short confirmation-led reply';
+$cue = 'Acknowledge the brief, confirm ownership, and set the next expectation clearly.';
+$palette = ['#475569', '#f8fafc', '#e2e8f0'];
+
+if (in_array($priority, ['urgent', 'vip'], true) || $status === 'new') {
+    $tone = 'Fast and reassuring';
+    $pacing = 'Fast';
+    $shape = 'Brief, confident, ownership-first reply';
+    $cue = 'Reduce friction, confirm that the request is being handled, and give the guest a clear immediate next step.';
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+}
+
+if ($privacy !== '' && str_contains($privacy, 'discretion')) {
+    $tone = 'Discreet and measured';
+    $shape = 'Concise, low-noise, privacy-aware reply';
+    $cue = 'Avoid unnecessary detail in the first touch and reinforce discretion without sounding formal or cold.';
+    $palette = ['#7c3aed', '#f5f3ff', '#ddd6fe'];
+}
+
+if ($budget !== '' && (str_contains($budget, '10,000') || str_contains($budget, '25,000') || str_contains($budget, 'lux') || str_contains($budget, 'premium'))) {
+    $shape = 'Concierge-level reply with elevated framing';
+}
+
+if ($followUp && $followUp->isPast()) {
+    $pacing = 'Immediate';
+    $cue = 'The follow-up checkpoint is overdue, so the next reply should restore momentum and make ownership visible.';
+    $palette = ['#b91c1c', '#fef2f2', '#fecaca'];
+}
+
+if ($lastContacted && $followUp && $followUp->isFuture()) {
+    $pacing = 'Measured';
+    $cue = 'Keep the reply aligned to the existing communication cadence instead of over-messaging the guest.';
+    $palette = ['#198754', '#eaf7ef', '#cfe9d8'];
+}
+
+$route = 'General';
+if ($contact !== '') {
+    $route = ucwords($contact);
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:18px; padding:18px 18px 16px; margin-bottom:18px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:<?= e($palette[0]) ?>; margin-bottom:10px;">Reply Tone Guidance</div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:14px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:14px; padding:12px 14px;">
+            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Tone</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a;"><?= e($tone) ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:14px; padding:12px 14px;">
+            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Pacing</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a;"><?= e($pacing) ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:14px; padding:12px 14px;">
+            <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Preferred Route</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a;"><?= e($route) ?></div>
+        </div>
+    </div>
+
+    <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:14px; padding:14px 16px; margin-bottom:12px;">
+        <div style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Suggested Reply Shape</div>
+        <div style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px;"><?= e($shape) ?></div>
+        <div style="font-size:14px; line-height:1.65; color:#334155;"><?= e($cue) ?></div>
+    </div>
+</div>

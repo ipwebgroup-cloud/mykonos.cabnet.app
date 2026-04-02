@@ -54,3 +54,5 @@
     - 'Add fulfillment readiness scan panel to the operator workspace consolidation line'
 1.1.14:
     - 'Add working summary framing scan panel to the operator workspace consolidation line'
+1.1.15:
+    - 'Add reply tone guidance scan panel to the operator workspace consolidation line'

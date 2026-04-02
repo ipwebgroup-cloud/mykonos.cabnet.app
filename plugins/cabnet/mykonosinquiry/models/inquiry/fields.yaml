@@ -396,6 +396,15 @@ tabs:
             tab: Internal
             comment: Read-only operator guidance for shaping the rolling summary and notes before the next hand-off.
 
+
+
+reply_tone_guidance_panel:
+    label: Reply Tone Guidance
+    type: partial
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_tone_guidance_panel.htm
+    tab: Internal
+    comment: Read-only operator guidance for the tone, shape, and pacing of the next guest-facing reply.
+
         guest_summary:
             label: Operator Working Summary
             type: textarea
