@@ -142,3 +142,8 @@
 - added a read-only **Occasion & Lifestyle** panel to the Internal tab
 - surfaces celebration intent, dining posture, nightlife appetite, and special-moment signals
 - keeps operator workspace consolidation moving without schema or public-flow changes
+
+## v2.6.15 — Fulfillment Readiness Panel
+- added a read-only **Fulfillment Readiness** panel to the Internal tab
+- surfaces execution readiness, sourcing posture, and what still needs confirmation before concrete supplier or itinerary shaping
+- keeps operator workspace consolidation moving without schema or public-flow changes

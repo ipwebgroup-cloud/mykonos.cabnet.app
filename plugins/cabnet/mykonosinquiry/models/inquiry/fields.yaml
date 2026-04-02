@@ -343,6 +343,14 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of whether the inquiry is ready for a starter package, structured proposal shaping, or one more clarification pass.
 
+
+        fulfillment_readiness_panel:
+            label: Fulfillment Readiness
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_readiness_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of whether the inquiry is ready to move from shaping into concrete sourcing and execution planning.
+
         commercial_posture_panel:
             label: Commercial Posture
             type: partial
