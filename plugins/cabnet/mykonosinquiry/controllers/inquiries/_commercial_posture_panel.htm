@@ -1,0 +1,130 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Commercial posture becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $status = (string) ($record->status ?? 'new');
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+    $hasOwner = trim((string) ($record->owner_name ?: '')) !== '';
+    $hasFollowUp = !empty($record->follow_up_date);
+    $hasContact = !empty($record->last_contacted_at);
+    $budget = trim((string) ($record->budget ?: ''));
+    $requestedMode = trim((string) ($record->requested_mode ?: ''));
+    $priority = trim((string) ($record->priority_label ?? 'Normal'));
+    $services = trim((string) ($record->services_inline ?? ''));
+    $details = trim((string) ($record->details ?: ''));
+    $hasServices = $services !== '';
+    $hasRichBrief = mb_strlen($details) >= 280 || $hasServices;
+
+    if ($isClosed) {
+        $tone = 'neutral';
+        $state = 'Closed commercial track';
+        $summary = 'This inquiry is already closed, so commercial posture is now a record-quality lens rather than a live offer-shaping one.';
+        $nextMove = 'No active commercial move is needed unless the inquiry is intentionally reopened.';
+    } elseif (!$hasOwner) {
+        $tone = 'critical';
+        $state = 'Assign before shaping';
+        $summary = 'Commercial framing is still too fragile because the inquiry has no clear owner to carry the next offer or clarification move.';
+        $nextMove = 'Assign ownership first, then decide whether the next move is a clarification touch, starter package, or fuller offer shape.';
+    } elseif (!$hasContact && !$hasServices) {
+        $tone = 'warning';
+        $state = 'Clarify before pricing posture';
+        $summary = 'The inquiry does not yet show a strong service cluster, so any commercial framing would rest on assumptions instead of anchored guest intent.';
+        $nextMove = 'Use the next touch to confirm the highest-priority service need before expanding the package or commercial depth.';
+    } elseif ($budget === '' && !$hasRichBrief) {
+        $tone = 'warning';
+        $state = 'Starter commercial posture';
+        $summary = 'There are enough signals to move the inquiry forward, but the commercial frame is still light and should stay flexible.';
+        $nextMove = 'Shape a starter response that opens options and collects missing budget or scope cues instead of overcommitting too early.';
+    } elseif ($hasContact && !$hasFollowUp) {
+        $tone = 'critical';
+        $state = 'Commercial move without checkpoint';
+        $summary = 'The guest has already been touched, but the next checkpoint is missing, which weakens commercial continuity for the next outbound step.';
+        $nextMove = 'Set the next follow-up date before expanding the proposal depth so the commercial thread remains owned and paced.';
+    } else {
+        $tone = 'positive';
+        $state = 'Offer-shaping ready';
+        $summary = 'The inquiry has enough workflow and brief continuity to support a more deliberate commercial framing for the next guest-facing move.';
+        $nextMove = 'Use the strongest service, budget, and experience signals to decide whether the next move should clarify, package, or deepen the offer.';
+    }
+
+    $palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+    $signalItems = [];
+    $signalItems[] = 'Priority posture: ' . ($priority !== '' ? $priority : 'Normal');
+    $signalItems[] = 'Requested mode: ' . ($requestedMode !== '' ? $requestedMode : 'Not specified');
+    $signalItems[] = 'Budget framing: ' . ($budget !== '' ? $budget : 'Not captured');
+    $signalItems[] = 'Service anchors: ' . ($hasServices ? $services : 'No clear service cluster yet');
+
+    $packageDepth = [];
+    if ($budget !== '') {
+        $packageDepth[] = 'Budget signal exists, so curated depth can be shaped with more confidence.';
+    } else {
+        $packageDepth[] = 'Budget is missing, so keep the package commercially flexible.';
+    }
+    if ($hasRichBrief) {
+        $packageDepth[] = 'Brief richness is strong enough to support a more deliberate package structure.';
+    } else {
+        $packageDepth[] = 'Brief is still light, so avoid building a heavy offer around weak assumptions.';
+    }
+    if (!$hasContact) {
+        $packageDepth[] = 'First-contact posture still matters more than proposal depth.';
+    }
+    if (!$hasFollowUp && !$isClosed) {
+        $packageDepth[] = 'Next checkpoint still needs to be locked for clean commercial continuity.';
+    }
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid <?= e($palette[2]) ?>;background:<?= e($palette[1]) ?>;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div>
+                <p style="margin:0 0 4px 0;"><strong>Commercial posture</strong></p>
+                <p class="help-block" style="margin-bottom:0;">Read-only operator framing of budget, package depth, and commercial pacing before the next offer-shaping move.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($palette[0]) ?>;background:#fff;border:1px solid <?= e($palette[2]) ?>;"><?= e($state) ?></span>
+        </div>
+        <div style="margin-top:12px;font-size:14px;line-height:1.7;color:#334155;">
+            <?= e($summary) ?><br>
+            <strong>Commercial move:</strong> <?= e($nextMove) ?>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;">
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Commercial anchors</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($signalItems as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Package depth guidance</div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.8;color:#111827;">
+            <?php foreach ($packageDepth as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

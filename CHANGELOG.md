@@ -1,3 +1,8 @@
+## v2.6.12 - Commercial Posture Panel
+- added a read-only **Commercial Posture** panel on the backend inquiry **Internal** tab
+- surfaces budget framing, package depth, pace, and commercial next-move posture for faster operator scan
+- backend-only refinement with no schema change and no public theme change
+
 ## v2.6.11 — Response Packaging Panel
 - added a read-only **Response Packaging** panel to the Internal tab
 - surfaces what should be packaged versus what still needs confirmation before the next guest-facing move

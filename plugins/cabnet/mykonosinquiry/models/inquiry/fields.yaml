@@ -335,6 +335,13 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of what should go into the next guest-facing package or clarification response.
 
+        commercial_posture_panel:
+            label: Commercial Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_commercial_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of budget, pace, package depth, and commercial framing before shaping the next offer or clarification move.
+
         risk_sensitivity_panel:
             label: Risk & Sensitivity
             type: partial
