@@ -42,6 +42,10 @@ class Inquiries extends Controller
 
     public function update($recordId = null, $context = null)
     {
+        if ($recordId && request()->isMethod('post') && post('_quick_action')) {
+            return $this->dispatchQuickActionFromUpdate($recordId);
+        }
+
         $inquiry = $recordId ? Inquiry::find($recordId) : null;
         $reference = $inquiry && $inquiry->request_reference ? $inquiry->request_reference : 'Update Inquiry';
 
@@ -167,6 +171,32 @@ class Inquiries extends Controller
     public function closeLost($recordId = null)
     {
         return $this->closeInquiry($recordId, 'closed_lost', 'Inquiry closed as lost.', 'Quick action: marked inquiry as closed lost.');
+    }
+
+
+    protected function dispatchQuickActionFromUpdate($recordId)
+    {
+        $action = trim((string) post('_quick_action'));
+
+        switch ($action) {
+            case 'assign_to_me':
+                return $this->assignToMe($recordId);
+            case 'mark_contacted':
+                return $this->markContacted($recordId);
+            case 'follow_up_tomorrow':
+                return $this->scheduleTomorrow($recordId);
+            case 'follow_up_plus_three':
+                return $this->scheduleInThreeDays($recordId);
+            case 'reopen_inquiry':
+                return $this->reopenInquiry($recordId);
+            case 'close_won':
+                return $this->closeWon($recordId);
+            case 'close_lost':
+                return $this->closeLost($recordId);
+            default:
+                Flash::warning('Unknown quick action.');
+                return redirect(\Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $recordId));
+        }
     }
 
     protected function scheduleFollowUp($recordId, Carbon $date, string $successMessage, string $auditNote)
