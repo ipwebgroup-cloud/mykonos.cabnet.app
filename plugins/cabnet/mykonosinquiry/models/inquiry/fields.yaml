@@ -284,6 +284,13 @@ tabs:
             tab: Internal
             comment: Read-only operator scan of preferred route, live contact posture, and the next communication move before editing workflow fields.
 
+        service_posture_panel:
+            label: Service Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of service intent, experience-specific signals, and planning continuity before editing detailed request fields.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

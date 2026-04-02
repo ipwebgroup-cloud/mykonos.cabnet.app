@@ -23,6 +23,11 @@
 
 # Changelog
 
+## v2.6.4 — Service Posture Panel
+- added a read-only Service Posture panel to the Internal tab
+- surfaces service intent, experience-specific signals, and planning continuity in one scan-first block
+- keeps the patch backend-only with no schema or public theme change
+
 
 ## v2.6.3 — Contact Posture Panel
 - added a read-only Contact Posture panel to the Internal tab

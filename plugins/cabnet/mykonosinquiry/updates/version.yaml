@@ -28,3 +28,5 @@
     - 'Start operator workspace consolidation with a unified internal summary panel'
 1.1.1:
     - 'Add contact posture scan panel to the operator workspace consolidation line'
+1.1.2:
+    - 'Add service posture scan panel to the operator workspace consolidation line'
