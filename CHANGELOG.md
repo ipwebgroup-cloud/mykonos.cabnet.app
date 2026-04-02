@@ -1,3 +1,8 @@
+## v2.6.2 — Handoff Focus Panel
+- added a read-only Handoff Focus panel to the Internal tab
+- surfaces guest focus, queue checkpoint, and current working picture in one operator scan block
+- keeps the patch backend-only with no schema or public theme change
+
 ## v2.5.9 — Brief Readiness Panel
 - added a read-only Brief Readiness panel at the top of the Request tab
 - surfaces trip, planning, and signal-coverage indicators before the operator works field-by-field

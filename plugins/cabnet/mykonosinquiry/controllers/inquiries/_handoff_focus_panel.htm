@@ -1,0 +1,121 @@
+<?php
+    $record = null;
+
+    if (isset($formModel) && $formModel && $formModel->exists) {
+        $record = $formModel;
+    } elseif (isset($model) && $model && $model->exists) {
+        $record = $model;
+    }
+
+    if (!$record) {
+?>
+    <p class="help-block">Handoff focus becomes available after the inquiry is created.</p>
+<?php
+        return;
+    }
+
+    $normalize = function ($value, $fallback = 'Not specified') {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d H:i');
+        }
+
+        if (is_array($value)) {
+            $value = implode(', ', array_filter(array_map('trim', $value)));
+        }
+
+        $value = trim((string) $value);
+
+        return $value !== '' ? $value : $fallback;
+    };
+
+    $toneStyles = [
+        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+    ];
+
+    $queueTone = $record->follow_up_queue_tone ?? 'neutral';
+    $queuePalette = $toneStyles[$queueTone] ?? $toneStyles['neutral'];
+
+    $owner = trim((string) ($record->owner_name ?: ''));
+    $owner = $owner !== '' ? $owner : 'Unassigned';
+
+    $fullName = $normalize($record->full_name ?? '', 'Guest not captured');
+    $services = $normalize($record->services_inline ?? '', 'General planning');
+    $budget = $normalize($record->budget ?? '', 'Not specified');
+    $contact = $normalize($record->contact_preference ?? '', 'Not specified');
+
+    $arrival = $record->arrival_date ? $record->arrival_date->format('Y-m-d') : null;
+    $departure = $record->departure_date ? $record->departure_date->format('Y-m-d') : null;
+    $stayWindow = $arrival && $departure ? $arrival . ' → ' . $departure : ($arrival ?: ($departure ?: 'Dates not set'));
+
+    $queueState = $record->follow_up_queue_state ?? 'Unscheduled';
+    $queueNote = $record->follow_up_queue_note ?? 'No follow-up date is currently set.';
+    $nextAction = $record->continuity_next_action ?? 'Keep the internal summary current for the next operator.';
+    $followUp = $record->follow_up_date ? $record->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+    $workingSummary = trim((string) ($record->guest_summary ?: ''));
+    $internalNotes = trim((string) ($record->internal_notes ?: ''));
+
+    if ($workingSummary !== '') {
+        $workingCue = $workingSummary;
+        if (mb_strlen($workingCue) > 180) {
+            $workingCue = mb_substr($workingCue, 0, 177) . '...';
+        }
+    } elseif ($internalNotes !== '') {
+        $workingCue = $internalNotes;
+        if (mb_strlen($workingCue) > 180) {
+            $workingCue = mb_substr($workingCue, 0, 177) . '...';
+        }
+    } else {
+        $workingCue = 'No operator summary has been captured yet.';
+    }
+?>
+
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="content" style="padding:16px 18px;">
+        <p style="margin:0 0 4px 0;"><strong>Handoff focus</strong></p>
+        <p class="help-block" style="margin-bottom:0;">Read-only hand-off cues so the next operator can understand the guest, queue posture, and current working picture in one glance.</p>
+    </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;">
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:10px;">Guest focus</div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Guest:</strong> <?= e($fullName) ?><br>
+            <strong>Stay:</strong> <?= e($stayWindow) ?><br>
+            <strong>Focus:</strong> <?= e($services) ?><br>
+            <strong>Budget:</strong> <?= e($budget) ?><br>
+            <strong>Contact:</strong> <?= e($contact) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid <?= e($queuePalette[2]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;">Queue checkpoint</div>
+            <span style="display:inline-block;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.02em;color:<?= e($queuePalette[0]) ?>;background:<?= e($queuePalette[1]) ?>;border:1px solid <?= e($queuePalette[2]) ?>;">
+                <?= e($queueState) ?>
+            </span>
+        </div>
+        <div style="font-size:14px;line-height:1.75;color:#111827;">
+            <strong>Owner:</strong> <?= e($owner) ?><br>
+            <strong>Follow-up:</strong> <?= e($followUp) ?><br>
+            <strong>Action:</strong> <?= e($nextAction) ?>
+        </div>
+        <div style="margin-top:10px;font-size:13px;line-height:1.6;color:#475569;">
+            <?= e($queueNote) ?>
+        </div>
+    </div>
+
+    <div style="flex:1 1 260px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:10px;">Working picture</div>
+        <div style="font-size:13px;line-height:1.7;color:#334155;">
+            <?= e($workingCue) ?>
+        </div>
+        <div style="margin-top:10px;font-size:12px;line-height:1.6;color:#64748b;">
+            Keep the operator summary current so the next assignee can continue without reconstructing context from raw fields.
+        </div>
+    </div>
+</div>

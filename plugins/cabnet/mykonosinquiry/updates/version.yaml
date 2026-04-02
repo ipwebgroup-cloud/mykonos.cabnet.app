@@ -26,3 +26,5 @@
     - 'Improve follow-up queue clarity for overdue, due-today, and unscheduled inquiries'
 1.1.0:
     - 'Start operator workspace consolidation with a unified internal summary panel'
+1.1.1:
+    - 'Add handoff focus cues to the operator workspace internal tab'
