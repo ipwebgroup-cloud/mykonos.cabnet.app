@@ -328,6 +328,13 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of the most appropriate next move based on live workflow, contact posture, and follow-up discipline.
 
+        response_packaging_panel:
+            label: Response Packaging
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_response_packaging_panel.htm
+            tab: Internal
+            comment: Read-only operator framing for what should go into the next guest-facing package or clarification response.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

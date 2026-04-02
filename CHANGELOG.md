@@ -1,3 +1,8 @@
+## v2.6.19 — Response Packaging Activation
+- reintroduced the read-only **Response Packaging** panel on the Internal tab
+- surfaces what should go into the next guest-facing package, what still needs confirmation, and whether the inquiry is ready for a starter package or fuller shaping
+- keeps the patch backend-only with no schema or public-flow change
+
 ## v2.6.17 — Reply Tone Guidance Panel
 - added a read-only **Reply Tone Guidance** panel to the Internal tab
 - surfaces the safest tone, pacing, route, and reply shape for the next guest-facing message
