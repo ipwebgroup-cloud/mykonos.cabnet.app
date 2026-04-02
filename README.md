@@ -1,72 +1,98 @@
-<p align="center">
-    <img src="https://github.com/octobercms/october/blob/develop/themes/demo/assets/images/favicon.png?raw=true" alt="October" width="25%" height="25%" />
-</p>
+# Mykonos Cabnet OctoberCMS Inquiry Platform
 
-[October](https://octobercms.com) is a Content Management System (CMS) and web platform whose sole purpose is to make your development workflow simple again. It was born out of frustration with existing systems. We feel building websites has become a convoluted and confusing process that leaves developers unsatisfied. We want to turn you around to the simpler side and get back to basics.
+This repository contains the live source for the **Mykonos Cabnet inquiry platform** built on OctoberCMS.
 
-October's mission is to show the world that web development is not rocket science.
+## Current direction
 
-[![Build Status](https://github.com/octobercms/library/actions/workflows/tests.yml/badge.svg)](https://octobercms.com/)
-[![Downloads](https://img.shields.io/packagist/dt/october/rain)](https://docs.octobercms.com/)
-[![Version](https://img.shields.io/packagist/v/october/october)](https://octobercms.com/changelog)
-[![License](https://poser.pugx.org/october/october/license.svg)](./LICENSE.md)
+This project is no longer a theme-only luxury site experiment.
+It is now a real inquiry workflow platform with:
 
-> *Please note*: October CMS is open source and every new account includes a complimentary license for the first year. After that, a license is required to continue receiving updates and access the Marketplace ecosystem.
+- luxury public frontend
+- mobile-first `/plan` inquiry flow
+- DB-backed `Cabnet.MykonosInquiry` persistence
+- backend inquiry queue and operator workflow
+- safe theme / plugin integration
+- safe incremental production-first changes
 
-## Installing October
+## Active lines
 
-Instructions on how to install October can be found at the [installation guide](https://docs.octobercms.com/3.x/setup/installation.html).
+### Theme
+- active theme directory: `themes/mykonos-aurelia-lux`
+- public `/plan` is wired through the plugin bridge
 
-### Quick Start Installation
+### Plugin
+- plugin: `plugins/cabnet/mykonosinquiry`
+- backend menu: **Mykonos Inquiries**
+- persistence table: `cabnet_mykonos_inquiries`
+- notes/history table: `cabnet_mykonos_inquiry_notes`
 
-If you have composer installed, run this in your terminal to install October CMS from command line. This will place the files in a directory named **myoctober**.
+## Current stable workflow line
 
-    composer create-project october/october myoctober
+The current stable operator workflow line includes:
 
-If you plan on using a database, run this command inside the application directory.
+- plugin-backed `/plan` persistence
+- safe mail handling in the inquiry manager
+- backend inquiry list stability hotfix baseline
+- detail screen polish
+- history timeline readability
+- assignment / status continuity readability
 
-    php artisan october:install
+## Version checkpoints
 
-## Learning October
+### v2.5.2
+Backend inquiry update-screen polish:
+- stronger inquiry header
+- clearer operator summary
+- tighter quick-action presentation
 
-The best place to learn October CMS is by [reading the documentation](https://docs.octobercms.com) or [following some tutorials](https://octobercms.com/support/articles/tutorials).
+### v2.5.3
+History timeline usability:
+- card-based readable history timeline
+- easier operator scanning of note type, author, time, and body
 
-You may also watch this [introductory video](https://www.youtube.com/watch?v=yLZTOeOS7wI). Make sure to check out our [official YouTube channel](https://www.youtube.com/c/OctoberCMSOfficial). There is also the excellent video series by [Watch & Learn](https://watch-learn.com/series/making-websites-with-october-cms).
+### v2.5.4
+Assignment and status continuity:
+- workflow continuity panel
+- clearer owner, queue posture, next action, follow-up, and closure readability
 
-For code examples of building with October CMS, visit the [RainLab Plugin Suite](https://github.com/rainlab) or the [October Demos Repo](https://github.com/octoberdemos).
+## Safe working rules
 
-## Coding Standards
+- inspect first, change second
+- prefer plugin-side operator improvements over theme drift
+- avoid schema changes unless clearly justified
+- keep public `/plan` stable
+- keep backend list rendering conservative and reliable
+- package work as small rooted patches whenever possible
 
-Please follow the following guides and code standards:
+## Local patch workflow
 
-* [PSR 4 Coding Standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md)
-* [PSR 2 Coding Style Guide](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)
-* [PSR 1 Coding Standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
+Recommended workflow for this repository:
 
-## Security Vulnerabilities
+1. keep a clean local working copy of `mykonos.cabnet.app`
+2. extract rooted patch zips directly over the local repo root
+3. review changes in GitHub Desktop
+4. commit and push from GitHub Desktop
+5. tag stable checkpoints after meaningful operator-facing improvements
 
-Please review [our security policy](https://github.com/octobercms/october/security/policy) on how to report security vulnerabilities.
+## Important paths
 
-## Development Team
+- `plugins/cabnet/mykonosinquiry/classes/InquiryManager.php`
+- `plugins/cabnet/mykonosinquiry/components/PlanBridge.php`
+- `plugins/cabnet/mykonosinquiry/controllers/Inquiries.php`
+- `plugins/cabnet/mykonosinquiry/controllers/inquiries/update.htm`
+- `plugins/cabnet/mykonosinquiry/models/Inquiry.php`
+- `plugins/cabnet/mykonosinquiry/models/inquiry/fields.yaml`
+- `themes/mykonos-aurelia-lux/pages/plan.htm`
+- `themes/mykonos-aurelia-lux/partials/plan/form.htm`
 
-October CMS was founded in 2014 by Alexey Bobkov and Sam Georges. Today it is supported by a worldwide network of [partners](https://octobercms.com/partners) and contributors.
+## Notes
 
-## Foundation library
+This repo intentionally excludes:
 
-The CMS uses [Laravel](https://laravel.com) as a foundation PHP framework.
-
-## Contact
-
-For announcements and updates:
-
-* [Contact Us Page](https://octobercms.com/contact)
-* [Follow us on Twitter](https://twitter.com/octobercms)
-* [Like us on Facebook](https://facebook.com/octobercms)
-
-To chat or hang out:
-
-* [Join us on Discord](https://discord.gg/gEKgwSZ)
-
-## License
-
-The October CMS platform is licensed software, see [End User License Agreement](./LICENSE.md) (EULA) for more details.
+- `.env`
+- `auth.json`
+- `vendor/`
+- runtime storage contents
+- SQL dumps
+- zip artifacts
+- server-local config such as `.user.ini` and `php.ini`
