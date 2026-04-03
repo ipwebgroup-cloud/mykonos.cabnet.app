@@ -1,3 +1,10 @@
+## v2.8.0 — Queue Command Board
+- upgrades the backend inquiry list page into a stronger operator triage surface
+- expands the list toolbar into a read-only **Queue Command Board** with live queue metrics and headline posture
+- adds **Live Triage Lanes** so operators can jump directly into unassigned, overdue, due-today, and proposal-window records
+- adds an **Operator Triage Playbook** with queue-first routing guidance before opening individual inquiries
+- keeps the update backend-only with no schema, public `/plan`, quick-action, or stable filter regression risk
+
 ## v2.7.0 — Operator Command Deck
 - added a new **Command** tab to the backend inquiry update screen
 - introduced a composite **Operator Command Deck** panel for queue posture, guest readiness, commercial clarity, and safest next action

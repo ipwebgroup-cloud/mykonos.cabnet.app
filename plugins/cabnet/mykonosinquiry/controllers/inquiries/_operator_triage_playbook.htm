@@ -1,0 +1,70 @@
+<?php
+use Cabnet\MykonosInquiry\Models\Inquiry;
+use Carbon\Carbon;
+
+$today = Carbon::today();
+$closedStatuses = ['closed_won', 'closed_lost', 'spam', 'closed'];
+$activeQuery = Inquiry::query()->whereNotIn('status', $closedStatuses);
+
+$counts = [
+    'unassigned' => (clone $activeQuery)
+        ->where(function ($query) {
+            $query->whereNull('owner_name')->orWhere('owner_name', '');
+        })
+        ->count(),
+    'overdue' => (clone $activeQuery)->whereDate('follow_up_date', '<', $today)->count(),
+    'first_touch' => (clone $activeQuery)->where('status', 'new')->count(),
+    'proposal_window' => (clone $activeQuery)->whereIn('status', ['proposal_sent', 'awaiting_guest'])->count(),
+    'vip' => (clone $activeQuery)->whereIn('priority', ['vip', 'urgent'])->count(),
+    'confirmed' => (clone $activeQuery)->where('status', 'confirmed')->count(),
+];
+
+$steps = [];
+$steps[] = [
+    'title' => 'Stabilize ownership first',
+    'detail' => $counts['unassigned'] > 0
+        ? sprintf('%d inquiry record(s) still have no named owner. Assign these before deeper package shaping or closure review.', $counts['unassigned'])
+        : 'All active inquiries currently show an owner. Keep reassignments explicit so hand-off continuity stays trustworthy.',
+];
+$steps[] = [
+    'title' => 'Clear overdue checkpoints',
+    'detail' => $counts['overdue'] > 0
+        ? sprintf('%d inquiry record(s) are already past follow-up date. Resolve overdue drift before adding new queue work.', $counts['overdue'])
+        : 'No overdue follow-up dates are visible right now. Keep today and future checkpoints clear.',
+];
+$steps[] = [
+    'title' => 'Handle first-touch discipline',
+    'detail' => $counts['first_touch'] > 0
+        ? sprintf('%d fresh inquiry record(s) are still in new status. Set owner, make first review, and define the next checkpoint.', $counts['first_touch'])
+        : 'Fresh inquiry first-touch discipline is under control right now.',
+];
+$steps[] = [
+    'title' => 'Protect guest-facing momentum',
+    'detail' => $counts['proposal_window'] > 0
+        ? sprintf('%d inquiry record(s) are in proposal or awaiting-guest posture. Keep reply tone, clarity, and next review date aligned.', $counts['proposal_window'])
+        : 'No proposal-window backlog is visible right now.',
+];
+$steps[] = [
+    'title' => 'Watch high-sensitivity handling',
+    'detail' => $counts['vip'] > 0 || $counts['confirmed'] > 0
+        ? sprintf('%d VIP/urgent and %d confirmed inquiry record(s) need extra continuity discipline across notes, source trail, and next action.', $counts['vip'], $counts['confirmed'])
+        : 'No high-sensitivity VIP/urgent or confirmed load spike is visible right now.',
+];
+?>
+
+<div style="margin-bottom: 16px; border:1px solid #d8dee4; border-radius:12px; background:#fff; overflow:hidden;">
+    <div style="padding:12px 14px; border-bottom:1px solid #e9ecef; background:#f8f9fa;">
+        <div style="font-size:16px; font-weight:700;">Operator triage playbook</div>
+        <div style="font-size:13px; color:#6c757d;">Read-only routing guidance for the queue page before opening individual records.</div>
+    </div>
+    <div style="padding:14px;">
+        <ol style="margin:0; padding-left:18px;">
+            <?php foreach ($steps as $step): ?>
+                <li style="margin-bottom:12px;">
+                    <div style="font-weight:700; margin-bottom:3px;"><?= e($step['title']) ?></div>
+                    <div style="font-size:13px; color:#495057;"><?= e($step['detail']) ?></div>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+</div>

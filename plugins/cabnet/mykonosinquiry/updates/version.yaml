@@ -99,3 +99,6 @@
 
 1.2.0:
     - 'Introduce the Operator Command Deck tab with composite operator guidance panels'
+
+1.3.0:
+    - 'Introduce the Queue Command Board on the inquiry list page with live triage lanes and operator routing guidance'

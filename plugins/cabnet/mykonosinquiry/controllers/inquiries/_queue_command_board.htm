@@ -1,0 +1,127 @@
+<?php
+use Cabnet\MykonosInquiry\Models\Inquiry;
+use Carbon\Carbon;
+
+$today = Carbon::today();
+$closedStatuses = ['closed_won', 'closed_lost', 'spam', 'closed'];
+$activeQuery = Inquiry::query()->whereNotIn('status', $closedStatuses);
+
+$metrics = [
+    [
+        'label' => 'Active queue',
+        'value' => (clone $activeQuery)->count(),
+        'hint' => 'Open inquiries in the live queue',
+        'tone' => 'primary',
+    ],
+    [
+        'label' => 'Unassigned',
+        'value' => (clone $activeQuery)
+            ->where(function ($query) {
+                $query->whereNull('owner_name')->orWhere('owner_name', '');
+            })
+            ->count(),
+        'hint' => 'Need owner assignment',
+        'tone' => 'critical',
+    ],
+    [
+        'label' => 'Needs first touch',
+        'value' => (clone $activeQuery)->where('status', 'new')->count(),
+        'hint' => 'Fresh inquiries not yet worked',
+        'tone' => 'warning',
+    ],
+    [
+        'label' => 'Due today',
+        'value' => (clone $activeQuery)->whereDate('follow_up_date', $today)->count(),
+        'hint' => 'Checkpoint is today',
+        'tone' => 'warning',
+    ],
+    [
+        'label' => 'Overdue',
+        'value' => (clone $activeQuery)->whereDate('follow_up_date', '<', $today)->count(),
+        'hint' => 'Follow-up date has passed',
+        'tone' => 'critical',
+    ],
+    [
+        'label' => 'Proposal window',
+        'value' => (clone $activeQuery)->whereIn('status', ['proposal_sent', 'awaiting_guest'])->count(),
+        'hint' => 'Guest is waiting or proposal is live',
+        'tone' => 'neutral',
+    ],
+    [
+        'label' => 'Confirmed active',
+        'value' => (clone $activeQuery)->where('status', 'confirmed')->count(),
+        'hint' => 'Fulfillment-minded handling',
+        'tone' => 'positive',
+    ],
+    [
+        'label' => 'VIP / urgent',
+        'value' => (clone $activeQuery)->whereIn('priority', ['vip', 'urgent'])->count(),
+        'hint' => 'High-sensitivity queue items',
+        'tone' => 'critical',
+    ],
+];
+
+$paletteFor = function ($tone) {
+    switch ($tone) {
+        case 'critical':
+            return ['border' => '#dc3545', 'bg' => '#fff5f5', 'text' => '#842029'];
+        case 'warning':
+            return ['border' => '#fd7e14', 'bg' => '#fff8f0', 'text' => '#9a4d00'];
+        case 'positive':
+            return ['border' => '#198754', 'bg' => '#f2fbf6', 'text' => '#0f5132'];
+        case 'primary':
+            return ['border' => '#0d6efd', 'bg' => '#eef5ff', 'text' => '#084298'];
+        default:
+            return ['border' => '#6c757d', 'bg' => '#f7f8f9', 'text' => '#495057'];
+    }
+};
+
+$unassignedCount = $metrics[1]['value'];
+$overdueCount = $metrics[4]['value'];
+$firstTouchCount = $metrics[2]['value'];
+$proposalWindowCount = $metrics[5]['value'];
+$vipCount = $metrics[7]['value'];
+
+$headline = 'Queue posture is balanced.';
+$headlineTone = 'positive';
+
+if ($overdueCount > 0 || $unassignedCount > 0) {
+    $headline = 'Queue needs active triage attention.';
+    $headlineTone = 'critical';
+} elseif ($firstTouchCount > 0 || $proposalWindowCount > 0 || $vipCount > 0) {
+    $headline = 'Queue is active and needs guided next moves.';
+    $headlineTone = 'warning';
+}
+
+$headlinePalette = $paletteFor($headlineTone);
+?>
+
+<div style="margin-bottom: 18px;">
+    <div style="border:1px solid <?= e($headlinePalette['border']) ?>; background:<?= e($headlinePalette['bg']) ?>; border-radius:12px; padding:14px 16px; margin-bottom:14px;">
+        <div style="font-size:18px; font-weight:700; color:<?= e($headlinePalette['text']) ?>; margin-bottom:4px;">
+            <?= e($headline) ?>
+        </div>
+        <div style="font-size:13px; color:<?= e($headlinePalette['text']) ?>; opacity:0.92;">
+            Prioritize owner clarity, overdue follow-ups, and first-touch discipline before deep proposal shaping.
+        </div>
+    </div>
+
+    <div class="row">
+        <?php foreach ($metrics as $metric): ?>
+            <?php $palette = $paletteFor($metric['tone']); ?>
+            <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
+                <div style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px; min-height:118px;">
+                    <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($palette['text']) ?>; opacity:0.8; margin-bottom:8px;">
+                        <?= e($metric['label']) ?>
+                    </div>
+                    <div style="font-size:30px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:8px;">
+                        <?= e((string) $metric['value']) ?>
+                    </div>
+                    <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.9;">
+                        <?= e($metric['hint']) ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

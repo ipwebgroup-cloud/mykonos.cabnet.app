@@ -1,66 +1,22 @@
-<?php
-    use Cabnet\MykonosInquiry\Models\Inquiry;
-    use Carbon\Carbon;
-
-    $today = Carbon::today()->toDateString();
-    $closedStatuses = ['closed_won', 'closed_lost', 'spam', 'closed'];
-
-    $activeCount = Inquiry::query()
-        ->whereNotIn('status', $closedStatuses)
-        ->count();
-
-    $unassignedCount = Inquiry::query()
-        ->whereNotIn('status', $closedStatuses)
-        ->where(function ($query) {
-            $query->whereNull('owner_name')->orWhere('owner_name', '');
-        })
-        ->count();
-
-    $firstTouchCount = Inquiry::query()
-        ->whereNotIn('status', $closedStatuses)
-        ->where('status', 'new')
-        ->count();
-
-    $dueTodayCount = Inquiry::query()
-        ->whereNotIn('status', $closedStatuses)
-        ->whereDate('follow_up_date', $today)
-        ->count();
-
-    $overdueCount = Inquiry::query()
-        ->whereNotIn('status', $closedStatuses)
-        ->whereDate('follow_up_date', '<', $today)
-        ->count();
-
-    $cards = [
-        ['label' => 'Active queue', 'value' => $activeCount, 'hint' => 'Open inquiries', 'color' => '#0d6efd', 'bg' => '#e7f1ff'],
-        ['label' => 'Unassigned', 'value' => $unassignedCount, 'hint' => 'Owner missing', 'color' => '#b02a37', 'bg' => '#fdebec'],
-        ['label' => 'Needs first touch', 'value' => $firstTouchCount, 'hint' => 'Status: new', 'color' => '#6f42c1', 'bg' => '#f1e8ff'],
-        ['label' => 'Due today', 'value' => $dueTodayCount, 'hint' => 'Follow-up date today', 'color' => '#fd7e14', 'bg' => '#fff3e8'],
-        ['label' => 'Overdue', 'value' => $overdueCount, 'hint' => 'Past follow-up date', 'color' => '#b02a37', 'bg' => '#fdebec'],
-    ];
-?>
-<div data-control="toolbar">
-    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;">
-        <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">New inquiry</a>
-
-        <div style="display:flex;flex:1 1 680px;flex-wrap:wrap;gap:10px;align-items:stretch;min-width:280px;">
-            <?php foreach ($cards as $card): ?>
-                <div style="flex:1 1 140px;min-width:135px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
-                    <div style="display:inline-block;padding:4px 8px;border-radius:999px;background:<?= e($card['bg']) ?>;color:<?= e($card['color']) ?>;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;">
-                        <?= e($card['label']) ?>
-                    </div>
-                    <div style="margin-top:10px;font-size:24px;font-weight:700;line-height:1;color:#111827;">
-                        <?= e((string) $card['value']) ?>
-                    </div>
-                    <div style="margin-top:6px;font-size:12px;color:#64748b;line-height:1.45;">
-                        <?= e($card['hint']) ?>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-
-    <div style="margin-top:10px;font-size:12px;color:#64748b;line-height:1.55;">
-        Queue snapshot is read-only and uses the current live data model. List filters remain on the conservative stable baseline.
+<div class="control-toolbar">
+    <div class="toolbar-item toolbar-primary">
+        <a
+            href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>"
+            class="btn btn-primary oc-icon-plus"
+        >New inquiry</a>
     </div>
 </div>
+
+<div class="callout callout-info no-subheader" style="margin-top: 0; margin-bottom: 18px;">
+    <div class="header">
+        <i class="icon-life-ring"></i>
+        <h3>Queue Command Board</h3>
+        <p>
+            Backend-only triage surface for safer operator scanning. It reads the live inquiry model without changing the conservative stable filter setup.
+        </p>
+    </div>
+</div>
+
+<?= $this->makePartial('queue_command_board') ?>
+<?= $this->makePartial('queue_lane_board') ?>
+<?= $this->makePartial('operator_triage_playbook') ?>
