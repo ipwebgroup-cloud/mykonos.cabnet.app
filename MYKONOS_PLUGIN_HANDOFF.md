@@ -8,11 +8,11 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity renders safely even when the loyalty storage layer is not installed.
-- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, qualification, segmentation, treatment-lane, journey-state, intervention-matrix, timing-guidance, pilot-lane, intent-mapping, offer-architecture, cadence-planning, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, and frequency-cap planning surface rather than a placeholder.
+- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, qualification, segmentation, treatment-lane, journey-state, intervention-matrix, timing-guidance, pilot-lane, intent-mapping, offer-architecture, cadence-planning, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, frequency-cap, consent-discipline, and approval-checkpoint planning surface rather than a placeholder.
 
 ## This patch
-- Version: `v3.7.0`
-- Name: `loyalty suppression controls and frequency-cap workspace`
+- Version: `v3.8.0`
+- Name: `loyalty consent discipline and approval checkpoints workspace`
 - Type: plugin-only major patch
 - No schema change
 - No theme change
@@ -24,19 +24,15 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_install_state_overview.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_trigger_library_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_escalation_thresholds_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_ownership_matrix_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_suppression_controls_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_frequency_cap_rules_panel.htm`
-- `docs/releases/MYKONOS_V370_LOYALTY_SUPPRESSION_CONTROLS_AND_FREQUENCY_CAP_WORKSPACE_PATCH.md`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_consent_discipline_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_approval_checkpoints_panel.htm`
+- `docs/releases/MYKONOS_V380_LOYALTY_CONSENT_DISCIPLINE_AND_APPROVAL_CHECKPOINTS_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty workspace already described qualification, segments, treatment lanes, timing, offers, cadence, measurement, return-value signals,
-journey-state, intervention logic, message framing, channel priority, trigger discipline, exception-routing, escalation thresholds, and ownership. The next safe step is to define who should be held back and how often continuity can speak at all. This patch adds suppression-control and frequency-cap panels so the first live pilot is governed by clear stop-rules and conservative pacing.
+The loyalty workspace already defined who may qualify, how a pilot could be paced, and where continuity should be suppressed, but it still needed clearer rules for when contact is appropriate at all and how a first live continuity move should be approved. This patch adds consent-discipline and approval-checkpoint panels so the first activation remains premium, deliberate, and defensible.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
 - Continue with plugin-only operator-facing patches until the loyalty storage layer is ready.
-- Use the qualification, journey-state, intervention, segmentation, timing, pilot-lane, intent-mapping, offer, cadence, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, and frequency-cap panels to define a very narrow first live pilot.
+- Use the qualification, journey-state, intervention, segmentation, timing, pilot-lane, intent-mapping, offer, cadence, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, frequency-cap, consent-discipline, and approval-checkpoint panels to define a very narrow first live pilot.
 - Add the loyalty tables only in a separate, explicitly installable structural release.
