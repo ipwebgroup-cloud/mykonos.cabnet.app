@@ -10,6 +10,7 @@ $snapshot = $record ? $record->stewardship_snapshot_summary : 'Stewardship closu
 $closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
 $nextFinishMove = $record ? $record->next_finish_move_label : 'Complete the current packet before choosing a finish lane';
 $finishReason = $record ? $record->finish_recommendation_reason_summary : 'Finish recommendation reasoning is still minimal.';
+$finishLaneStatus = $record ? $record->finish_lane_status_label : 'No finish lane parked';
 ?>
 <div class="callout fade in no-subheader">
     <div class="header">
@@ -40,6 +41,10 @@ $finishReason = $record ? $record->finish_recommendation_reason_summary : 'Finis
             <div class="scoreboard-item title-value">
                 <h4>Latest closure packet</h4>
                 <p><?= e($latestClosurePacket) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish lane status</h4>
+                <p><?= e($finishLaneStatus) ?></p>
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Closure window</h4>
@@ -74,6 +79,7 @@ $finishReason = $record ? $record->finish_recommendation_reason_summary : 'Finis
                 <li>Use reactivation closure when the loop produced a genuine re-engagement signal and the record should return to a narrow review cadence.</li>
                 <li>Use referral closure when goodwill is strong and the record should be parked with a longer, safer referral window.</li>
                 <li>Use return-value closure when the relationship should be protected as a high-value stewardship lane rather than pushed back into active follow-through.</li>
+                <li>After a closure packet is prepared, use the finish-lane follow-through panel to explicitly park or reopen the lane instead of leaving the finish state implied.</li>
             </ul>
         </div>
     </div>

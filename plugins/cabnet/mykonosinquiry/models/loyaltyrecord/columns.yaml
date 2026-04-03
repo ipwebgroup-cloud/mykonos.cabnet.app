@@ -48,6 +48,10 @@ columns:
         label: Finish Posture
         sortable: false
 
+    finish_lane_status_label:
+        label: Finish Lane
+        sortable: false
+
     closure_readiness_label:
         label: Closure Readiness
         sortable: false

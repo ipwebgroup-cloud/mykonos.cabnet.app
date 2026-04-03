@@ -137,6 +137,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Prepare a clean finish packet for reactivation, referral goodwill, or return-value stewardship without widening into automation.',
             ],
+            'finish_lane_follow_through_panel' => [
+                'label'   => 'Finish Lane Follow-through',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_lane_follow_through_panel.htm',
+                'tab'     => 'Workspace',
+                'span'    => 'full',
+                'comment' => 'Explicitly park or reopen the finish lane once a closure packet exists, so stewardship stays narrow and readable.',
+            ],
             'live_touchpoint_capture_panel' => [
                 'label'   => 'Live Touchpoint Capture',
                 'type'    => 'partial',
@@ -264,6 +272,18 @@ class LoyaltyRecords extends Controller
 
             case 'prepare_return_value_closure_packet':
                 return $this->prepareReturnValueClosurePacket($recordId);
+
+            case 'park_reactivation_finish_lane':
+                return $this->parkReactivationFinishLane($recordId);
+
+            case 'park_referral_finish_lane':
+                return $this->parkReferralFinishLane($recordId);
+
+            case 'park_return_value_finish_lane':
+                return $this->parkReturnValueFinishLane($recordId);
+
+            case 'reopen_finish_lane':
+                return $this->reopenFinishLane($recordId);
 
             case 'start_packet_follow_through':
                 return $this->startPacketFollowThrough($recordId);
@@ -882,6 +902,230 @@ class LoyaltyRecords extends Controller
                 return $record->stewardship_snapshot_summary;
         }
     }
+
+
+protected function parkReactivationFinishLane($recordId)
+{
+    return $this->parkFinishLaneAction($recordId, 'reactivation', 'Reactivation finish lane parked.', function (LoyaltyRecord $record): bool {
+        $changed = false;
+        $targetReviewAt = Carbon::now()->addDays(21);
+
+        if ($record->continuity_status === 'dormant' || $record->continuity_status === '' || $record->continuity_status === null) {
+            $record->continuity_status = 'active_retention';
+            $changed = true;
+        }
+
+        if (!in_array((string) $record->loyalty_stage, ['re-engaged', 'completed'], true)) {
+            $record->loyalty_stage = 're-engaged';
+            $changed = true;
+        }
+
+        if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $targetReviewAt->format('Y-m-d H:i:s')) {
+            $record->next_review_at = $targetReviewAt;
+            $changed = true;
+        }
+
+        return $changed;
+    });
+}
+
+protected function parkReferralFinishLane($recordId)
+{
+    return $this->parkFinishLaneAction($recordId, 'referral', 'Referral finish lane parked.', function (LoyaltyRecord $record): bool {
+        $changed = false;
+        $targetReviewAt = Carbon::now()->addDays(60);
+
+        if (!$record->referral_ready) {
+            $record->referral_ready = true;
+            $changed = true;
+        }
+
+        if ($record->continuity_status !== 'referral_ready') {
+            $record->continuity_status = 'referral_ready';
+            $changed = true;
+        }
+
+        if ($record->loyalty_stage !== 'completed') {
+            $record->loyalty_stage = 'completed';
+            $changed = true;
+        }
+
+        if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $targetReviewAt->format('Y-m-d H:i:s')) {
+            $record->next_review_at = $targetReviewAt;
+            $changed = true;
+        }
+
+        return $changed;
+    });
+}
+
+protected function parkReturnValueFinishLane($recordId)
+{
+    return $this->parkFinishLaneAction($recordId, 'return_value', 'Return-value finish lane parked.', function (LoyaltyRecord $record): bool {
+        $changed = false;
+        $targetReviewAt = Carbon::now()->addDays(45);
+
+        if ($record->continuity_status !== 'return_value_watch') {
+            $record->continuity_status = 'return_value_watch';
+            $changed = true;
+        }
+
+        if (!$record->return_value_candidate) {
+            $record->return_value_candidate = true;
+            $changed = true;
+        }
+
+        if (in_array((string) $record->return_value_tier, ['', 'watch', 'promising'], true)) {
+            $record->return_value_tier = 'strong';
+            $changed = true;
+        }
+
+        if (!in_array((string) $record->loyalty_stage, ['retained', 'completed'], true)) {
+            $record->loyalty_stage = 'retained';
+            $changed = true;
+        }
+
+        if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $targetReviewAt->format('Y-m-d H:i:s')) {
+            $record->next_review_at = $targetReviewAt;
+            $changed = true;
+        }
+
+        return $changed;
+    });
+}
+
+protected function reopenFinishLane($recordId)
+{
+    $record = LoyaltyRecord::findOrFail($recordId);
+
+    if ($record->latest_finish_lane_mode === '') {
+        Flash::info('No parked finish lane was found to reopen.');
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+    }
+
+    $operatorName = $this->getOperatorName();
+    $changed = false;
+    $targetReviewAt = Carbon::now()->addDays(14);
+    $mode = $record->latest_finish_lane_mode;
+
+    if (empty($record->owner_name)) {
+        $record->owner_name = $operatorName;
+        $changed = true;
+    }
+
+    if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $targetReviewAt->format('Y-m-d H:i:s')) {
+        $record->next_review_at = $targetReviewAt;
+        $changed = true;
+    }
+
+    if ($mode === 'referral' && $record->loyalty_stage === 'completed') {
+        $record->loyalty_stage = 'warm';
+        $changed = true;
+    } elseif ($mode === 'return_value' && $record->loyalty_stage === 'completed') {
+        $record->loyalty_stage = 'retained';
+        $changed = true;
+    } elseif ($mode === 'reactivation' && $record->loyalty_stage === 'completed') {
+        $record->loyalty_stage = 're-engaged';
+        $changed = true;
+    }
+
+    if ($changed) {
+        $record->save();
+    }
+
+    $record->appendTouchpoint(
+        'system',
+        'Finish lane reopened for operator review. Lane: ' . $this->humanizeValue($mode) . '.',
+        $operatorName,
+        [
+            'touchpoint_channel' => 'system',
+            'touchpoint_outcome' => 'finish_lane_reopened',
+            'touchpoint_at' => Carbon::now(),
+            'next_step_at' => $record->next_review_at,
+            'reference_code' => $record->request_reference,
+            'is_internal' => true,
+            'payload_json' => [
+                'entry_mode' => 'finish_lane_follow_through',
+                'captured_from' => 'loyalty_record_update',
+                'finish_lane_mode' => $mode,
+                'finish_lane_state' => 'reopened',
+                'finish_lane_label' => $this->humanizeValue($mode),
+                'parked_window' => $record->parked_finish_window_label,
+                'finish_posture_snapshot' => $record->stewardship_finish_posture_label,
+                'closure_readiness_snapshot' => $record->closure_readiness_label,
+                'next_finish_move_snapshot' => $record->next_finish_move_label,
+                'continuity_status_snapshot' => $record->continuity_status,
+                'loyalty_stage_snapshot' => $record->loyalty_stage,
+                'return_value_tier_snapshot' => $record->return_value_tier,
+                'referral_ready_snapshot' => (bool) $record->referral_ready,
+            ],
+        ]
+    );
+
+    Flash::success('Finish lane reopened for operator review.');
+
+    return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+}
+
+protected function parkFinishLaneAction($recordId, string $mode, string $successMessage, callable $mutator)
+{
+    $record = LoyaltyRecord::findOrFail($recordId);
+
+    if ($record->latest_closure_packet_mode === '') {
+        Flash::warning('Prepare a stewardship closure packet before parking a finish lane.');
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+    }
+
+    $operatorName = $this->getOperatorName();
+    $changed = false;
+
+    if (empty($record->owner_name)) {
+        $record->owner_name = $operatorName;
+        $changed = true;
+    }
+
+    $changed = (bool) $mutator($record) || $changed;
+
+    if ($changed) {
+        $record->save();
+    }
+
+    $record->appendTouchpoint(
+        'system',
+        'Finish lane parked on ' . $this->humanizeValue($mode) . ' posture.',
+        $operatorName,
+        [
+            'touchpoint_channel' => 'system',
+            'touchpoint_outcome' => 'finish_lane_parked',
+            'touchpoint_at' => Carbon::now(),
+            'next_step_at' => $record->next_review_at,
+            'reference_code' => $record->request_reference,
+            'is_internal' => true,
+            'payload_json' => [
+                'entry_mode' => 'finish_lane_follow_through',
+                'captured_from' => 'loyalty_record_update',
+                'finish_lane_mode' => $mode,
+                'finish_lane_state' => 'parked',
+                'finish_lane_label' => $this->humanizeValue($mode),
+                'parked_window' => $record->parked_finish_window_label,
+                'finish_posture_snapshot' => $record->stewardship_finish_posture_label,
+                'closure_packet_mode_snapshot' => $record->latest_closure_packet_mode,
+                'latest_closure_packet_snapshot' => $record->latest_closure_packet_label,
+                'closure_readiness_snapshot' => $record->closure_readiness_label,
+                'next_finish_move_snapshot' => $record->next_finish_move_label,
+                'continuity_status_snapshot' => $record->continuity_status,
+                'loyalty_stage_snapshot' => $record->loyalty_stage,
+                'return_value_tier_snapshot' => $record->return_value_tier,
+                'referral_ready_snapshot' => (bool) $record->referral_ready,
+            ],
+        ]
+    );
+
+    Flash::success($successMessage);
+
+    return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+}
+
 
     protected function runPacketExecutionAction($recordId, string $state, string $successMessage, string $touchpointBody, callable $mutator, array $meta = [])
     {

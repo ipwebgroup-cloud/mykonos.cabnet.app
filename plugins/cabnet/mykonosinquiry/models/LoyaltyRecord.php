@@ -35,6 +35,7 @@ class LoyaltyRecord extends Model
     protected $latestPreparedPacketTouchpointCache = false;
     protected $latestExecutionTouchpointCache = false;
     protected $latestClosurePacketTouchpointCache = false;
+    protected $latestFinishLaneTouchpointCache = false;
 
     public static function getWorkspaceInstallState(): array
     {
@@ -211,6 +212,8 @@ class LoyaltyRecord extends Model
             'packet_checkin'        => 'Packet check-in scheduled',
             'packet_completed'      => 'Packet follow-through completed',
             'closure_packet_prepared'=> 'Stewardship closure packet prepared',
+            'finish_lane_parked'    => 'Finish lane parked',
+            'finish_lane_reopened'  => 'Finish lane reopened',
             'state_changed'         => 'State changed',
             'record_created'        => 'Record created',
         ];
@@ -1016,8 +1019,162 @@ class LoyaltyRecord extends Model
     }
 
 
+public function getLatestFinishLaneModeAttribute(): string
+{
+    $touchpoint = $this->getLatestFinishLaneTouchpoint();
+
+    if (!$touchpoint) {
+        return '';
+    }
+
+    $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+    return trim((string) ($payload['finish_lane_mode'] ?? ''));
+}
+
+public function getLatestFinishLaneLabelAttribute(): string
+{
+    $touchpoint = $this->getLatestFinishLaneTouchpoint();
+
+    if (!$touchpoint) {
+        return 'No finish lane parked yet.';
+    }
+
+    $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+    $mode = trim((string) ($payload['finish_lane_mode'] ?? ''));
+    $state = trim((string) ($payload['finish_lane_state'] ?? ''));
+    $label = $mode !== '' ? ($this->humanizeValue($mode) ?: 'Finish') : 'Finish';
+
+    if ($state === 'reopened') {
+        return $label . ' lane reopened for operator review';
+    }
+
+    if ($state === 'parked') {
+        return $label . ' lane parked';
+    }
+
+    return $label . ' lane updated';
+}
+
+public function getFinishLaneStatusLabelAttribute(): string
+{
+    $touchpoint = $this->getLatestFinishLaneTouchpoint();
+
+    if ($touchpoint) {
+        $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+        $mode = trim((string) ($payload['finish_lane_mode'] ?? ''));
+        $state = trim((string) ($payload['finish_lane_state'] ?? ''));
+
+        if ($state === 'reopened') {
+            return 'Finish lane reopened';
+        }
+
+        switch ($mode) {
+            case 'referral':
+                return 'Referral lane parked';
+            case 'return_value':
+                return 'Return-value lane parked';
+            case 'reactivation':
+                return 'Reactivation lane parked';
+            default:
+                return 'Finish lane parked';
+        }
+    }
+
+    if ($this->latest_closure_packet_mode !== '') {
+        return 'Closure packet prepared';
+    }
+
+    return 'No finish lane parked';
+}
+
+public function getParkedFinishWindowLabelAttribute(): string
+{
+    $mode = $this->latest_finish_lane_mode;
+
+    if ($mode === '') {
+        $mode = $this->latest_closure_packet_mode;
+    }
+
+    if ($mode === '') {
+        switch ($this->closure_packet_recommendation_label) {
+            case 'Prepare referral closure packet':
+                $mode = 'referral';
+                break;
+            case 'Prepare return-value closure packet':
+                $mode = 'return_value';
+                break;
+            case 'Prepare reactivation closure packet':
+                $mode = 'reactivation';
+                break;
+            default:
+                $mode = 'review';
+                break;
+        }
+    }
+
+    switch ($mode) {
+        case 'referral':
+            return '60-day parked goodwill window';
+        case 'return_value':
+            return '45-day parked value-watch window';
+        case 'reactivation':
+            return '21-day parked reactivation review';
+        default:
+            return '21-day parked review window';
+    }
+}
+
+public function getFinishLaneSnapshotSummaryAttribute(): string
+{
+    return $this->formatSummary([
+        'Finish lane status' => $this->finish_lane_status_label,
+        'Latest finish lane' => $this->latest_finish_lane_label,
+        'Parked finish window' => $this->parked_finish_window_label,
+        'Finish posture' => $this->stewardship_finish_posture_label,
+        'Closure readiness' => $this->closure_readiness_label,
+        'Latest closure packet' => $this->latest_closure_packet_label,
+        'Next finish move' => $this->next_finish_move_label,
+        'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') : 'Not scheduled',
+    ], 'Finish lane follow-through is still minimal.');
+}
+
+public function getFinishLaneFollowThroughFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Finish lane status: ' . $this->finish_lane_status_label . '.';
+    $lines[] = 'Latest finish lane: ' . $this->latest_finish_lane_label . '.';
+    $lines[] = 'Parked window: ' . $this->parked_finish_window_label . '.';
+    $lines[] = 'Finish posture: ' . $this->stewardship_finish_posture_label . '.';
+    $lines[] = 'Next finish move: ' . $this->next_finish_move_label . '.';
+
+    if ($this->latest_finish_lane_mode !== '') {
+        $lines[] = 'The record is already parked on an explicit finish lane and should only be reopened on new proof.';
+    } elseif ($this->latest_closure_packet_mode !== '') {
+        $lines[] = 'A closure packet exists, but the finish lane is not explicitly parked yet, so the next safe move is to park the matching lane deliberately.';
+    } else {
+        $lines[] = 'No closure packet is parked yet, so finish handling should stay narrow until the stewardship lane is explicit.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
     public function getClosureReadinessLabelAttribute(): string
     {
+        $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
+
+        if ($finishLaneTouchpoint) {
+            $payload = is_array($finishLaneTouchpoint->payload_json) ? $finishLaneTouchpoint->payload_json : [];
+            $state = trim((string) ($payload['finish_lane_state'] ?? ''));
+
+            if ($state === 'reopened') {
+                return 'Finish lane reopened';
+            }
+
+            return 'Finish lane parked';
+        }
+
         if ($this->latest_closure_packet_mode !== '') {
             return 'Closure packet prepared';
         }
@@ -1043,8 +1200,21 @@ class LoyaltyRecord extends Model
 
     public function getNextFinishMoveLabelAttribute(): string
     {
+        $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
+
+        if ($finishLaneTouchpoint) {
+            $payload = is_array($finishLaneTouchpoint->payload_json) ? $finishLaneTouchpoint->payload_json : [];
+            $state = trim((string) ($payload['finish_lane_state'] ?? ''));
+
+            if ($state === 'reopened') {
+                return 'Rebuild the finish lane from the next explicit signal';
+            }
+
+            return 'Hold the parked window and only reopen on new proof';
+        }
+
         if ($this->latest_closure_packet_mode !== '') {
-            return 'Monitor closure window and keep the record narrow';
+            return 'Park the matching finish lane and keep the record narrow';
         }
 
         switch ($this->closure_packet_recommendation_label) {
@@ -1096,6 +1266,9 @@ class LoyaltyRecord extends Model
 
         return $this->formatSummary([
             'Finish posture' => $this->stewardship_finish_posture_label,
+            'Finish lane status' => $this->finish_lane_status_label,
+            'Latest finish lane' => $this->latest_finish_lane_label,
+            'Parked finish window' => $this->parked_finish_window_label,
             'Closure recommendation' => $this->closure_packet_recommendation_label,
             'Latest closure packet' => $this->latest_closure_packet_label,
             'Closure packet logged at' => $closureAt,
@@ -1110,12 +1283,15 @@ class LoyaltyRecord extends Model
     {
         $lines = [];
         $lines[] = 'Finish posture: ' . $this->stewardship_finish_posture_label . '.';
+        $lines[] = 'Finish lane status: ' . $this->finish_lane_status_label . '.';
         $lines[] = 'Closure readiness: ' . $this->closure_readiness_label . '.';
         $lines[] = 'Recommendation: ' . $this->closure_packet_recommendation_label . '.';
         $lines[] = 'Why: ' . $this->buildFinishReasonLine() . '.';
         $lines[] = 'Next finish move: ' . $this->next_finish_move_label . '.';
 
-        if ($this->latest_closure_packet_mode !== '') {
+        if ($this->latest_finish_lane_mode !== '') {
+            $lines[] = 'Latest finish lane: ' . $this->latest_finish_lane_label . ' with a ' . $this->parked_finish_window_label . '.';
+        } elseif ($this->latest_closure_packet_mode !== '') {
             $lines[] = 'Latest closure packet: ' . $this->latest_closure_packet_label . ' with a ' . $this->closure_window_label . '.';
         } else {
             $lines[] = 'No closure packet is prepared yet, so the record should stay narrow and readable until the finish lane is explicit.';
@@ -1184,6 +1360,9 @@ class LoyaltyRecord extends Model
     {
         return $this->formatSummary([
             'Finish posture' => $this->stewardship_finish_posture_label,
+            'Finish lane status' => $this->finish_lane_status_label,
+            'Latest finish lane' => $this->latest_finish_lane_label,
+            'Parked finish window' => $this->parked_finish_window_label,
             'Closure recommendation' => $this->closure_packet_recommendation_label,
             'Latest closure packet' => $this->latest_closure_packet_label,
             'Closure window' => $this->closure_window_label,
@@ -1282,6 +1461,23 @@ class LoyaltyRecord extends Model
 
         return $this->latestClosurePacketTouchpointCache ?: null;
     }
+
+
+
+protected function getLatestFinishLaneTouchpoint(): ?LoyaltyTouchpoint
+{
+    if ($this->latestFinishLaneTouchpointCache !== false) {
+        return $this->latestFinishLaneTouchpointCache ?: null;
+    }
+
+    $this->latestFinishLaneTouchpointCache = $this->findLatestTouchpointByCallback(function (LoyaltyTouchpoint $touchpoint): bool {
+        $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+        return !empty($payload['finish_lane_mode']) || (($payload['entry_mode'] ?? null) === 'finish_lane_follow_through');
+    });
+
+    return $this->latestFinishLaneTouchpointCache ?: null;
+}
 
 
     protected function findLatestTouchpointByCallback(callable $callback): ?LoyaltyTouchpoint
@@ -1412,6 +1608,10 @@ class LoyaltyRecord extends Model
         $latestOutcome = $latestTouchpoint ? (string) $latestTouchpoint->touchpoint_outcome : '';
         $executionStatus = $this->packet_execution_status_label;
 
+        if ($this->latest_finish_lane_mode !== '') {
+            return 'a finish lane is already explicitly parked, so the record now belongs in a monitored parked window rather than a new closure cycle';
+        }
+
         if ($this->latest_closure_packet_mode !== '') {
             return 'A closure packet is already present, so the record now belongs in a monitored finish window rather than a new packet cycle';
         }
@@ -1490,6 +1690,7 @@ class LoyaltyRecord extends Model
         $this->latestPreparedPacketTouchpointCache = false;
         $this->latestExecutionTouchpointCache = false;
         $this->latestClosurePacketTouchpointCache = false;
+        $this->latestFinishLaneTouchpointCache = false;
 
         return $touchpoint;
     }

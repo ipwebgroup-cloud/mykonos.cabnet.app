@@ -249,6 +249,38 @@ tabs:
             span: right
             comment: Suggested narrow review window for the current finish posture.
 
+        finish_lane_status_label:
+            label: Finish Lane Status
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: Whether the stewardship lane is only prepared, explicitly parked, or reopened for review.
+
+        parked_finish_window_label:
+            label: Parked Finish Window
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Narrow parked window for the current finish lane once closure is deliberately parked.
+
+        finish_lane_snapshot_summary:
+            label: Finish Lane Snapshot
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: At-a-glance summary of the current parked or reopened finish lane posture.
+
+        finish_lane_follow_through_frame:
+            label: Finish Lane Follow-through Frame
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Read-only framing that makes the parked finish state easier to understand and reopen deliberately.
+
         continuity_loop_posture_label:
             label: Continuity Loop Posture
             tab: Workspace

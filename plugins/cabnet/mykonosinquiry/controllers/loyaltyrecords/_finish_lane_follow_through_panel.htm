@@ -1,0 +1,84 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$finishLaneStatus = $record ? $record->finish_lane_status_label : 'No finish lane parked';
+$latestFinishLane = $record ? $record->latest_finish_lane_label : 'No finish lane parked yet.';
+$parkedWindow = $record ? $record->parked_finish_window_label : '21-day parked review window';
+$latestClosurePacket = $record ? $record->latest_closure_packet_label : 'No closure packet prepared yet.';
+$finishPosture = $record ? $record->stewardship_finish_posture_label : 'Review posture maintained';
+$closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
+$nextFinishMove = $record ? $record->next_finish_move_label : 'Prepare a stewardship closure packet first';
+$finishLaneSnapshot = $record ? $record->finish_lane_snapshot_summary : 'Finish lane follow-through is still minimal.';
+$finishLaneFrame = $record ? $record->finish_lane_follow_through_frame : 'Finish lane follow-through is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-map-signs"></i>
+        <h4 style="margin-top:0;">Finish lane follow-through</h4>
+        <p>
+            Explicitly park or reopen the finish lane after a closure packet exists, so stewardship closure becomes a visible parked state instead of an implied one.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Finish lane status</h4>
+                <p><?= e($finishLaneStatus) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest finish lane</h4>
+                <p><?= e($latestFinishLane) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked window</h4>
+                <p><?= e($parkedWindow) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest closure packet</h4>
+                <p><?= e($latestClosurePacket) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish posture</h4>
+                <p><?= e($finishPosture) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($closureReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($nextFinishMove) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;">
+            <button type="submit" class="btn btn-default oc-icon-refresh" name="_loyalty_action" value="park_reactivation_finish_lane">
+                Park reactivation lane
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-heart" name="_loyalty_action" value="park_referral_finish_lane">
+                Park referral lane
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-star" name="_loyalty_action" value="park_return_value_finish_lane">
+                Park return-value lane
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-undo" name="_loyalty_action" value="reopen_finish_lane">
+                Reopen finish lane
+            </button>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Finish lane snapshot:</strong> <?= nl2br(e($finishLaneSnapshot)) ?></li>
+                <li><strong>Finish lane frame:</strong> <?= nl2br(e($finishLaneFrame)) ?></li>
+                <li>Park a finish lane only after a stewardship closure packet exists, so the record moves into a deliberate parked state instead of an implied one.</li>
+                <li>Use reactivation lane parking when the relationship should fall back into a short reactivation review cadence.</li>
+                <li>Use referral lane parking when goodwill should be protected on a longer, lower-pressure parked window.</li>
+                <li>Use return-value lane parking when the relationship should be held as a measured stewardship lane rather than pushed back into active handling.</li>
+                <li>Reopen the finish lane only when new proof appears and a human operator should deliberately rebuild the finish decision.</li>
+            </ul>
+        </div>
+    </div>
+</div>
