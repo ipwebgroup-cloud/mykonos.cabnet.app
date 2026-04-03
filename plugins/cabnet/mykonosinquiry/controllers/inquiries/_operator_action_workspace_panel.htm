@@ -1,0 +1,168 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$humanize = function ($value) {
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+    return ucwords(str_replace(['_', '-'], ' ', $value));
+};
+
+$formatDate = function ($value, $format = 'Y-m-d') {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format($format);
+    }
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+    try {
+        return (new DateTime($value))->format($format);
+    } catch (Throwable $e) {
+        return $value;
+    }
+};
+
+$status = trim((string) ($record->status ?? 'new'));
+$priority = trim((string) ($record->priority ?? 'normal'));
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUp = $formatDate($record->follow_up_date ?? null);
+$lastContacted = $formatDate($record->last_contacted_at ?? null, 'Y-m-d H:i');
+$requestReference = trim((string) ($record->request_reference ?? ''));
+$guestName = trim((string) ($record->full_name ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$arrival = $formatDate($record->arrival_date ?? null);
+$departure = $formatDate($record->departure_date ?? null);
+$budget = trim((string) ($record->budget ?? ''));
+$guestSummary = trim((string) ($record->guest_summary ?? ''));
+$internalNotes = trim((string) ($record->internal_notes ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$services = array_values(array_filter(array_map('trim', (array) ($record->services_json ?? []))));
+
+$isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+$needsOwner = !$isClosed && $owner === '';
+$needsFollowUp = !$isClosed && $followUp === '';
+$needsGuestRoute = ($email === '' && $phone === '');
+$needsTripFrame = ($arrival === '' || $departure === '');
+$needsScope = empty($services);
+$needsBudget = trim($budget) === '';
+$needsContinuity = ($guestSummary === '' || $internalNotes === '');
+
+$primaryAction = 'Maintain current operator flow';
+$primaryDetail = 'Ownership, continuity, and queue posture are covered well enough to keep execution moving.';
+$tone = 'positive';
+if ($isClosed) {
+    $primaryAction = 'Protect closure clarity';
+    $primaryDetail = $closedReason !== ''
+        ? 'Keep closure context concise and factual so reopen review stays clean.'
+        : 'Add a short factual closure reason before treating the record as safely closed.';
+    $tone = $closedReason === '' ? 'warning' : 'positive';
+} elseif ($needsOwner) {
+    $primaryAction = 'Stabilize ownership first';
+    $primaryDetail = 'Assign a named owner before deeper packaging, guest-touch planning, or hand-off.';
+    $tone = 'critical';
+} elseif ($needsGuestRoute || $needsTripFrame || $needsScope) {
+    $primaryAction = 'Run a clarification-first next move';
+    $primaryDetail = 'Basic contact, trip, or service anchors are still thin, so the next action should close gaps instead of over-shaping an offer.';
+    $tone = 'warning';
+} elseif ($status === 'awaiting_guest' || $status === 'contacted') {
+    $primaryAction = 'Protect reply momentum';
+    $primaryDetail = 'Keep reply route, tone, and next checkpoint explicit so the inquiry does not drift after contact.';
+    $tone = 'warning';
+} elseif (in_array($status, ['reviewed', 'proposal', 'proposal_sent'], true) || $needsBudget) {
+    $primaryAction = 'Shape the next commercial move';
+    $primaryDetail = 'The record is moving toward packaging. Tighten budget, service scope, and accommodation posture before overcommitting.';
+    $tone = $needsBudget ? 'warning' : 'positive';
+} elseif ($status === 'confirmed') {
+    $primaryAction = 'Shift into execution continuity';
+    $primaryDetail = 'Use the record to keep sourcing, delivery, and guest confidence tightly aligned.';
+    $tone = 'positive';
+}
+
+$actionCards = [
+    [
+        'eyebrow' => 'Now',
+        'headline' => $primaryAction,
+        'body' => [$primaryDetail],
+        'tone' => $tone,
+    ],
+    [
+        'eyebrow' => 'Queue control',
+        'headline' => $needsFollowUp ? 'Next checkpoint still needs scheduling' : 'Queue checkpoint is visible',
+        'body' => [
+            $needsFollowUp ? 'Set a follow-up date so the queue remains explicit and auditable.' : 'Follow-up date is set for ' . $followUp . '.',
+            $lastContacted !== '' ? 'Last contacted is logged at ' . $lastContacted . '.' : 'Last contacted is not yet logged.',
+        ],
+        'tone' => $needsFollowUp ? 'warning' : 'positive',
+    ],
+    [
+        'eyebrow' => 'Guest coverage',
+        'headline' => ($needsGuestRoute || $needsTripFrame || $needsScope) ? 'Coverage gaps still shape the next move' : 'Guest-facing basics are covered',
+        'body' => array_values(array_filter([
+            $guestName !== '' ? 'Guest name is visible as “' . $guestName . '”.' : 'Guest name is not yet captured.',
+            $needsGuestRoute ? 'No reliable guest contact route is visible yet.' : 'At least one direct contact route is present.',
+            $needsTripFrame ? 'Arrival or departure timing still needs reinforcement.' : 'Trip timing is visible enough for active handling.',
+            $needsScope ? 'Requested services are still too thin for precise packaging.' : 'Service focus is visible enough for next-step shaping.',
+        ])),
+        'tone' => ($needsGuestRoute || $needsTripFrame || $needsScope) ? 'warning' : 'positive',
+    ],
+    [
+        'eyebrow' => 'Continuity',
+        'headline' => $needsContinuity ? 'Working continuity still needs reinforcement' : 'Working continuity is in decent shape',
+        'body' => [
+            $requestReference !== '' ? 'Request reference is visible as ' . $requestReference . '.' : 'Request reference is missing.',
+            $guestSummary !== '' ? 'Operator summary is present.' : 'Operator summary is still blank.',
+            $internalNotes !== '' ? 'Working notes are present.' : 'Working notes are still blank.',
+        ],
+        'tone' => $needsContinuity ? 'warning' : 'positive',
+    ],
+];
+
+$paletteMap = [
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'warning' => ['#b45309', '#fff7ed', '#fed7aa'],
+    'critical' => ['#b91c1c', '#fef2f2', '#fecaca'],
+];
+?>
+<div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:16px; padding:18px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:14px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700;">Operator Action Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;">Record-level next-move control board</div>
+        </div>
+        <div style="font-size:12px; color:#475569; max-width:340px; text-align:right;">
+            Status <strong><?= e($humanize($status) ?: 'New') ?></strong>
+            · Priority <strong><?= e($humanize($priority) ?: 'Normal') ?></strong>
+            <?php if ($requestReference !== ''): ?>· Ref <strong><?= e($requestReference) ?></strong><?php endif; ?>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
+        <?php foreach ($actionCards as $card): $palette = $paletteMap[$card['tone']]; ?>
+            <div style="border:1px solid <?= e($palette[2]) ?>; background:#fff; border-radius:14px; padding:14px;">
+                <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;"><?= e($card['eyebrow']) ?></div>
+                <div style="font-size:17px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($card['headline']) ?></div>
+                <ul style="margin:0 0 0 18px; padding:0; color:#334155; font-size:13px; line-height:1.55;">
+                    <?php foreach ($card['body'] as $line): ?>
+                        <li style="margin-bottom:6px;"><?= e($line) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="border:1px dashed #bfd5ff; border-radius:12px; background:#fff; padding:12px 14px;">
+        <div style="font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#1d4ed8; font-weight:700; margin-bottom:6px;">Why this tab exists</div>
+        <div style="font-size:13px; color:#334155; line-height:1.6;">
+            This Action tab turns the record into a safer next-move workspace. Use it before editing detailed fields so assignment, guest contact, commercial pacing, and continuity stay aligned.
+        </div>
+    </div>
+</div>

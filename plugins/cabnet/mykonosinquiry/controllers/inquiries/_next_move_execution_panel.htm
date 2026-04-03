@@ -1,0 +1,133 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$formatDate = function ($value, $format = 'Y-m-d') {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format($format);
+    }
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+    try {
+        return (new DateTime($value))->format($format);
+    } catch (Throwable $e) {
+        return $value;
+    }
+};
+
+$status = trim((string) ($record->status ?? 'new'));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$contactPreference = trim((string) ($record->contact_preference ?? ''));
+$arrival = $formatDate($record->arrival_date ?? null);
+$departure = $formatDate($record->departure_date ?? null);
+$budget = trim((string) ($record->budget ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUp = $formatDate($record->follow_up_date ?? null);
+$services = array_values(array_filter(array_map('trim', (array) ($record->services_json ?? []))));
+$closedStatuses = ['closed_won', 'closed_lost', 'closed', 'spam'];
+$isClosed = in_array($status, $closedStatuses, true);
+
+$route = 'Email-first';
+if ($contactPreference !== '') {
+    $route = ucwords(str_replace(['_', '-'], ' ', $contactPreference));
+} elseif ($phone !== '' && $email === '') {
+    $route = 'Phone / WhatsApp-first';
+} elseif ($phone !== '' && $email !== '') {
+    $route = 'Email with phone fallback';
+}
+if ($isClosed) {
+    $route = 'No active guest touch unless reopen is justified';
+}
+
+$goal = 'Keep momentum without over-shaping the next move.';
+if ($owner === '') {
+    $goal = 'Assign ownership before any guest-facing action.';
+} elseif ($isClosed) {
+    $goal = 'Preserve a factual closure record rather than sending a new touch.';
+} elseif ($arrival === '' || $departure === '' || empty($services)) {
+    $goal = 'Close the highest-value information gaps before packaging.';
+} elseif ($budget === '' || in_array($status, ['reviewed', 'proposal', 'proposal_sent'], true)) {
+    $goal = 'Shape the next commercial response with clearer package boundaries.';
+} elseif ($status === 'awaiting_guest') {
+    $goal = 'Send a concise momentum-preserving follow-up that makes the reply easy.';
+} elseif ($status === 'confirmed') {
+    $goal = 'Use the next touch to reinforce confidence, logistics, and execution clarity.';
+}
+
+$include = [];
+if ($owner !== '') {
+    $include[] = 'Keep ownership visible so the guest feels there is one active handler.';
+}
+if (!empty($services)) {
+    $include[] = 'Echo the main requested service focus: ' . implode(', ', array_slice($services, 0, 3)) . '.';
+}
+if ($arrival !== '' || $departure !== '') {
+    $include[] = 'Reference the trip window to show continuity and attention to detail.';
+}
+if ($budget !== '') {
+    $include[] = 'Anchor the next move around the visible budget range or commercial posture.';
+}
+if ($followUp !== '') {
+    $include[] = 'Keep the next checkpoint internally aligned with the promised follow-up timing.';
+}
+if (empty($include)) {
+    $include[] = 'Start with a concise acknowledgment and gather the facts needed for the next real decision.';
+}
+
+$avoid = [];
+if ($owner === '') {
+    $avoid[] = 'Do not create guest-facing momentum without a named internal owner.';
+}
+if ($arrival === '' || $departure === '') {
+    $avoid[] = 'Do not overcommit on availability or package timing before the trip window is clearer.';
+}
+if (empty($services)) {
+    $avoid[] = 'Do not jump into a detailed offer before service scope is explicit.';
+}
+if ($budget === '') {
+    $avoid[] = 'Avoid heavy proposal shaping if budget posture is still unknown.';
+}
+if ($isClosed) {
+    $avoid[] = 'Avoid restarting guest-facing motion unless reopen is intentional and documented.';
+}
+if (empty($avoid)) {
+    $avoid[] = 'Avoid oversized responses that create more ambiguity than movement.';
+}
+?>
+<div style="border:1px solid #d8dee4; border-radius:14px; background:#fff; overflow:hidden; margin-bottom:16px;">
+    <div style="padding:12px 14px; border-bottom:1px solid #e9ecef; background:#f8fafc;">
+        <div style="font-size:16px; font-weight:700; color:#0f172a;">Next Move Execution</div>
+        <div style="font-size:13px; color:#64748b;">Read-only execution brief for the next guest-facing or operator-side move.</div>
+    </div>
+    <div style="padding:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px;">
+        <div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:12px; padding:12px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:6px;">Preferred route</div>
+            <div style="font-size:17px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($route) ?></div>
+            <div style="font-size:13px; color:#334155; line-height:1.6;"><?= e($goal) ?></div>
+        </div>
+        <div style="border:1px solid #d1fae5; background:#f0fdf4; border-radius:12px; padding:12px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#047857; font-weight:700; margin-bottom:6px;">Include in the next move</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#334155; font-size:13px; line-height:1.55;">
+                <?php foreach ($include as $line): ?>
+                    <li style="margin-bottom:6px;"><?= e($line) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div style="border:1px solid #fed7aa; background:#fff7ed; border-radius:12px; padding:12px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#c2410c; font-weight:700; margin-bottom:6px;">Avoid on the next move</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#334155; font-size:13px; line-height:1.55;">
+                <?php foreach ($avoid as $line): ?>
+                    <li style="margin-bottom:6px;"><?= e($line) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = trim((string) ($record->status ?? 'new'));
+$owner = trim((string) ($record->owner_name ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guestSummary = trim((string) ($record->guest_summary ?? ''));
+$internalNotes = trim((string) ($record->internal_notes ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$services = array_values(array_filter(array_map('trim', (array) ($record->services_json ?? []))));
+
+$cards = [];
+
+$clarifyReady = ($owner !== '');
+$cards[] = [
+    'title' => 'Clarification move',
+    'tone' => $clarifyReady ? 'positive' : 'critical',
+    'headline' => $clarifyReady ? 'Safe when handled by a named owner' : 'Assign ownership first',
+    'checks' => [
+        $owner !== '' ? 'Named owner is visible.' : 'No named owner is visible yet.',
+        !empty($services) ? 'There is already some visible service focus.' : 'Service focus still needs to be made explicit.',
+        ($arrival !== '' || $departure !== '') ? 'At least part of the trip window is visible.' : 'Trip timing is still thin.',
+    ],
+];
+
+$proposalReady = ($owner !== '' && !empty($services) && $budget !== '' && $arrival !== '' && $departure !== '');
+$cards[] = [
+    'title' => 'Proposal-shaping move',
+    'tone' => $proposalReady ? 'positive' : 'warning',
+    'headline' => $proposalReady ? 'Enough structure exists for proposal shaping' : 'Still needs more structure before deeper packaging',
+    'checks' => [
+        $budget !== '' ? 'Budget posture is visible.' : 'Budget posture is still missing.',
+        !empty($services) ? 'Service scope is visible.' : 'Service scope is still too thin.',
+        ($arrival !== '' && $departure !== '') ? 'Trip window is explicit.' : 'Trip window is not fully explicit yet.',
+    ],
+];
+
+$confirmationReady = in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed'], true) && $proposalReady;
+$cards[] = [
+    'title' => 'Confirmation-style move',
+    'tone' => $confirmationReady ? 'positive' : 'warning',
+    'headline' => $confirmationReady ? 'Confirmation posture is forming' : 'Do not force confirmation yet',
+    'checks' => [
+        in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed'], true) ? 'Workflow status is already in a late-stage posture.' : 'Workflow status is still pre-confirmation.',
+        $guestSummary !== '' ? 'Working summary supports continuity.' : 'Working summary still needs reinforcement.',
+        $internalNotes !== '' ? 'Working notes support continuity.' : 'Working notes are still thin for a confident transition.',
+    ],
+];
+
+$closureReady = in_array($status, ['closed_won', 'closed_lost', 'spam', 'closed'], true) && $closedReason !== '';
+$cards[] = [
+    'title' => 'Closure / reopen discipline',
+    'tone' => $closureReady ? 'positive' : 'warning',
+    'headline' => $closureReady ? 'Closure context is visible enough to trust later' : 'Closure and reopen context still need discipline',
+    'checks' => [
+        in_array($status, ['closed_won', 'closed_lost', 'spam', 'closed'], true) ? 'Record is currently in a closure-style status.' : 'Record is currently open and should not be treated as closed.',
+        $closedReason !== '' ? 'Closed reason is recorded.' : 'Closed reason is blank or thin.',
+        ($guestSummary !== '' || $internalNotes !== '') ? 'There is at least some continuity context for later review.' : 'Future reopen review would depend too heavily on memory.',
+    ],
+];
+
+$paletteFor = function ($tone) {
+    switch ($tone) {
+        case 'critical':
+            return ['border' => '#dc2626', 'bg' => '#fef2f2', 'text' => '#7f1d1d'];
+        case 'warning':
+            return ['border' => '#ea580c', 'bg' => '#fff7ed', 'text' => '#9a3412'];
+        default:
+            return ['border' => '#16a34a', 'bg' => '#f0fdf4', 'text' => '#166534'];
+    }
+};
+?>
+<div style="border:1px solid #d8dee4; border-radius:14px; background:#fff; overflow:hidden; margin-bottom:16px;">
+    <div style="padding:12px 14px; border-bottom:1px solid #e9ecef; background:#f8fafc;">
+        <div style="font-size:16px; font-weight:700; color:#0f172a;">Record Transition Guardrails</div>
+        <div style="font-size:13px; color:#64748b;">Read-only checks for the next record transition so operators do not skip essential continuity or readiness anchors.</div>
+    </div>
+    <div style="padding:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <?php foreach ($cards as $card): $palette = $paletteFor($card['tone']); ?>
+            <div style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:12px;">
+                <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette['text']) ?>; font-weight:700; margin-bottom:6px;"><?= e($card['title']) ?></div>
+                <div style="font-size:16px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($card['headline']) ?></div>
+                <ul style="margin:0 0 0 18px; padding:0; color:#334155; font-size:13px; line-height:1.55;">
+                    <?php foreach ($card['checks'] as $line): ?>
+                        <li style="margin-bottom:6px;"><?= e($line) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

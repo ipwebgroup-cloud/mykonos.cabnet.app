@@ -166,6 +166,27 @@ tabs:
             tab: Command
             comment: Read-only check of whether assignment, source, notes, timing, and closure context are strong enough for a clean internal hand-off or reopen later.
 
+        operator_action_workspace_panel:
+            label: Operator Action Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_action_workspace_panel.htm
+            tab: Action
+            comment: Composite record-level next-move control board for queue control, guest coverage, continuity, and safest immediate operator action.
+
+        next_move_execution_panel:
+            label: Next Move Execution
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_move_execution_panel.htm
+            tab: Action
+            comment: Read-only execution brief for the next guest-facing or operator-side move, including route, message goal, and what to avoid.
+
+        record_transition_guardrails_panel:
+            label: Record Transition Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_record_transition_guardrails_panel.htm
+            tab: Action
+            comment: Read-only transition checks for clarification, proposal shaping, confirmation posture, and closure/reopen discipline before changing the record trajectory.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

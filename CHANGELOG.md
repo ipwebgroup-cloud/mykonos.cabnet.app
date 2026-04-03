@@ -1,3 +1,10 @@
+## v2.9.0 — Action Workspace
+- adds a new **Action** tab to the backend inquiry update screen
+- introduces a composite **Operator Action Workspace** panel for record-level next-move control across queue posture, guest coverage, and continuity
+- adds **Next Move Execution** guidance for route, message goal, must-include points, and what to avoid on the next touch
+- adds **Record Transition Guardrails** to keep clarification, proposal shaping, confirmation posture, and closure/reopen decisions disciplined
+- keeps the update backend-only with no schema, list filter, quick-action, or public `/plan` change
+
 ## v2.8.0 — Queue Command Board
 - upgrades the backend inquiry list page into a stronger operator triage surface
 - expands the list toolbar into a read-only **Queue Command Board** with live queue metrics and headline posture
