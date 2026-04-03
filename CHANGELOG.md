@@ -1,3 +1,9 @@
+## v2.6.26 — Closure Posture Panel
+- adds a read-only **Closure Posture** panel to the Internal tab near the closure fields
+- surfaces whether the record is truly ready to close, what closure context is still missing, and the safest operator move before using close or reopen actions
+- keeps the patch backend-only with no schema change, no list change, and no public `/plan` flow change
+
+
 ## v2.6.25 — Handoff Focus Restoration
 - restores the read-only **Handoff Focus** panel on the Internal tab after confirming the partial still exists in the repo but is not currently wired into the stabilized inquiry form
 - surfaces guest focus, queue checkpoint, and current working picture in one operator scan block before editing the detailed internal fields

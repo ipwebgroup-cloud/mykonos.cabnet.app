@@ -431,6 +431,13 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of the safest anchors, write checks, and hand-off shape before updating the working summary.
 
+        closure_posture_panel:
+            label: Closure Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator framing for when a record is truly ready to close, what closure context is still missing, and how to preserve a safe reopen path.
+
         guest_summary:
             label: Operator Working Summary
             type: textarea

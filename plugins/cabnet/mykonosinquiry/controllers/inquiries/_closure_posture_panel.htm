@@ -1,0 +1,140 @@
+<?php
+$record = null;
+
+if (isset($vars['formModel']) && $vars['formModel'] && $vars['formModel']->exists) {
+    $record = $vars['formModel'];
+} elseif (isset($formModel) && $formModel && $formModel->exists) {
+    $record = $formModel;
+} elseif (isset($model) && $model && $model->exists) {
+    $record = $model;
+} elseif (isset($this->controller) && method_exists($this->controller, 'formGetModel')) {
+    $record = $this->controller->formGetModel();
+}
+
+if (!$record) { ?>
+    <p class="form-control-static">Closure posture becomes available after the inquiry is created.</p>
+<?php return; }
+
+$escape = function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+$normalize = function ($value, string $fallback = 'Not captured'): string {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map('trim', $value)));
+    }
+
+    $value = trim((string) $value);
+
+    return $value !== '' ? $value : $fallback;
+};
+
+$toneStyles = [
+    'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+    'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+$owner = trim((string) ($record->owner_name ?? ''));
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($record->follow_up_date);
+$hasContact = !empty($record->last_contacted_at);
+$hasClosedAt = !empty($record->closed_at);
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$hasClosedReason = $closedReason !== '';
+$guestSummary = trim((string) ($record->guest_summary ?? ''));
+$hasGuestSummary = $guestSummary !== '';
+$services = $normalize($record->services_inline ?? '', 'General planning');
+$budget = $normalize($record->budget ?? '', 'Not specified');
+$lastContacted = $normalize($record->last_contacted_at ?? null, 'Not contacted yet');
+$followUp = $normalize($record->follow_up_date ?? null, 'Not scheduled');
+$statusLabel = $normalize(method_exists($record, 'getStatusLabelAttribute') ? $record->status_label : ucwords(str_replace('_', ' ', $status)), 'Unknown');
+
+$tone = 'neutral';
+$headline = 'Active record posture';
+$guidance = 'This inquiry is still active. Closure should wait until the outcome is factual and the next operator would not need to reopen the record just to continue normal handling.';
+$nextMove = 'Keep ownership, next checkpoint, and the working summary explicit before using any closure action.';
+
+if ($isClosed) {
+    if ($hasClosedReason && $hasGuestSummary && $hasClosedAt) {
+        $tone = 'positive';
+        $headline = 'Closed record is continuity-safe';
+        $guidance = 'Closure context is readable. The record keeps a visible outcome, a timestamp, and enough operator context to support later reference or a deliberate reopen.';
+        $nextMove = 'Preserve the closure reason, keep the final summary concise, and reopen only if live work genuinely resumes.';
+    } elseif ($hasClosedReason) {
+        $tone = 'warning';
+        $headline = 'Closed, but context is still thin';
+        $guidance = 'A closure reason exists, but the record would be easier to trust later if the working summary captured the final guest posture and outcome in one short block.';
+        $nextMove = 'Tighten the operator summary so the record can be reopened or referenced without reconstructing the whole thread.';
+    } else {
+        $tone = 'critical';
+        $headline = 'Closed without enough closure context';
+        $guidance = 'The record is closed, but the closure reason is missing or too weak. That makes future reference and safe reopening harder than it should be.';
+        $nextMove = 'Add a short factual closure reason and a concise final summary before considering this record tidy.';
+    }
+} elseif (!$hasOwner) {
+    $tone = 'critical';
+    $headline = 'Not ready for closure';
+    $guidance = 'A closure move would be risky while ownership is still unclear. The record needs an explicit operator before any close-or-reopen judgment remains trustworthy.';
+    $nextMove = 'Assign a named owner and keep the next checkpoint visible before considering closure.';
+} elseif (in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed'], true) && !$hasFollowUp && !$isClosed) {
+    $tone = 'warning';
+    $headline = 'Active, but checkpoint is exposed';
+    $guidance = 'The inquiry is in a later-stage workflow state, yet no follow-up checkpoint is visible. Closing now would hide an active thread rather than resolve it.';
+    $nextMove = 'Schedule the next checkpoint first, then decide later whether the outcome truly becomes a closure case.';
+} elseif ($status === 'contacted' && !$hasContact) {
+    $tone = 'warning';
+    $headline = 'Contact status needs proof';
+    $guidance = 'The workflow says the guest was contacted, but the contact timestamp is missing. This is still an active continuity issue, not a closure case.';
+    $nextMove = 'Record the latest contact or correct the status before any closure decision.';
+} elseif ($status === 'confirmed') {
+    $tone = 'neutral';
+    $headline = 'Confirmed, not closed';
+    $guidance = 'Confirmed inquiries usually need execution continuity, not closure. Preserve the live operational picture unless the service outcome is genuinely finished.';
+    $nextMove = 'Keep the fulfillment path and next guest commitment explicit instead of treating confirmation as closure.';
+}
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+$checks = [
+    'Status: ' . $statusLabel,
+    'Owner: ' . $normalize($owner, 'Unassigned'),
+    'Follow-up: ' . $followUp,
+    'Last contacted: ' . $lastContacted,
+    'Closed at: ' . $normalize($record->closed_at ?? null, 'Not closed'),
+    'Closure reason: ' . $normalize($closedReason, 'Not captured'),
+    'Working summary: ' . ($hasGuestSummary ? 'Present' : 'Still blank'),
+    'Service focus: ' . $services,
+    'Budget posture: ' . $budget,
+];
+?>
+<div style="border:1px solid <?= $escape($palette[2]) ?>;background:<?= $escape($palette[1]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:<?= $escape($palette[0]) ?>;margin-bottom:6px;">Closure Posture</div>
+    <div style="font-size:20px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:8px;"><?= $escape($headline) ?></div>
+    <p style="margin:0 0 14px 0;color:#374151;line-height:1.6;"><?= $escape($guidance) ?></p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Safest operator move</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;line-height:1.55;"><?= $escape($nextMove) ?></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Closure checks</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($checks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
