@@ -250,6 +250,38 @@ tabs:
             span: right
             comment: Read-only framing for when to interpret new proof now, when to check a parked watch before due, and when to hold quietly.
 
+        finish_close_compression_label:
+            label: Finish-Close Signal
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed close-side signal showing whether the record belongs in draft-close work, parked close watch, reopened review, or quiet finish review.
+
+        reopen_scan_order_label:
+            label: Reopen Scan Order
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Human queue-order cue with a conservative ordering prefix so reopened, due, and quiet records can be scanned faster without automation.
+
+        finish_close_dashboard_digest:
+            label: Finish-Close Dashboard Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed close-side digest joining finish-close posture, reopen ordering, watch state, and the next finish move.
+
+        reopen_scan_order_frame:
+            label: Reopen Scan Order Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for why this record should sit earlier or later in human reopen review without introducing queue automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

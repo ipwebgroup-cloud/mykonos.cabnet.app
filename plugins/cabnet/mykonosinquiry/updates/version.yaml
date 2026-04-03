@@ -159,3 +159,5 @@
 2.3.18:
   - 'Introduce finish-watch dashboard compression and reopen queue cues for live loyalty records'
 
+2.3.19:
+  - 'Introduce finish-close compression and conservative reopen scan-order cues for live loyalty records'

@@ -80,6 +80,14 @@ columns:
         label: Reopen Cue
         sortable: false
 
+    finish_close_compression_label:
+        label: Finish-Close
+        sortable: false
+
+    reopen_scan_order_label:
+        label: Reopen Order
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

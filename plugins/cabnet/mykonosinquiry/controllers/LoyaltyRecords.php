@@ -130,6 +130,15 @@ class LoyaltyRecords extends Controller
                 'comment' => 'Compressed finish-watch readout so the next queue cue is visible without expanding the whole finish dashboard in your head.',
             ],
 
+            'finish_close_reopen_sort_panel' => [
+                'label'   => 'Finish-Close Compression and Reopen Scan Order',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_close_reopen_sort_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Compress the close-side posture and show a conservative human scan order so reopened, due, and quiet records are easier to review without automation.',
+            ],
+
             'stewardship_finish_dashboard_panel' => [
                 'label'   => 'Stewardship Finish Dashboard',
                 'type'    => 'partial',

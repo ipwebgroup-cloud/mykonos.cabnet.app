@@ -1923,7 +1923,148 @@ public function getReopenQueueCueFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
-    public function getClosureReadinessLabelAttribute(): string
+    public function getFinishCloseCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Reopened / close decision pending';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Parked / close review due now';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Parked / close review due soon';
+        }
+
+        return 'Parked / close watch stable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Close packet should be drafted';
+
+        case 'Closure packet prepared':
+            return 'Close packet ready / choose lane';
+
+        case 'Execution still open':
+            return 'Close follow-through still open';
+
+        case 'Prepared but not yet executed':
+            return 'Close packet prepared / not started';
+
+        case 'Timed for later finish':
+            return 'Close timing deferred';
+    }
+
+    if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Close review due now';
+    }
+
+    if ($this->next_review_window_label === 'Due soon') {
+        return 'Close review due soon';
+    }
+
+    return 'Close posture still forming';
+}
+
+public function getReopenScanOrderLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return '01 · reopened lane / read first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return '02 · parked watch due now';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return '07 · parked watch due soon';
+        }
+
+        return '09 · parked watch stable';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return '03 · unassigned due review';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return '04 · finish packet queue';
+
+        case 'Closure packet prepared':
+            return '05 · choose finish lane';
+
+        case 'Execution still open':
+        case 'Prepared but not yet executed':
+            return '06 · finish follow-through';
+
+        case 'Timed for later finish':
+            return '10 · timed finish watch';
+    }
+
+    if ($this->next_review_window_label === 'Due soon') {
+        return '08 · review due soon';
+    }
+
+    return '11 · quiet review hold';
+}
+
+public function getFinishCloseDashboardDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Finish-close signal' => $this->finish_close_compression_label,
+        'Reopen scan order' => $this->reopen_scan_order_label,
+        'Closure readiness' => $this->closure_readiness_label,
+        'Finish dashboard' => $this->finish_dashboard_status_label,
+        'Finish watch' => $this->finish_watch_signal_label,
+        'Reopen cue' => $this->reopen_queue_cue_label,
+        'Next finish move' => $this->next_finish_move_label,
+        'Latest closure packet' => $this->latest_closure_packet_label,
+        'Parked watch' => $this->parked_lane_watch_label,
+        'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')' : 'Not scheduled',
+    ], 'Finish-close dashboard digest is still minimal.');
+}
+
+public function getReopenScanOrderFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Finish-close signal: ' . $this->finish_close_compression_label . '.';
+    $lines[] = 'Reopen scan order: ' . $this->reopen_scan_order_label . '.';
+    $lines[] = 'Closure readiness: ' . $this->closure_readiness_label . '.';
+    $lines[] = 'Finish watch: ' . $this->finish_watch_signal_label . '.';
+    $lines[] = 'Reopen cue: ' . $this->reopen_queue_cue_label . '.';
+    $lines[] = 'Owner timing: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the lane is already reopened, this record should sit first in deliberate human review until the new proof is interpreted and a clear close or re-park decision is made.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            $lines[] = 'Because the finish lane is parked but the watch window is due now, this record should rise near the top of the queue even though the finish posture remains formally parked.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the finish lane is parked and the watch window is approaching, this record should be scanned ahead of quiet parked holds before the watch turns urgent.';
+        } else {
+            $lines[] = 'Because the parked finish watch is stable, this record can stay lower in the queue until the review window or reopen trigger changes the close posture.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because close posture is ready, this record should sit ahead of quiet review so the narrow finish packet is drafted instead of the lane drifting.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet already exists, the next queue move is to choose the finish lane deliberately rather than leaving the record ambiguous between close and reopen.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close follow-through is still open, this record belongs in active human follow-through ahead of quiet watch lanes.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because review timing is already due and ownership is missing, this record should rise early in the queue until a human owner is explicit.';
+    } else {
+        $lines[] = 'Because close posture is still conservative, this record can stay in a lower quiet-review position until stronger proof or timing makes a deliberate move necessary.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
 

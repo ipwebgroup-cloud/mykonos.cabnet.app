@@ -1,0 +1,60 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$finishCloseSignal = $record ? $record->finish_close_compression_label : 'Close posture still forming';
+$reopenOrder = $record ? $record->reopen_scan_order_label : '11 · quiet review hold';
+$closeDigest = $record ? $record->finish_close_dashboard_digest : 'Finish-close dashboard digest is still minimal.';
+$reopenOrderFrame = $record ? $record->reopen_scan_order_frame : 'Reopen scan order framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-sort-amount-desc"></i>
+        <h4 style="margin-top:0;">Finish-close compression and reopen scan order</h4>
+        <p>
+            Compress the close-side posture into one narrow signal and one conservative queue-order cue so reopened and due records rise faster without turning the workspace into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Finish-close signal</h4>
+                <p><?= e($finishCloseSignal) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen scan order</h4>
+                <p><?= e($reopenOrder) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($record ? $record->closure_readiness_label : 'Finish posture still emerging') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish watch</h4>
+                <p><?= e($record ? $record->finish_watch_signal_label : 'Quiet continuity review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen cue</h4>
+                <p><?= e($record ? $record->reopen_queue_cue_label : 'Keep conservative review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Unassigned / no review set') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked watch</h4>
+                <p><?= e($record ? $record->parked_lane_watch_label : 'No parked watch active') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Finish-close dashboard digest:</strong> <?= nl2br(e($closeDigest)) ?></li>
+                <li><strong>Reopen scan order frame:</strong> <?= nl2br(e($reopenOrderFrame)) ?></li>
+                <li>Use the numeric prefix as a conservative human scan aid, not as automation or a hard machine queue.</li>
+            </ul>
+        </div>
+    </div>
+</div>
