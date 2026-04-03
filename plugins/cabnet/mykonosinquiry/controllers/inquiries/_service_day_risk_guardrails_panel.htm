@@ -1,0 +1,70 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+
+$risks = [
+    'treating delivery control as if it automatically guarantees clean same-day execution',
+    'letting live service changes happen off-record and outside the visible summary',
+    'running the service day without one visible owner and one visible checkpoint',
+];
+if ($owner === '') {
+    $risks[] = 'operating the service day without an explicit day-of owner';
+}
+if ($followUpDate === '') {
+    $risks[] = 'losing the first same-day escalation checkpoint during fast movement';
+}
+if ($services === '') {
+    $risks[] = 'letting day-of execution language outrun visible service scope';
+}
+if ($summary === '') {
+    $risks[] = 'forcing another operator to reconstruct the day-of brief from fragments';
+}
+if ($arrival === '' || $departure === '') {
+    $risks[] = 'making same-day decisions without a clearly visible date window';
+}
+if ($closedAt !== '') {
+    $risks[] = 'using same-day delivery language on a record that still reads as explicitly closed';
+}
+?>
+<div style="border:1px solid #fecaca; background:#fef2f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Service-Day Risk Guardrails</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Keep same-day execution readable, accountable, and easy to stabilize when conditions shift</div>
+
+    <ul style="margin:0; padding-left:18px; color:#7f1d1d; line-height:1.75; font-size:14px;">
+        <?php foreach ($risks as $risk): ?>
+            <li><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>

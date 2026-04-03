@@ -168,3 +168,6 @@
 
 3.4.0:
     - 'Introduce the Final Readiness Workspace tab with go-live framing and final-readiness guardrail panels'
+
+3.5.0:
+    - 'Introduce the Service-Day Control Workspace tab with same-day execution and service-day guardrail panels'

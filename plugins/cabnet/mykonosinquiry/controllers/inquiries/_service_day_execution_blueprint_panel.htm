@@ -1,0 +1,74 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$sequence = $services !== ''
+    ? 'Use the visible services as the day-of execution spine and keep any live adjustments anchored to that sequence.'
+    : 'Rebuild the service sequence before assuming the record can carry same-day execution pressure safely.';
+$control = $followUpDate !== ''
+    ? 'Use the visible checkpoint as the first control point for any same-day drift or escalation.'
+    : 'Set one visible same-day checkpoint before relying on execution posture.';
+$fallback = $summary !== ''
+    ? 'Use the working summary as the fallback day-of brief if another operator needs to step in quickly.'
+    : 'Promote the clearest live execution brief into the working summary before the day accelerates.';
+if ($arrival !== '' || $departure !== '') {
+    $control .= ' Keep the stay dates in view so timing decisions stay grounded in the actual window.';
+}
+if ($owner !== '') {
+    $fallback .= ' Keep the visible owner attached to the brief so accountability survives a rapid hand-off.';
+}
+if ($requestedMode !== '') {
+    $sequence .= ' Match same-day language to the active handling mode so the control posture remains readable.';
+}
+?>
+<div style="border:1px solid #cbd5e1; background:#ffffff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#0f766e; font-weight:700; margin-bottom:6px;">Service-Day Execution Blueprint</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Shape the service day around one visible sequence, one control checkpoint, and one fallback brief</div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Execution sequence</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($sequence) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Control checkpoint</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($control) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Fallback brief</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($fallback) ?></div>
+        </div>
+    </div>
+</div>

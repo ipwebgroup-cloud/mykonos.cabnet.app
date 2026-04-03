@@ -1,3 +1,17 @@
+## v5.1.0 — Service-Day Control Workspace
+- adds a new **Service Day** tab to the backend inquiry update screen
+- introduces a composite **Service-Day Control Workspace** panel for same-day ownership, live sequence stability, and fallback control
+- adds **Service-Day Execution Blueprint** guidance so operators can hold the day around one visible sequence, one control checkpoint, and one fallback brief
+- adds **Service-Day Risk Guardrails** to prevent same-day ownership blur, off-record service changes, checkpoint loss, and fragile live execution assumptions
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v5.0.0 — Delivery Control Workspace
+- adds a new **Delivery Control** tab to the backend inquiry update screen
+- introduces a composite **Delivery Control Workspace** panel for live operational posture, visible execution anchors, and delivery accountability
+- adds **Live Delivery Blueprint** guidance so operators can hold the live record around one readable service spine, one control checkpoint, and one fallback brief
+- adds **Delivery Risk Guardrails** to prevent hidden ownership, checkpoint loss, off-record service changes, and fragile live delivery assumptions
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.9.0 — Final Readiness Workspace
 - adds a new **Final Readiness** tab to the backend inquiry update screen
 - introduces a composite **Final Readiness Workspace** panel for go-live posture, visible execution anchors, and last-mile accountability

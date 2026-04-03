@@ -634,6 +634,27 @@ tabs:
             tab: Delivery Control
             comment: Read-only guardrails that surface the live-delivery mistakes most likely to blur ownership, lose control checkpoints, or let execution pressure outrun the visible record.
 
+        service_day_control_workspace_panel:
+            label: Service-Day Control Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_day_control_workspace_panel.htm
+            tab: Service Day
+            comment: Composite operator framing for same-day ownership, live sequence stability, and fallback control when execution pressure rises.
+
+        service_day_execution_blueprint_panel:
+            label: Service-Day Execution Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_day_execution_blueprint_panel.htm
+            tab: Service Day
+            comment: Read-only operator blueprint for keeping the service day anchored to one visible sequence, one checkpoint, and one fallback brief.
+
+        service_day_risk_guardrails_panel:
+            label: Service-Day Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_day_risk_guardrails_panel.htm
+            tab: Service Day
+            comment: Read-only operator guardrails for keeping same-day execution readable, accountable, and easy to stabilize under pressure.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial
