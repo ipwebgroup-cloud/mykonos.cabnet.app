@@ -1,3 +1,10 @@
+## v5.7.0 — Referral Readiness Workspace
+- adds a new **Referrals** tab to the backend inquiry update screen
+- introduces a composite **Referral Readiness Workspace** panel for turning trusted service continuity into readable referral readiness instead of leaving network-fit logic buried in retrospective memory
+- adds **Referral Path Blueprint** guidance so operators can shape visible ownership, profile clarity, service memory, and timing before the record is treated as referral-ready
+- adds **Referral Risk Guardrails** to prevent referral over-assumption, hidden ownership, weak trust memory, and network motion that outruns the visible record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.6.0 — VIP Relationship Workspace
 - adds a new **VIP Relationship** tab to the backend inquiry update screen
 - introduces a composite **VIP Relationship Workspace** panel for turning repeat-ready service continuity into long-cycle premium relationship handling instead of leaving VIP value buried in retrospective memory

@@ -1,0 +1,70 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$guestSummary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$historyPreview = $stringify($record->history_preview ?? '');
+$services = $stringify($record->services_list ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$stayMood = $stringify($record->stay_mood ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+
+$steps = [
+    $owner !== '' ? 'Keep a named relationship owner visible before treating the record as referral-ready.' : 'Assign a named owner before any trusted-network referral thinking begins.',
+    $guestSummary !== '' ? 'Use the visible summary as the referral front door for who this guest is and why the relationship matters.' : 'Lift the clearest guest-profile memory into the visible summary before referral framing starts.',
+    ($services !== '' || $travelStyle !== '' || $stayMood !== '')
+        ? 'Separate repeatable taste and service-pattern memory from one-time trip detail before thinking about introductions.'
+        : 'Capture repeatable service pattern or style memory before assuming a referral path is grounded.',
+    ($workingNotes !== '' || $historyPreview !== '')
+        ? 'Keep notes and timeline aligned so referral continuity does not depend on hidden recall.'
+        : 'Add readable continuity notes before relying on this record for future introductions.',
+    $sourceTitle !== '' || $lastContacted !== ''
+        ? 'Keep origin and latest contact posture visible so referral timing respects the real relationship context.'
+        : 'Make source context or latest contact posture visible before pushing the record into referral readiness.',
+];
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:6px;">Referral Path Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25; margin-bottom:8px;">Shape referral readiness from visible trust and continuity, not instinct</div>
+    <div style="font-size:14px; color:#475569; line-height:1.6; margin-bottom:12px;">
+        Referral posture should make one readable case for why this record is safe to carry into a trusted network, who owns that motion, and what context must travel with it.
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($steps as $index => $step): ?>
+            <div style="border:1px solid #e2e8f0; border-radius:12px; padding:12px; background:#f8fafc;">
+                <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Step <?= e((string) ($index + 1)) ?></div>
+                <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($step) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <div style="font-size:13px; color:#475569; line-height:1.6; margin-top:12px;">
+        Good referral readiness keeps trust portable: visible owner, visible profile, visible service memory, and visible pacing.
+    </div>
+</div>

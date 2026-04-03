@@ -186,3 +186,6 @@
 
 1.1.26:
     - 'Add VIP relationship workspace guidance to the operator workflow line'
+
+3.9.0:
+    - 'Introduce the Referral Readiness Workspace tab with referral-path framing and referral guardrail panels'

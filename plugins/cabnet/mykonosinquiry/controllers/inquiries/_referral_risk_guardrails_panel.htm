@@ -1,0 +1,68 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$guestSummary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$services = $stringify($record->services_list ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+
+$risks = [];
+$risks[] = $owner === ''
+    ? 'Do not treat the record as referral-ready while ownership is still implicit or missing.'
+    : 'Keep referral ownership explicit so trust does not become detached from accountability.';
+$risks[] = $guestSummary === ''
+    ? 'Do not rely on memory or assumption if the visible guest summary is still thin.'
+    : 'Keep the visible summary current so referral language stays grounded in the real record.';
+$risks[] = $services === ''
+    ? 'Do not frame service fit for a referral path if repeatable service memory is still missing.'
+    : 'Separate repeatable service memory from one-time detail before reusing the record in a network context.';
+$risks[] = $workingNotes === ''
+    ? 'Do not let referral readiness depend on one operator privately remembering what mattered.'
+    : 'Keep continuity notes readable enough that referral motion remains portable between operators.';
+$risks[] = $lastContacted === '' && $sourceTitle === '' && $closedReason === ''
+    ? 'Do not overstate warmth or timing fit when the latest relationship posture and origin context are not visible.'
+    : 'Keep latest contact, origin, or closure posture visible so referral timing respects the real relationship state.';
+?>
+<div style="border:1px solid #fecaca; background:#fff1f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Referral Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25; margin-bottom:8px;">Protect trusted-network motion from assumption, timing drift, and hidden ownership</div>
+    <div style="font-size:14px; color:#475569; line-height:1.6; margin-bottom:12px;">
+        Referral posture should stay anchored to visible trust, visible continuity, and visible ownership. These guardrails keep network-thinking from outrunning the actual record.
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($risks as $index => $risk): ?>
+            <div style="border:1px solid #fecaca; border-radius:12px; padding:12px; background:#fff;">
+                <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#991b1b; font-weight:700; margin-bottom:6px;">Guardrail <?= e((string) ($index + 1)) ?></div>
+                <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($risk) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

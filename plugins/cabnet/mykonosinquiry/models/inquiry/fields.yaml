@@ -761,6 +761,27 @@ tabs:
             tab: VIP Relationship
             comment: Read-only operator guardrails for preventing VIP over-assumption, hidden ownership, weak profile memory, and future-service framing that outruns the visible record.
 
+        referral_readiness_workspace_panel:
+            label: Referral Readiness Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_referral_readiness_workspace_panel.htm
+            tab: Referrals
+            comment: Composite operator framing for turning trusted service continuity into readable referral readiness instead of leaving network-fit logic buried in retrospective memory.
+
+        referral_path_blueprint_panel:
+            label: Referral Path Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_referral_path_blueprint_panel.htm
+            tab: Referrals
+            comment: Read-only operator blueprint for shaping visible ownership, profile clarity, service memory, and timing before the record is treated as referral-ready.
+
+        referral_risk_guardrails_panel:
+            label: Referral Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_referral_risk_guardrails_panel.htm
+            tab: Referrals
+            comment: Read-only operator guardrails for preventing referral over-assumption, hidden ownership, weak trust memory, and network motion that outruns the visible record.
+
 
         brief_readiness_panel:
             label: Brief Readiness

@@ -1,0 +1,107 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$priority = strtolower($stringify($record->priority ?? 'normal'));
+$owner = $stringify($record->owner_name ?? '');
+$guestSummary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$historyPreview = $stringify($record->history_preview ?? '');
+$services = $stringify($record->services_list ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$stayMood = $stringify($record->stay_mood ?? '');
+$occasionType = $stringify($record->occasion_type ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$sourceType = $stringify($record->source_type ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$requestReference = $stringify($record->request_reference ?? '');
+
+$signals = [];
+if ($owner !== '') $signals[] = 'named owner';
+if ($guestSummary !== '') $signals[] = 'profile summary';
+if ($services !== '') $signals[] = 'service memory';
+if ($travelStyle !== '' || $stayMood !== '' || $occasionType !== '') $signals[] = 'taste pattern';
+if ($historyPreview !== '' || $workingNotes !== '') $signals[] = 'continuity trail';
+if ($lastContacted !== '') $signals[] = 'recent contact posture';
+if ($sourceTitle !== '' || $sourceType !== '') $signals[] = 'origin context';
+if ($requestReference !== '') $signals[] = 'reference anchor';
+
+$gaps = [];
+if ($owner === '') $gaps[] = 'relationship owner';
+if ($guestSummary === '') $gaps[] = 'visible profile summary';
+if ($services === '') $gaps[] = 'repeatable service memory';
+if ($historyPreview === '' && $workingNotes === '') $gaps[] = 'continuity notes';
+if ($sourceTitle === '' && $sourceType === '') $gaps[] = 'traceable origin context';
+
+$palette = ['#1d4ed8', '#eff6ff', '#93c5fd'];
+$headline = 'Referral readiness should convert a strong record into trusted-network confidence';
+if (!empty($gaps)) {
+    $palette = ['#9a3412', '#fff7ed', '#fdba74'];
+    $headline = 'The record still needs stronger visible continuity before it is safe to support referral motion';
+} elseif ($guestSummary !== '' && $services !== '' && $owner !== '') {
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+    $headline = 'The record is carrying enough visible continuity to support disciplined referral readiness';
+}
+
+$posture = 'Referral posture should make it clear why this guest, service pattern, and operator relationship could be safely introduced into a trusted network without improvising context.';
+if ($priority === 'vip' || $priority === 'urgent') {
+    $posture .= ' Priority sensitivity means any referral framing should stay especially explicit and ownership-led.';
+}
+if ($closedReason !== '') {
+    $posture .= ' Closure memory should remain visible so referral thinking respects how the last cycle actually ended.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Referral Readiness Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Referral signals</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($signals ? implode(' • ', $signals) : 'The record still lacks enough visible signals for trusted-network referral readiness.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Continuity gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural referral-readiness gaps detected in the visible record.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Referral readiness should preserve trust, profile clarity, service memory, and named ownership so future introductions feel grounded rather than improvised.
+    </div>
+</div>
