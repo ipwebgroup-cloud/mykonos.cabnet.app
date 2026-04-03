@@ -10,7 +10,12 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         </a>
     <?php else: ?>
         <button type="button" class="btn btn-default disabled" disabled>
-            Loyalty launch readiness mode
+            Loyalty activation blueprint mode
         </button>
+        <a
+            href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>"
+            class="btn btn-default oc-icon-list-ul">
+            Open Inquiry Queue
+        </a>
     <?php endif ?>
 </div>

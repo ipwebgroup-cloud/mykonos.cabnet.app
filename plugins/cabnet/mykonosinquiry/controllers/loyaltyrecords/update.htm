@@ -4,38 +4,22 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
 
 <div class="layout">
     <?php if (!$loyaltyTableReady): ?>
+        <?= $this->makePartial('install_state_overview') ?>
+
         <div class="layout-row">
             <div class="callout fade in no-subheader">
-                <div class="header">
-                    <i class="icon-info"></i>
-                    <h3>Loyalty Continuity editing is waiting for storage activation</h3>
-                    <p>
-                        This workspace remains protected until the loyalty database tables are introduced in a controlled release.
+                <div class="content">
+                    <h4 style="margin-top:0;">Edit mode is waiting for storage activation</h4>
+                    <p style="margin-bottom:0;">
+                        Loyalty records cannot be edited until the storage layer exists and real continuity records are present. Until then,
+                        this workspace acts as a stable planning and operator-guidance surface.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="layout-row">
-            <div class="control-list">
-                <table class="table data">
-                    <tbody>
-                        <tr>
-                            <td style="width:280px;"><strong>Editing state</strong></td>
-                            <td>Locked safely</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Reason</strong></td>
-                            <td>Loyalty records cannot exist without the storage layer</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Operational route</strong></td>
-                            <td>Continue case handling from Inquiry Queue until the launch release is ready</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <?= $this->makePartial('safe_rollout_plan_panel') ?>
+        <?= $this->makePartial('operator_routes_panel') ?>
     <?php else: ?>
         <?= $this->formRender() ?>
     <?php endif ?>

@@ -4,38 +4,22 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
 
 <div class="layout">
     <?php if (!$loyaltyTableReady): ?>
+        <?= $this->makePartial('install_state_overview') ?>
+
         <div class="layout-row">
             <div class="callout fade in no-subheader">
-                <div class="header">
-                    <i class="icon-info"></i>
-                    <h3>Loyalty Continuity is in launch-readiness mode</h3>
-                    <p>
-                        Manual loyalty record creation is intentionally blocked because the loyalty storage tables are not installed in this environment yet.
+                <div class="content">
+                    <h4 style="margin-top:0;">Create mode is intentionally locked</h4>
+                    <p style="margin-bottom:0;">
+                        Manual loyalty record creation stays disabled until the dedicated storage layer is installed. This protects production from
+                        partial retention workflows and preserves the Inquiry Queue as the live operational surface.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="layout-row">
-            <div class="control-list">
-                <table class="table data">
-                    <tbody>
-                        <tr>
-                            <td style="width:280px;"><strong>Current mode</strong></td>
-                            <td>Guarded pre-launch workspace</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Use instead</strong></td>
-                            <td>Inquiry Queue for live handling and qualification</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Create action</strong></td>
-                            <td>Will unlock only after the loyalty storage layer is deployed</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <?= $this->makePartial('activation_gates_panel') ?>
+        <?= $this->makePartial('operator_routes_panel') ?>
     <?php else: ?>
         <?= $this->formRender() ?>
     <?php endif ?>
