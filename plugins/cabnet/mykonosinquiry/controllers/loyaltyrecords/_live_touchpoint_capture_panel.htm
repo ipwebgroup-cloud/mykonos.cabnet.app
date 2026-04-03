@@ -1,0 +1,87 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$typeOptions = $record && method_exists($record, 'getTouchpointTypeOptions') ? $record->getTouchpointTypeOptions() : [];
+$channelOptions = $record && method_exists($record, 'getTouchpointChannelOptions') ? $record->getTouchpointChannelOptions() : [];
+$outcomeOptions = $record && method_exists($record, 'getTouchpointOutcomeOptions') ? $record->getTouchpointOutcomeOptions() : [];
+$currentType = (string) post('new_touchpoint_type', '');
+$currentChannel = (string) post('new_touchpoint_channel', '');
+$currentOutcome = (string) post('new_touchpoint_outcome', '');
+$currentTouchpointAt = (string) post('new_touchpoint_at', '');
+$currentNextStepAt = (string) post('new_touchpoint_next_step_at', '');
+$currentBody = (string) post('new_touchpoint_body', '');
+$currentInternal = post('new_touchpoint_is_internal', '1') ? true : false;
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-edit"></i>
+        <h4 style="margin-top:0;">Live touchpoint capture</h4>
+        <p>
+            Capture the smallest practical loyalty touchpoint: channel, outcome, timing, and a short narrative. Save the record to append it to the continuity ledger.
+        </p>
+    </div>
+    <div class="content">
+        <div class="form-elements layout-row">
+            <div class="form-group span-left">
+                <label for="new_touchpoint_type">Touchpoint type</label>
+                <select id="new_touchpoint_type" name="new_touchpoint_type" class="form-control custom-select">
+                    <option value="">Choose type</option>
+                    <?php foreach ($typeOptions as $value => $label): ?>
+                        <option value="<?= e($value) ?>" <?= $currentType === (string) $value ? 'selected' : '' ?>><?= e($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group span-right">
+                <label for="new_touchpoint_channel">Channel</label>
+                <select id="new_touchpoint_channel" name="new_touchpoint_channel" class="form-control custom-select">
+                    <option value="">Choose channel</option>
+                    <?php foreach ($channelOptions as $value => $label): ?>
+                        <option value="<?= e($value) ?>" <?= $currentChannel === (string) $value ? 'selected' : '' ?>><?= e($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-elements layout-row">
+            <div class="form-group span-left">
+                <label for="new_touchpoint_outcome">Outcome</label>
+                <select id="new_touchpoint_outcome" name="new_touchpoint_outcome" class="form-control custom-select">
+                    <option value="">Choose outcome</option>
+                    <?php foreach ($outcomeOptions as $value => $label): ?>
+                        <option value="<?= e($value) ?>" <?= $currentOutcome === (string) $value ? 'selected' : '' ?>><?= e($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group span-right">
+                <label style="display:block; margin-bottom:8px;">Visibility</label>
+                <label class="custom-checkbox" style="display:inline-flex; align-items:center; gap:8px;">
+                    <input type="checkbox" name="new_touchpoint_is_internal" value="1" <?= $currentInternal ? 'checked' : '' ?>>
+                    <span>Internal continuity note</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-elements layout-row">
+            <div class="form-group span-left">
+                <label for="new_touchpoint_at">Touchpoint time</label>
+                <input id="new_touchpoint_at" type="datetime-local" name="new_touchpoint_at" value="<?= e($currentTouchpointAt) ?>" class="form-control">
+            </div>
+            <div class="form-group span-right">
+                <label for="new_touchpoint_next_step_at">Next-step time</label>
+                <input id="new_touchpoint_next_step_at" type="datetime-local" name="new_touchpoint_next_step_at" value="<?= e($currentNextStepAt) ?>" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="new_touchpoint_body">Touchpoint note</label>
+            <textarea id="new_touchpoint_body" name="new_touchpoint_body" class="form-control" rows="5" placeholder="Capture the minimal useful narrative for this continuity touch."><?= e($currentBody) ?></textarea>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li>Leave this section blank if you are only updating record fields and do not want to append a new touchpoint.</li>
+                <li>When a next-step time is provided, the record’s <strong>Next Review</strong> value is updated to keep timing visible in the list.</li>
+                <li>When a touchpoint time is provided, the record’s <strong>Last Retention Contact</strong> is updated so the list reflects real continuity activity.</li>
+            </ul>
+        </div>
+    </div>
+</div>

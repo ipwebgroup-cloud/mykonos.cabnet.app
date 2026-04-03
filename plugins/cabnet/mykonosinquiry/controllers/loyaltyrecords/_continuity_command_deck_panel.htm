@@ -1,0 +1,65 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$latestSummary = $record ? $record->latest_touchpoint_summary : 'No touchpoint logged yet.';
+$latestBody = $record ? $record->latest_touchpoint_body_preview : 'No touchpoint narrative has been captured yet.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-compass"></i>
+        <h4 style="margin-top:0;">Continuity command deck</h4>
+        <p>
+            These quick actions keep the loyalty record narrow and operator-owned. They update the real continuity record and append an explicit system touchpoint.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Current posture</h4>
+                <p><?= e($record ? $record->continuity_status_label : 'Unknown') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Stage</h4>
+                <p><?= e($record ? $record->loyalty_stage_label : 'Unknown') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Return value</h4>
+                <p><?= e($record ? $record->return_value_tier_label : 'Watch') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest touchpoint</h4>
+                <p><?= e($latestSummary) ?></p>
+            </div>
+        </div>
+
+        <p style="margin-top:15px;"><strong>Latest narrative:</strong> <?= e($latestBody) ?></p>
+
+        <div class="btn-group" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;">
+            <button type="submit" class="btn btn-default oc-icon-calendar" name="_loyalty_action" value="schedule_review_14">
+                Review +14 days
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-calendar" name="_loyalty_action" value="schedule_review_30">
+                Review +30 days
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-share-alt" name="_loyalty_action" value="mark_referral_ready">
+                Mark referral-ready
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-line-chart" name="_loyalty_action" value="promote_return_value">
+                Promote return value
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-moon-o" name="_loyalty_action" value="mark_dormant">
+                Mark dormant
+            </button>
+            <button type="submit" class="btn btn-primary oc-icon-refresh" name="_loyalty_action" value="reactivate_record">
+                Reactivate retention
+            </button>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li>Use these actions to express continuity posture changes directly on the record instead of burying them in freeform notes.</li>
+                <li>Each action appends a system touchpoint so the ledger shows why the continuity state moved.</li>
+                <li>Keep this deck narrow: record posture, timing, referral readiness, and return-value strength belong here. Broad campaign logic still does not.</li>
+            </ul>
+        </div>
+    </div>
+</div>

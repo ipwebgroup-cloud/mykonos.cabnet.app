@@ -118,6 +118,24 @@ $touchpointColumnsMissing = (array)($installState['missing_touchpoint_columns'] 
             </div>
         <?php endif; ?>
 
+
+        <?php if ($record): ?>
+            <div class="scoreboard" style="margin-top:15px;">
+                <div class="scoreboard-item title-value">
+                    <h4>Live continuity posture</h4>
+                    <p><?= e($record->continuity_status_label) ?> / <?= e($record->loyalty_stage_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Latest touchpoint</h4>
+                    <p><?= e($record->latest_touchpoint_summary) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Next review</h4>
+                    <p><?= $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="btn-group" style="margin-top:10px;">
             <?php if ($record): ?>
                 <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>" class="btn btn-default oc-icon-external-link">

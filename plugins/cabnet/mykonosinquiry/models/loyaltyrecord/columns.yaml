@@ -19,6 +19,15 @@ columns:
         label: Return Value
         sortable: false
 
+    last_retention_contact_at:
+        label: Last Touch
+        type: datetime
+        format: Y-m-d H:i
+
+    latest_touchpoint_summary:
+        label: Latest Touchpoint
+        sortable: false
+
     next_review_at:
         label: Next Review
         type: datetime

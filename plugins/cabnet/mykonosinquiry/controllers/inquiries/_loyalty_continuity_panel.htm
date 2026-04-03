@@ -86,6 +86,24 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
             </div>
         </div>
 
+
+        <?php if ($record): ?>
+            <div class="scoreboard" style="margin-top:15px;">
+                <div class="scoreboard-item title-value">
+                    <h4>Linked continuity</h4>
+                    <p><?= e($record->continuity_status_label) ?> / <?= e($record->loyalty_stage_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Last touch</h4>
+                    <p><?= e($record->latest_touchpoint_summary) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Next review</h4>
+                    <p><?= $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="control-list" style="margin-top:15px;">
             <ul>
                 <?php if ($record): ?>

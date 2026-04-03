@@ -155,11 +155,3 @@ tabs:
             readOnly: true
             span: full
             comment: Append-only loyalty continuity touchpoints, newest first.
-
-        new_touchpoint_note:
-            label: Add Loyalty Touchpoint
-            type: textarea
-            size: large
-            tab: History
-            span: full
-            comment: This will be saved as a new append-only continuity touchpoint when you click Save.

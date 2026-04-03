@@ -120,3 +120,5 @@
 2.3.3:
   - 'Align the loyalty touchpoint ledger schema with the guarded live workspace model'
   - upgrade_loyalty_touchpoints_table_for_workspace_activation.php
+2.3.4:
+  - 'Introduce first live loyalty touchpoint capture and continuity command deck actions'

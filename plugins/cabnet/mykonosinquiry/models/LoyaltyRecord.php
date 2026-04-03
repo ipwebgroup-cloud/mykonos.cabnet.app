@@ -31,6 +31,8 @@ class LoyaltyRecord extends Model
         'source_inquiry' => [Inquiry::class, 'key' => 'source_inquiry_id'],
     ];
 
+    protected $latestTouchpointCache = false;
+
     public static function getWorkspaceInstallState(): array
     {
         $recordTableReady = Schema::hasTable(self::RECORD_TABLE);
@@ -106,13 +108,13 @@ class LoyaltyRecord extends Model
         $touchpointSchemaReady = $touchpointTableReady && empty($missingTouchpointColumns);
 
         return [
-            'record_table_ready'        => $recordTableReady,
-            'touchpoint_table_ready'    => $touchpointTableReady,
-            'record_schema_ready'       => $recordSchemaReady,
-            'touchpoint_schema_ready'   => $touchpointSchemaReady,
-            'workspace_storage_ready'   => $recordSchemaReady && $touchpointSchemaReady,
-            'missing_record_columns'    => $missingRecordColumns,
-            'missing_touchpoint_columns'=> $missingTouchpointColumns,
+            'record_table_ready'         => $recordTableReady,
+            'touchpoint_table_ready'     => $touchpointTableReady,
+            'record_schema_ready'        => $recordSchemaReady,
+            'touchpoint_schema_ready'    => $touchpointSchemaReady,
+            'workspace_storage_ready'    => $recordSchemaReady && $touchpointSchemaReady,
+            'missing_record_columns'     => $missingRecordColumns,
+            'missing_touchpoint_columns' => $missingTouchpointColumns,
         ];
     }
 
@@ -160,6 +162,51 @@ class LoyaltyRecord extends Model
         ];
     }
 
+    public function getTouchpointTypeOptions(): array
+    {
+        return [
+            'follow_up' => 'Follow-up',
+            'review'    => 'Review',
+            'internal'  => 'Internal note',
+            'service'   => 'Service aftercare',
+            'referral'  => 'Referral check-in',
+            'revisit'   => 'Revisit signal',
+            'system'    => 'System / command deck',
+        ];
+    }
+
+    public function getTouchpointChannelOptions(): array
+    {
+        return [
+            'email'     => 'Email',
+            'phone'     => 'Phone',
+            'whatsapp'  => 'WhatsApp',
+            'sms'       => 'SMS',
+            'in_person' => 'In person',
+            'system'    => 'System',
+            'other'     => 'Other',
+        ];
+    }
+
+    public function getTouchpointOutcomeOptions(): array
+    {
+        return [
+            'note_added'            => 'Note added',
+            'follow_up_logged'      => 'Follow-up logged',
+            'response_received'     => 'Response received',
+            'no_reply'              => 'No reply',
+            'revisit_signal'        => 'Revisit signal',
+            'referral_ready'        => 'Referral-ready signal',
+            'return_value_promoted' => 'Return-value promoted',
+            'retained'              => 'Retention strengthened',
+            'dormant'               => 'Dormant',
+            'reactivated'           => 'Reactivated',
+            'next_review_scheduled' => 'Next review scheduled',
+            'state_changed'         => 'State changed',
+            'record_created'        => 'Record created',
+        ];
+    }
+
     public function getContinuityStatusLabelAttribute(): string
     {
         $options = $this->getContinuityStatusOptions();
@@ -179,6 +226,44 @@ class LoyaltyRecord extends Model
         $options = $this->getReturnValueTierOptions();
 
         return $options[$this->return_value_tier] ?? $this->humanizeValue($this->return_value_tier) ?? 'Watch';
+    }
+
+    public function getLatestTouchpointSummaryAttribute(): string
+    {
+        $touchpoint = $this->getLatestTouchpointRecord();
+
+        if (!$touchpoint) {
+            return 'No touchpoint logged yet.';
+        }
+
+        $stamp = $touchpoint->touchpoint_at instanceof \DateTimeInterface
+            ? $touchpoint->touchpoint_at->format('Y-m-d H:i')
+            : (optional($touchpoint->created_at)->format('Y-m-d H:i') ?: 'Pending');
+
+        $parts = [$stamp];
+
+        if ($touchpoint->touchpoint_outcome) {
+            $parts[] = $this->humanizeValue($touchpoint->touchpoint_outcome);
+        }
+
+        if ($touchpoint->touchpoint_channel) {
+            $parts[] = $this->humanizeValue($touchpoint->touchpoint_channel);
+        }
+
+        return implode(' · ', array_filter($parts));
+    }
+
+    public function getLatestTouchpointBodyPreviewAttribute(): string
+    {
+        $touchpoint = $this->getLatestTouchpointRecord();
+
+        if (!$touchpoint) {
+            return 'No touchpoint narrative has been captured yet.';
+        }
+
+        $body = trim((string) ($touchpoint->body ?: $touchpoint->touchpoint_summary ?: ''));
+
+        return $body !== '' ? $body : 'No touchpoint narrative has been captured yet.';
     }
 
     public function getSourceInquiryDisplayAttribute(): string
@@ -232,6 +317,25 @@ class LoyaltyRecord extends Model
         }
 
         return trim(implode(PHP_EOL, $lines));
+    }
+
+    public function getLatestTouchpointRecord(): ?LoyaltyTouchpoint
+    {
+        if ($this->latestTouchpointCache !== false) {
+            return $this->latestTouchpointCache ?: null;
+        }
+
+        if (!$this->id || !static::touchpointStorageReady()) {
+            $this->latestTouchpointCache = null;
+            return null;
+        }
+
+        $this->latestTouchpointCache = LoyaltyTouchpoint::where('loyalty_record_id', $this->id)
+            ->orderBy('touchpoint_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        return $this->latestTouchpointCache ?: null;
     }
 
     public static function syncFromInquiry(Inquiry $inquiry, array $overrides = [], ?string $operatorName = null): ?self
@@ -320,6 +424,8 @@ class LoyaltyRecord extends Model
         if (static::touchpointStorageReady()) {
             $touchpoint->save();
         }
+
+        $this->latestTouchpointCache = $touchpoint;
 
         return $touchpoint;
     }
