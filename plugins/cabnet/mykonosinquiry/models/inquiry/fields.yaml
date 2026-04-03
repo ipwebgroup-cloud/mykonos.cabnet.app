@@ -460,6 +460,13 @@ tabs:
             span: right
             comment: Keep this concise and factual so reopen and hand-off decisions stay readable.
 
+        working_notes_posture_panel:
+            label: Working Notes Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_working_notes_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator framing for what the rolling note should preserve so the next assignee can continue without reconstructing the whole inquiry.
+
         internal_notes:
             label: Working Notes
             comment: Current rolling operator summary. Use this for the latest working picture, not the historical timeline.

@@ -1,3 +1,10 @@
+
+
+## v2.6.27 — Working Notes Posture Panel
+- added a read-only **Working Notes Posture** panel to the Internal tab
+- surfaces what the rolling note should preserve for continuity, where the current note is thin or overloaded, and the safest note-writing move before editing working notes
+- keeps the patch backend-only with no schema change, no backend list change, and no public `/plan` flow change
+
 ## v2.6.26 — Closure Posture Panel
 - adds a read-only **Closure Posture** panel to the Internal tab near the closure fields
 - surfaces whether the record is truly ready to close, what closure context is still missing, and the safest operator move before using close or reopen actions

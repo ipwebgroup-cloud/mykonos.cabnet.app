@@ -75,3 +75,6 @@
 
 1.1.23:
     - 'Add closure posture scan panel to the stabilized operator workspace line'
+
+1.1.24:
+    - 'Add working notes posture scan panel to the stabilized operator workspace line'
