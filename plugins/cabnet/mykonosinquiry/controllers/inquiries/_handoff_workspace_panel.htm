@@ -1,0 +1,111 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$details = trim((string) ($record->details ?? ''));
+
+$missing = [];
+if ($owner === '') {
+    $missing[] = 'named owner';
+}
+if ($summary === '' && $notes === '') {
+    $missing[] = 'continuity text';
+}
+if ($followUpDate === '' && $lastContacted === '') {
+    $missing[] = 'checkpoint cadence';
+}
+if ($sourceType === '' && $requestedMode === '') {
+    $missing[] = 'entry context';
+}
+if ($services === '' && $details === '') {
+    $missing[] = 'mission scope';
+}
+
+$state = 'Handoff rebuild required';
+$palette = ['#92400e', '#fffbeb', '#fcd34d'];
+if (empty($missing)) {
+    $state = 'Transfer-ready packet';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+} elseif (count($missing) <= 2) {
+    $state = 'Handoff possible with repairs';
+    $palette = ['#1d4ed8', '#eff6ff', '#93c5fd'];
+}
+
+$nextMove = 'Do not hand this record off as memory only. Rebuild the packet so the next operator inherits owner clarity, mission scope, cadence, and source context in one scan.';
+if ($state === 'Handoff possible with repairs') {
+    $nextMove = 'A hand-off is possible now, but repair the missing packet anchors first so the receiving operator does not need to reconstruct the case from raw notes.';
+}
+if ($state === 'Transfer-ready packet') {
+    $nextMove = 'The record carries the core anchors needed for a clean transfer. Use the hand-off to preserve route, momentum, and next checkpoint rather than restating the whole case.';
+}
+if (in_array($priority, ['vip', 'urgent'], true)) {
+    $nextMove .= ' VIP / urgent posture raises the cost of fuzzy transfer language.';
+}
+
+$signals = [];
+if ($owner !== '') {
+    $signals[] = 'owner visible';
+}
+if ($summary !== '' || $notes !== '') {
+    $signals[] = 'continuity text visible';
+}
+if ($followUpDate !== '' || $lastContacted !== '') {
+    $signals[] = 'checkpoint visible';
+}
+if ($sourceType !== '' || $requestedMode !== '') {
+    $signals[] = 'entry context visible';
+}
+if ($closedReason !== '') {
+    $signals[] = 'closure memory visible';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Handoff Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($state) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Transfer posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($nextMove) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible packet signals</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($signals) ? implode(', ', $signals) : 'Build the packet from owner, continuity text, checkpoint cadence, source context, and guest mission.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Receiving operator note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($closedReason !== '' ? 'Closure / reopen memory should travel with the packet so the next operator understands what changed.' : 'The receiving operator should inherit the case through packet clarity, not guesswork.') ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($missing)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Safe hand-off still depends on: <strong><?= e(implode(', ', $missing)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries the anchors needed for a disciplined operator transfer without forcing reconstruction from raw notes or memory.
+        </div>
+    <?php endif; ?>
+</div>

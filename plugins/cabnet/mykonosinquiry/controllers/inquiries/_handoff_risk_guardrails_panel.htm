@@ -1,0 +1,44 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+
+$risks = [];
+$risks[] = $owner === '' ? 'Owner is not explicit, so transfer accountability may disappear immediately.' : 'Owner is visible, which stabilizes transfer accountability.';
+$risks[] = ($summary === '' && $notes === '') ? 'There is not enough continuity text to hand the case over without reconstruction.' : 'Continuity text exists, which lowers transfer friction.';
+$risks[] = ($followUpDate === '' && $lastContacted === '') ? 'No visible checkpoint cadence exists, so the receiving operator may not know when to act next.' : 'Checkpoint cadence exists, which supports immediate continuation.';
+$risks[] = ($sourceType === '' && $requestedMode === '') ? 'Source / entry memory is weak, so campaign or form context may be lost in transfer.' : 'Source / entry memory is visible, which supports better continuity.';
+$risks[] = ($closedReason === '' && in_array($status, ['closed_won', 'closed_lost', 'closed'], true)) ? 'Closure context is weak, so the receiving operator may inherit a frozen record without outcome memory.' : 'Outcome / closure context is readable enough for safer transfer.';
+
+$headline = 'Repair packet before transfer';
+$palette = ['#92400e', '#fffbeb', '#fcd34d'];
+if ($owner !== '' && ($summary !== '' || $notes !== '') && ($followUpDate !== '' || $lastContacted !== '') && ($sourceType !== '' || $requestedMode !== '')) {
+    $headline = 'Handoff guardrails mostly satisfied';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Handoff Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;"><?= e($headline) ?></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($risks as $risk): ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; font-size:14px; color:#0f172a; line-height:1.6;">
+                <?= e($risk) ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

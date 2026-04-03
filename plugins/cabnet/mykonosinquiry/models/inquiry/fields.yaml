@@ -314,6 +314,27 @@ tabs:
             tab: Reopen
             comment: Read-only guardrails that surface the reactivation mistakes most likely to revive stale assumptions, blur ownership, or create a fragile second-cycle hand-off.
 
+        handoff_workspace_panel:
+            label: Handoff Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_workspace_panel.htm
+            tab: Handoff
+            comment: High-level transfer shaping surface for deciding whether the record is truly ready to be handed to another operator, what continuity still needs to be repaired, and whether the safest move is transfer, rebuild, or hold.
+
+        handoff_packet_blueprint_panel:
+            label: Handoff Packet Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_packet_blueprint_panel.htm
+            tab: Handoff
+            comment: Read-only structure guidance for packaging owner clarity, current mission, timing cadence, and source memory into a clean transfer packet.
+
+        handoff_risk_guardrails_panel:
+            label: Handoff Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_risk_guardrails_panel.htm
+            tab: Handoff
+            comment: Read-only guardrails that surface the transfer mistakes most likely to blur accountability, lose continuity, or force the receiving operator to reconstruct the case.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

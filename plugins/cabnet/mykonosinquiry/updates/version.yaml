@@ -123,3 +123,6 @@
 
 2.0.0:
     - 'Introduce the Reopen Workspace tab with reactivation and reopen guardrail panels'
+
+2.1.0:
+    - 'Introduce the Handoff Workspace tab with transfer packet and handoff guardrail panels'

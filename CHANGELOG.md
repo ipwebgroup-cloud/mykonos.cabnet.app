@@ -1,3 +1,8 @@
+## v3.6.0 — Handoff Workspace
+- added a dedicated **Handoff** tab to the inquiry update screen
+- introduced **Handoff Workspace**, **Handoff Packet Blueprint**, and **Handoff Risk Guardrails** panels
+- gives operators a backend-only space to transfer active, reopened, or paused inquiries with explicit continuity packet discipline without touching public `/plan`, schema, or list stability
+
 ## v3.5.0 — Reopen Workspace
 - adds a new **Reopen** tab to the backend inquiry update screen
 - introduces a composite **Reopen Workspace** panel for disciplined reactivation, continuity rebuilding, and second-cycle ownership clarity

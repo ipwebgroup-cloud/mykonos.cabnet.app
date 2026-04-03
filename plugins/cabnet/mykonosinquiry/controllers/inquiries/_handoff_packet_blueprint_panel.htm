@@ -1,0 +1,64 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+
+$route = 'Build a compact transfer packet';
+if (($summary !== '' || $notes !== '') && $owner !== '' && ($followUpDate !== '' || $lastContacted !== '') && ($services !== '' || $sourceType !== '' || $requestedMode !== '')) {
+    $route = 'Use a direct hand-off packet now';
+}
+if (in_array($status, ['closed_won', 'closed_lost', 'closed'], true)) {
+    $route = 'Use a continuity-preserving hand-off only if another operator truly needs the record';
+}
+
+$mustCapture = [];
+$mustCapture[] = $owner !== '' ? 'named sender / owner is visible' : 'state the accountable owner explicitly';
+$mustCapture[] = ($summary !== '' || $notes !== '') ? 'current mission text is visible' : 'write the current mission in one readable block';
+$mustCapture[] = ($followUpDate !== '' || $lastContacted !== '') ? 'cadence checkpoint is visible' : 'state the next timing checkpoint';
+$mustCapture[] = $services !== '' ? 'service scope is visible' : 'state service scope or current scope uncertainty';
+$mustCapture[] = ($sourceType !== '' || $requestedMode !== '') ? 'source / entry memory is visible' : 'restore source / entry context';
+$mustCapture[] = 'state the exact next operator objective';
+
+$avoid = [
+    'Do not hand off a record as a long narrative with no obvious owner, objective, or next checkpoint.',
+    'Do not force the receiving operator to infer what the guest currently wants from stale fragments.',
+    'Do not bury source, timing, or closure / reopen context inside raw payload or old notes only.',
+];
+?>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:12px; margin-bottom:16px;">
+    <div style="padding:14px; border:1px solid #bfdbfe; border-radius:14px; background:#eff6ff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:8px;">Handoff Packet Blueprint</div>
+        <div style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($route) ?></div>
+        <div style="font-size:14px; color:#334155;">A good transfer packet should let the receiving operator move immediately without reconstructing the record first.</div>
+    </div>
+    <div style="padding:14px; border:1px solid #cbd5e1; border-radius:14px; background:#fff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:8px;">Must-capture packet facts</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($mustCapture as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <div style="padding:14px; border:1px solid #fecaca; border-radius:14px; background:#fef2f2;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:8px;">Avoid</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($avoid as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
