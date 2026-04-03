@@ -277,3 +277,8 @@
 - added a dedicated **Proposal** tab to the inquiry update screen
 - introduced **Proposal Workspace**, **Offer Shape Blueprint**, and **Proposal Risk Guardrails** panels
 - gives operators a backend-only space to shape premium starter offers and proposal follow-up without touching public `/plan`, schema, or list stability
+
+## v3.2.0 — Fulfillment Workspace
+- added a dedicated **Fulfillment** tab to the inquiry update screen
+- introduced **Fulfillment Workspace**, **Execution Readiness Blueprint**, and **Fulfillment Risk Guardrails** panels
+- gives operators a backend-only space to move from proposal posture into execution readiness without touching public `/plan`, schema, or list stability

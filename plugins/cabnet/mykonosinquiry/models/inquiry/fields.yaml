@@ -230,6 +230,27 @@ tabs:
             tab: Proposal
             comment: Read-only guardrails that surface the offer-shaping mistakes most likely to over-promise, blur continuity, or create avoidable commercial drift.
 
+        fulfillment_workspace_panel:
+            label: Fulfillment Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_workspace_panel.htm
+            tab: Fulfillment
+            comment: High-level execution shaping surface for deciding whether the record is ready for operational sequencing, staged fulfillment planning, or one more continuity pass before delivery language tightens.
+
+        execution_readiness_blueprint_panel:
+            label: Execution Readiness Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_execution_readiness_blueprint_panel.htm
+            tab: Fulfillment
+            comment: Read-only structure guidance for moving from commercial posture into operational readiness without letting timing, scale, or continuity assumptions go invisible.
+
+        fulfillment_risk_guardrails_panel:
+            label: Fulfillment Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_risk_guardrails_panel.htm
+            tab: Fulfillment
+            comment: Read-only guardrails that surface the execution-shaping mistakes most likely to create supplier-like promises, weak hand-offs, or assumption-heavy operational drift.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

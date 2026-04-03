@@ -1,0 +1,76 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$privacy = strtolower(trim((string) ($record->privacy_level ?? '')));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+
+$guardrails = [];
+if ($owner === '') {
+    $guardrails[] = ['label' => 'Invisible execution ownership', 'detail' => 'Do not let a record drift into fulfillment posture while ownership is still unclear.', 'level' => 'high'];
+}
+if ($services === '' && $details === '') {
+    $guardrails[] = ['label' => 'Execution without scope', 'detail' => 'Do not sequence suppliers or logistics before the actual requested services are readable.', 'level' => 'high'];
+}
+if ($arrival === '' || $departure === '') {
+    $guardrails[] = ['label' => 'Timing uncertainty', 'detail' => 'Avoid availability-like promises before the stay window is explicit.', 'level' => 'high'];
+}
+if ($guests === '' || $guests === '0') {
+    $guardrails[] = ['label' => 'Scale mismatch', 'detail' => 'Do not shape transfers, villas, or staffing assumptions before group size is pinned down.', 'level' => 'medium'];
+}
+if ($summary === '') {
+    $guardrails[] = ['label' => 'Continuity thinness', 'detail' => 'Strengthen the working summary before hand-off or execution planning relies on memory.', 'level' => 'medium'];
+}
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed'], true)) {
+    $guardrails[] = ['label' => 'Privacy handling drift', 'detail' => 'Keep visibility, routing, and venue language aligned to the higher privacy posture.', 'level' => 'medium'];
+}
+if (($status === 'confirmed' || $status === 'closed_won') && $followUpDate === '' && $lastContacted === '') {
+    $guardrails[] = ['label' => 'Execution checkpoint gap', 'detail' => 'Keep at least one visible continuity checkpoint even after confirmation so execution does not go dark.', 'level' => 'medium'];
+}
+
+if (empty($guardrails)) {
+    $guardrails[] = ['label' => 'No major fulfillment blockers', 'detail' => 'The record can support controlled execution shaping. Keep sequencing explicit and assumptions visible.', 'level' => 'low'];
+}
+
+$colors = [
+    'high' => ['#b91c1c', '#fef2f2', '#fecaca'],
+    'medium' => ['#b45309', '#fff7ed', '#fed7aa'],
+    'low' => ['#166534', '#f0fdf4', '#bbf7d0'],
+];
+?>
+<div style="border:1px solid #d1fae5; background:#f7fffc; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#0f766e; font-weight:700;">Fulfillment Risk Guardrails</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;">Prevent assumption-heavy execution drift</div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($guardrails as $item): ?>
+            <?php $palette = $colors[$item['level']] ?? $colors['medium']; ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:<?= e($palette[1]) ?>;">
+                <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:6px;">
+                    <div style="font-size:14px; font-weight:700; color:#0f172a;"><?= e($item['label']) ?></div>
+                    <span style="display:inline-block; padding:4px 8px; border-radius:999px; background:#fff; border:1px solid <?= e($palette[2]) ?>; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:<?= e($palette[0]) ?>; font-weight:700;"><?= e($item['level']) ?></span>
+                </div>
+                <div style="font-size:13px; color:#334155;"><?= e($item['detail']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

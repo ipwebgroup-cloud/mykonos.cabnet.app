@@ -111,3 +111,6 @@
 
 1.6.0:
     - 'Introduce the Proposal Workspace tab with offer shaping and commercial guardrail panels'
+
+1.7.0:
+    - 'Introduce the Fulfillment Workspace tab with execution readiness and fulfillment guardrail panels'
