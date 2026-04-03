@@ -1,0 +1,102 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+$services = $stringify($record->services_list ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$financialReady = $stringify($record->budget ?? '');
+
+$gaps = [];
+if ($requestReference === '') $gaps[] = 'request reference';
+if ($summary === '') $gaps[] = 'working summary';
+if ($owner === '') $gaps[] = 'visible owner';
+if ($followUpDate === '') $gaps[] = 'next checkpoint';
+if ($services === '') $gaps[] = 'scope visibility';
+if ($arrival === '' || $departure === '') $gaps[] = 'timing window';
+
+$headline = 'Approval should become controlled lock-in, not a vague sense that everything is now finished';
+$palette = ['#7c3aed', '#f5f3ff', '#ddd6fe'];
+if (empty($gaps) && in_array($status, ['confirmed', 'closed_won'], true) && $closedAt === '') {
+    $headline = 'The record is carrying enough visible structure for disciplined post-approval lock handling';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+} elseif ($closedAt !== '' || in_array($status, ['closed_lost', 'closed'], true)) {
+    $headline = 'Keep post-approval review factual so closure history stays readable and reversible when needed';
+    $palette = ['#9a3412', '#fff7ed', '#fed7aa'];
+}
+
+$posture = 'Use post-approval handling to convert sign-off into controlled next-state clarity: what is now locked, what is still pending, what still depends on human follow-through, and where the record can still fail if assumptions go invisible.';
+if ($financialReady !== '') {
+    $posture .= ' Keep financial posture visible so approval does not get mistaken for fully completed payment readiness.';
+}
+if ($closedReason !== '') {
+    $posture .= ' Preserve prior closure context so reactivated approvals do not erase why the record paused earlier.';
+}
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($services !== '') $anchors[] = 'scope visibility';
+if ($arrival !== '' || $departure !== '') $anchors[] = 'timing window';
+if ($summary !== '') $anchors[] = 'working summary';
+if ($owner !== '') $anchors[] = 'owner clarity';
+if ($followUpDate !== '') $anchors[] = 'next checkpoint';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Post-Approval Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($anchors ? implode(' • ', $anchors) : 'Approval still lacks enough visible anchors for safe lock handling.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Remaining gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural gaps detected in the record-level lock posture.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Post-approval discipline should leave the record easier to trust later, not harder: one approved path, visible owner, explicit pending items, and a readable place to restart if anything slips.
+    </div>
+</div>

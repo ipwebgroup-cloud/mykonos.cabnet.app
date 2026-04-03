@@ -571,6 +571,27 @@ tabs:
             tab: Approvals
             comment: Read-only guardrails that surface the approval mistakes most likely to blur ownership, imply premature commitment, or hide why the decision path paused.
 
+        post_approval_workspace_panel:
+            label: Post-Approval Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_approval_workspace_panel.htm
+            tab: Post-Approval
+            comment: High-level post-approval surface for turning sign-off into controlled lock, issue visibility, and final readiness checkpoints without letting the record drift into assumed completion.
+
+        post_approval_lock_blueprint_panel:
+            label: Post-Approval Lock Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_approval_lock_blueprint_panel.htm
+            tab: Post-Approval
+            comment: Read-only structure guidance for converting an approved record into a locked, accountable next-stage packet with visible dependencies and explicit remaining actions.
+
+        post_approval_risk_guardrails_panel:
+            label: Post-Approval Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_approval_risk_guardrails_panel.htm
+            tab: Post-Approval
+            comment: Read-only guardrails that surface the post-approval mistakes most likely to create false completion, hidden dependencies, or fragile final-readiness assumptions.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

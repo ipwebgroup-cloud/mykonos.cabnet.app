@@ -162,3 +162,6 @@
 
 3.2.0:
     - 'Introduce the Approvals Workspace tab with sign-off framing and approval guardrail panels'
+
+3.3.0:
+    - 'Introduce the Post-Approval Workspace tab with lock framing and post-approval guardrail panels'

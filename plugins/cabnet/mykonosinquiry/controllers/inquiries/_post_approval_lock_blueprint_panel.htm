@@ -1,0 +1,86 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$fullName = $stringify($record->full_name ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$priority = $stringify($record->priority ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$phase = 'Use a post-approval lock packet: approved path -> still-pending items -> accountable next move -> visible fallback if completion slips.';
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $phase = 'Use a final-readiness packet: what is locked, what is scheduled, what is still conditional, and who carries the next operational checkpoint.';
+}
+if (in_array($status, ['awaiting_guest', 'proposal_sent'], true)) {
+    $phase = 'Use a pre-lock packet: approval is present, but the record still needs visible pending items and checkpoint discipline before it feels final.';
+}
+
+$sequence = [
+    'Open with the request reference and one-sentence statement of what the approval actually unlocked so later readers do not mistake approval for total completion.',
+    'Separate locked items from still-pending dependencies so the record shows exactly what is now firm versus what still depends on follow-through.',
+    'Name the active owner and the next checkpoint explicitly so post-approval motion stays accountable and visible.',
+    'Preserve one clean fallback path for issues, delays, or reactivation so the record remains recoverable if the approved path slips.',
+];
+if ($requestedMode !== '') {
+    $sequence[] = 'Keep the lock packet aligned with the active handling mode so post-approval language matches the real operating lane.';
+}
+if ($followUpDate !== '') {
+    $sequence[] = 'Tie the packet to the visible follow-up date so the next checkpoint remains trackable after approval.';
+}
+
+$anchorText = [];
+if ($requestReference !== '') $anchorText[] = 'ref: ' . $requestReference;
+if ($fullName !== '') $anchorText[] = 'guest: ' . $fullName;
+if ($arrival !== '' || $departure !== '') $anchorText[] = 'stay: ' . trim($arrival . ' → ' . $departure, ' →');
+if ($services !== '') $anchorText[] = 'services: ' . $services;
+if ($summary !== '') $anchorText[] = 'summary ready';
+if ($owner !== '') $anchorText[] = 'owner: ' . $owner;
+if ($priority !== '') $anchorText[] = 'priority: ' . $priority;
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">Post-Approval Lock Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Turn approval into a readable locked path, not a vague finish state</div>
+    <div style="font-size:14px; color:#334155; margin-bottom:12px;"><?= e($phase) ?></div>
+
+    <div style="padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; margin-bottom:12px;">
+        <div style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:.06em; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+        <div style="font-size:14px; color:#0f172a;"><?= e($anchorText ? implode(' • ', $anchorText) : 'Strengthen the record anchors before treating approval as a clean lock point.') ?></div>
+    </div>
+
+    <ol style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+        <?php foreach ($sequence as $step): ?>
+            <li style="margin-bottom:8px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

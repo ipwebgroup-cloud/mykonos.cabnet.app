@@ -1,3 +1,10 @@
+## v4.8.0 — Post-Approval Workspace
+- adds a new **Post-Approval** tab to the backend inquiry update screen
+- introduces a composite **Post-Approval Workspace** panel for lock handling, dependency visibility, and final-readiness discipline after sign-off
+- adds **Post-Approval Lock Blueprint** guidance so operators can convert approvals into a controlled locked path with explicit pending items and accountable next checkpoints
+- adds **Post-Approval Risk Guardrails** to prevent false completion, hidden dependencies, ownership blur, and final-readiness language that outruns the live record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.7.0 — Approvals Workspace
 - adds a new **Approvals** tab to the backend inquiry update screen
 - introduces a composite **Approvals Workspace** panel for sign-off posture, decision checkpoints, and owner-visible approval handling

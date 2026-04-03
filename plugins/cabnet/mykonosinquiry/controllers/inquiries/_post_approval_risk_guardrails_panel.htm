@@ -1,0 +1,74 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$requestReference = $stringify($record->request_reference ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+$closedReason = $stringify($record->closed_reason ?? '');
+
+$risks = [
+    'Do not treat approval as proof that every dependency, supplier, or timing assumption is now fully locked.',
+    'Do not let post-approval notes erase the distinction between what is approved, what is merely planned, and what is still waiting on follow-through.',
+    'Do not let a record feel complete if ownership and the next checkpoint are still implicit rather than visible on the screen.',
+    'Do not allow final-readiness language to outrun the record if issues, open dependencies, or recovery paths are still active.',
+];
+if ($requestReference === '') {
+    $risks[] = 'Add a visible request reference before expecting post-approval handling to travel safely across operators or later reviews.';
+}
+if ($summary === '') {
+    $risks[] = 'Strengthen the working summary before using approval as the basis for a locked or final-ready record.';
+}
+if ($services === '') {
+    $risks[] = 'Keep lock language conservative until scope is visible in structured form.';
+}
+if ($owner === '' || $followUpDate === '') {
+    $risks[] = 'Keep ownership and next checkpoint explicit so post-approval motion does not create soft accountability or invisible timing drift.';
+}
+if ($closedReason !== '') {
+    $risks[] = 'Preserve the earlier closure/reopen context so post-approval handling does not overwrite why the record paused before.';
+}
+
+$severity = 'Post-approval posture is safe when it sharpens the record into a traceable next state instead of pretending the work is already done.';
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $severity = 'Higher-confidence records still need disciplined post-approval handling so lock language, pending items, and operational ownership remain visible.';
+}
+?>
+<div style="border:1px solid #fecaca; background:#fff1f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Post-Approval Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Keep approval from becoming false completion</div>
+    <div style="font-size:14px; color:#7f1d1d; margin-bottom:12px;"><?= e($severity) ?></div>
+
+    <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.55;">
+        <?php foreach ($risks as $risk): ?>
+            <li style="margin-bottom:8px;"><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
