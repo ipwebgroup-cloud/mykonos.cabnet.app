@@ -1,0 +1,335 @@
+<?php
+$record = null;
+
+if (isset($vars['formModel']) && $vars['formModel'] && $vars['formModel']->exists) {
+    $record = $vars['formModel'];
+} elseif (isset($formModel) && $formModel && $formModel->exists) {
+    $record = $formModel;
+} elseif (isset($model) && $model && $model->exists) {
+    $record = $model;
+} elseif (isset($this->controller) && method_exists($this->controller, 'formGetModel')) {
+    $record = $this->controller->formGetModel();
+}
+
+if (!$record) { ?>
+    <p class="form-control-static">Payload carryover gaps become available after the inquiry is created.</p>
+<?php return; }
+
+$escape = static function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+$normalizeText = static function ($value): string {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map(static function ($item) {
+            return trim((string) $item);
+        }, $value)));
+    }
+
+    $value = trim((string) $value);
+    return preg_replace('/\s+/u', ' ', $value);
+};
+
+$normalizeCompare = static function ($value) use ($normalizeText): string {
+    return mb_strtolower(trim($normalizeText($value)), 'UTF-8');
+};
+
+$readPayload = static function ($payloadRaw): array {
+    if (is_array($payloadRaw)) {
+        return $payloadRaw;
+    }
+
+    if (is_string($payloadRaw)) {
+        $payloadRaw = trim($payloadRaw);
+        if ($payloadRaw !== '') {
+            $decoded = json_decode($payloadRaw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
+    }
+
+    return [];
+};
+
+$getPayloadValue = static function (array $payload, array $paths) {
+    foreach ($paths as $path) {
+        $segments = explode('.', $path);
+        $cursor = $payload;
+        $found = true;
+
+        foreach ($segments as $segment) {
+            if (is_array($cursor) && array_key_exists($segment, $cursor)) {
+                $cursor = $cursor[$segment];
+            } else {
+                $found = false;
+                break;
+            }
+        }
+
+        if ($found) {
+            return $cursor;
+        }
+    }
+
+    return null;
+};
+
+$payload = $readPayload($record->payload_json ?? null);
+$payloadAvailable = !empty($payload);
+$workingSummary = trim((string) ($record->guest_summary ?? ''));
+$workingNotes = trim((string) ($record->internal_notes ?? ''));
+$historyDepth = null;
+
+try {
+    if (method_exists($record, 'notes')) {
+        $historyDepth = (int) $record->notes()->count();
+    }
+} catch (Throwable $e) {
+    $historyDepth = null;
+}
+
+$anchors = [
+    [
+        'label' => 'Arrival window',
+        'record' => $record->arrival_window ?? null,
+        'paths' => ['arrival_window', 'arrivalWindow', 'trip.arrival_window', 'stay.arrival_window'],
+        'why' => 'Arrival timing nuance often affects first-touch pacing, airport handling, and itinerary shape.',
+    ],
+    [
+        'label' => 'Group composition',
+        'record' => $record->group_composition ?? null,
+        'paths' => ['group_composition', 'groupComposition', 'party.composition', 'guest.group_composition'],
+        'why' => 'Family, couples, friends, or mixed groups usually change recommendation style and logistics.',
+    ],
+    [
+        'label' => 'Travel style',
+        'record' => $record->travel_style ?? null,
+        'paths' => ['travel_style', 'travelStyle', 'preferences.travel_style'],
+        'why' => 'Travel style is a high-value experience signal that should not remain trapped only in raw JSON.',
+    ],
+    [
+        'label' => 'Stay mood',
+        'record' => $record->stay_mood ?? null,
+        'paths' => ['stay_mood', 'stayMood', 'preferences.stay_mood'],
+        'why' => 'Mood signals help shape pacing and package tone for the next operator move.',
+    ],
+    [
+        'label' => 'Arrival mode',
+        'record' => $record->arrival_mode ?? null,
+        'paths' => ['arrival_mode', 'arrivalMode', 'logistics.arrival_mode'],
+        'why' => 'Arrival mode can be important for transfer planning and urgency assumptions.',
+    ],
+    [
+        'label' => 'Privacy level',
+        'record' => $record->privacy_level ?? null,
+        'paths' => ['privacy_level', 'privacyLevel', 'preferences.privacy_level'],
+        'why' => 'Privacy posture should stay visible in the structured record during hand-off.',
+    ],
+    [
+        'label' => 'Villa area',
+        'record' => $record->villa_area ?? null,
+        'paths' => ['villa_area', 'villaArea', 'accommodation.villa_area'],
+        'why' => 'Accommodation area preference often matters for sourcing continuity later.',
+    ],
+    [
+        'label' => 'Occasion type',
+        'record' => $record->occasion_type ?? null,
+        'paths' => ['occasion_type', 'occasionType', 'occasion.type'],
+        'why' => 'Celebration posture can shift the whole guest-facing plan, so it should not be left only in payload.',
+    ],
+    [
+        'label' => 'Special moments',
+        'record' => $record->special_moments ?? null,
+        'paths' => ['special_moments', 'specialMoments', 'occasion.special_moments'],
+        'why' => 'Special-moment cues are easy to lose if they live only in raw JSON.',
+    ],
+    [
+        'label' => 'Accommodation status',
+        'record' => $record->accommodation_status ?? null,
+        'paths' => ['accommodation_status', 'accommodationStatus', 'stay.accommodation_status'],
+        'why' => 'Knowing whether lodging is already set changes the next planning move immediately.',
+    ],
+    [
+        'label' => 'Dining style',
+        'record' => $record->dining_style ?? null,
+        'paths' => ['dining_style', 'diningStyle', 'preferences.dining_style'],
+        'why' => 'Dining posture is a useful preference signal that should stay operator-visible.',
+    ],
+    [
+        'label' => 'Nightlife interest',
+        'record' => $record->nightlife_interest ?? null,
+        'paths' => ['nightlife_interest', 'nightlifeInterest', 'preferences.nightlife_interest'],
+        'why' => 'Nightlife appetite helps keep the experience brief consistent across assignees.',
+    ],
+    [
+        'label' => 'Dietary needs',
+        'record' => $record->dietary_needs ?? null,
+        'paths' => ['dietary_needs', 'dietaryNeeds', 'preferences.dietary_needs'],
+        'why' => 'Dietary constraints are easy to miss later if they are not carried into the structured record.',
+    ],
+    [
+        'label' => 'Contact preference',
+        'record' => $record->contact_preference ?? null,
+        'paths' => ['contact_preference', 'contactPreference', 'contact.preference'],
+        'why' => 'Preferred route and cadence should remain visible outside the raw payload.',
+    ],
+];
+
+$rows = [];
+$payloadOnlyRows = [];
+$thinRows = [];
+$carriedRows = 0;
+
+foreach ($anchors as $item) {
+    $recordValue = $item['record'];
+    $payloadValue = $getPayloadValue($payload, $item['paths']);
+
+    $recordText = $normalizeText($recordValue);
+    $payloadText = $normalizeText($payloadValue);
+    $recordCompare = $normalizeCompare($recordValue);
+    $payloadCompare = $normalizeCompare($payloadValue);
+
+    $state = 'Absent on both sides';
+    $tone = 'neutral';
+
+    if ($recordCompare !== '' && $payloadCompare !== '') {
+        $state = ($recordCompare === $payloadCompare) ? 'Carried into record' : 'Present on both sides';
+        $tone = 'positive';
+        $carriedRows++;
+    } elseif ($payloadCompare !== '') {
+        $state = 'Payload only';
+        $tone = 'warning';
+        $payloadOnlyRows[] = $item['label'];
+    } elseif ($recordCompare !== '') {
+        $state = 'Record only';
+        $tone = 'positive';
+        $carriedRows++;
+    } else {
+        $thinRows[] = $item['label'];
+    }
+
+    $rows[] = [
+        'label' => $item['label'],
+        'state' => $state,
+        'tone' => $tone,
+        'record' => $recordText !== '' ? $recordText : 'Not surfaced on record',
+        'payload' => $payloadText !== '' ? $payloadText : 'Not visible in payload',
+        'why' => $item['why'],
+    ];
+}
+
+$payloadOnlyCount = count($payloadOnlyRows);
+$thinCount = count($thinRows);
+$continuityPromoted = $workingSummary !== '' || $workingNotes !== '' || ($historyDepth !== null && $historyDepth > 1);
+
+$toneStyles = [
+    'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+    'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$tone = 'neutral';
+$headline = 'Carryover posture is moderate';
+$guidance = 'Some preference and logistics anchors are already surfaced on the working record, but a few planning cues may still be living deeper in the payload.';
+$nextMove = 'Before a major hand-off, lift any payload-only planning signals into the working summary or latest history note so the next operator does not need to mine the JSON.';
+
+if (!$payloadAvailable) {
+    $tone = 'critical';
+    $headline = 'No payload is available for carryover scanning';
+    $guidance = 'There is no decodable payload to compare against the structured record, so the operator must rely on visible fields, the working summary, and timeline continuity.';
+    $nextMove = 'Preserve critical planning nuance in the working summary and append-only notes because there is no payload fallback to recover from.';
+} elseif ($payloadOnlyCount >= 5 && !$continuityPromoted) {
+    $tone = 'warning';
+    $headline = 'Too many planning cues still live only in the raw payload';
+    $guidance = 'Important preference, arrival, or occasion details are still buried in JSON, which weakens continuity when the inquiry is reopened or reassigned.';
+    $nextMove = 'Promote the payload-only anchors into the working summary or one clean history note before closing the screen.';
+} elseif ($payloadOnlyCount >= 3) {
+    $tone = 'warning';
+    $headline = 'Several useful cues have not been carried out of payload yet';
+    $guidance = 'The inquiry is still workable, but some important shaping details are not visible enough in the structured operator surface.';
+    $nextMove = 'Carry the most decision-shaping payload-only items into a concise working summary update so continuity survives the next hand-off.';
+} elseif ($carriedRows >= 10 && $payloadOnlyCount <= 1) {
+    $tone = 'positive';
+    $headline = 'Preference and logistics carryover is strong';
+    $guidance = 'Most of the meaningful payload cues are already visible in the structured record, which keeps future review faster and safer.';
+    $nextMove = 'Keep using the Raw tab as a validation surface, not the primary place to rediscover guest nuance.';
+}
+
+$summaryChecks = [
+    'Payload-only carryover gaps: ' . $payloadOnlyCount,
+    'Anchors already visible on record: ' . $carriedRows,
+    'Missing on both sides: ' . $thinCount,
+    'Working summary present: ' . ($workingSummary !== '' ? 'Yes' : 'No'),
+    'Working notes present: ' . ($workingNotes !== '' ? 'Yes' : 'No'),
+    'History depth: ' . ($historyDepth === null ? 'Unknown' : (string) $historyDepth . ' entr' . ($historyDepth === 1 ? 'y' : 'ies')),
+];
+
+$payloadOnlyPreview = empty($payloadOnlyRows)
+    ? ['No obvious payload-only carryover gaps detected in these core preference/logistics anchors.']
+    : array_slice($payloadOnlyRows, 0, 6);
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+$badgeStyles = [
+    'Carried into record' => 'background:#eaf7ef;color:#198754;border:1px solid #cfe9d8;',
+    'Present on both sides' => 'background:#eaf7ef;color:#198754;border:1px solid #cfe9d8;',
+    'Record only' => 'background:#eef6ff;color:#1d4ed8;border:1px solid #bfdbfe;',
+    'Payload only' => 'background:#fff3e8;color:#fd7e14;border:1px solid #ffe0bf;',
+    'Absent on both sides' => 'background:#f8fafc;color:#475569;border:1px solid #e2e8f0;',
+];
+?>
+<div style="border:1px solid <?= $escape($palette[2]) ?>;background:<?= $escape($palette[1]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:<?= $escape($palette[0]) ?>;margin-bottom:6px;">Payload Carryover Gaps</div>
+    <div style="font-size:20px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:8px;"><?= $escape($headline) ?></div>
+    <p style="margin:0 0 14px 0;color:#374151;line-height:1.6;"><?= $escape($guidance) ?></p>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Safest next move</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;line-height:1.55;"><?= $escape($nextMove) ?></div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Carryover summary</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($summaryChecks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Payload-only items to consider lifting</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($payloadOnlyPreview as $item): ?>
+                        <li><?= $escape($item) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:10px;">Preference and logistics anchors</div>
+                <?php foreach ($rows as $row): ?>
+                    <div style="border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+                            <div style="font-size:14px;font-weight:700;color:#111827;"><?= $escape($row['label']) ?></div>
+                            <div style="font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:4px 9px;<?= $escape($badgeStyles[$row['state']] ?? $badgeStyles['Absent on both sides']) ?>">
+                                <?= $escape($row['state']) ?>
+                            </div>
+                        </div>
+                        <div style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:8px;"><?= $escape($row['why']) ?></div>
+                        <div style="font-size:12px;color:#111827;line-height:1.55;">
+                            <strong>Record:</strong> <?= $escape($row['record']) ?><br>
+                            <strong>Payload:</strong> <?= $escape($row['payload']) ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

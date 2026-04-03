@@ -1,3 +1,9 @@
+## v2.6.32 — Payload Carryover Gaps Panel
+- added a read-only **Payload Carryover Gaps** panel to the Raw tab
+- surfaces which preference and logistics cues still live only in payload instead of the structured operator record
+- helps operators lift important planning nuance into working summary or history before hand-off, reopen, or closure
+- keeps the patch backend-only with no schema, list, quick-action, or public `/plan` flow change
+
 ## v2.6.31 — Reopen Recovery Cues Panel
 - added a read-only **Reopen Recovery Cues** panel to the Raw tab
 - surfaces whether the inquiry can be safely reopened or handed off later without depending too heavily on memory or raw JSON

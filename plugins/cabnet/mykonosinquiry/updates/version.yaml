@@ -90,3 +90,6 @@
 
 1.1.28:
     - 'Add reopen recovery cues scan panel to the stabilized operator workspace line'
+
+1.1.29:
+    - 'Add payload carryover gaps scan panel to the stabilized operator workspace line'

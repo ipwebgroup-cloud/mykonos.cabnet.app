@@ -510,6 +510,13 @@ tabs:
             tab: Raw
             comment: Read-only operator comparison of normalized inquiry fields against saved payload so reopen and hand-off review can spot drift before relying on raw JSON.
 
+        payload_carryover_gaps_panel:
+            label: Payload Carryover Gaps
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_payload_carryover_gaps_panel.htm
+            tab: Raw
+            comment: Read-only operator scan of which planning cues still live only in payload and should be lifted into the structured record or continuity notes.
+
         reopen_recovery_cues_panel:
             label: Reopen Recovery Cues
             type: partial
