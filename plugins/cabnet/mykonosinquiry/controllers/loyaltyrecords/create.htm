@@ -12,7 +12,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Create mode is intentionally locked</h4>
                     <p style="margin-bottom:0;">
                         Manual loyalty record creation stays disabled until the dedicated storage layer is installed. This protects production from
-                        partial retention workflows and preserves the Inquiry Queue as the live operational surface. Use the qualification, candidate-lane, and intent-mapping panels below to define the first activation cohort instead.
+                        partial retention workflows and preserves the Inquiry Queue as the live operational surface. Use the qualification, candidate-lane, intent-mapping, measurement, and return-value panels below to define the first activation cohort instead.
                     </p>
                 </div>
             </div>
@@ -27,6 +27,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('reengagement_intent_map_panel') ?>
         <?= $this->makePartial('offer_architecture_panel') ?>
         <?= $this->makePartial('reactivation_cadence_panel') ?>
+        <?= $this->makePartial('continuity_measurement_panel') ?>
+        <?= $this->makePartial('return_value_signals_panel') ?>
         <?= $this->makePartial('handoff_evidence_panel') ?>
         <?= $this->makePartial('workspace_separation_rules_panel') ?>
         <?= $this->makePartial('operator_routes_panel') ?>
