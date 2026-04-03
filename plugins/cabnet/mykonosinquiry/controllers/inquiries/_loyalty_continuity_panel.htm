@@ -157,6 +157,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <h4>Parked window</h4>
                     <p><?= e($record->parked_finish_window_label) ?></p>
                 </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Parked watch</h4>
+                    <p><?= e($record->parked_lane_watch_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Reopen trigger</h4>
+                    <p><?= e($record->parked_lane_reopen_trigger_label) ?></p>
+                </div>
             </div>
 
             <div class="control-list" style="margin-top:15px;">
@@ -171,6 +179,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Closure evidence:</strong> <?= e($record->closure_evidence_digest) ?></li>
                     <li><strong>Outcome-driven finish frame:</strong> <?= e($record->outcome_driven_finish_frame) ?></li>
                     <li><strong>Finish lane snapshot:</strong> <?= e($record->finish_lane_snapshot_summary) ?></li>
+                    <li><strong>Parked-state digest:</strong> <?= e($record->parked_state_digest) ?></li>
+                    <li><strong>Parked-state frame:</strong> <?= e($record->parked_state_visibility_frame) ?></li>
                     <li><strong>Finish lane frame:</strong> <?= e($record->finish_lane_follow_through_frame) ?></li>
                     <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
                 </ul>

@@ -1032,6 +1032,19 @@ public function getLatestFinishLaneModeAttribute(): string
     return trim((string) ($payload['finish_lane_mode'] ?? ''));
 }
 
+public function getLatestFinishLaneStateAttribute(): string
+{
+    $touchpoint = $this->getLatestFinishLaneTouchpoint();
+
+    if (!$touchpoint) {
+        return '';
+    }
+
+    $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+    return trim((string) ($payload['finish_lane_state'] ?? ''));
+}
+
 public function getLatestFinishLaneLabelAttribute(): string
 {
     $touchpoint = $this->getLatestFinishLaneTouchpoint();
@@ -1125,11 +1138,73 @@ public function getParkedFinishWindowLabelAttribute(): string
     }
 }
 
+public function getParkedLaneWatchLabelAttribute(): string
+{
+    $mode = $this->latest_finish_lane_mode;
+    $state = $this->latest_finish_lane_state;
+
+    if ($state === 'reopened') {
+        return 'Reopened for proof review';
+    }
+
+    if ($mode === '') {
+        if ($this->latest_closure_packet_mode !== '') {
+            return 'Awaiting deliberate lane parking';
+        }
+
+        return 'No parked watch active';
+    }
+
+    switch ($mode) {
+        case 'referral':
+            return $this->referral_ready ? 'Goodwill hold / referral-safe watch' : 'Goodwill preservation watch';
+        case 'return_value':
+            return in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)
+                ? 'High-value stewardship watch'
+                : 'Measured value-watch';
+        case 'reactivation':
+            return 'Short reactivation proof watch';
+        default:
+            return 'Review watch';
+    }
+}
+
+public function getParkedLaneReopenTriggerLabelAttribute(): string
+{
+    $mode = $this->latest_finish_lane_mode;
+    $state = $this->latest_finish_lane_state;
+
+    if ($state === 'reopened') {
+        return 'Operator is actively rebuilding the finish lane from fresh proof.';
+    }
+
+    if ($mode === '') {
+        if ($this->latest_closure_packet_mode !== '') {
+            return 'Park the matching finish lane deliberately before defining a reopen trigger.';
+        }
+
+        return 'No parked lane to reopen yet.';
+    }
+
+    switch ($mode) {
+        case 'referral':
+            return 'Reopen only on a new referral cue, direct ask, or ownership change.';
+        case 'return_value':
+            return 'Reopen only on a new value signal, premium intent, or deliberate owner review.';
+        case 'reactivation':
+            return 'Reopen only on a fresh contact signal, missed review, or reactivation proof.';
+        default:
+            return 'Reopen only on new proof.';
+    }
+}
+
 public function getFinishLaneSnapshotSummaryAttribute(): string
 {
     return $this->formatSummary([
         'Finish lane status' => $this->finish_lane_status_label,
         'Latest finish lane' => $this->latest_finish_lane_label,
+        'Parked watch' => $this->parked_lane_watch_label,
+        'Reopen trigger' => $this->parked_lane_reopen_trigger_label,
         'Parked finish window' => $this->parked_finish_window_label,
         'Finish posture' => $this->stewardship_finish_posture_label,
         'Closure readiness' => $this->closure_readiness_label,
@@ -1144,6 +1219,8 @@ public function getFinishLaneFollowThroughFrameAttribute(): string
     $lines = [];
     $lines[] = 'Finish lane status: ' . $this->finish_lane_status_label . '.';
     $lines[] = 'Latest finish lane: ' . $this->latest_finish_lane_label . '.';
+    $lines[] = 'Parked watch: ' . $this->parked_lane_watch_label . '.';
+    $lines[] = 'Reopen trigger: ' . rtrim($this->parked_lane_reopen_trigger_label, '.') . '.';
     $lines[] = 'Parked window: ' . $this->parked_finish_window_label . '.';
     $lines[] = 'Finish posture: ' . $this->stewardship_finish_posture_label . '.';
     $lines[] = 'Next finish move: ' . $this->next_finish_move_label . '.';
@@ -1159,6 +1236,57 @@ public function getFinishLaneFollowThroughFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getParkedStateDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Parked watch' => $this->parked_lane_watch_label,
+        'Finish lane status' => $this->finish_lane_status_label,
+        'Latest finish lane' => $this->latest_finish_lane_label,
+        'Reopen trigger' => $this->parked_lane_reopen_trigger_label,
+        'Parked finish window' => $this->parked_finish_window_label,
+        'Closure readiness' => $this->closure_readiness_label,
+        'Latest outcome' => $this->latest_touchpoint_outcome_label,
+        'Latest prepared packet' => $this->latest_prepared_packet_label,
+        'Latest closure packet' => $this->latest_closure_packet_label,
+        'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') : 'Not scheduled',
+    ], 'Parked-state digest is still minimal.');
+}
+
+public function getParkedStateVisibilityFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Parked watch: ' . $this->parked_lane_watch_label . '.';
+    $lines[] = 'Finish lane status: ' . $this->finish_lane_status_label . '.';
+    $lines[] = 'Reopen trigger: ' . rtrim($this->parked_lane_reopen_trigger_label, '.') . '.';
+    $lines[] = 'Parked window: ' . $this->parked_finish_window_label . '.';
+
+    switch ($this->latest_finish_lane_mode) {
+        case 'referral':
+            $lines[] = 'Referral parking should stay low-pressure, goodwill-preserving, and human-owned.';
+            break;
+        case 'return_value':
+            $lines[] = 'Return-value parking should stay measured, stewardship-led, and alert to premium intent rather than broad outreach.';
+            break;
+        case 'reactivation':
+            $lines[] = 'Reactivation parking should stay short-window and proof-sensitive rather than broad or automated.';
+            break;
+        default:
+            if ($this->latest_closure_packet_mode !== '') {
+                $lines[] = 'A closure packet exists, but the finish lane still needs deliberate parking before the parked posture is fully readable.';
+            } else {
+                $lines[] = 'No parked finish lane exists yet, so finish handling should stay narrow until a human operator parks the record deliberately.';
+            }
+            break;
+    }
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'The lane is reopened, so the parked posture is suspended until a fresh finish decision is made.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        $lines[] = 'The parked lane should remain stable until fresh proof justifies a deliberate reopen.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
 
     public function getClosureReadinessLabelAttribute(): string
     {
@@ -1268,6 +1396,8 @@ public function getFinishLaneFollowThroughFrameAttribute(): string
             'Finish posture' => $this->stewardship_finish_posture_label,
             'Finish lane status' => $this->finish_lane_status_label,
             'Latest finish lane' => $this->latest_finish_lane_label,
+            'Parked watch' => $this->parked_lane_watch_label,
+            'Reopen trigger' => $this->parked_lane_reopen_trigger_label,
             'Parked finish window' => $this->parked_finish_window_label,
             'Closure recommendation' => $this->closure_packet_recommendation_label,
             'Latest closure packet' => $this->latest_closure_packet_label,
@@ -1362,6 +1492,8 @@ public function getFinishLaneFollowThroughFrameAttribute(): string
             'Finish posture' => $this->stewardship_finish_posture_label,
             'Finish lane status' => $this->finish_lane_status_label,
             'Latest finish lane' => $this->latest_finish_lane_label,
+            'Parked watch' => $this->parked_lane_watch_label,
+            'Reopen trigger' => $this->parked_lane_reopen_trigger_label,
             'Parked finish window' => $this->parked_finish_window_label,
             'Closure recommendation' => $this->closure_packet_recommendation_label,
             'Latest closure packet' => $this->latest_closure_packet_label,

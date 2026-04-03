@@ -145,6 +145,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Explicitly park or reopen the finish lane once a closure packet exists, so stewardship stays narrow and readable.',
             ],
+            'parked_finish_state_digest_panel' => [
+                'label'   => 'Parked Finish State Digest',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_finish_state_digest_panel.htm',
+                'tab'     => 'Workspace',
+                'span'    => 'full',
+                'comment' => 'Make referral and return-value parked lanes easier to read from one narrow operator digest without widening into automation.',
+            ],
             'live_touchpoint_capture_panel' => [
                 'label'   => 'Live Touchpoint Capture',
                 'type'    => 'partial',

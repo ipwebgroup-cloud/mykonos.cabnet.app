@@ -3,6 +3,8 @@ $record = $formModel ?? $model ?? null;
 $finishLaneStatus = $record ? $record->finish_lane_status_label : 'No finish lane parked';
 $latestFinishLane = $record ? $record->latest_finish_lane_label : 'No finish lane parked yet.';
 $parkedWindow = $record ? $record->parked_finish_window_label : '21-day parked review window';
+$parkedWatch = $record ? $record->parked_lane_watch_label : 'No parked watch active';
+$reopenTrigger = $record ? $record->parked_lane_reopen_trigger_label : 'No parked lane to reopen yet.';
 $latestClosurePacket = $record ? $record->latest_closure_packet_label : 'No closure packet prepared yet.';
 $finishPosture = $record ? $record->stewardship_finish_posture_label : 'Review posture maintained';
 $closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
@@ -31,6 +33,14 @@ $finishLaneFrame = $record ? $record->finish_lane_follow_through_frame : 'Finish
             <div class="scoreboard-item title-value">
                 <h4>Parked window</h4>
                 <p><?= e($parkedWindow) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked watch</h4>
+                <p><?= e($parkedWatch) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen trigger</h4>
+                <p><?= e($reopenTrigger) ?></p>
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Latest closure packet</h4>
@@ -72,6 +82,8 @@ $finishLaneFrame = $record ? $record->finish_lane_follow_through_frame : 'Finish
         <div class="control-list" style="margin-top:15px;">
             <ul>
                 <li><strong>Finish lane snapshot:</strong> <?= nl2br(e($finishLaneSnapshot)) ?></li>
+                <li><strong>Parked watch:</strong> <?= e($parkedWatch) ?></li>
+                <li><strong>Reopen trigger:</strong> <?= e($reopenTrigger) ?></li>
                 <li><strong>Finish lane frame:</strong> <?= nl2br(e($finishLaneFrame)) ?></li>
                 <li>Park a finish lane only after a stewardship closure packet exists, so the record moves into a deliberate parked state instead of an implied one.</li>
                 <li>Use reactivation lane parking when the relationship should fall back into a short reactivation review cadence.</li>

@@ -263,6 +263,38 @@ tabs:
             span: right
             comment: Narrow parked window for the current finish lane once closure is deliberately parked.
 
+        parked_lane_watch_label:
+            label: Parked Watch
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: Fast reading of what kind of parked watch is active on the current finish lane.
+
+        parked_lane_reopen_trigger_label:
+            label: Reopen Trigger
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Human-owned condition that justifies reopening a parked finish lane.
+
+        parked_state_digest:
+            label: Parked-State Digest
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: At-a-glance digest for referral, reactivation, and return-value parked lanes.
+
+        parked_state_visibility_frame:
+            label: Parked-State Visibility Frame
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Read-only framing that makes the parked finish posture easier to understand from one narrow operator view.
+
         finish_lane_snapshot_summary:
             label: Finish Lane Snapshot
             type: textarea

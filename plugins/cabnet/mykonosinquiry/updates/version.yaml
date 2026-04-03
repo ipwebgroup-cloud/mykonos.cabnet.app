@@ -141,3 +141,5 @@
 2.3.12:
   - 'Introduce finish-lane follow-through and parked-state visibility for live loyalty records'
 
+2.3.13:
+  - 'Introduce parked-state digest polish and lane-watch framing for live loyalty finish lanes'

@@ -1,0 +1,58 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$parkedWatch = $record ? $record->parked_lane_watch_label : 'No parked watch active';
+$reopenTrigger = $record ? $record->parked_lane_reopen_trigger_label : 'No parked lane to reopen yet.';
+$parkedWindow = $record ? $record->parked_finish_window_label : '21-day parked review window';
+$finishLaneStatus = $record ? $record->finish_lane_status_label : 'No finish lane parked';
+$finishLane = $record ? $record->latest_finish_lane_label : 'No finish lane parked yet.';
+$parkedDigest = $record ? $record->parked_state_digest : 'Parked-state digest is still minimal.';
+$parkedFrame = $record ? $record->parked_state_visibility_frame : 'Parked-state visibility is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-binoculars"></i>
+        <h4 style="margin-top:0;">Parked finish state digest</h4>
+        <p>
+            Keep parked referral, reactivation, and return-value lanes readable from one narrow digest so operators can see the watch posture without rebuilding the whole finish story.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Parked watch</h4>
+                <p><?= e($parkedWatch) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish lane status</h4>
+                <p><?= e($finishLaneStatus) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest finish lane</h4>
+                <p><?= e($finishLane) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen trigger</h4>
+                <p><?= e($reopenTrigger) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked window</h4>
+                <p><?= e($parkedWindow) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Parked-state digest:</strong> <?= nl2br(e($parkedDigest)) ?></li>
+                <li><strong>Visibility frame:</strong> <?= nl2br(e($parkedFrame)) ?></li>
+                <li>Use this digest to decide whether the record should simply stay parked or whether human proof justifies reopening the lane.</li>
+                <li>Referral lanes should stay goodwill-safe and low-pressure.</li>
+                <li>Return-value lanes should stay stewardship-led and alert to premium intent rather than broad outreach.</li>
+                <li>Reactivation lanes should stay short-window and proof-sensitive.</li>
+            </ul>
+        </div>
+    </div>
+</div>
