@@ -109,8 +109,5 @@
 2.2.1:
   - 'Harden the Recovery Workspace payload handling for array-backed payload_json values'
 2.3.0:
-  - 'Introduce the Loyalty Continuity Workspace with retention routing from inquiry handling'
+  - 'Stage the first loyalty structural activation foundation files and guarded workspace install packet'
   - create_loyalty_records_table.php
-2.3.1:
-  - 'Add loyalty touchpoint history for long-cycle retention handling'
-  - create_loyalty_touchpoints_table.php

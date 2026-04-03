@@ -5,14 +5,16 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
 <div class="layout">
     <?php if (!$loyaltyTableReady): ?>
         <?= $this->makePartial('install_state_overview') ?>
+        <?= $this->makePartial('structural_activation_foundation_panel') ?>
+        <?= $this->makePartial('installable_schema_packet_panel') ?>
 
         <div class="layout-row">
             <div class="callout fade in no-subheader">
                 <div class="content">
                     <h4 style="margin-top:0;">Edit mode is waiting for storage activation</h4>
                     <p style="margin-bottom:0;">
-                        Loyalty records cannot be edited until the storage layer exists and real continuity records are present. Until then,
-                        this workspace acts as a stable planning and operator-guidance surface. Use the qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, dependency-map, launch-decision, and intent-mapping panels to evaluate whether a case would belong in the first controlled live wave later.
+                        Loyalty records cannot be edited until the storage layer exists and real continuity records are present. This release adds
+                        the first structural packet but keeps the workspace in guarded mode until installation is deliberately completed.
                     </p>
                 </div>
             </div>

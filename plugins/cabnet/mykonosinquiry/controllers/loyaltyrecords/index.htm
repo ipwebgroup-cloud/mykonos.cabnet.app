@@ -5,6 +5,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
 <div class="layout">
     <?php if (!$loyaltyTableReady): ?>
         <?= $this->makePartial('install_state_overview') ?>
+        <?= $this->makePartial('structural_activation_foundation_panel') ?>
+        <?= $this->makePartial('installable_schema_packet_panel') ?>
         <?= $this->makePartial('activation_gates_panel') ?>
         <?= $this->makePartial('transition_scorecard_panel') ?>
         <?= $this->makePartial('activation_scenarios_panel') ?>
@@ -49,9 +51,10 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                 <div class="content">
                     <h4 style="margin-top:0;">Current safe use</h4>
                     <p style="margin-bottom:0;">
-                        The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now documents the
-                        transition path clearly so the next structural release can be prepared without mixing incomplete retention logic into the
-                        active concierge workflow. The new qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, escalation-threshold, ownership-matrix, suppression controls, frequency-cap rules, consent-discipline, approval-checkpoint, pilot-experiment-ledger, and rollback-criteria panels help define the safest first live cohort before storage activation.
+                        The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now includes the
+                        first install-ready structural packet while remaining render-safe before activation. Use the planning panels to define
+                        the narrowest possible first continuity cohort, and treat the new schema file as a staged activation artifact rather
+                        than a reason to mix unfinished retention handling into active concierge operations.
                     </p>
                 </div>
             </div>
