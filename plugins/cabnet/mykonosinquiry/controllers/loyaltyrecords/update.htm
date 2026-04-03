@@ -12,7 +12,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Edit mode is waiting for storage activation</h4>
                     <p style="margin-bottom:0;">
                         Loyalty records cannot be edited until the storage layer exists and real continuity records are present. Until then,
-                        this workspace acts as a stable planning and operator-guidance surface. Use the qualification and timing panels to evaluate whether a case would belong in the first controlled live wave later.
+                        this workspace acts as a stable planning and operator-guidance surface. Use the qualification, candidate-lane, and intent-mapping panels to evaluate whether a case would belong in the first controlled live wave later.
                     </p>
                 </div>
             </div>
@@ -22,6 +22,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('activation_scenarios_panel') ?>
         <?= $this->makePartial('first_wave_qualification_panel') ?>
         <?= $this->makePartial('retention_timing_windows_panel') ?>
+        <?= $this->makePartial('pilot_candidate_lanes_panel') ?>
+        <?= $this->makePartial('reengagement_intent_map_panel') ?>
         <?= $this->makePartial('handoff_evidence_panel') ?>
         <?= $this->makePartial('workspace_separation_rules_panel') ?>
         <?= $this->makePartial('safe_rollout_plan_panel') ?>
