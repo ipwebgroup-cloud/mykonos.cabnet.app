@@ -148,6 +148,29 @@ tabs:
             span: full
             comment: Ready-to-act packet text for the current recommended continuity move.
 
+        packet_execution_status_label:
+            label: Packet Execution Status
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: Current follow-through posture for the latest prepared packet.
+
+        next_execution_move_label:
+            label: Next Execution Move
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Narrowest next move for packet follow-through.
+
+        packet_execution_summary:
+            label: Packet Execution Summary
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: full
+            comment: Read-only packet execution frame showing preparation, follow-through, timing, and the latest execution note.
+
         referral_return_value_summary:
             label: Referral / Return-Value Framing
             type: textarea

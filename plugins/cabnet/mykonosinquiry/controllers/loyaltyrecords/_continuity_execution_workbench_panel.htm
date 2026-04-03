@@ -1,0 +1,71 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$executionStatus = $record ? $record->packet_execution_status_label : 'No packet execution started';
+$nextMove = $record ? $record->next_execution_move_label : 'Prepare review packet';
+$executionSummary = $record ? $record->packet_execution_summary : 'Packet execution framing is still sparse.';
+$latestPrepared = $record ? $record->latest_prepared_packet_label : 'No packet prepared yet.';
+$latestNote = $record ? $record->latest_execution_note_preview : 'No packet follow-through note has been captured yet.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-bolt"></i>
+        <h4 style="margin-top:0;">Packet follow-through workbench</h4>
+        <p>
+            Move a prepared continuity packet into deliberate operator execution without turning the loyalty workspace into a campaign system.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Latest prepared</h4>
+                <p><?= e($latestPrepared) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Execution status</h4>
+                <p><?= e($executionStatus) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next move</h4>
+                <p><?= e($nextMove) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner</h4>
+                <p><?= e($record ? ($record->owner_name ?: 'unassigned') : 'unassigned') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Stage</h4>
+                <p><?= e($record ? $record->loyalty_stage_label : 'Review') ?></p>
+            </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;">
+            <button type="submit" class="btn btn-primary oc-icon-play" name="_loyalty_action" value="start_packet_follow_through">
+                Start follow-through
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-pause" name="_loyalty_action" value="defer_packet_follow_through">
+                Defer packet
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-calendar" name="_loyalty_action" value="schedule_packet_checkin">
+                Schedule check-in
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-check" name="_loyalty_action" value="complete_packet_follow_through">
+                Complete follow-through
+            </button>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Execution frame:</strong> <?= e($executionSummary) ?></li>
+                <li><strong>Latest execution note:</strong> <?= e($latestNote) ?></li>
+                <li>Start follow-through when a prepared packet should move into a real next move.</li>
+                <li>Defer when timing is wrong but the packet still belongs on the record.</li>
+                <li>Schedule check-in when a narrow timed revisit is the safest follow-through step.</li>
+                <li>Complete follow-through when the packet has been acted on and the record should fall back to review rather than broad automation.</li>
+            </ul>
+        </div>
+    </div>
+</div>

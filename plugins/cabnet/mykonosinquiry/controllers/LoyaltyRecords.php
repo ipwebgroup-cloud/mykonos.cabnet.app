@@ -113,6 +113,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Sanctioned continuity actions that keep retention work narrow, visible, and operator-owned.',
             ],
+            'continuity_execution_workbench_panel' => [
+                'label'   => 'Packet Follow-through Workbench',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_continuity_execution_workbench_panel.htm',
+                'tab'     => 'Workspace',
+                'span'    => 'full',
+                'comment' => 'Move prepared packets into deliberate follow-through without widening into campaign automation.',
+            ],
             'live_touchpoint_capture_panel' => [
                 'label'   => 'Live Touchpoint Capture',
                 'type'    => 'partial',
@@ -223,6 +231,18 @@ class LoyaltyRecords extends Controller
 
             case 'prepare_return_value_packet':
                 return $this->prepareReturnValuePacket($recordId);
+
+            case 'start_packet_follow_through':
+                return $this->startPacketFollowThrough($recordId);
+
+            case 'defer_packet_follow_through':
+                return $this->deferPacketFollowThrough($recordId);
+
+            case 'schedule_packet_checkin':
+                return $this->schedulePacketCheckin($recordId);
+
+            case 'complete_packet_follow_through':
+                return $this->completePacketFollowThrough($recordId);
 
             default:
                 Flash::warning('Unknown loyalty continuity action.');
@@ -408,6 +428,161 @@ class LoyaltyRecords extends Controller
     }
 
 
+    protected function startPacketFollowThrough($recordId)
+    {
+        return $this->runPacketExecutionAction(
+            $recordId,
+            'in_progress',
+            'Packet follow-through started.',
+            'Packet follow-through started from the execution workbench.',
+            function (LoyaltyRecord $record): bool {
+                $changed = false;
+                $now = Carbon::now();
+
+                if (empty($record->owner_name)) {
+                    $record->owner_name = $this->getOperatorName();
+                    $changed = true;
+                }
+
+                if (!$record->last_retention_contact_at || $record->last_retention_contact_at->format('Y-m-d H:i') !== $now->format('Y-m-d H:i')) {
+                    $record->last_retention_contact_at = $now;
+                    $changed = true;
+                }
+
+                if (!$record->next_review_at || $record->next_review_at->lt($now)) {
+                    $record->next_review_at = $now->copy()->addDays(7);
+                    $changed = true;
+                }
+
+                if (in_array((string) $record->continuity_status, ['', 'draft', 'dormant'], true)) {
+                    $record->continuity_status = 'active_retention';
+                    $changed = true;
+                }
+
+                if (in_array((string) $record->loyalty_stage, ['', 'review', 'watch'], true)) {
+                    $record->loyalty_stage = 'warm';
+                    $changed = true;
+                }
+
+                return $changed;
+            },
+            [
+                'touchpoint_outcome' => 'packet_started',
+                'touchpoint_channel' => 'system',
+                'is_internal' => true,
+            ]
+        );
+    }
+
+    protected function deferPacketFollowThrough($recordId)
+    {
+        return $this->runPacketExecutionAction(
+            $recordId,
+            'deferred',
+            'Packet follow-through deferred.',
+            'Packet follow-through deferred to a later review window.',
+            function (LoyaltyRecord $record): bool {
+                $changed = false;
+                $target = Carbon::now()->addDays(14);
+
+                if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $target->format('Y-m-d H:i:s')) {
+                    $record->next_review_at = $target;
+                    $changed = true;
+                }
+
+                if (empty($record->owner_name)) {
+                    $record->owner_name = $this->getOperatorName();
+                    $changed = true;
+                }
+
+                return $changed;
+            },
+            [
+                'touchpoint_outcome' => 'packet_deferred',
+                'touchpoint_channel' => 'system',
+                'is_internal' => true,
+            ]
+        );
+    }
+
+    protected function schedulePacketCheckin($recordId)
+    {
+        return $this->runPacketExecutionAction(
+            $recordId,
+            'scheduled_checkin',
+            'Packet check-in scheduled for 7 days from now.',
+            'Packet follow-through check-in scheduled for 7 days from now.',
+            function (LoyaltyRecord $record): bool {
+                $changed = false;
+                $target = Carbon::now()->addDays(7);
+
+                if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $target->format('Y-m-d H:i:s')) {
+                    $record->next_review_at = $target;
+                    $changed = true;
+                }
+
+                if (empty($record->owner_name)) {
+                    $record->owner_name = $this->getOperatorName();
+                    $changed = true;
+                }
+
+                return $changed;
+            },
+            [
+                'touchpoint_outcome' => 'packet_checkin',
+                'touchpoint_channel' => 'system',
+                'is_internal' => true,
+            ]
+        );
+    }
+
+    protected function completePacketFollowThrough($recordId)
+    {
+        return $this->runPacketExecutionAction(
+            $recordId,
+            'completed',
+            'Packet follow-through completed.',
+            'Packet follow-through completed and parked into the next review window.',
+            function (LoyaltyRecord $record): bool {
+                $changed = false;
+                $now = Carbon::now();
+                $nextReview = $now->copy()->addDays(30);
+
+                if (!$record->last_retention_contact_at || $record->last_retention_contact_at->format('Y-m-d H:i') !== $now->format('Y-m-d H:i')) {
+                    $record->last_retention_contact_at = $now;
+                    $changed = true;
+                }
+
+                if (!$record->next_review_at || $record->next_review_at->format('Y-m-d H:i:s') !== $nextReview->format('Y-m-d H:i:s')) {
+                    $record->next_review_at = $nextReview;
+                    $changed = true;
+                }
+
+                if (in_array((string) $record->loyalty_stage, ['review', 'watch', 'warm', 're-engaged', ''], true)) {
+                    $record->loyalty_stage = 'retained';
+                    $changed = true;
+                }
+
+                if (in_array((string) $record->continuity_status, ['dormant', 'draft', ''], true)) {
+                    $record->continuity_status = 'active_retention';
+                    $changed = true;
+                }
+
+                if (empty($record->owner_name)) {
+                    $record->owner_name = $this->getOperatorName();
+                    $changed = true;
+                }
+
+                return $changed;
+            },
+            [
+                'touchpoint_outcome' => 'packet_completed',
+                'touchpoint_channel' => 'system',
+                'is_internal' => true,
+            ]
+        );
+    }
+
     protected function prepareReviewPacket($recordId)
     {
         return $this->preparePacketAction($recordId, 'review', 'Review packet prepared.');
@@ -514,6 +689,46 @@ class LoyaltyRecords extends Controller
             default:
                 return $record->review_packet_brief;
         }
+    }
+
+    protected function runPacketExecutionAction($recordId, string $state, string $successMessage, string $touchpointBody, callable $mutator, array $meta = [])
+    {
+        $record = LoyaltyRecord::findOrFail($recordId);
+        $changed = $mutator($record);
+
+        if ($changed) {
+            $record->save();
+        }
+
+        $packetMode = $record->latest_prepared_packet_mode ?: $record->packet_action_recommendation_mode;
+        $packetLabel = $packetMode !== '' ? $this->humanizeValue($packetMode) : 'review';
+
+        $record->appendTouchpoint(
+            'system',
+            $touchpointBody . ' Packet mode: ' . $packetLabel . '.',
+            $this->getOperatorName(),
+            array_merge([
+                'reference_code' => $record->request_reference,
+                'next_step_at' => $record->next_review_at,
+                'payload_json' => [
+                    'entry_mode' => 'packet_execution_workbench',
+                    'captured_from' => 'loyalty_record_update',
+                    'execution_state' => $state,
+                    'packet_mode' => $packetMode,
+                    'packet_label' => $packetLabel,
+                    'continuity_status_snapshot' => $record->continuity_status,
+                    'loyalty_stage_snapshot' => $record->loyalty_stage,
+                    'return_value_tier_snapshot' => $record->return_value_tier,
+                    'referral_ready_snapshot' => (bool) $record->referral_ready,
+                    'owner_name_snapshot' => $record->owner_name,
+                    'next_review_at_snapshot' => $record->next_review_at ? $record->next_review_at->format('Y-m-d H:i:s') : null,
+                ],
+            ], $meta)
+        );
+
+        Flash::success($successMessage);
+
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
     }
 
     protected function runContinuityAction($recordId, callable $mutator, string $successMessage, string $touchpointBody, array $meta = [])

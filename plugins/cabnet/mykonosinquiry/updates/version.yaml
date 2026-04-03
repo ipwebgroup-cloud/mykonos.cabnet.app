@@ -130,3 +130,5 @@
 
 2.3.7:
   - 'Introduce continuity packet actions and operator brief packaging for live loyalty records'
+2.3.8:
+  - 'Introduce packet follow-through execution framing and guarded non-ready render safety for live loyalty records'

@@ -32,6 +32,8 @@ class LoyaltyRecord extends Model
     ];
 
     protected $latestTouchpointCache = false;
+    protected $latestPreparedPacketTouchpointCache = false;
+    protected $latestExecutionTouchpointCache = false;
 
     public static function getWorkspaceInstallState(): array
     {
@@ -203,6 +205,10 @@ class LoyaltyRecord extends Model
             'reactivated'           => 'Reactivated',
             'next_review_scheduled' => 'Next review scheduled',
             'packet_prepared'       => 'Packet prepared',
+            'packet_started'        => 'Packet follow-through started',
+            'packet_deferred'       => 'Packet deferred',
+            'packet_checkin'        => 'Packet check-in scheduled',
+            'packet_completed'      => 'Packet follow-through completed',
             'state_changed'         => 'State changed',
             'record_created'        => 'Record created',
         ];
@@ -730,6 +736,175 @@ class LoyaltyRecord extends Model
         return 'Packet prepared';
     }
 
+    public function getLatestPreparedPacketModeAttribute(): string
+    {
+        $touchpoint = $this->getLatestPreparedPacketTouchpoint();
+
+        if (!$touchpoint) {
+            return '';
+        }
+
+        $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+        return trim((string) ($payload['packet_mode'] ?? ''));
+    }
+
+    public function getPacketActionRecommendationModeAttribute(): string
+    {
+        switch ($this->packet_action_recommendation_label) {
+            case 'Prepare referral-safe brief':
+                return 'referral';
+
+            case 'Prepare reactivation brief':
+                return 'reactivation';
+
+            case 'Prepare return-value brief':
+                return 'return_value';
+
+            case 'Prepare review packet':
+            default:
+                return 'review';
+        }
+    }
+
+    public function getPacketExecutionStatusLabelAttribute(): string
+    {
+        $executionTouchpoint = $this->getLatestExecutionTouchpoint();
+
+        if ($executionTouchpoint) {
+            $payload = is_array($executionTouchpoint->payload_json) ? $executionTouchpoint->payload_json : [];
+            $state = trim((string) ($payload['execution_state'] ?? ''));
+
+            switch ($state) {
+                case 'in_progress':
+                    return 'Follow-through in progress';
+
+                case 'deferred':
+                    return 'Deferred for later review';
+
+                case 'scheduled_checkin':
+                    return 'Check-in scheduled';
+
+                case 'completed':
+                    return 'Follow-through completed';
+            }
+        }
+
+        if ($this->latest_prepared_packet_mode !== '') {
+            return 'Prepared / awaiting follow-through';
+        }
+
+        return 'No packet execution started';
+    }
+
+    public function getNextExecutionMoveLabelAttribute(): string
+    {
+        if ($this->latest_prepared_packet_mode === '') {
+            return $this->packet_action_recommendation_label;
+        }
+
+        switch ($this->packet_execution_status_label) {
+            case 'Prepared / awaiting follow-through':
+                return 'Start packet follow-through';
+
+            case 'Follow-through in progress':
+                return 'Schedule a near check-in or complete the packet';
+
+            case 'Deferred for later review':
+                return 'Review deferred packet on the next review date';
+
+            case 'Check-in scheduled':
+                return 'Run the scheduled check-in and then complete or defer';
+
+            case 'Follow-through completed':
+                return 'Monitor outcome and prepare the next narrow packet only if needed';
+
+            default:
+                return 'Review packet posture';
+        }
+    }
+
+    public function getLatestExecutionNotePreviewAttribute(): string
+    {
+        $touchpoint = $this->getLatestExecutionTouchpoint();
+
+        if (!$touchpoint) {
+            return 'No packet follow-through note has been captured yet.';
+        }
+
+        $body = trim((string) ($touchpoint->body ?: $touchpoint->touchpoint_summary ?: ''));
+
+        return $body !== '' ? $body : 'No packet follow-through note has been captured yet.';
+    }
+
+    public function getPacketExecutionSummaryAttribute(): string
+    {
+        $latestPrepared = $this->latest_prepared_packet_label;
+        $latestExecution = $this->getLatestExecutionTouchpoint();
+        $payload = $latestExecution && is_array($latestExecution->payload_json) ? $latestExecution->payload_json : [];
+        $packetMode = trim((string) ($payload['packet_mode'] ?? $this->latest_prepared_packet_mode));
+
+        return $this->formatSummary([
+            'Prepared packet' => $latestPrepared,
+            'Packet mode' => $packetMode !== '' ? $this->humanizeValue($packetMode) : 'Not prepared yet',
+            'Execution status' => $this->packet_execution_status_label,
+            'Next execution move' => $this->next_execution_move_label,
+            'Owner' => $this->owner_name ?: 'Owner not assigned',
+            'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') : 'Not scheduled',
+            'Latest execution note' => $this->firstMeaningfulLine($this->latest_execution_note_preview, 'No packet follow-through note has been captured yet.'),
+        ], 'Packet execution framing is still sparse.');
+    }
+
+    protected function getLatestPreparedPacketTouchpoint(): ?LoyaltyTouchpoint
+    {
+        if ($this->latestPreparedPacketTouchpointCache !== false) {
+            return $this->latestPreparedPacketTouchpointCache ?: null;
+        }
+
+        $this->latestPreparedPacketTouchpointCache = $this->findLatestTouchpointByCallback(function (LoyaltyTouchpoint $touchpoint): bool {
+            $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+            return $touchpoint->touchpoint_outcome === 'packet_prepared' || !empty($payload['packet_mode']);
+        });
+
+        return $this->latestPreparedPacketTouchpointCache ?: null;
+    }
+
+    protected function getLatestExecutionTouchpoint(): ?LoyaltyTouchpoint
+    {
+        if ($this->latestExecutionTouchpointCache !== false) {
+            return $this->latestExecutionTouchpointCache ?: null;
+        }
+
+        $this->latestExecutionTouchpointCache = $this->findLatestTouchpointByCallback(function (LoyaltyTouchpoint $touchpoint): bool {
+            $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+            return !empty($payload['execution_state']) || (($payload['entry_mode'] ?? null) === 'packet_execution_workbench');
+        });
+
+        return $this->latestExecutionTouchpointCache ?: null;
+    }
+
+    protected function findLatestTouchpointByCallback(callable $callback): ?LoyaltyTouchpoint
+    {
+        if (!$this->id || !static::touchpointStorageReady()) {
+            return null;
+        }
+
+        $touchpoints = LoyaltyTouchpoint::where('loyalty_record_id', $this->id)
+            ->orderBy('touchpoint_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        foreach ($touchpoints as $touchpoint) {
+            if ($callback($touchpoint)) {
+                return $touchpoint;
+            }
+        }
+
+        return null;
+    }
+
     protected function buildPacketBrief(string $packetType, string $recommendedMove, array $extras = []): string
     {
         $pairs = array_merge([
@@ -855,6 +1030,8 @@ class LoyaltyRecord extends Model
         }
 
         $this->latestTouchpointCache = $touchpoint;
+        $this->latestPreparedPacketTouchpointCache = false;
+        $this->latestExecutionTouchpointCache = false;
 
         return $touchpoint;
     }

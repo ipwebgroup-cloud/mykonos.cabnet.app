@@ -36,6 +36,14 @@ columns:
         label: Latest Touchpoint
         sortable: false
 
+    packet_execution_status_label:
+        label: Execution
+        sortable: false
+
+    next_execution_move_label:
+        label: Next Move
+        sortable: false
+
     next_review_window_label:
         label: Review Window
         sortable: false
