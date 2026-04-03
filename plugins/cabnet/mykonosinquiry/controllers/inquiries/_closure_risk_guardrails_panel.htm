@@ -1,0 +1,75 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$closedAt = trim((string) ($record->closed_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+
+$risks = [];
+$risks[] = [
+    'title' => 'Closure ambiguity',
+    'state' => ($closedAt !== '' || $closedReason !== '' || !in_array($status, ['new', 'open', 'contacted', 'awaiting_guest', 'proposal_sent', 'confirmed'], true)) ? 'controlled' : 'watch',
+    'detail' => ($closedAt !== '' || $closedReason !== '' || !in_array($status, ['new', 'open', 'contacted', 'awaiting_guest', 'proposal_sent', 'confirmed'], true))
+        ? 'The record carries explicit outcome or closure posture signals.'
+        : 'Do not let the inquiry drift into informal closure without a readable outcome trail.',
+];
+$risks[] = [
+    'title' => 'Ownership loss on closure',
+    'state' => $owner !== '' ? 'controlled' : 'exposed',
+    'detail' => $owner !== ''
+        ? 'A named owner remains attached to the record, so closure accountability can stay visible.'
+        : 'Avoid close / lost posture while the record still lacks a visible owner who can explain the outcome later.',
+];
+$risks[] = [
+    'title' => 'Continuity loss on reopen',
+    'state' => ($summary !== '' || $notes !== '') ? 'controlled' : 'exposed',
+    'detail' => ($summary !== '' || $notes !== '')
+        ? 'A continuity layer exists, so reopen or hand-off review can happen without reconstructing the inquiry from memory.'
+        : 'The record lacks enough continuity text. Closing it now increases reopen friction for the next operator.',
+];
+$risks[] = [
+    'title' => 'Checkpoint drift',
+    'state' => ($followUpDate !== '' || $lastContacted !== '' || $closedAt !== '') ? 'controlled' : 'watch',
+    'detail' => ($followUpDate !== '' || $lastContacted !== '' || $closedAt !== '')
+        ? 'The record carries visible checkpoint or closure timing context.'
+        : 'Make the last meaningful touch or closure timing readable before pausing the record.',
+];
+$risks[] = [
+    'title' => 'Trip-context fade',
+    'state' => ($arrival !== '' || $departure !== '') ? 'controlled' : 'watch',
+    'detail' => ($arrival !== '' || $departure !== '')
+        ? 'Trip timing remains visible for future reopen review.'
+        : 'If the record reopens later, invisible trip timing will make the next operator re-scan raw payload or old notes.',
+];
+
+$colorMap = [
+    'controlled' => ['#166534', '#f0fdf4', '#86efac'],
+    'watch' => ['#92400e', '#fffbeb', '#fcd34d'],
+    'exposed' => ['#b91c1c', '#fef2f2', '#fca5a5'],
+];
+?>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px; margin-bottom:16px;">
+    <?php foreach ($risks as $risk): ?>
+        <?php $colors = $colorMap[$risk['state']] ?? $colorMap['watch']; ?>
+        <div style="padding:14px; border:1px solid <?= e($colors[2]) ?>; border-radius:14px; background:<?= e($colors[1]) ?>;">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:8px;">
+                <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($colors[0]) ?>; font-weight:700;"><?= e($risk['title']) ?></div>
+                <div style="font-size:11px; color:<?= e($colors[0]) ?>; font-weight:700;"><?= e(strtoupper($risk['state'])) ?></div>
+            </div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($risk['detail']) ?></div>
+        </div>
+    <?php endforeach; ?>
+</div>

@@ -272,6 +272,27 @@ tabs:
             tab: Confirmation
             comment: Read-only guardrails that surface the commitment mistakes most likely to over-confirm, blur accountability, or create fragile reopen/hand-off conditions.
 
+        closure_workspace_panel:
+            label: Closure Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_workspace_panel.htm
+            tab: Closure
+            comment: High-level closure shaping surface for deciding whether the record should stay open, close with an explicit outcome, or preserve a cleaner reopen path before momentum fades.
+
+        closure_decision_blueprint_panel:
+            label: Closure Decision Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_decision_blueprint_panel.htm
+            tab: Closure
+            comment: Read-only structure guidance for turning close / lost / pause / reopen handling into an explicit operator decision with readable outcome context.
+
+        closure_risk_guardrails_panel:
+            label: Closure Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_risk_guardrails_panel.htm
+            tab: Closure
+            comment: Read-only guardrails that surface the closure mistakes most likely to hide outcomes, weaken reopen continuity, or make future hand-off recovery harder.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

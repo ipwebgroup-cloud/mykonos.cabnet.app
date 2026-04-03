@@ -117,3 +117,7 @@
 
 1.8.0:
     - 'Introduce the Confirmation Workspace tab with commitment shaping and confirmation guardrail panels'
+
+1.9.0:
+    - 'Introduce the Closure Workspace tab with explicit close, pause, and reopen discipline panels'
+

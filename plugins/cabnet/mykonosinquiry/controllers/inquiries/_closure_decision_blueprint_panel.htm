@@ -1,0 +1,62 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+
+$route = 'Use an open-record continuity move';
+if (in_array($status, ['closed_won', 'closed_lost'], true)) {
+    $route = 'Use closure reinforcement or reopen discipline';
+} elseif (in_array($status, ['confirmed', 'awaiting_guest', 'proposal_sent'], true) && $summary !== '' && $services !== '' && $arrival !== '' && $departure !== '' && $guests !== '' && $guests !== '0') {
+    $route = 'Use an explicit close / pause / reopen decision';
+}
+
+$mustCapture = [];
+$mustCapture[] = $summary !== '' ? 'current mission summary remains visible' : 'state the current mission before closing';
+$mustCapture[] = $services !== '' ? 'service scope remains visible' : 'capture service scope before closing';
+$mustCapture[] = ($arrival !== '' || $departure !== '') ? 'timing posture remains visible' : 'state timing uncertainty explicitly';
+$mustCapture[] = $guests !== '' && $guests !== '0' ? 'group size remains visible' : 'make guest-count uncertainty explicit';
+$mustCapture[] = $followUpDate !== '' ? 'follow-up history visible' : 'note why follow-up is ending or pausing';
+$mustCapture[] = $closedReason !== '' ? 'closure reason already present' : 'set a closure reason if you close the record';
+
+$avoid = [
+    'Do not close a record simply because guest momentum slowed down; make the current outcome explicit.',
+    'Do not use closure language that hides whether the record is won, lost, paused, or reopen-worthy.',
+    'Do not leave the next operator guessing why the inquiry stopped moving or what would justify reopening it.',
+];
+?>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:12px; margin-bottom:16px;">
+    <div style="padding:14px; border:1px solid #bfdbfe; border-radius:14px; background:#eff6ff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:8px;">Closure Decision Blueprint</div>
+        <div style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($route) ?></div>
+        <div style="font-size:14px; color:#334155;">Choose the closure route deliberately, then make the outcome and reopen posture unmistakable in the record.</div>
+    </div>
+    <div style="padding:14px; border:1px solid #cbd5e1; border-radius:14px; background:#fff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:8px;">Must-capture facts</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($mustCapture as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <div style="padding:14px; border:1px solid #fecaca; border-radius:14px; background:#fef2f2;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:8px;">Avoid</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($avoid as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

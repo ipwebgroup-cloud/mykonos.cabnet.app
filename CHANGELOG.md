@@ -1,3 +1,31 @@
+## v3.4.0 — Closure Workspace
+- adds a new **Closure** tab to the backend inquiry update screen
+- introduces a composite **Closure Workspace** panel for close / lost / pause / reopen posture before momentum fades into ambiguity
+- adds **Closure Decision Blueprint** guidance so operators capture the outcome, reason, and reopen path explicitly instead of letting records drift into informal closure
+- adds **Closure Risk Guardrails** to protect ownership, continuity, checkpoint visibility, and future reopen readability
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v3.3.0 — Confirmation Workspace
+- adds a new **Confirmation** tab to the backend inquiry update screen
+- introduces a composite **Confirmation Workspace** panel for commitment shaping and disciplined pre-confirmation handling
+- adds **Commitment Lock Blueprint** guidance so operators move into confirmation language without losing scope, timing, or continuity anchors
+- adds **Confirmation Risk Guardrails** to prevent over-confirming, ownership blur, and fragile reopen conditions
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v3.2.0 — Fulfillment Workspace
+- adds a new **Fulfillment** tab to the backend inquiry update screen
+- introduces a composite **Fulfillment Workspace** panel for operational sequencing and execution-readiness posture
+- adds **Execution Readiness Blueprint** guidance so operators move from commercial shaping into disciplined operational planning
+- adds **Fulfillment Risk Guardrails** to prevent assumption-heavy delivery language, weak hand-off cues, and invisible execution drift
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v3.1.0 — Proposal Workspace
+- adds a new **Proposal** tab to the backend inquiry update screen
+- introduces a composite **Proposal Workspace** panel for offer shaping and commercial posture
+- adds **Offer Shape Blueprint** guidance so operators can structure the next premium offer without breaking continuity
+- adds **Proposal Risk Guardrails** to prevent over-promising, blurred offer logic, and avoidable commercial drift
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v3.0.0 — Communication Workspace
 - adds a new **Communication** tab to the backend inquiry update screen
 - introduces a composite **Communication Workspace** panel for route, tone, readiness, and the safest next guest-facing move

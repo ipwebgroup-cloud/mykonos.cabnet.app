@@ -1,0 +1,113 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$closedAt = trim((string) ($record->closed_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+
+$missing = [];
+if ($owner === '') {
+    $missing[] = 'named owner';
+}
+if ($summary === '' && $notes === '') {
+    $missing[] = 'working continuity';
+}
+if ($services === '') {
+    $missing[] = 'service scope';
+}
+if ($arrival === '' || $departure === '') {
+    $missing[] = 'stay dates';
+}
+if ($guests === '' || $guests === '0') {
+    $missing[] = 'guest count';
+}
+
+$closureState = 'Keep the record open';
+$palette = ['#1d4ed8', '#eff6ff', '#93c5fd'];
+if (in_array($status, ['closed_won', 'closed_lost'], true) || $closedAt !== '') {
+    $closureState = 'Closure already anchored';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+} elseif (empty($missing) && in_array($status, ['confirmed', 'awaiting_guest', 'proposal_sent'], true)) {
+    $closureState = 'Closure-ready posture';
+    $palette = ['#b45309', '#fff7ed', '#fdba74'];
+}
+
+$nextMove = 'Do not close the record until continuity, guest mission, and the current next step remain readable to the next operator.';
+if ($closureState === 'Closure-ready posture') {
+    $nextMove = 'Use disciplined closure handling. Make the outcome, reason, and reopen path explicit instead of letting the record fade out informally.';
+}
+if ($closureState === 'Closure already anchored') {
+    $nextMove = 'Preserve closure readability. Keep reopen cues, closure reason, and scope memory easy to inherit later.';
+}
+if ($priority === 'vip' || $priority === 'urgent') {
+    $nextMove .= ' VIP / urgent posture increases the cost of vague closure language.';
+}
+
+$signals = [];
+if ($owner !== '') {
+    $signals[] = 'owner visible';
+}
+if ($summary !== '' || $notes !== '') {
+    $signals[] = 'continuity text visible';
+}
+if ($followUpDate !== '' || $lastContacted !== '') {
+    $signals[] = 'checkpoint trail visible';
+}
+if ($closedAt !== '' || $closedReason !== '') {
+    $signals[] = 'closure trail visible';
+}
+
+$closureNote = $closedAt !== '' || in_array($status, ['closed_won', 'closed_lost'], true)
+    ? 'The record already carries closure posture. Protect the reason, timing, and reopen context from drifting out of view.'
+    : 'Closure should be an explicit operator decision, not the by-product of silence, ambiguity, or missing next-step ownership.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Closure Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($closureState) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Closure posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($nextMove) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible closure signals</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($signals) ? implode(', ', $signals) : 'Build closure posture from ownership, continuity text, checkpoints, and explicit outcome context first.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Closure note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($closureNote) ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($missing)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Safe closure still depends on: <strong><?= e(implode(', ', $missing)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries the core anchors needed for disciplined close / lost / reopen handling without forcing the next operator to reconstruct the inquiry.
+        </div>
+    <?php endif; ?>
+</div>
