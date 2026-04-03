@@ -1,132 +1,67 @@
 <?php
 $inquiry = $formModel ?? $model ?? null;
 $record = null;
-
-$hasInquiry = $inquiry && !empty($inquiry->id);
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 $loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
-$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
-$loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
 
-if ($loyaltyUiReady && $hasInquiry) {
+if ($loyaltyTableReady && $loyaltyModelReady && $inquiry && !empty($inquiry->id)) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
 }
 
-$formatDate = function ($value, $fallback = 'Not scheduled') {
-    if (!$value) {
-        return $fallback;
-    }
-
-    if ($value instanceof \DateTimeInterface) {
-        return $value->format('Y-m-d H:i');
-    }
-
-    try {
-        return (new \DateTime((string) $value))->format('Y-m-d H:i');
-    } catch (\Exception $e) {
-        return (string) $value;
-    }
-};
-
-$status = trim((string) ($inquiry->status ?? ''));
-$servicesInline = trim((string) ($inquiry->services_inline ?? ''));
-$focusLabel = $servicesInline !== '' ? $servicesInline : 'General planning';
-$inquiryAnchor = trim((string) ($inquiry->request_reference ?? ''));
-$priority = trim((string) ($inquiry->priority ?? ''));
-$ownerName = trim((string) ($inquiry->owner_name ?? ''));
-$lastContacted = $formatDate($inquiry->last_contacted_at ?? null, 'Not recorded');
-$followUpDate = $formatDate($inquiry->follow_up_date ?? null);
-
-$signals = [];
-if ($priority !== '') {
-    $signals[] = 'Priority: ' . ucwords(str_replace(['_', '-'], ' ', $priority));
-}
-if ($ownerName !== '') {
-    $signals[] = 'Owner: ' . $ownerName;
-}
-if ($status !== '') {
-    $signals[] = 'Status: ' . ucwords(str_replace(['_', '-'], ' ', $status));
-}
-if (!$signals) {
-    $signals[] = 'No routing signals recorded yet';
-}
+$status = strtolower(trim((string)($inquiry->status ?? '')));
+$priority = (string)($inquiry->priority ?? '');
+$owner = (string)($inquiry->owner ?? '');
+$closedAt = $inquiry->closed_at ?? null;
+$followUp = $inquiry->follow_up_at ?? null;
+$transferReady = in_array($status, ['closed_won', 'closed_lost', 'closed', 'won', 'fulfilled', 'complete', 'completed'], true) || !empty($closedAt);
+$recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'Review for loyalty transfer' : 'Keep in Inquiry Queue');
 ?>
-<div class="callout fade in no-icon">
+<div class="callout fade in no-subheader">
     <div class="header">
         <i class="icon-heart"></i>
-        <h3>Loyalty Continuity Snapshot</h3>
-        <p>Retention-only visibility for guests who should remain visible after active inquiry handling.</p>
+        <h4 style="margin-top:0;">Loyalty continuity snapshot</h4>
+        <p>
+            The continuity view below helps operators decide whether this record belongs in active concierge handling or in the long-cycle loyalty lane.
+        </p>
     </div>
-
     <div class="content">
-        <?php if (!$hasInquiry): ?>
-            <p class="oc-text-muted">Save the inquiry first to generate a continuity snapshot.</p>
-        <?php elseif (!$loyaltyUiReady): ?>
-            <p class="oc-text-muted">Loyalty Continuity is not fully active on this installation yet.</p>
-        <?php elseif (!$record): ?>
-            <div class="alert alert-info">
-                No linked loyalty record exists yet. Use the workspace actions only when this inquiry is ready to move from active handling into retention continuity.
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Recommended route</h4>
+                <p><?= e($recommendedRoute) ?></p>
             </div>
-            <ul class="list-unstyled oc-text-muted">
-                <li><strong>Inquiry anchor:</strong> <?= e($inquiryAnchor !== '' ? $inquiryAnchor : 'Not assigned') ?></li>
-                <li><strong>Current inquiry status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
-                <li><strong>Service focus:</strong> <?= e($focusLabel) ?></li>
-                <li><strong>Last contacted:</strong> <?= e($lastContacted) ?></li>
-                <li><strong>Follow-up date:</strong> <?= e($followUpDate) ?></li>
+            <div class="scoreboard-item title-value">
+                <h4>Status / priority</h4>
+                <p><?= e($status ?: 'unspecified') ?><?= $priority !== '' ? ' / ' . e($priority) : '' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner / follow-up</h4>
+                <p><?= e($owner !== '' ? $owner : 'unassigned') ?><?= $followUp ? ' / follow-up scheduled' : ' / no follow-up set' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Loyalty storage</h4>
+                <p><?= $loyaltyTableReady ? 'installed' : 'not installed yet' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <?php if ($record): ?>
+                    <li>This inquiry already has a linked loyalty record and can be reviewed in Loyalty Continuity.</li>
+                <?php elseif ($transferReady): ?>
+                    <li>This inquiry looks transition-ready. Confirm closure and continuity reason before bridging it.</li>
+                <?php else: ?>
+                    <li>This inquiry still belongs in the live operational queue and should not be treated as a loyalty record yet.</li>
+                <?php endif; ?>
+
+                <?php if (!$loyaltyTableReady): ?>
+                    <li>The storage layer is still staged, so any bridge here is informational until activation is deliberately installed.</li>
+                <?php endif; ?>
+
+                <?php if (!$record && empty($closedAt)): ?>
+                    <li>No close timestamp is present yet, so keep operational discipline inside Inquiry Queue first.</li>
+                <?php endif; ?>
             </ul>
-
-            <div class="form-group" style="margin-top:15px;">
-                <label class="control-label">Routing Signals</label>
-                <ul class="list-unstyled oc-text-muted" style="margin-bottom:0;">
-                    <?php foreach ($signals as $signal): ?>
-                        <li><?= e($signal) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php else: ?>
-            <ul class="list-unstyled">
-                <li><strong>Status:</strong> <?= e($record->continuity_status_label ?? $record->continuity_status ?? 'Active retention') ?></li>
-                <li><strong>Stage:</strong> <?= e($record->loyalty_stage_label ?? $record->loyalty_stage ?? 'Review') ?></li>
-                <li><strong>Referral ready:</strong> <?= !empty($record->referral_ready) ? 'Yes' : 'No' ?></li>
-                <li><strong>Return-value tier:</strong> <?= e($record->return_value_tier_label ?? $record->return_value_tier ?? 'Watch') ?></li>
-                <li><strong>Owner:</strong> <?= e(trim((string) ($record->owner_name ?? '')) !== '' ? $record->owner_name : 'Unassigned') ?></li>
-                <li><strong>Next review:</strong> <?= e($formatDate($record->next_review_at ?? null)) ?></li>
-                <li><strong>Last retention contact:</strong> <?= e($formatDate($record->last_retention_contact_at ?? null)) ?></li>
-                <li><strong>Preferred season:</strong> <?= e(trim((string) ($record->preferred_season ?? '')) !== '' ? $record->preferred_season : 'Not set') ?></li>
-                <li><strong>Source inquiry:</strong> <?= e($inquiryAnchor !== '' ? $inquiryAnchor : ('#' . $inquiry->id)) ?></li>
-                <li><strong>Original focus:</strong> <?= e($focusLabel) ?></li>
-            </ul>
-
-            <?php if (!empty($record->continuity_summary)): ?>
-                <div class="form-group">
-                    <label class="control-label">Continuity Summary</label>
-                    <pre style="white-space:pre-wrap;word-break:break-word;"><?= e($record->continuity_summary) ?></pre>
-                </div>
-            <?php endif; ?>
-
-            <div class="form-group">
-                <label class="control-label">Routing Signals</label>
-                <ul class="list-unstyled oc-text-muted" style="margin-bottom:0;">
-                    <?php foreach ($signals as $signal): ?>
-                        <li><?= e($signal) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label">Retention Lens</label>
-                <p class="oc-text-muted" style="margin-bottom:0;">
-                    Keep Loyalty Continuity focused on return-value follow-up, referral readiness, and future re-engagement rather than live request fulfillment.
-                </p>
-            </div>
-
-            <?php if ($loyaltyControllerReady): ?>
-                <p>
-                    <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>" class="btn btn-default">
-                        Open Loyalty Record
-                    </a>
-                </p>
-            <?php endif; ?>
-        <?php endif; ?>
+        </div>
     </div>
 </div>

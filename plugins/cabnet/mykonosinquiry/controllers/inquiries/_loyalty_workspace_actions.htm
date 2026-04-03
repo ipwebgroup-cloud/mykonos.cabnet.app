@@ -1,181 +1,57 @@
 <?php
 $inquiry = $formModel ?? $model ?? null;
-$record = null;
-
-$hasInquiry = $inquiry && !empty($inquiry->id);
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 $loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
-$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
-$loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
+$record = null;
 
-if ($loyaltyUiReady && $hasInquiry) {
+if ($loyaltyTableReady && $loyaltyModelReady && $inquiry && !empty($inquiry->id)) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
 }
 
-$status = trim((string) ($inquiry->status ?? ''));
-$normalizedStatus = strtolower(str_replace('-', '_', $status));
-$hasOwner = trim((string) ($inquiry->owner_name ?? '')) !== '';
-$hasReference = trim((string) ($inquiry->request_reference ?? '')) !== '';
-$servicesInline = trim((string) ($inquiry->services_inline ?? ''));
-$closedAt = trim((string) ($inquiry->closed_at ?? '')) !== '';
-$lastContactedAt = trim((string) ($inquiry->last_contacted_at ?? '')) !== '';
-$followUpDate = trim((string) ($inquiry->follow_up_date ?? '')) !== '';
-$priority = trim((string) ($inquiry->priority ?? ''));
-
-$isRecommendedStage = in_array($normalizedStatus, ['reviewed', 'contacted', 'proposal_sent', 'confirmed', 'closed_won', 'closed_lost'], true);
-$isStrongRetentionStage = in_array($normalizedStatus, ['confirmed', 'closed_won'], true) || $closedAt;
-$hasOperationalContext = $hasOwner || $lastContactedAt || $followUpDate;
-
-$readinessChecks = [
-    [
-        'label' => 'Inquiry has reached a later handling stage',
-        'ok' => $isRecommendedStage,
-        'hint' => 'Move the request further through active handling first.',
-    ],
-    [
-        'label' => 'Reference is assigned',
-        'ok' => $hasReference,
-        'hint' => 'A reference helps retention work map cleanly back to the inquiry line.',
-    ],
-    [
-        'label' => 'Operational context exists',
-        'ok' => $hasOperationalContext,
-        'hint' => 'At least one operational signal should exist before continuity handoff.',
-    ],
-];
-
-$passedChecks = 0;
-$blockers = [];
-foreach ($readinessChecks as $check) {
-    if ($check['ok']) {
-        $passedChecks++;
-    } else {
-        $blockers[] = $check['hint'];
-    }
-}
-
-$buttonLocked = !$record && $passedChecks < 2;
-$readinessTone = $passedChecks === 3 ? 'text-success' : ($passedChecks >= 2 ? 'text-warning' : 'text-danger');
-$readinessSummary = $passedChecks === 3
-    ? 'Ready for loyalty continuity handoff.'
-    : ($passedChecks >= 2 ? 'Conditionally ready. Review operator context before handoff.' : 'Keep this inquiry in the active handling queue.');
-$continuityLens = $isStrongRetentionStage
-    ? 'This looks more like post-service retention work than live queue triage.'
-    : 'This still reads as an active inquiry unless the operator intentionally promotes it to continuity.';
-
-$routeLabel = 'Active Handling';
-$routeTone = 'text-danger';
-$routeHint = 'Work this request inside the live queue first.';
-if ($record) {
-    $routeLabel = 'Loyalty Continuity';
-    $routeTone = 'text-success';
-    $routeHint = 'A loyalty record is already linked, so continuity work belongs in the retention workspace.';
-} elseif ($passedChecks >= 2) {
-    $routeLabel = 'Review for Continuity';
-    $routeTone = 'text-warning';
-    $routeHint = 'The inquiry is approaching retention readiness, but the operator should confirm intent before handoff.';
-}
-
-$priorityLabel = $priority !== '' ? ucwords(str_replace(['_', '-'], ' ', $priority)) : 'Not set';
-$focusLabel = $servicesInline !== '' ? $servicesInline : 'General planning';
+$status = strtolower(trim((string)($inquiry->status ?? '')));
+$closedAt = $inquiry->closed_at ?? null;
+$transferReady = in_array($status, ['closed_won', 'closed_lost', 'closed', 'won', 'fulfilled', 'complete', 'completed'], true) || !empty($closedAt);
 ?>
-<div class="callout fade in no-icon">
+<div class="callout fade in no-subheader">
     <div class="header">
-        <i class="icon-repeat"></i>
-        <h3>Loyalty Continuity Workspace</h3>
-        <p>Retention-ready handoff for referral continuity and return-value tracking after the live inquiry queue has been handled.</p>
+        <i class="icon-random"></i>
+        <h4 style="margin-top:0;">Loyalty bridge actions</h4>
+        <p>
+            This inquiry remains the live operational record. Use Loyalty Continuity only after active handling is complete and a clear retention,
+            referral, or return-value reason exists.
+        </p>
     </div>
-
     <div class="content">
-        <?php if (!$hasInquiry): ?>
-            <p class="oc-text-muted">Save the inquiry first before using Loyalty Continuity actions.</p>
-        <?php elseif (!$loyaltyUiReady): ?>
-            <p class="oc-text-muted">Loyalty Continuity is not fully active on this installation yet. The inquiry queue remains safe and unchanged.</p>
+        <?php if ($record): ?>
+            <p>
+                <strong>Linked loyalty record found.</strong>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>">Open Loyalty Continuity record</a>
+            </p>
         <?php else: ?>
-            <div class="mb-3">
-                <p><strong>Readiness:</strong> <span class="<?= e($readinessTone) ?>"><?= e($readinessSummary) ?></span></p>
-                <p><strong>Recommended Route:</strong> <span class="<?= e($routeTone) ?>"><?= e($routeLabel) ?></span></p>
-                <p class="oc-text-muted" style="margin-bottom:10px;"><?= e($routeHint) ?></p>
-                <p class="oc-text-muted" style="margin-bottom:10px;"><?= e($continuityLens) ?></p>
-                <ul class="list-unstyled oc-text-muted" style="margin-bottom:10px;">
-                    <li><strong>Status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
-                    <li><strong>Reference:</strong> <?= e($hasReference ? $inquiry->request_reference : 'Not yet assigned') ?></li>
-                    <li><strong>Priority:</strong> <?= e($priorityLabel) ?></li>
-                    <li><strong>Owner:</strong> <?= e($hasOwner ? $inquiry->owner_name : 'Unassigned') ?></li>
-                    <li><strong>Last contacted:</strong> <?= e($lastContactedAt ? (string) $inquiry->last_contacted_at : 'Not recorded') ?></li>
-                    <li><strong>Follow-up date:</strong> <?= e($followUpDate ? (string) $inquiry->follow_up_date : 'Not scheduled') ?></li>
-                    <li><strong>Focus:</strong> <?= e($focusLabel) ?></li>
-                    <li><strong>Loyalty record:</strong> <?= $record ? 'Already linked' : 'Not linked yet' ?></li>
-                </ul>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label">Readiness Checklist</label>
-                <ul class="list-unstyled">
-                    <?php foreach ($readinessChecks as $check): ?>
-                        <li>
-                            <strong><?= $check['ok'] ? '✓' : '–' ?></strong>
-                            <?= e($check['label']) ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-
-            <?php if (!$record && !empty($blockers)): ?>
-                <div class="alert alert-warning">
-                    <strong>Why handoff is guarded:</strong>
-                    <ul style="margin:8px 0 0 18px;">
-                        <?php foreach ($blockers as $blocker): ?>
-                            <li><?= e($blocker) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php elseif (!$record): ?>
-                <div class="alert alert-success">
-                    This inquiry is ready for post-triage loyalty handling without mixing retention work into the live queue.
-                </div>
-            <?php endif; ?>
-
-            <?php if ($record): ?>
-                <div class="alert alert-info">
-                    This inquiry already has a loyalty link. Continue retention work in the Loyalty Continuity workspace instead of re-routing it through queue actions.
-                </div>
-            <?php endif; ?>
-
-            <form method="post">
-                <?= Form::token() ?>
-                <input type="hidden" name="_quick_action" value="">
-                <div class="btn-toolbar">
-                    <button type="submit" class="btn btn-primary"
-                            <?= $buttonLocked ? 'disabled="disabled" title="Complete the readiness checklist before loyalty handoff."' : '' ?>
-                            onclick="this.form._quick_action.value='send_to_loyalty';">
-                        Move to Loyalty
-                    </button>
-
-                    <button type="submit" class="btn btn-default"
-                            <?= $buttonLocked ? 'disabled="disabled" title="Complete the readiness checklist before marking referral-ready."' : '' ?>
-                            onclick="this.form._quick_action.value='mark_referral_ready';">
-                        Mark Referral Ready
-                    </button>
-
-                    <button type="submit" class="btn btn-default"
-                            <?= $buttonLocked ? 'disabled="disabled" title="Complete the readiness checklist before marking return-value."' : '' ?>
-                            onclick="this.form._quick_action.value='mark_return_value_candidate';">
-                        Mark Return-Value Candidate
-                    </button>
-
-                    <?php if ($record && $loyaltyControllerReady): ?>
-                        <a class="btn btn-secondary"
-                           href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>">
-                            Open Loyalty Workspace
-                        </a>
-                    <?php elseif ($record): ?>
-                        <button type="button" class="btn btn-secondary" disabled="disabled" title="Loyalty record exists but the workspace controller is not active on this installation.">
-                            Loyalty Workspace Unavailable
-                        </button>
-                    <?php endif; ?>
-                </div>
-            </form>
+            <p>
+                <strong>No loyalty record is linked yet.</strong>
+                <?= $loyaltyTableReady ? 'The storage layer is available, but this inquiry has not been bridged into Loyalty Continuity yet.' : 'The loyalty storage layer is still not installed, so transfer remains staged rather than active.' ?>
+            </p>
         <?php endif; ?>
+
+        <div class="btn-group" style="margin-top:10px;">
+            <?php if ($record): ?>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>" class="btn btn-default oc-icon-external-link">
+                    Open linked loyalty record
+                </a>
+            <?php elseif ($loyaltyTableReady && $transferReady): ?>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>" class="btn btn-primary oc-icon-plus">
+                    Start loyalty transfer
+                </a>
+            <?php else: ?>
+                <button type="button" class="btn btn-default disabled" disabled>
+                    Transfer remains staged
+                </button>
+            <?php endif; ?>
+
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-random">
+                Open Loyalty Continuity
+            </a>
+        </div>
     </div>
 </div>
