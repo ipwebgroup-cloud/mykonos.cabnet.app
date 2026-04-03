@@ -137,12 +137,17 @@ $touchpointColumnsMissing = (array)($installState['missing_touchpoint_columns'] 
                     <h4>Decision focus</h4>
                     <p><?= e($record->decision_focus_label) ?></p>
                 </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Packet recommendation</h4>
+                    <p><?= e($record->packet_action_recommendation_label) ?></p>
+                </div>
             </div>
 
             <div class="control-list" style="margin-top:15px;">
                 <ul>
                     <li><strong>Review window:</strong> <?= e($record->next_review_window_label) ?></li>
                     <li><strong>Referral / value posture:</strong> <?= e($record->return_value_tier_label) ?><?= $record->referral_ready ? ' · referral ready' : '' ?></li>
+                    <li><strong>Latest prepared packet:</strong> <?= e($record->latest_prepared_packet_label) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

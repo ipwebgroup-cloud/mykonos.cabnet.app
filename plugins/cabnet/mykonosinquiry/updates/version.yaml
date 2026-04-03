@@ -127,3 +127,6 @@
 
 2.3.6:
   - 'Introduce retention packet polish and evidence framing for live loyalty continuity records'
+
+2.3.7:
+  - 'Introduce continuity packet actions and operator brief packaging for live loyalty records'

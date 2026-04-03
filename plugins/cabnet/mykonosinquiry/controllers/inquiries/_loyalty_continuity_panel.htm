@@ -113,13 +113,21 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <h4>Recommendation</h4>
                     <p><?= e($record->retention_recommendation_label) ?></p>
                 </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Packet recommendation</h4>
+                    <p><?= e($record->packet_action_recommendation_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Latest prepared</h4>
+                    <p><?= e($record->latest_prepared_packet_label) ?></p>
+                </div>
             </div>
 
             <div class="control-list" style="margin-top:15px;">
                 <ul>
                     <li><strong>Review window:</strong> <?= e($record->next_review_window_label) ?></li>
                     <li><strong>Referral / value posture:</strong> <?= e($record->return_value_tier_label) ?><?= $record->referral_ready ? ' · referral ready' : '' ?></li>
-                    <li><strong>Packet brief:</strong> <?= e($record->retention_recommendation_label) ?> · <?= e($record->decision_focus_label) ?> · <?= e($record->next_review_window_label) ?></li>
+                    <li><strong>Packet brief:</strong> <?= e($record->operator_action_brief) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

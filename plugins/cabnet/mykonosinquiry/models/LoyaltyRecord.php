@@ -202,6 +202,7 @@ class LoyaltyRecord extends Model
             'dormant'               => 'Dormant',
             'reactivated'           => 'Reactivated',
             'next_review_scheduled' => 'Next review scheduled',
+            'packet_prepared'       => 'Packet prepared',
             'state_changed'         => 'State changed',
             'record_created'        => 'Record created',
         ];
@@ -610,6 +611,143 @@ class LoyaltyRecord extends Model
         ], 'Evidence frame is still limited.');
     }
 
+
+    public function getPacketActionRecommendationLabelAttribute(): string
+    {
+        if ($this->continuity_status === 'referral_ready' || $this->referral_ready) {
+            return 'Prepare referral-safe brief';
+        }
+
+        if ($this->continuity_status === 'dormant') {
+            return 'Prepare reactivation brief';
+        }
+
+        if (in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            return 'Prepare return-value brief';
+        }
+
+        if (in_array($this->getNextReviewWindowLabelAttribute(), ['Overdue', 'Due today', 'Due soon'], true)) {
+            return 'Prepare review packet';
+        }
+
+        $touchpoint = $this->getLatestTouchpointRecord();
+        if ($touchpoint && $touchpoint->touchpoint_outcome === 'no_reply') {
+            return 'Prepare reactivation brief';
+        }
+
+        return 'Prepare review packet';
+    }
+
+    public function getOperatorActionBriefAttribute(): string
+    {
+        switch ($this->packet_action_recommendation_label) {
+            case 'Prepare referral-safe brief':
+                return $this->getReferralSafePacketBriefAttribute();
+
+            case 'Prepare reactivation brief':
+                return $this->getReactivationPacketBriefAttribute();
+
+            case 'Prepare return-value brief':
+                return $this->getReturnValuePacketBriefAttribute();
+
+            case 'Prepare review packet':
+            default:
+                return $this->getReviewPacketBriefAttribute();
+        }
+    }
+
+    public function getReviewPacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Review packet',
+            'Review continuity posture, confirm the next review window, and keep the record in narrow stewardship handling.',
+            [
+                'Review window' => $this->next_review_window_label,
+                'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') : 'Not scheduled',
+            ]
+        );
+    }
+
+    public function getReactivationPacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Reactivation brief',
+            'Treat the next move as a careful reactivation check, not a live retention push.',
+            [
+                'Dormancy posture' => $this->continuity_status === 'dormant' ? 'Dormant / reactivation needed' : 'Reactivation brief prepared from current touchpoint signals',
+                'Last touchpoint outcome' => $this->latest_touchpoint_outcome_label,
+            ]
+        );
+    }
+
+    public function getReferralSafePacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Referral-safe brief',
+            'Protect goodwill first and frame any referral ask only after relationship quality is reconfirmed.',
+            [
+                'Referral posture' => $this->referral_ready ? 'Referral-ready flag active' : 'Referral-safe posture under review',
+                'Return-value tier' => $this->return_value_tier_label,
+            ]
+        );
+    }
+
+    public function getReturnValuePacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Return-value stewardship brief',
+            'Use a stewardship-style next move that protects relationship quality and long-cycle value.',
+            [
+                'Return-value tier' => $this->return_value_tier_label,
+                'Continuity status' => $this->continuity_status_label,
+            ]
+        );
+    }
+
+    public function getLatestPreparedPacketLabelAttribute(): string
+    {
+        if (!$this->id || !static::touchpointStorageReady()) {
+            return 'No packet prepared yet.';
+        }
+
+        $touchpoint = LoyaltyTouchpoint::where('loyalty_record_id', $this->id)
+            ->where('touchpoint_outcome', 'packet_prepared')
+            ->orderBy('touchpoint_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if (!$touchpoint) {
+            return 'No packet prepared yet.';
+        }
+
+        $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+        $mode = trim((string) ($payload['packet_mode'] ?? ''));
+
+        if ($mode !== '') {
+            return ucwords(str_replace('_', ' ', $mode)) . ' packet prepared';
+        }
+
+        return 'Packet prepared';
+    }
+
+    protected function buildPacketBrief(string $packetType, string $recommendedMove, array $extras = []): string
+    {
+        $pairs = array_merge([
+            'Packet type' => $packetType,
+            'Anchor' => $this->request_reference ?: $this->source_inquiry_display,
+            'Guest' => $this->guest_name ?: 'Guest not captured',
+            'Owner' => $this->owner_name ?: 'Owner not assigned',
+            'Decision focus' => $this->decision_focus_label,
+            'Recommendation' => $this->retention_recommendation_label,
+            'Latest touchpoint' => $this->latest_touchpoint_summary,
+            'Latest narrative' => $this->firstMeaningfulLine($this->latest_touchpoint_body_preview, 'No touchpoint narrative has been captured yet.'),
+            'Evidence strength' => $this->continuity_evidence_strength_label,
+            'Recommended move' => $recommendedMove,
+        ], $extras);
+
+        return $this->formatSummary($pairs, $packetType . ' is still sparse.');
+    }
+
     public function getLatestTouchpointRecord(): ?LoyaltyTouchpoint
     {
         if ($this->latestTouchpointCache !== false) {
@@ -762,6 +900,26 @@ class LoyaltyRecord extends Model
         }
 
         return ucwords(str_replace(['_', '-'], ' ', $value));
+    }
+
+
+    protected function firstMeaningfulLine($value, string $fallback): string
+    {
+        $text = trim((string) $value);
+
+        if ($text === '') {
+            return $fallback;
+        }
+
+        foreach (preg_split('/\r\n|\r|\n/', $text) as $line) {
+            $line = trim((string) $line);
+
+            if ($line !== '') {
+                return $line;
+            }
+        }
+
+        return $fallback;
     }
 
     protected static function humanizeStatic($value): ?string

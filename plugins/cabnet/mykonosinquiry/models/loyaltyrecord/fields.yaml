@@ -114,6 +114,13 @@ tabs:
             tab: Workspace
             span: left
 
+        packet_action_recommendation_label:
+            label: Packet Recommendation
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: The narrowest packet mode that best fits the current continuity posture.
+
         next_step_visibility:
             label: Next-Step Visibility
             type: textarea
@@ -131,6 +138,15 @@ tabs:
             readOnly: true
             span: full
             comment: Read-only framing to keep referral and return-value handling deliberate rather than drifting broad.
+
+        operator_action_brief:
+            label: Operator Action Brief
+            type: textarea
+            size: giant
+            tab: Workspace
+            readOnly: true
+            span: full
+            comment: Ready-to-act packet text for the current recommended continuity move.
 
         referral_return_value_summary:
             label: Referral / Return-Value Framing
@@ -214,6 +230,13 @@ tabs:
             readOnly: true
             span: left
             comment: Structured visibility into the latest touchpoint outcome and next-step marker.
+
+        latest_prepared_packet_label:
+            label: Latest Prepared Packet
+            tab: History
+            readOnly: true
+            span: right
+            comment: Most recent internally prepared operator brief packet.
 
         latest_touchpoint_body_preview:
             label: Latest Touchpoint Narrative

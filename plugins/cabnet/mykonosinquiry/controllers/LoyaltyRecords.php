@@ -97,6 +97,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Read-only structure check so the continuity record stays narrow, owned, and operationally useful.',
             ],
+            'continuity_packet_actions_panel' => [
+                'label'   => 'Continuity Packet Actions',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_continuity_packet_actions_panel.htm',
+                'tab'     => 'Workspace',
+                'span'    => 'full',
+                'comment' => 'Prepare a clean operator brief for reactivation, referral-safe follow-up, return-value stewardship, or review without widening into automation.',
+            ],
             'continuity_command_deck_panel' => [
                 'label'   => 'Continuity Command Deck',
                 'type'    => 'partial',
@@ -203,6 +211,18 @@ class LoyaltyRecords extends Controller
 
             case 'reactivate_record':
                 return $this->reactivateRecord($recordId);
+
+            case 'prepare_review_packet':
+                return $this->prepareReviewPacket($recordId);
+
+            case 'prepare_reactivation_packet':
+                return $this->prepareReactivationPacket($recordId);
+
+            case 'prepare_referral_packet':
+                return $this->prepareReferralPacket($recordId);
+
+            case 'prepare_return_value_packet':
+                return $this->prepareReturnValuePacket($recordId);
 
             default:
                 Flash::warning('Unknown loyalty continuity action.');
@@ -385,6 +405,115 @@ class LoyaltyRecords extends Controller
                 'is_internal' => true,
             ]
         );
+    }
+
+
+    protected function prepareReviewPacket($recordId)
+    {
+        return $this->preparePacketAction($recordId, 'review', 'Review packet prepared.');
+    }
+
+    protected function prepareReactivationPacket($recordId)
+    {
+        return $this->preparePacketAction($recordId, 'reactivation', 'Reactivation brief prepared.');
+    }
+
+    protected function prepareReferralPacket($recordId)
+    {
+        return $this->preparePacketAction($recordId, 'referral', 'Referral-safe brief prepared.');
+    }
+
+    protected function prepareReturnValuePacket($recordId)
+    {
+        return $this->preparePacketAction($recordId, 'return_value', 'Return-value stewardship brief prepared.');
+    }
+
+    protected function preparePacketAction($recordId, string $mode, string $successMessage)
+    {
+        $record = LoyaltyRecord::findOrFail($recordId);
+        $changed = false;
+        $operatorName = $this->getOperatorName();
+
+        if (empty($record->owner_name)) {
+            $record->owner_name = $operatorName;
+            $changed = true;
+        }
+
+        if (($mode === 'review' || $mode === 'reactivation') && !$record->next_review_at) {
+            $record->next_review_at = Carbon::now()->addDays($mode === 'reactivation' ? 7 : 14);
+            $changed = true;
+        }
+
+        if ($changed) {
+            $record->save();
+        }
+
+        $briefTitle = $this->resolvePacketTitle($record, $mode);
+        $briefBody = $this->resolvePacketBrief($record, $mode);
+
+        $record->appendTouchpoint(
+            'system',
+            $briefTitle . PHP_EOL . $briefBody,
+            $operatorName,
+            [
+                'touchpoint_channel' => 'system',
+                'touchpoint_outcome' => 'packet_prepared',
+                'touchpoint_at' => Carbon::now(),
+                'reference_code' => $record->request_reference,
+                'is_internal' => true,
+                'payload_json' => [
+                    'entry_mode' => 'continuity_packet_actions',
+                    'captured_from' => 'loyalty_record_update',
+                    'packet_mode' => $mode,
+                    'packet_title' => $briefTitle,
+                    'packet_brief' => $briefBody,
+                    'continuity_status_snapshot' => $record->continuity_status,
+                    'loyalty_stage_snapshot' => $record->loyalty_stage,
+                    'return_value_tier_snapshot' => $record->return_value_tier,
+                    'referral_ready_snapshot' => (bool) $record->referral_ready,
+                ],
+            ]
+        );
+
+        Flash::success($successMessage);
+
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+    }
+
+    protected function resolvePacketTitle(LoyaltyRecord $record, string $mode): string
+    {
+        switch ($mode) {
+            case 'reactivation':
+                return 'Prepared reactivation brief for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+
+            case 'referral':
+                return 'Prepared referral-safe brief for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+
+            case 'return_value':
+                return 'Prepared return-value stewardship brief for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+
+            case 'review':
+            default:
+                return 'Prepared review packet for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+        }
+    }
+
+    protected function resolvePacketBrief(LoyaltyRecord $record, string $mode): string
+    {
+        switch ($mode) {
+            case 'reactivation':
+                return $record->reactivation_packet_brief;
+
+            case 'referral':
+                return $record->referral_safe_packet_brief;
+
+            case 'return_value':
+                return $record->return_value_packet_brief;
+
+            case 'review':
+            default:
+                return $record->review_packet_brief;
+        }
     }
 
     protected function runContinuityAction($recordId, callable $mutator, string $successMessage, string $touchpointBody, array $meta = [])

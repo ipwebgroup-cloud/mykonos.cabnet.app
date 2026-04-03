@@ -1,0 +1,64 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$packetRecommendation = $record ? $record->packet_action_recommendation_label : 'Prepare review packet';
+$operatorBrief = $record ? $record->operator_action_brief : 'No operator brief available.';
+$reviewBrief = $record ? $record->review_packet_brief : 'No review packet available.';
+$reactivationBrief = $record ? $record->reactivation_packet_brief : 'No reactivation brief available.';
+$referralBrief = $record ? $record->referral_safe_packet_brief : 'No referral-safe brief available.';
+$returnValueBrief = $record ? $record->return_value_packet_brief : 'No return-value brief available.';
+$latestPreparedPacket = $record ? $record->latest_prepared_packet_label : 'No packet prepared yet.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-briefcase"></i>
+        <h4 style="margin-top:0;">Continuity packet actions</h4>
+        <p>
+            Prepare a clean operator brief without widening this loyalty record into automation or campaign logic.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Recommended packet</h4>
+                <p><?= e($packetRecommendation) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest prepared</h4>
+                <p><?= e($latestPreparedPacket) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Decision focus</h4>
+                <p><?= e($record ? $record->decision_focus_label : 'Retention watch') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner</h4>
+                <p><?= e($record ? ($record->owner_name ?: 'unassigned') : 'unassigned') ?></p>
+            </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;">
+            <button type="submit" class="btn btn-default oc-icon-file-text-o" name="_loyalty_action" value="prepare_review_packet">
+                Prepare review packet
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-refresh" name="_loyalty_action" value="prepare_reactivation_packet">
+                Prepare reactivation brief
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-share-alt" name="_loyalty_action" value="prepare_referral_packet">
+                Prepare referral-safe brief
+            </button>
+            <button type="submit" class="btn btn-primary oc-icon-star" name="_loyalty_action" value="prepare_return_value_packet">
+                Prepare return-value brief
+            </button>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Current operator brief:</strong> <?= e($operatorBrief) ?></li>
+                <li><strong>Review packet preview:</strong> <?= e($reviewBrief) ?></li>
+                <li><strong>Reactivation preview:</strong> <?= e($reactivationBrief) ?></li>
+                <li><strong>Referral-safe preview:</strong> <?= e($referralBrief) ?></li>
+                <li><strong>Return-value preview:</strong> <?= e($returnValueBrief) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>

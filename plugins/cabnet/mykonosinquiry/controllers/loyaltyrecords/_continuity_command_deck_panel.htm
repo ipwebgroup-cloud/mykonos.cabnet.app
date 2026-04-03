@@ -29,9 +29,18 @@ $latestBody = $record ? $record->latest_touchpoint_body_preview : 'No touchpoint
                 <h4>Latest touchpoint</h4>
                 <p><?= e($latestSummary) ?></p>
             </div>
+            <div class="scoreboard-item title-value">
+                <h4>Packet recommendation</h4>
+                <p><?= e($record ? $record->packet_action_recommendation_label : 'Prepare review packet') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest prepared</h4>
+                <p><?= e($record ? $record->latest_prepared_packet_label : 'No packet prepared yet.') ?></p>
+            </div>
         </div>
 
         <p style="margin-top:15px;"><strong>Latest narrative:</strong> <?= e($latestBody) ?></p>
+        <p><strong>Operator brief:</strong> <?= e($record ? $record->operator_action_brief : 'No operator brief available.') ?></p>
 
         <div class="btn-group" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;">
             <button type="submit" class="btn btn-default oc-icon-calendar" name="_loyalty_action" value="schedule_review_14">
@@ -57,7 +66,8 @@ $latestBody = $record ? $record->latest_touchpoint_body_preview : 'No touchpoint
         <div class="control-list" style="margin-top:15px;">
             <ul>
                 <li>Use these actions to express continuity posture changes directly on the record instead of burying them in freeform notes.</li>
-                <li>Each action appends a system touchpoint so the ledger shows why the continuity state moved.</li>
+                <li>The packet workbench above prepares cleaner operator briefs for review, reactivation, referral-safe follow-up, or return-value stewardship.</li>
+                <li>Each action appends a system touchpoint so the ledger shows why the continuity state moved or which internal packet was prepared.</li>
                 <li>Keep this deck narrow: record posture, timing, referral readiness, and return-value strength belong here. Broad campaign logic still does not.</li>
             </ul>
         </div>
