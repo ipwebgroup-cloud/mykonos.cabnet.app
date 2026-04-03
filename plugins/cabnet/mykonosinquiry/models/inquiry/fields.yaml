@@ -496,6 +496,13 @@ tabs:
             tab: History
             comment: This will be saved as a new append-only history entry when you click Save.
 
+        raw_payload_framing_panel:
+            label: Raw Payload Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_raw_payload_framing_panel.htm
+            tab: Raw
+            comment: Read-only operator guidance for using the saved payload as a continuity fallback, source check, and reopen reference without editing the raw record.
+
         payload_pretty_json:
             label: Raw Payload
             type: textarea

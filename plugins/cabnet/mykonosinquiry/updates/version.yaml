@@ -81,3 +81,6 @@
 
 1.1.25:
     - 'Add history note framing scan panel to the stabilized operator workspace line'
+
+1.1.26:
+    - 'Add raw payload framing scan panel to the stabilized operator workspace line'

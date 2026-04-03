@@ -1,0 +1,229 @@
+<?php
+$record = null;
+
+if (isset($vars['formModel']) && $vars['formModel'] && $vars['formModel']->exists) {
+    $record = $vars['formModel'];
+} elseif (isset($formModel) && $formModel && $formModel->exists) {
+    $record = $formModel;
+} elseif (isset($model) && $model && $model->exists) {
+    $record = $model;
+} elseif (isset($this->controller) && method_exists($this->controller, 'formGetModel')) {
+    $record = $this->controller->formGetModel();
+}
+
+if (!$record) { ?>
+    <p class="form-control-static">Raw payload framing becomes available after the inquiry is created.</p>
+<?php return; }
+
+$escape = function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+$normalize = function ($value, string $fallback = 'Not captured'): string {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map('trim', $value)));
+    }
+
+    $value = trim((string) $value);
+
+    return $value !== '' ? $value : $fallback;
+};
+
+$wordCount = function (string $value): int {
+    $value = trim(preg_replace('/\s+/u', ' ', strip_tags($value)));
+    if ($value === '') {
+        return 0;
+    }
+
+    return count(preg_split('/\s+/u', $value));
+};
+
+$flattenKeys = function ($value, string $prefix = '') use (&$flattenKeys): array {
+    if (!is_array($value)) {
+        return [];
+    }
+
+    $keys = [];
+
+    foreach ($value as $key => $child) {
+        $label = $prefix !== '' ? $prefix . '.' . $key : (string) $key;
+        $keys[] = $label;
+
+        if (is_array($child)) {
+            foreach ($flattenKeys($child, $label) as $nested) {
+                $keys[] = $nested;
+            }
+        }
+    }
+
+    return $keys;
+};
+
+$payloadRaw = $record->payload_json ?? null;
+$payloadArray = [];
+$payloadState = 'Empty';
+$payloadLooksStructured = false;
+
+if (is_array($payloadRaw)) {
+    $payloadArray = $payloadRaw;
+    $payloadLooksStructured = true;
+    $payloadState = 'Array payload';
+} elseif (is_string($payloadRaw)) {
+    $payloadString = trim($payloadRaw);
+    if ($payloadString !== '') {
+        $decoded = json_decode($payloadString, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            $payloadArray = $decoded;
+            $payloadLooksStructured = true;
+            $payloadState = 'Decoded JSON string';
+        } else {
+            $payloadState = 'String payload';
+        }
+    }
+}
+
+$payloadPretty = trim((string) ($record->payload_pretty_json ?? ''));
+$payloadChars = mb_strlen($payloadPretty);
+$payloadWords = $wordCount($payloadPretty);
+$allKeys = array_values(array_unique($flattenKeys($payloadArray)));
+sort($allKeys);
+$topKeys = is_array($payloadArray) ? array_keys($payloadArray) : [];
+$keyPreview = !empty($topKeys) ? implode(', ', array_slice(array_map('strval', $topKeys), 0, 8)) : 'No top-level keys visible';
+if (count($topKeys) > 8) {
+    $keyPreview .= ', …';
+}
+
+$reference = trim((string) ($record->request_reference ?? ''));
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$sourceTitle = trim((string) ($record->source_title ?? ''));
+$sourceUrl = trim((string) ($record->source_url ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$services = trim((string) ($record->services_inline ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$guestSummary = trim((string) ($record->guest_summary ?? ''));
+$workingNotes = trim((string) ($record->internal_notes ?? ''));
+$fullName = trim((string) ($record->full_name ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$country = trim((string) ($record->country ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$arrival = $record->arrival_date ?? null;
+$departure = $record->departure_date ?? null;
+
+$payloadReference = '';
+foreach (['request_reference', 'reference', 'requestReference'] as $key) {
+    if (isset($payloadArray[$key]) && trim((string) $payloadArray[$key]) !== '') {
+        $payloadReference = trim((string) $payloadArray[$key]);
+        break;
+    }
+}
+
+$hasSourceContext = $sourceType !== '' || $sourceTitle !== '' || $sourceUrl !== '' || $requestedMode !== ''
+    || array_intersect($allKeys, ['source_type', 'source_title', 'source_url', 'requested_mode', 'source.slug', 'source.title', 'source.url', 'mode']);
+$hasGuestContext = $fullName !== '' || $email !== '' || $phone !== '' || $country !== ''
+    || array_intersect($allKeys, ['full_name', 'name', 'email', 'phone', 'country', 'guest.name', 'guest.email']);
+$hasTripContext = $guests !== '' || $arrival || $departure
+    || array_intersect($allKeys, ['guests', 'arrival_date', 'departure_date', 'arrival_window', 'departure', 'arrival']);
+$hasRequestContext = $services !== '' || $details !== ''
+    || array_intersect($allKeys, ['services', 'services_json', 'details', 'guest_brief', 'brief', 'notes']);
+$hasContinuityContext = $guestSummary !== '' || $workingNotes !== '';
+$referenceMismatch = $reference !== '' && $payloadReference !== '' && $reference !== $payloadReference;
+$payloadEmpty = !$payloadLooksStructured && ($payloadPretty === '' || $payloadPretty === '{}');
+
+$toneStyles = [
+    'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+    'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$tone = 'neutral';
+$headline = 'Raw payload should act as a fallback reference layer, not an ignored dump';
+$guidance = 'Use the saved payload to confirm how the inquiry entered the system, what the guest actually submitted, and what context still deserves to be promoted into summaries or notes.';
+$nextMove = 'Scan for source, service, and timing signals first. If the payload carries context that the working summary or notes do not, refresh the operator-facing fields rather than treating the JSON as the only source of truth.';
+
+if ($payloadEmpty) {
+    $tone = 'critical';
+    $headline = 'Raw payload is empty or too thin to help with continuity';
+    $guidance = 'The Raw tab still renders, but there is little captured payload context to support reopen review, source tracing, or fallback continuity.';
+    $nextMove = 'Rely on the normalized fields and operator notes, and keep future updates continuity-rich because the payload layer is not carrying much detail.';
+} elseif ($referenceMismatch) {
+    $tone = 'warning';
+    $headline = 'Payload reference and live record reference are not aligned';
+    $guidance = 'This does not automatically break the inquiry, but it is a continuity cue worth noticing before using the payload as a fallback reference source.';
+    $nextMove = 'Treat the live request reference as primary, then use the payload for supporting context rather than identifier truth.';
+} elseif (!$hasSourceContext || !$hasRequestContext) {
+    $tone = 'warning';
+    $headline = 'Payload exists, but operator-useful context is still thin';
+    $guidance = 'The raw record is present, yet the saved payload is missing some of the source, request, or planning shape that makes reopen review faster.';
+    $nextMove = 'Use the normalized tabs and timeline as the main continuity layer, and only lean on the payload for the context it actually contains.';
+} elseif ($payloadLooksStructured && $hasSourceContext && $hasRequestContext && $hasTripContext) {
+    $tone = 'positive';
+    $headline = 'Raw payload is a strong fallback continuity layer';
+    $guidance = 'The saved payload carries enough shape to help trace source context, guest request framing, and trip basics if the inquiry ever needs deeper reopen review.';
+    $nextMove = 'Use the payload to validate summaries and history notes, but continue keeping operator-facing fields current because those remain the faster working surface.';
+}
+
+$checks = [
+    'Payload state: ' . $payloadState,
+    'Request reference: ' . $normalize($reference, 'Not assigned'),
+    'Payload reference: ' . $normalize($payloadReference, 'Not visible in payload'),
+    'Structured payload keys: ' . (!empty($allKeys) ? (string) count($allKeys) : '0'),
+    'Top-level key preview: ' . $keyPreview,
+    'Source context: ' . ($hasSourceContext ? 'Present' : 'Thin'),
+    'Guest identity context: ' . ($hasGuestContext ? 'Present' : 'Thin'),
+    'Trip context: ' . ($hasTripContext ? 'Present' : 'Thin'),
+    'Request context: ' . ($hasRequestContext ? 'Present' : 'Thin'),
+    'Summary/note continuity: ' . ($hasContinuityContext ? 'Present on operator fields' : 'Still thin on operator fields'),
+    'Payload size: ' . ($payloadChars > 0 ? number_format($payloadChars) . ' chars / ' . number_format($payloadWords) . ' words' : 'Minimal'),
+];
+
+$usageChecks = [
+    'Treat the live form fields and history as the working surface; treat payload as fallback reference.',
+    'Look for source, mode, services, and dates before scanning the full JSON block line by line.',
+    'If the payload reveals missing continuity context, promote that into the working summary or notes rather than rewriting raw storage.',
+    'Do not treat payload wording as the current operator posture unless the timeline and working notes still agree.',
+    $referenceMismatch
+        ? 'Reference mismatch is visible, so prefer the live request reference for all follow-up and hand-off use.'
+        : 'Reference alignment looks stable, so the payload can safely support reopen review.',
+];
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+?>
+<div style="border:1px solid <?= $escape($palette[2]) ?>;background:<?= $escape($palette[1]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:<?= $escape($palette[0]) ?>;margin-bottom:6px;">Raw Payload Framing</div>
+    <div style="font-size:20px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:8px;"><?= $escape($headline) ?></div>
+    <p style="margin:0 0 14px 0;color:#374151;line-height:1.6;"><?= $escape($guidance) ?></p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Safest payload-reading move</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;line-height:1.55;"><?= $escape($nextMove) ?></div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Usage checks</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($usageChecks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Payload signals</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($checks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
