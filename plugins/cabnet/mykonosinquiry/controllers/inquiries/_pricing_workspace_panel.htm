@@ -1,0 +1,142 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$priority = strtolower($stringify($record->priority ?? 'normal'));
+$budget = $stringify($record->budget ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$guests = $stringify($record->guests ?? '');
+$privacy = strtolower($stringify($record->privacy_level ?? ''));
+$travelStyle = $stringify($record->travel_style ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$accommodation = $stringify($record->accommodation_status ?? '');
+$sourceType = $stringify($record->source_type ?? '');
+
+$gaps = [];
+if ($budget === '') {
+    $gaps[] = 'budget posture';
+}
+if ($services === '' && $details === '') {
+    $gaps[] = 'service scope';
+}
+if ($guests === '' || $guests === '0') {
+    $gaps[] = 'guest count';
+}
+if ($arrival === '' || $departure === '') {
+    $gaps[] = 'stay window';
+}
+if ($owner === '') {
+    $gaps[] = 'owner visibility';
+}
+
+$pricingState = 'Pricing should stay exploratory';
+$palette = ['#b45309', '#fff7ed', '#fed7aa'];
+if (empty($gaps) && in_array($status, ['reviewed', 'contacted', 'proposal_sent', 'awaiting_guest'], true)) {
+    $pricingState = 'Pricing can be shaped with discipline';
+    $palette = ['#0f766e', '#f0fdfa', '#99f6e4'];
+} elseif (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $pricingState = 'Pricing should support execution continuity';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+} elseif ($priority === 'vip' || $priority === 'urgent') {
+    $pricingState = 'Fast pricing posture with high discipline';
+    $palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+}
+
+$pricingPosture = 'Keep the next pricing move directional, anchored to visible scope, and easy to refine.';
+if ($budget !== '' && empty($gaps)) {
+    $pricingPosture = 'Shape a controlled premium pricing frame around visible timing, group scale, and service stack without locking in supplier-style detail too early.';
+}
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed'], true)) {
+    $pricingPosture .= ' Keep privacy-sensitive services packaged discreetly.';
+}
+if ($accommodation !== '') {
+    $pricingPosture .= ' Use accommodation posture to avoid mismatched transport or villa assumptions.';
+}
+
+$anchorParts = [];
+if ($services !== '') {
+    $anchorParts[] = 'service stack';
+}
+if ($budget !== '') {
+    $anchorParts[] = 'budget signal';
+}
+if ($arrival !== '' || $departure !== '') {
+    $anchorParts[] = 'stay timing';
+}
+if ($guests !== '' && $guests !== '0') {
+    $anchorParts[] = 'group size';
+}
+if ($travelStyle !== '') {
+    $anchorParts[] = 'travel style';
+}
+if ($sourceType !== '') {
+    $anchorParts[] = 'source posture';
+}
+
+$commercialNote = $budget !== ''
+    ? 'A budget signal is visible, so the next pricing move can be framed with more confidence and less guesswork.'
+    : 'No budget signal is visible, so treat pricing as a range-framing exercise rather than a locked proposal.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Pricing Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($pricingState) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Pricing posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($pricingPosture) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Pricing anchors</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($anchorParts) ? implode(', ', $anchorParts) : 'Build anchors from the visible brief, services, timing, and guest profile before shaping price language.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Commercial note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($commercialNote) ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($gaps)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Pricing still depends on: <strong><?= e(implode(', ', $gaps)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries the core anchors needed for disciplined premium pricing posture.
+        </div>
+    <?php endif; ?>
+</div>

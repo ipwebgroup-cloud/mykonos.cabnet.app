@@ -1,0 +1,111 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$budget = $stringify($record->budget ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$guests = $stringify($record->guests ?? '');
+$privacy = strtolower($stringify($record->privacy_level ?? ''));
+$status = strtolower($stringify($record->status ?? 'new'));
+$contact = $stringify($record->contact_preference ?? '');
+
+$steps = [];
+$steps[] = 'Open the pricing move with one line that restates the guest mission and clarifies that the numbers depend on the visible scope.';
+
+$anchors = [];
+if ($arrival !== '' || $departure !== '') {
+    $anchors[] = 'stay timing';
+}
+if ($guests !== '' && $guests !== '0') {
+    $anchors[] = 'group scale';
+}
+if ($services !== '') {
+    $anchors[] = 'service stack';
+}
+if ($budget !== '') {
+    $anchors[] = 'budget comfort';
+}
+if (!empty($anchors)) {
+    $steps[] = 'Make the price frame visibly tied to: ' . implode(', ', $anchors) . '.';
+}
+
+if ($summary !== '') {
+    $steps[] = 'Use the working summary as the pricing backbone so the next commercial move reads as continuous and informed.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift one or two brief cues into the pricing explanation so the range feels custom rather than generic.';
+}
+
+if ($budget !== '') {
+    $steps[] = 'Position the range inside the guest\'s visible comfort zone, with room for refinement once missing details are locked.';
+} else {
+    $steps[] = 'Use directional range language and hold back false precision until budget posture is clearer.';
+}
+
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $steps[] = 'Frame the next price touch as a continuity clarification, not a total reset of the commercial posture.';
+} else {
+    $steps[] = 'Close with one clean pricing next step: refine, confirm the preferred direction, or surface the main trade-off.';
+}
+
+$routeClose = $contact !== ''
+    ? 'Match the pricing follow-up to the preferred contact route already visible on the record.'
+    : 'Keep the pricing follow-up channel-neutral until a preferred route is explicit.';
+
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+$headline = 'Pricing blueprint is commercially readable';
+if ($budget === '' || $services === '') {
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+    $headline = 'Pricing blueprint should stay range-led';
+}
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed'], true)) {
+    $headline .= ' and discreet';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Pricing Range Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Pricing route: <strong><?= e($status === 'proposal_sent' ? 'continuity repricing' : 'first range framing') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Closing discipline</div>
+        <div style="font-size:14px;"><?= e($routeClose) ?></div>
+    </div>
+</div>

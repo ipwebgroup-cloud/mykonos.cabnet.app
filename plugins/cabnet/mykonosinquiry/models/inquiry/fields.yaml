@@ -398,6 +398,27 @@ tabs:
             tab: Intake
             comment: Read-only guardrails that surface the cleanup mistakes most likely to hide original brief memory, weaken source continuity, or create new structured drift.
 
+        pricing_workspace_panel:
+            label: Pricing Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_pricing_workspace_panel.htm
+            tab: Pricing
+            comment: High-level pricing surface for deciding whether the record is ready for directional ranges, disciplined commercial framing, or one more clarification pass before numbers become visible.
+
+        pricing_range_blueprint_panel:
+            label: Pricing Range Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_pricing_range_blueprint_panel.htm
+            tab: Pricing
+            comment: Read-only structure guidance for framing premium ranges around visible scope, timing, group scale, and budget posture without false precision.
+
+        pricing_risk_guardrails_panel:
+            label: Pricing Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_pricing_risk_guardrails_panel.htm
+            tab: Pricing
+            comment: Read-only guardrails that surface the pricing mistakes most likely to over-specify, blur scope, weaken continuity, or create fragile commercial expectations.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

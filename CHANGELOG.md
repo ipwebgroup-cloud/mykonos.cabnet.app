@@ -1,3 +1,10 @@
+## v4.0.0 — Pricing Workspace
+- adds a new **Pricing** tab to the backend inquiry update screen
+- introduces a composite **Pricing Workspace** panel for directional range posture and disciplined commercial framing
+- adds **Pricing Range Blueprint** guidance so operators can frame premium ranges around visible scope, timing, group scale, and budget posture without false precision
+- adds **Pricing Risk Guardrails** to prevent assumption-heavy numbers, scope blur, continuity drift, and fragile commercial expectations
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v3.7.1 — Recovery Workspace Payload Hotfix
 - fixes an **array to string conversion** crash on the Recovery tab when `payload_json` is already hydrated as an array or object on the inquiry model
 - hardens the Recovery Workspace payload handling so the panel can safely detect raw payload availability without breaking the backend update screen

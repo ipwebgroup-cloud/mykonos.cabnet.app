@@ -138,3 +138,6 @@
 
 2.4.0:
     - 'Introduce the Intake Workspace tab with structured field normalization and normalization guardrail panels'
+
+2.5.0:
+    - 'Introduce the Pricing Workspace tab with range framing and pricing guardrail panels'

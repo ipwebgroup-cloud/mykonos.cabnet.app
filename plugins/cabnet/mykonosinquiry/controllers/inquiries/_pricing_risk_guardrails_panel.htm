@@ -1,0 +1,102 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$owner = $stringify($record->owner_name ?? '');
+$budget = $stringify($record->budget ?? '');
+$services = $stringify($record->services_list ?? '');
+$details = $stringify($record->details ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$guests = $stringify($record->guests ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$privacy = strtolower($stringify($record->privacy_level ?? ''));
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$sourceType = $stringify($record->source_type ?? '');
+
+$guardrails = [];
+if ($owner === '') {
+    $guardrails[] = ['label' => 'Ownership missing', 'detail' => 'Do not send a pricing move that still leaves the handling owner ambiguous.', 'level' => 'high'];
+}
+if ($services === '' && $details === '') {
+    $guardrails[] = ['label' => 'Range without scope', 'detail' => 'Avoid price language before the real service priorities are visible.', 'level' => 'high'];
+}
+if ($budget === '') {
+    $guardrails[] = ['label' => 'False precision risk', 'detail' => 'Keep pricing directional if budget comfort is still unknown.', 'level' => 'medium'];
+}
+if ($arrival === '' || $departure === '') {
+    $guardrails[] = ['label' => 'Timing blur', 'detail' => 'Avoid date-sensitive pricing posture before the stay window is clear.', 'level' => 'high'];
+}
+if ($guests === '' || $guests === '0') {
+    $guardrails[] = ['label' => 'Scale assumption risk', 'detail' => 'Do not imply group-fit pricing before the guest count is pinned down.', 'level' => 'medium'];
+}
+if ($summary === '') {
+    $guardrails[] = ['label' => 'Continuity thinness', 'detail' => 'Use the working summary or note trail before sending pricing that the next operator cannot easily defend.', 'level' => 'medium'];
+}
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed'], true)) {
+    $guardrails[] = ['label' => 'Privacy mismatch', 'detail' => 'Keep venue, movement, and visibility language discreet if the privacy posture is elevated.', 'level' => 'medium'];
+}
+if ($sourceType === '') {
+    $guardrails[] = ['label' => 'Source memory weak', 'detail' => 'Avoid pricing as if context is complete when the source trail is still thin.', 'level' => 'low'];
+}
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true) && $followUpDate === '') {
+    $guardrails[] = ['label' => 'Pricing pacing drift', 'detail' => 'Do not leave an active commercial conversation without a visible checkpoint for the next follow-up.', 'level' => 'medium'];
+}
+
+if (empty($guardrails)) {
+    $guardrails[] = ['label' => 'No major pricing blockers', 'detail' => 'The record can support a controlled premium pricing posture. Keep the price frame readable, range-led, and continuity-safe.', 'level' => 'low'];
+}
+
+$colors = [
+    'high' => ['#b91c1c', '#fef2f2', '#fecaca'],
+    'medium' => ['#b45309', '#fff7ed', '#fed7aa'],
+    'low' => ['#166534', '#f0fdf4', '#bbf7d0'],
+];
+?>
+<div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700;">Pricing Risk Guardrails</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;">Prevent fragile or assumption-heavy pricing posture</div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($guardrails as $item): ?>
+            <?php $palette = $colors[$item['level']] ?? $colors['medium']; ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:<?= e($palette[1]) ?>;">
+                <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:6px;">
+                    <div style="font-size:14px; font-weight:700; color:#0f172a;"><?= e($item['label']) ?></div>
+                    <span style="display:inline-block; padding:4px 8px; border-radius:999px; background:#fff; border:1px solid <?= e($palette[2]) ?>; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:<?= e($palette[0]) ?>; font-weight:700;"><?= e($item['level']) ?></span>
+                </div>
+                <div style="font-size:13px; color:#334155;"><?= e($item['detail']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
