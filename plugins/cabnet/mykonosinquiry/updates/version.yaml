@@ -129,3 +129,6 @@
 
 2.2.0:
     - 'Introduce the Recovery Workspace tab with continuity rebuild and recovery guardrail panels'
+
+2.2.1:
+    - 'Harden the Recovery Workspace payload handling for array-backed payload_json values'

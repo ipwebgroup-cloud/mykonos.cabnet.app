@@ -1,3 +1,8 @@
+## v3.7.1 — Recovery Workspace Payload Hotfix
+- fixes an **array to string conversion** crash on the Recovery tab when `payload_json` is already hydrated as an array or object on the inquiry model
+- hardens the Recovery Workspace payload handling so the panel can safely detect raw payload availability without breaking the backend update screen
+- keeps the update backend-only with no schema, list, quick-action, or public `/plan` change
+
 ## v3.6.0 — Handoff Workspace
 - added a dedicated **Handoff** tab to the inquiry update screen
 - introduced **Handoff Workspace**, **Handoff Packet Blueprint**, and **Handoff Risk Guardrails** panels

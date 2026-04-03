@@ -19,7 +19,13 @@ $requestedMode = trim((string) ($record->requested_mode ?? ''));
 $followUpDate = trim((string) ($record->follow_up_date ?? ''));
 $lastContacted = trim((string) ($record->last_contacted_at ?? ''));
 $closedReason = trim((string) ($record->closed_reason ?? ''));
-$payload = trim((string) ($record->payload_json ?? ''));
+$payloadValue = $record->payload_json ?? '';
+if (is_array($payloadValue) || is_object($payloadValue)) {
+    $encoded = json_encode($payloadValue, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $payload = trim((string) ($encoded !== false ? $encoded : ''));
+} else {
+    $payload = trim((string) $payloadValue);
+}
 
 $missing = [];
 if ($owner === '') {
