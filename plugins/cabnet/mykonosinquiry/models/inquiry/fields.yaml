@@ -507,6 +507,28 @@ tabs:
             tab: Partners
             comment: Read-only guardrails that surface the partner-coordination mistakes most likely to create disclosure drift, ownership blur, or fragile external expectations.
 
+
+        financial_closure_workspace_panel:
+            label: Financial Closure Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_financial_closure_workspace_panel.htm
+            tab: Financials
+            comment: High-level financial-closure surface for shaping deposit posture, payment checkpoints, and commercial lock discipline without blurring pricing posture and final confirmation.
+
+        deposit_commitment_blueprint_panel:
+            label: Deposit Commitment Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_deposit_commitment_blueprint_panel.htm
+            tab: Financials
+            comment: Read-only structure guidance for moving from pricing posture into payment and deposit language without skipping scope, timing, or operator-controlled checkpoints.
+
+        financial_risk_guardrails_panel:
+            label: Financial Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_financial_risk_guardrails_panel.htm
+            tab: Financials
+            comment: Read-only guardrails that surface the commercial mistakes most likely to overstate commitment, outrun visible scope, or create fragile payment expectations.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

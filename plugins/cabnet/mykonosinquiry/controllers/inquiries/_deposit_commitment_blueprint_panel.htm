@@ -1,0 +1,81 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$budget = $stringify($record->budget ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$guests = $stringify($record->guests ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+
+$phase = 'Use phased financial language: range -> checkpoint -> commitment.';
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $phase = 'Use proposal-adjacent financial language: directional framing -> decision checkpoint -> deposit logic only when the guest signals readiness.';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $phase = 'Use confirmation-aware financial language: what is reserved, what is pending, and what still requires visible operator confirmation.';
+}
+
+$sequence = [
+    'Restate the visible scope, timing, and guest scale before any payment or deposit wording appears.',
+    'Frame the next financial checkpoint as an operator-controlled step, not an implied demand.',
+    'Separate directional spend posture from hard commitment language so the guest can distinguish planning from lock-in.',
+    'Show what still needs confirmation before money-related language becomes final.',
+];
+if ($budget !== '') {
+    $sequence[] = 'Reference the visible budget cue as context only, without treating it as final approval or exact spend authority.';
+}
+if ($followUpDate !== '') {
+    $sequence[] = 'Anchor the next financial touch to the visible follow-up checkpoint so payment posture stays tied to the live operator cadence.';
+}
+
+$anchorText = [];
+if ($budget !== '') $anchorText[] = 'budget: ' . $budget;
+if ($arrival !== '' || $departure !== '') $anchorText[] = 'stay: ' . trim($arrival . ' → ' . $departure, ' →');
+if ($guests !== '') $anchorText[] = 'guests: ' . $guests;
+if ($services !== '') $anchorText[] = 'services: ' . $services;
+if ($summary !== '') $anchorText[] = 'summary ready';
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">Deposit Commitment Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Move from pricing posture into payment language without skipping checkpoints</div>
+    <div style="font-size:14px; color:#334155; margin-bottom:12px;"><?= e($phase) ?></div>
+
+    <div style="padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; margin-bottom:12px;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+        <div style="font-size:14px; color:#0f172a;"><?= e(!empty($anchorText) ? implode(' | ', $anchorText) : 'Bring budget posture, stay timing, guest scale, and service scope into view before financial closure language tightens.') ?></div>
+    </div>
+
+    <ol style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.55;">
+        <?php foreach ($sequence as $step): ?>
+            <li style="margin-bottom:8px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

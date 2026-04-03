@@ -1,0 +1,69 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$budget = $stringify($record->budget ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+
+$risks = [];
+$risks[] = $budget === ''
+    ? 'Do not present payment posture as if spend authority already exists. Budget is still unclear.'
+    : 'Do not treat the visible budget cue as final approval or exact commitment authority.';
+$risks[] = ($arrival === '' || $departure === '')
+    ? 'Avoid deposit-style language while stay timing is incomplete or unstable.'
+    : 'Keep deposit posture tied to the visible stay window so timing assumptions do not harden silently.';
+$risks[] = $services === ''
+    ? 'Do not let money language outrun visible scope.'
+    : 'Keep payment framing attached to visible services so spend posture does not drift away from scope.';
+$risks[] = $owner === ''
+    ? 'Assign a visible commercial owner before money-related language creates accountability gaps.'
+    : 'Keep one named commercial owner accountable for payment and deposit posture.';
+$risks[] = $followUpDate === ''
+    ? 'Set a visible next checkpoint so financial closure does not become free-floating pressure.'
+    : 'Use the next checkpoint to contain payment posture rather than escalating commitment ad hoc.';
+if ($requestedMode !== '') {
+    $risks[] = 'Keep financial wording aligned with the current handling mode (' . $requestedMode . ') so commercial confidence does not outrun the live workflow.';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $risks[] = 'Even in confirmed posture, keep the line clear between what is internally expected and what is explicitly locked with the guest.';
+}
+?>
+<div style="border:1px solid #fecaca; background:#fef2f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Financial Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#7f1d1d; margin-bottom:10px;">Protect payment posture from premature certainty</div>
+    <ul style="margin:0; padding-left:18px; color:#7f1d1d; font-size:14px; line-height:1.55;">
+        <?php foreach ($risks as $risk): ?>
+            <li style="margin-bottom:8px;"><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>

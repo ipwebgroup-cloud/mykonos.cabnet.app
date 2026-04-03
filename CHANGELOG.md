@@ -1,3 +1,10 @@
+## v4.5.0 — Financial Closure Workspace
+- adds a new **Financials** tab to the backend inquiry update screen
+- introduces a composite **Financial Closure Workspace** panel for deposit posture, payment checkpoints, and commercial lock discipline
+- adds **Deposit Commitment Blueprint** guidance so operators can move from pricing posture into payment language without skipping scope, timing, or operator-controlled checkpoints
+- adds **Financial Risk Guardrails** to prevent premature certainty, fragile payment expectations, hidden accountability gaps, and spend language that outruns the visible record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.4.0 — Partner Coordination Workspace
 - adds a new **Partners** tab to the backend inquiry update screen
 - introduces a composite **Partner Coordination Workspace** panel for cross-party motion, disclosure boundaries, and operator-controlled checkpoints

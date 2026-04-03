@@ -153,3 +153,6 @@
 
 2.9.0:
     - 'Introduce the Partner Coordination Workspace tab with partner alignment and partner guardrail panels'
+
+3.0.0:
+    - 'Introduce the Financial Closure Workspace tab with deposit framing and financial guardrail panels'
