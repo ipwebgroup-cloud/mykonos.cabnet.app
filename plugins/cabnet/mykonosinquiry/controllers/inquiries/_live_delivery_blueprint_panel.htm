@@ -1,0 +1,69 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+
+$route = $services !== '' ? 'Treat the visible services as the live delivery spine and keep any changes anchored to that spine.' : 'Rebuild the service spine before assuming the record can carry delivery pressure safely.';
+$cadence = $followUpDate !== '' ? 'Use the next checkpoint as the control point for live delivery decisions and escalation.' : 'Set a visible next checkpoint before relying on delivery posture.';
+$fallback = $summary !== '' ? 'Use the working summary as the fallback brief if the delivery path needs quick review.' : 'Promote the clearest delivery brief into the working summary before live handling expands.';
+if ($arrival !== '' || $departure !== '') {
+    $cadence .= ' Keep the stay window in view so the operating rhythm stays date-aware.';
+}
+if ($requestedMode !== '') {
+    $route .= ' Match the delivery language to the active handling mode so the operator lane remains readable.';
+}
+if ($sourceTitle !== '') {
+    $fallback .= ' Keep the source trail visible so a sudden hand-off does not lose entry context.';
+}
+?>
+<div style="border:1px solid #cbd5e1; background:#ffffff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:6px;">Live Delivery Blueprint</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Shape live delivery around one readable service spine, one visible control checkpoint, and one fallback brief</div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Service spine</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($route) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Control checkpoint</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($cadence) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Fallback brief</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($fallback) ?></div>
+        </div>
+    </div>
+</div>

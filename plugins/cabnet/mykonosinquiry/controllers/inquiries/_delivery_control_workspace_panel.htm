@@ -1,0 +1,108 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($owner !== '') $anchors[] = 'delivery owner';
+if ($summary !== '') $anchors[] = 'working summary';
+if ($services !== '') $anchors[] = 'service visibility';
+if ($arrival !== '' || $departure !== '') $anchors[] = 'stay window';
+if ($followUpDate !== '') $anchors[] = 'next checkpoint';
+if ($lastContacted !== '') $anchors[] = 'last contact signal';
+if ($requestedMode !== '') $anchors[] = 'handling mode';
+
+$gaps = [];
+if ($owner === '') $gaps[] = 'visible delivery owner';
+if ($summary === '') $gaps[] = 'working summary';
+if ($services === '') $gaps[] = 'service visibility';
+if ($arrival === '' || $departure === '') $gaps[] = 'stay window';
+if ($followUpDate === '') $gaps[] = 'delivery checkpoint';
+if ($requestReference === '') $gaps[] = 'request reference';
+
+$headline = 'Delivery control should leave the record stable under live operational pressure, not just formally ready';
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+if (!empty($gaps)) {
+    $headline = 'The record still needs clearer anchors before it can absorb live delivery pressure safely';
+    $palette = ['#9a3412', '#fff7ed', '#fed7aa'];
+} elseif (in_array($status, ['confirmed', 'closed_won'], true) && $closedAt === '') {
+    $headline = 'The record is carrying a strong delivery-control posture with visible ownership, timing, and continuity';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+} elseif ($closedAt !== '' || in_array($status, ['closed_lost', 'closed'], true)) {
+    $headline = 'Use delivery control as a readback of live readiness, not as a substitute for closure history';
+    $palette = ['#7c2d12', '#fff7ed', '#fdba74'];
+}
+
+$posture = 'Delivery control should answer three questions clearly: who is carrying the live operational lane, what service sequence is being protected, and which checkpoint should be used first if anything starts to drift.';
+if ($sourceTitle !== '') {
+    $posture .= ' Keep the source trail visible so emergency review does not lose the origin of the case.';
+}
+if ($requestedMode !== '') {
+    $posture .= ' Align the delivery posture with the active handling mode so execution language and operator reality stay matched.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Delivery Control Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Live anchors</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($anchors ? implode(' • ', $anchors) : 'Live delivery posture still lacks enough visible anchors for safe execution handling.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Delivery gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural gaps detected in the delivery-control posture.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Delivery control should make the live record easier to operate under pressure: visible owner, visible sequence, visible fallback checkpoint, and less dependence on memory when service reality shifts.
+    </div>
+</div>

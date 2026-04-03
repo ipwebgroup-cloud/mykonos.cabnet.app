@@ -613,6 +613,27 @@ tabs:
             tab: Final Readiness
             comment: Read-only guardrails that surface the final-readiness mistakes most likely to create false go-live confidence, checkpoint loss, or fragile execution posture.
 
+        delivery_control_workspace_panel:
+            label: Delivery Control Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_delivery_control_workspace_panel.htm
+            tab: Delivery Control
+            comment: High-level live-operations control surface for deciding whether the record can absorb service pressure safely, where the visible control point sits, and what should be treated as the fallback operating brief.
+
+        live_delivery_blueprint_panel:
+            label: Live Delivery Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_live_delivery_blueprint_panel.htm
+            tab: Delivery Control
+            comment: Read-only structure guidance for translating final readiness into one readable live-delivery spine with visible service sequence, checkpoint cadence, and fallback brief.
+
+        delivery_risk_guardrails_panel:
+            label: Delivery Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_delivery_risk_guardrails_panel.htm
+            tab: Delivery Control
+            comment: Read-only guardrails that surface the live-delivery mistakes most likely to blur ownership, lose control checkpoints, or let execution pressure outrun the visible record.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial
