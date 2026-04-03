@@ -1,0 +1,51 @@
+<?php
+$record = $formModel ?? $model ?? null;
+?>
+
+<?php if ($record): ?>
+    <div class="callout fade in no-subheader">
+        <div class="header">
+            <i class="icon-briefcase"></i>
+            <h4 style="margin-top:0;">Retention packet overview</h4>
+            <p>
+                Read the current loyalty posture as a narrow operator packet, not as a broad campaign profile.
+            </p>
+        </div>
+        <div class="content">
+            <div class="scoreboard">
+                <div class="scoreboard-item title-value">
+                    <h4>Evidence strength</h4>
+                    <p><?= e($record->continuity_evidence_strength_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Recommendation</h4>
+                    <p><?= e($record->retention_recommendation_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Decision focus</h4>
+                    <p><?= e($record->decision_focus_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Review window</h4>
+                    <p><?= e($record->next_review_window_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Latest outcome</h4>
+                    <p><?= e($record->latest_touchpoint_outcome_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Next review</h4>
+                    <p><?= $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+                </div>
+            </div>
+
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <li><strong>Packet anchor:</strong> <?= e($record->request_reference ?: $record->source_inquiry_display) ?></li>
+                    <li><strong>Owner:</strong> <?= e($record->owner_name ?: 'unassigned') ?></li>
+                    <li><strong>Latest touchpoint:</strong> <?= e($record->latest_touchpoint_summary) ?></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

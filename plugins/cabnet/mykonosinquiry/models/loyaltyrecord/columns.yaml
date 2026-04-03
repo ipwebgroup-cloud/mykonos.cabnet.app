@@ -15,6 +15,10 @@ columns:
         label: Decision Focus
         sortable: false
 
+    continuity_evidence_strength_label:
+        label: Evidence
+        sortable: false
+
     referral_ready:
         label: Referral Ready
         type: switch

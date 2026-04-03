@@ -51,6 +51,38 @@ tabs:
             tab: Overview
             span: right
 
+        continuity_evidence_strength_label:
+            label: Continuity Evidence Strength
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Fast reading of how complete and actionable the continuity evidence is.
+
+        retention_recommendation_label:
+            label: Retention Recommendation
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: The narrowest current operator recommendation for this loyalty record.
+
+        retention_packet_summary:
+            label: Retention Packet Summary
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: At-a-glance packet summary for retention, reactivation, referral, or return-value handling.
+
+        evidence_frame_summary:
+            label: Evidence Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: Source, service, and touchpoint rationale that explains why this record belongs in loyalty continuity.
+
         continuity_status:
             label: Continuity Status
             type: dropdown

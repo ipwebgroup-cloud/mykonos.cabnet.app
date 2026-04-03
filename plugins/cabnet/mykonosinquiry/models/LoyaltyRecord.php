@@ -492,6 +492,124 @@ class LoyaltyRecord extends Model
         return implode(PHP_EOL, $frame);
     }
 
+
+    public function getContinuityEvidenceStrengthLabelAttribute(): string
+    {
+        $score = 0;
+
+        foreach ([
+            $this->guest_name,
+            $this->service_focus_summary,
+            $this->source_summary,
+            $this->continuity_summary,
+            $this->retention_notes,
+        ] as $value) {
+            if ($this->normalizeDisplayValue($value) !== null) {
+                $score++;
+            }
+        }
+
+        if ($this->getLatestTouchpointRecord()) {
+            $score++;
+        }
+
+        if ($this->next_review_at) {
+            $score++;
+        }
+
+        if ($this->last_retention_contact_at) {
+            $score++;
+        }
+
+        if ($this->referral_ready || in_array((string) $this->return_value_tier, ['promising', 'strong', 'flagship'], true)) {
+            $score++;
+        }
+
+        if ($score >= 8) {
+            return 'Strong';
+        }
+
+        if ($score >= 6) {
+            return 'Actionable';
+        }
+
+        if ($score >= 3) {
+            return 'Emerging';
+        }
+
+        return 'Thin';
+    }
+
+    public function getRetentionRecommendationLabelAttribute(): string
+    {
+        $touchpoint = $this->getLatestTouchpointRecord();
+        $reviewWindow = $this->getNextReviewWindowLabelAttribute();
+
+        if ($this->continuity_status === 'referral_ready' || $this->referral_ready) {
+            return 'Protect referral goodwill';
+        }
+
+        if ($this->continuity_status === 'dormant') {
+            return 'Run reactivation check';
+        }
+
+        if (in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            return 'Steward high-value relationship';
+        }
+
+        if (in_array($reviewWindow, ['Overdue', 'Due today'], true)) {
+            return 'Review and touch now';
+        }
+
+        if ($touchpoint && $touchpoint->touchpoint_outcome === 'no_reply') {
+            return 'Re-engage carefully';
+        }
+
+        if ($touchpoint && in_array((string) $touchpoint->touchpoint_outcome, ['response_received', 'retained', 'revisit_signal'], true)) {
+            return 'Keep warm continuity';
+        }
+
+        return 'Maintain retention watch';
+    }
+
+    public function getRetentionPacketSummaryAttribute(): string
+    {
+        $nextReview = $this->next_review_at
+            ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')'
+            : 'No review is scheduled yet.';
+
+        $packetAnchor = trim((string) $this->request_reference) !== ''
+            ? trim((string) $this->request_reference)
+            : $this->source_inquiry_display;
+
+        return $this->formatSummary([
+            'Packet anchor' => $packetAnchor,
+            'Evidence strength' => $this->continuity_evidence_strength_label,
+            'Recommendation' => $this->retention_recommendation_label,
+            'Decision focus' => $this->decision_focus_label,
+            'Review window' => $this->next_review_window_label,
+            'Next review' => $nextReview,
+            'Latest outcome' => $this->latest_touchpoint_outcome_label,
+            'Latest touchpoint' => $this->latest_touchpoint_summary,
+            'Owner' => $this->owner_name ?: 'Owner not assigned',
+        ], 'Retention packet summary is still limited.');
+    }
+
+    public function getEvidenceFrameSummaryAttribute(): string
+    {
+        return $this->formatSummary([
+            'Source inquiry' => $this->source_inquiry_display,
+            'Why loyalty now' => $this->firstMeaningfulLine($this->continuity_summary, 'Continuity reason is still minimal.'),
+            'Service focus' => $this->firstMeaningfulLine($this->service_focus_summary, 'Service focus is still minimal.'),
+            'Source frame' => $this->firstMeaningfulLine($this->source_summary, 'Source frame is still minimal.'),
+            'Latest narrative' => $this->firstMeaningfulLine($this->latest_touchpoint_body_preview, 'No touchpoint narrative has been captured yet.'),
+            'Retention note posture' => $this->firstMeaningfulLine($this->retention_notes, 'No retention notes have been written yet.'),
+            'Last visit' => $this->last_visit_at ? $this->last_visit_at->format('Y-m-d') : 'No visit date captured',
+            'Preferred season' => $this->preferred_season,
+            'Revisit window' => $this->revisit_window,
+        ], 'Evidence frame is still limited.');
+    }
+
     public function getLatestTouchpointRecord(): ?LoyaltyTouchpoint
     {
         if ($this->latestTouchpointCache !== false) {

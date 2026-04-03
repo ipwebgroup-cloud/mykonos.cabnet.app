@@ -73,6 +73,22 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Read-only carry-over audit from the source inquiry into the loyalty record.',
             ],
+            'retention_packet_overview_panel' => [
+                'label'   => 'Retention Packet Overview',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_retention_packet_overview_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'At-a-glance packet framing for retention, reactivation, referral, or return-value stewardship.',
+            ],
+            'continuity_evidence_frame_panel' => [
+                'label'   => 'Continuity Evidence Frame',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_continuity_evidence_frame_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Readable rationale showing why this record belongs in loyalty continuity and what evidence supports that posture.',
+            ],
             'record_detail_structure_panel' => [
                 'label'   => 'Record Detail Structure',
                 'type'    => 'partial',

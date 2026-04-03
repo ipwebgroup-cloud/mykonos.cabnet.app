@@ -1,0 +1,61 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$firstLine = function ($value, $fallback) {
+    $text = trim((string) $value);
+
+    if ($text === '') {
+        return $fallback;
+    }
+
+    foreach (preg_split('/\r\n|\r|\n/', $text) as $line) {
+        $line = trim((string) $line);
+
+        if ($line !== '') {
+            return $line;
+        }
+    }
+
+    return $fallback;
+};
+?>
+
+<?php if ($record): ?>
+    <div class="callout fade in no-subheader">
+        <div class="header">
+            <i class="icon-search"></i>
+            <h4 style="margin-top:0;">Continuity evidence frame</h4>
+            <p>
+                This keeps source context, service posture, and touchpoint evidence readable so continuity decisions stay grounded.
+            </p>
+        </div>
+        <div class="content">
+            <div class="scoreboard">
+                <div class="scoreboard-item title-value">
+                    <h4>Source inquiry</h4>
+                    <p><?= e($record->source_inquiry_display) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Service focus</h4>
+                    <p><?= e($firstLine($record->service_focus_summary, 'service focus still minimal')) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Last touchpoint</h4>
+                    <p><?= e($record->latest_touchpoint_summary) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Last visit</h4>
+                    <p><?= $record->last_visit_at ? e($record->last_visit_at->format('Y-m-d')) : 'not captured' ?></p>
+                </div>
+            </div>
+
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <li><strong>Why loyalty now:</strong> <?= e($firstLine($record->continuity_summary, 'Continuity reason is still minimal.')) ?></li>
+                    <li><strong>Source frame:</strong> <?= e($firstLine($record->source_summary, 'Source context is still minimal.')) ?></li>
+                    <li><strong>Retention note posture:</strong> <?= e($firstLine($record->retention_notes, 'No retention notes have been written yet.')) ?></li>
+                    <li><strong>Latest narrative:</strong> <?= e($firstLine($record->latest_touchpoint_body_preview, 'No touchpoint narrative has been captured yet.')) ?></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
