@@ -1,0 +1,111 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$history = $stringify($record->history_preview ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$payload = $record->payload_json ?? null;
+$hasPayloadMemory = false;
+if (is_array($payload)) {
+    $hasPayloadMemory = !empty($payload);
+} elseif (is_object($payload)) {
+    $hasPayloadMemory = true;
+} else {
+    $hasPayloadMemory = trim((string) ($payload ?? '')) !== '';
+}
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($owner !== '') $anchors[] = 'review owner';
+if ($summary !== '') $anchors[] = 'guest summary';
+if ($workingNotes !== '') $anchors[] = 'working notes';
+if ($history !== '') $anchors[] = 'history memory';
+if ($closedAt !== '') $anchors[] = 'closure timestamp';
+if ($closedReason !== '') $anchors[] = 'closure reason';
+if ($lastContacted !== '') $anchors[] = 'last contact trace';
+if ($hasPayloadMemory) $anchors[] = 'payload memory';
+
+$gaps = [];
+if ($summary === '') $gaps[] = 'review summary';
+if ($workingNotes === '' && $history === '') $gaps[] = 'operator memory trail';
+if ($owner === '') $gaps[] = 'review owner';
+if ($requestReference === '') $gaps[] = 'request reference';
+if ($closedAt === '' && !in_array($status, ['closed_won', 'closed_lost', 'closed'], true)) $gaps[] = 'explicit service outcome';
+
+$headline = 'Post-service review should turn delivery memory into future-useful operator intelligence';
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+if (!empty($gaps)) {
+    $headline = 'The record still needs stronger continuity anchors before post-service review can be trusted';
+    $palette = ['#9a3412', '#fff7ed', '#fdba74'];
+} elseif ($closedAt !== '' || in_array($status, ['closed_won', 'closed_lost', 'closed'], true)) {
+    $headline = 'The record has enough visible closure context to support a disciplined post-service review';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+}
+
+$posture = 'Post-service review should capture what actually happened, what should be remembered next time, and what should be lifted into future-ready continuity rather than left in operator memory.';
+if ($closedReason !== '') {
+    $posture .= ' Keep the closure reason visible so the review reflects the real outcome rather than a softened retelling.';
+}
+if ($lastContacted !== '') {
+    $posture .= ' The last contact signal helps anchor whether the final guest-facing touch and the service reality stayed aligned.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Post-Service Review Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Review anchors</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($anchors ? implode(' • ', $anchors) : 'The record still lacks enough visible review anchors for a trustworthy post-service review.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Review gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural review gaps detected in the visible record.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        A good post-service review leaves behind one readable outcome, one lesson path, and one future-useful continuity packet instead of scattered retrospective memory.
+    </div>
+</div>

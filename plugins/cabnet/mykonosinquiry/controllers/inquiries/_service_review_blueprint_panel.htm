@@ -1,0 +1,60 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$summary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$history = $stringify($record->history_preview ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+
+$steps = [
+    'Lock one plain-language service outcome before pulling lessons out of the record.',
+    'Separate what the guest experienced from what the operator learned internally.',
+    'Lift future-useful continuity into one readable packet instead of leaving it scattered across notes and history.',
+    'Keep source, guest profile, and service pattern memory visible if this review will inform future follow-up or repeat-service readiness.',
+];
+
+if ($closedReason !== '') {
+    $steps[] = 'Use the recorded closure reason as the explicit anchor for success, loss, pause, or mixed-result review posture.';
+}
+if ($sourceTitle !== '') {
+    $steps[] = 'Preserve source-title memory if the review may influence future campaign, channel, or service-entry decisions.';
+}
+$signal = ($summary !== '' || $workingNotes !== '' || $history !== '')
+    ? 'The record already has enough continuity memory to support a disciplined review blueprint.'
+    : 'This record still needs stronger summary or note memory before review lessons can be trusted.';
+?>
+<div style="border:1px dashed #cbd5e1; border-radius:12px; padding:14px; margin-bottom:16px; background:#fff;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#475569; font-weight:700; margin-bottom:8px;">Service Review Blueprint</div>
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:10px;"><?= e($signal) ?></div>
+    <ol style="margin:0; padding-left:18px; color:#0f172a; line-height:1.7; font-size:14px;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin-bottom:6px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

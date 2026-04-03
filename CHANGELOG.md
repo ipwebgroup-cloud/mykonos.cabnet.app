@@ -1,3 +1,10 @@
+## v5.4.0 — Post-Service Review Workspace
+- adds a new **Service Review** tab to the backend inquiry update screen
+- introduces a composite **Post-Service Review Workspace** panel for turning completed or stabilized delivery into one readable outcome review, one lesson path, and one future-useful continuity packet
+- adds **Service Review Blueprint** guidance so operators can separate service outcome, internal lessons, and future-useful continuity without rewriting the live record from memory
+- adds **Service Review Risk Guardrails** to prevent hindsight blur, hidden ownership, weak lesson capture, and retrospective language that softens the real service outcome
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.3.0 — Post-Incident Recovery Workspace
 - adds a new **Incident Recovery** tab to the backend inquiry update screen
 - introduces a composite **Post-Incident Recovery Workspace** panel for stabilizing the record after disruption, rebuilding continuity, and preparing a safe hand-back into normal workflow

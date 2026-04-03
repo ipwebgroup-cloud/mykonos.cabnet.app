@@ -697,6 +697,28 @@ tabs:
             tab: Incident Recovery
             comment: Read-only operator guardrails for keeping recovery visible, owned, and strong enough for normal workflow to resume safely.
 
+
+        post_service_review_workspace_panel:
+            label: Post-Service Review Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_service_review_workspace_panel.htm
+            tab: Service Review
+            comment: Composite operator framing for turning completed or stabilized service delivery into one readable outcome review, one lesson path, and one future-useful continuity packet.
+
+        service_review_blueprint_panel:
+            label: Service Review Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_review_blueprint_panel.htm
+            tab: Service Review
+            comment: Read-only operator blueprint for separating service outcome, internal lessons, and future-useful continuity without rewriting the live record from memory.
+
+        service_review_risk_guardrails_panel:
+            label: Service Review Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_review_risk_guardrails_panel.htm
+            tab: Service Review
+            comment: Read-only operator guardrails for keeping retrospective review explicit, owned, and useful for future continuity rather than vague hindsight.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

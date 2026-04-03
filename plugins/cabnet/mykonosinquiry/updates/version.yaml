@@ -177,3 +177,6 @@
 
 3.7.0:
     - 'Introduce the Post-Incident Recovery Workspace tab with recovery re-entry and post-incident guardrail panels'
+
+3.8.0:
+    - 'Introduce the Post-Service Review Workspace tab with review blueprint and review guardrail panels'
