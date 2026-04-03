@@ -174,6 +174,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->reopen_scan_order_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Close handoff</h4>
+                    <p><?= e($record->close_handoff_group_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Review exit</h4>
+                    <p><?= e($record->finish_review_exit_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
@@ -246,6 +254,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Reopen queue cue frame:</strong> <?= e($record->reopen_queue_cue_frame) ?></li>
                     <li><strong>Finish-close dashboard digest:</strong> <?= e($record->finish_close_dashboard_digest) ?></li>
                     <li><strong>Reopen scan order frame:</strong> <?= e($record->reopen_scan_order_frame) ?></li>
+                    <li><strong>Close handoff digest:</strong> <?= e($record->close_handoff_digest) ?></li>
+                    <li><strong>Finish-review exit frame:</strong> <?= e($record->finish_review_exit_frame) ?></li>
                     <li><strong>Queue watch digest:</strong> <?= e($record->queue_watch_digest) ?></li>
                     <li><strong>Reopen priority frame:</strong> <?= e($record->reopen_priority_frame) ?></li>
                 </ul>

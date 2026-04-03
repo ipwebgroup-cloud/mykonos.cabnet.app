@@ -139,6 +139,15 @@ class LoyaltyRecords extends Controller
                 'comment' => 'Compress the close-side posture and show a conservative human scan order so reopened, due, and quiet records are easier to review without automation.',
             ],
 
+            'close_handoff_review_exit_panel' => [
+                'label'   => 'Close-Handoff Grouping and Finish-Review Exit',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_close_handoff_review_exit_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Group close-side records into a narrow handoff posture and show the clean finish-review exit so operators do not have to reconstruct the next close move mentally.',
+            ],
+
             'stewardship_finish_dashboard_panel' => [
                 'label'   => 'Stewardship Finish Dashboard',
                 'type'    => 'partial',

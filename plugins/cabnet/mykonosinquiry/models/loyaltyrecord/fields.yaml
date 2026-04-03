@@ -282,6 +282,38 @@ tabs:
             span: right
             comment: Read-only framing for why this record should sit earlier or later in human reopen review without introducing queue automation.
 
+        close_handoff_group_label:
+            label: Close Handoff Group
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Conservative grouping signal that shows whether the record belongs in pre-close drafting, close follow-through, parked watch, reopened review, or quiet hold.
+
+        finish_review_exit_label:
+            label: Finish Review Exit
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only exit cue showing the next clean way out of finish review without widening into automation.
+
+        close_handoff_digest:
+            label: Close Handoff Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining close handoff grouping, finish-review exit, finish-close posture, and the next finish move.
+
+        finish_review_exit_frame:
+            label: Finish Review Exit Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for the clean next exit from finish review, parked watch, or reopened close posture.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

@@ -88,6 +88,14 @@ columns:
         label: Reopen Order
         sortable: false
 
+    close_handoff_group_label:
+        label: Close Handoff
+        sortable: false
+
+    finish_review_exit_label:
+        label: Review Exit
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

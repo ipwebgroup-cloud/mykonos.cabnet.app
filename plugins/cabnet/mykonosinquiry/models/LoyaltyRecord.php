@@ -2064,6 +2064,139 @@ public function getReopenScanOrderFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getCloseHandoffGroupLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Reopened handoff / immediate review';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Parked handoff / due-now watch';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Parked handoff / due-soon watch';
+        }
+
+        return 'Parked handoff / quiet watch';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Ownership handoff / assign first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Pre-close handoff / packet drafting';
+
+        case 'Closure packet prepared':
+            return 'Close handoff / lane choice';
+
+        case 'Execution still open':
+        case 'Prepared but not yet executed':
+            return 'Execution handoff / follow-through';
+
+        case 'Timed for later finish':
+            return 'Timed handoff / later finish review';
+    }
+
+    return 'Review handoff / quiet hold';
+}
+
+public function getFinishReviewExitLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Exit parked close and review new proof now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Exit quiet watch and check the parked lane now';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Schedule the parked close review before due';
+        }
+
+        return 'Stay parked until trigger or watch window changes';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Assign an owner before finish review can exit cleanly';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Draft the finish packet and narrow the exit path';
+
+        case 'Closure packet prepared':
+            return 'Choose finish lane and log the close decision';
+
+        case 'Execution still open':
+            return 'Complete follow-through before any finish exit';
+
+        case 'Prepared but not yet executed':
+            return 'Start prepared follow-through before close exit';
+
+        case 'Timed for later finish':
+            return 'Hold timed finish review until the next window';
+    }
+
+    return 'Keep the record in conservative finish review';
+}
+
+public function getCloseHandoffDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Close handoff group' => $this->close_handoff_group_label,
+        'Finish review exit' => $this->finish_review_exit_label,
+        'Finish-close signal' => $this->finish_close_compression_label,
+        'Reopen scan order' => $this->reopen_scan_order_label,
+        'Closure readiness' => $this->closure_readiness_label,
+        'Finish watch' => $this->finish_watch_signal_label,
+        'Reopen cue' => $this->reopen_queue_cue_label,
+        'Owner timing' => $this->owner_timing_signal_label,
+        'Next finish move' => $this->next_finish_move_label,
+    ], 'Close handoff digest is still minimal.');
+}
+
+public function getFinishReviewExitFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Close handoff group: ' . $this->close_handoff_group_label . '.';
+    $lines[] = 'Finish review exit: ' . $this->finish_review_exit_label . '.';
+    $lines[] = 'Finish-close signal: ' . $this->finish_close_compression_label . '.';
+    $lines[] = 'Reopen scan order: ' . $this->reopen_scan_order_label . '.';
+    $lines[] = 'Closure readiness: ' . $this->closure_readiness_label . '.';
+    $lines[] = 'Owner timing: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, the clean exit from finish review is to interpret the new proof now and either re-park deliberately or move the record into the next explicit close decision.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            $lines[] = 'Because the record is parked but the watch is due now, the next clean exit is a deliberate parked-lane review instead of leaving the close posture silent.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked watch is approaching, the clean exit is to schedule the review before due so the record does not drift into urgent reopen work.';
+        } else {
+            $lines[] = 'Because the parked close watch is stable, the clean exit is to hold the lane quietly until a trigger or timing change justifies reopening it.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because ownership is missing while review timing is already due, the clean exit is to assign a human owner before any finish decision is treated as settled.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close work, the clean exit is to draft the narrow finish packet now so the review can move out of ambiguity.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a finish packet already exists, the clean exit is to choose the correct finish lane and log that close decision explicitly.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because finish follow-through is still active, the clean exit is to complete the prepared work before treating the record as closed or quietly parked.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, the clean exit is to keep the record in deliberate human review until stronger proof or timing changes the close path.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
