@@ -1,28 +1,22 @@
 # MYKONOS PLUGIN HANDOFF
 
-## Current line
-- Project: `mykonos.cabnet.app`
-- Plugin: `plugins/cabnet/mykonosinquiry`
-- Current patch line delivered in chat: **v2.3.8 loyalty workspace render fix**
-- Archive root convention: zip contents begin with `mykonos.cabnet.app/` so extraction starts from `/home/cabnet/public_html/`
+Current live patch line: v2.3.9 loyalty toolbar restore.
 
-## Stable intent
-The stable source-of-truth direction remains the database-backed inquiry workflow introduced in the v41 integration line. Public `/plan` saves through the plugin and backend work should continue from that plugin-first flow.
+## Current objective
+Stabilize the Loyalty Continuity backend workspace as a separate retention layer without disturbing the stable inquiry queue and operator workflow.
 
-## What has been stabilized in this chat
-- loyalty inquiry partial crashes were guarded
-- loyalty inquiry panels now avoid hard failure when loyalty tables are absent or the workspace is only partially active
-- loyalty routing / readiness / guardrail messaging was added on the inquiry side
-- loyalty workspace blank backend body was fixed by adding the missing controller render templates
+## Latest patch delivered
+- v2.3.9 loyalty toolbar restore
 
-## Current expectation after v2.3.8
-- **Inquiry Queue** should render
-- inquiry update pages should render
-- **Loyalty Continuity** should no longer show a blank body
-- no destructive refresh should be used casually on the live plugin line
+## What this patch fixes
+- restores the missing loyaltyrecords toolbar partial required by the backend list controller
+- resolves the partial-not-found crash on `/admin/cabnet/mykonosinquiry/loyaltyrecords`
+- keeps prior loyalty safety guards and render templates in place
 
-## Next safest step
-- continue with plugin-only backend polish
-- keep schema untouched unless explicitly needed
-- preserve the live inquiry queue and public `/plan` flow
-- prefer conservative OctoberCMS controller/view completions over risky structural rewrites
+## Live safety notes
+- keep changes plugin-only unless a theme change is explicitly required
+- avoid destructive refresh/reset flows on the live project
+- prefer small backend rendering fixes over broad rewrites
+
+## Next likely step
+- improve the Loyalty Continuity list usefulness with safe operator-facing columns, empty-state guidance, and conservative filters only after the page is fully stable
