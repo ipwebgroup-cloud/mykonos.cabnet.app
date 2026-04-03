@@ -1,0 +1,71 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$guestSummary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$historyPreview = $stringify($record->history_preview ?? '');
+$services = $stringify($record->services_list ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$stayMood = $stringify($record->stay_mood ?? '');
+$occasionType = $stringify($record->occasion_type ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+
+$steps = [
+    $owner !== '' ? 'Keep a named relationship owner visible so premium continuity has a clear steward.' : 'Assign or preserve a named relationship owner before treating the record as premium continuity-ready.',
+    $guestSummary !== '' ? 'Use the guest summary as the front-door memory for taste, tone, and relationship posture.' : 'Lift the clearest guest-profile memory into the visible summary before long-cycle handling begins.',
+    ($services !== '' || $travelStyle !== '' || $stayMood !== '' || $occasionType !== '')
+        ? 'Separate repeatable style and service pattern memory from one-time trip facts.'
+        : 'Capture repeatable service pattern or style memory before assuming the next cycle will inherit context.',
+    ($workingNotes !== '' || $historyPreview !== '')
+        ? 'Keep operator notes and timeline memory aligned so the next operator can continue the relationship without rediscovery.'
+        : 'Add readable operator continuity memory so the relationship does not depend on hidden recall.',
+    $lastContacted !== ''
+        ? 'Use the last contact trace to anchor warmth, pacing, and whether the relationship is open, paused, or settled.'
+        : 'Make the latest contact posture visible before pushing the record into future relationship handling.',
+];
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">VIP Relationship Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25; margin-bottom:8px;">Build premium continuity from visible signals, not operator memory</div>
+    <div style="font-size:14px; color:#475569; line-height:1.6; margin-bottom:12px;">
+        VIP relationship posture should treat the record as a reusable premium continuity asset: who owns the relationship, what matters repeatedly, and how the next cycle should start.
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($steps as $index => $step): ?>
+            <div style="border:1px solid #e2e8f0; border-radius:12px; padding:12px; background:#f8fafc;">
+                <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Step <?= e((string) ($index + 1)) ?></div>
+                <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($step) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <div style="font-size:13px; color:#475569; line-height:1.6; margin-top:12px;">
+        Treat premium relationship memory as reusable capital: keep what is repeatable explicit and leave one-time trip detail in its proper place.
+    </div>
+</div>

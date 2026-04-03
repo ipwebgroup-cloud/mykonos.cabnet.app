@@ -1,0 +1,106 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$priority = strtolower($stringify($record->priority ?? 'normal'));
+$owner = $stringify($record->owner_name ?? '');
+$requestReference = $stringify($record->request_reference ?? '');
+$guestSummary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$historyPreview = $stringify($record->history_preview ?? '');
+$services = $stringify($record->services_list ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$stayMood = $stringify($record->stay_mood ?? '');
+$occasionType = $stringify($record->occasion_type ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+
+$relationshipSignals = [];
+if ($requestReference !== '') $relationshipSignals[] = 'reference continuity';
+if ($owner !== '') $relationshipSignals[] = 'named owner';
+if ($guestSummary !== '') $relationshipSignals[] = 'guest summary';
+if ($services !== '') $relationshipSignals[] = 'service memory';
+if ($travelStyle !== '' || $stayMood !== '' || $occasionType !== '') $relationshipSignals[] = 'experience profile';
+if ($historyPreview !== '' || $workingNotes !== '') $relationshipSignals[] = 'operator continuity trail';
+if ($lastContacted !== '') $relationshipSignals[] = 'last contact memory';
+if ($sourceTitle !== '') $relationshipSignals[] = 'origin context';
+
+$gaps = [];
+if ($guestSummary === '') $gaps[] = 'visible VIP summary';
+if ($owner === '') $gaps[] = 'relationship owner';
+if ($workingNotes === '' && $historyPreview === '') $gaps[] = 'continuity trail';
+if ($services === '') $gaps[] = 'service memory';
+if ($requestReference === '') $gaps[] = 'reference anchor';
+
+$palette = ['#7c3aed', '#f5f3ff', '#c4b5fd'];
+$headline = 'VIP relationship posture should convert a good record into long-cycle premium continuity';
+if (!empty($gaps)) {
+    $palette = ['#9a3412', '#fff7ed', '#fdba74'];
+    $headline = 'The record still needs stronger continuity before it can support premium relationship handling';
+} elseif ($guestSummary !== '' && ($services !== '' || $travelStyle !== '' || $stayMood !== '')) {
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+    $headline = 'The record has enough visible continuity to support disciplined VIP relationship handling';
+}
+
+$posture = 'VIP relationship continuity should protect the long-cycle memory around preferences, tone, service rhythm, and ownership so premium future handling does not depend on one operator remembering everything.';
+if ($priority === 'vip' || $priority === 'urgent') {
+    $posture .= ' Current priority already signals sensitivity, so the record should read as intentionally owned and commercially disciplined.';
+}
+if ($closedReason !== '') {
+    $posture .= ' Closed-state memory should stay visible so future relationship motion respects how the last cycle actually ended.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">VIP Relationship Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Relationship signals</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($relationshipSignals ? implode(' • ', $relationshipSignals) : 'The record still lacks enough visible signals for premium relationship continuity.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Continuity gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural VIP relationship gaps detected in the visible record.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Premium relationship handling should preserve context, taste memory, trust signals, and named ownership so the next cycle feels continuous rather than restarted.
+    </div>
+</div>

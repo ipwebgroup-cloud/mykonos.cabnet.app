@@ -1,3 +1,10 @@
+## v5.6.0 — VIP Relationship Workspace
+- adds a new **VIP Relationship** tab to the backend inquiry update screen
+- introduces a composite **VIP Relationship Workspace** panel for turning repeat-ready service continuity into long-cycle premium relationship handling instead of leaving VIP value buried in retrospective memory
+- adds **VIP Relationship Blueprint** guidance so operators can separate reusable premium relationship memory from one-trip detail before future outreach or planning resumes
+- adds **VIP Relationship Risk Guardrails** to prevent VIP over-assumption, hidden ownership, weak profile memory, and future-service framing that outruns the visible record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.5.1 — Repeat Guest Workspace YAML Hotfix
 - fixes malformed indentation in `plugins/cabnet/mykonosinquiry/models/inquiry/fields.yaml` introduced around the **Repeat Guest** workspace block
 - restores backend inquiry update screen rendering by keeping the Repeat Guest partial declarations inside the form `fields` tree

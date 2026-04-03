@@ -1,0 +1,67 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$guestSummary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$services = $stringify($record->services_list ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+
+$risks = [];
+$risks[] = $owner === ''
+    ? 'Do not frame the record as premium relationship continuity while ownership is still implicit or missing.'
+    : 'Keep ownership explicit if the record will be used for premium future continuity.';
+$risks[] = $guestSummary === ''
+    ? 'Do not assume taste or trust memory is obvious if the visible summary is still thin.'
+    : 'Keep the visible summary current so premium handling is grounded in the real record.';
+$risks[] = $services === ''
+    ? 'Do not treat one finished trip as repeat-ready if no service-pattern memory is visible.'
+    : 'Separate repeatable service pattern memory from one-time requests and incidental detail.';
+$risks[] = $workingNotes === ''
+    ? 'Do not let premium relationship continuity depend on one operator remembering what mattered.'
+    : 'Keep working notes readable enough that the next operator can continue the relationship calmly.';
+$risks[] = $lastContacted === '' && $closedReason === ''
+    ? 'Do not overstate warmth or future openness when the latest relationship posture is not visible.'
+    : 'Keep latest contact or closure posture visible so future motion respects how the last cycle ended.';
+?>
+<div style="border:1px solid #fecaca; background:#fff1f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">VIP Relationship Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25; margin-bottom:8px;">Protect premium continuity from assumption, drift, and hidden ownership</div>
+    <div style="font-size:14px; color:#475569; line-height:1.6; margin-bottom:12px;">
+        Premium relationship posture should stay anchored to visible continuity. These guardrails keep repeat-value thinking from outrunning the actual record.
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($risks as $index => $risk): ?>
+            <div style="border:1px solid #fecaca; border-radius:12px; padding:12px; background:#fff;">
+                <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#991b1b; font-weight:700; margin-bottom:6px;">Guardrail <?= e((string) ($index + 1)) ?></div>
+                <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($risk) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

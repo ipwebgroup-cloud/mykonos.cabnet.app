@@ -740,6 +740,27 @@ tabs:
             tab: Repeat Guest
             comment: Read-only operator guardrails for preventing generic repeat assumptions, buried preference memory, and future-service framing that outruns the visible record.
 
+        vip_relationship_workspace_panel:
+            label: VIP Relationship Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_vip_relationship_workspace_panel.htm
+            tab: VIP Relationship
+            comment: Composite operator framing for turning repeat-ready service continuity into long-cycle premium relationship handling instead of leaving VIP value buried in retrospective memory.
+
+        vip_relationship_blueprint_panel:
+            label: VIP Relationship Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_vip_relationship_blueprint_panel.htm
+            tab: VIP Relationship
+            comment: Read-only operator blueprint for separating reusable premium relationship memory from one-trip detail before future outreach or planning resumes.
+
+        vip_relationship_risk_guardrails_panel:
+            label: VIP Relationship Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_vip_relationship_risk_guardrails_panel.htm
+            tab: VIP Relationship
+            comment: Read-only operator guardrails for preventing VIP over-assumption, hidden ownership, weak profile memory, and future-service framing that outruns the visible record.
+
 
         brief_readiness_panel:
             label: Brief Readiness
