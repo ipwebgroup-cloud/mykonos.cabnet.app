@@ -121,6 +121,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Move prepared packets into deliberate follow-through without widening into campaign automation.',
             ],
+            'stewardship_closure_packets_panel' => [
+                'label'   => 'Stewardship Closure Packets',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_stewardship_closure_packets_panel.htm',
+                'tab'     => 'Workspace',
+                'span'    => 'full',
+                'comment' => 'Prepare a clean finish packet for reactivation, referral goodwill, or return-value stewardship without widening into automation.',
+            ],
             'live_touchpoint_capture_panel' => [
                 'label'   => 'Live Touchpoint Capture',
                 'type'    => 'partial',
@@ -239,6 +247,15 @@ class LoyaltyRecords extends Controller
 
             case 'prepare_return_value_packet':
                 return $this->prepareReturnValuePacket($recordId);
+
+            case 'prepare_reactivation_closure_packet':
+                return $this->prepareReactivationClosurePacket($recordId);
+
+            case 'prepare_referral_closure_packet':
+                return $this->prepareReferralClosurePacket($recordId);
+
+            case 'prepare_return_value_closure_packet':
+                return $this->prepareReturnValueClosurePacket($recordId);
 
             case 'start_packet_follow_through':
                 return $this->startPacketFollowThrough($recordId);
@@ -696,6 +713,165 @@ class LoyaltyRecords extends Controller
             case 'review':
             default:
                 return $record->review_packet_brief;
+        }
+    }
+
+
+    protected function prepareReactivationClosurePacket($recordId)
+    {
+        return $this->prepareClosurePacketAction($recordId, 'reactivation', 'Reactivation closure packet prepared.');
+    }
+
+    protected function prepareReferralClosurePacket($recordId)
+    {
+        return $this->prepareClosurePacketAction($recordId, 'referral', 'Referral closure packet prepared.');
+    }
+
+    protected function prepareReturnValueClosurePacket($recordId)
+    {
+        return $this->prepareClosurePacketAction($recordId, 'return_value', 'Return-value closure packet prepared.');
+    }
+
+    protected function prepareClosurePacketAction($recordId, string $mode, string $successMessage)
+    {
+        $record = LoyaltyRecord::findOrFail($recordId);
+        $operatorName = $this->getOperatorName();
+        $changed = false;
+        $targetReviewAt = null;
+
+        if (empty($record->owner_name)) {
+            $record->owner_name = $operatorName;
+            $changed = true;
+        }
+
+        switch ($mode) {
+            case 'reactivation':
+                if ($record->continuity_status === 'dormant') {
+                    $record->continuity_status = 'active_retention';
+                    $changed = true;
+                }
+                if ($record->loyalty_stage !== 're-engaged') {
+                    $record->loyalty_stage = 're-engaged';
+                    $changed = true;
+                }
+                $targetReviewAt = Carbon::now()->addDays(14);
+                break;
+
+            case 'referral':
+                if (!$record->referral_ready) {
+                    $record->referral_ready = true;
+                    $changed = true;
+                }
+                if ($record->continuity_status !== 'referral_ready') {
+                    $record->continuity_status = 'referral_ready';
+                    $changed = true;
+                }
+                if ($record->loyalty_stage !== 'completed') {
+                    $record->loyalty_stage = 'completed';
+                    $changed = true;
+                }
+                $targetReviewAt = Carbon::now()->addDays(45);
+                break;
+
+            case 'return_value':
+                if ($record->continuity_status !== 'return_value_watch') {
+                    $record->continuity_status = 'return_value_watch';
+                    $changed = true;
+                }
+                if (!in_array((string) $record->loyalty_stage, ['retained', 'completed'], true)) {
+                    $record->loyalty_stage = 'retained';
+                    $changed = true;
+                }
+                if (in_array((string) $record->return_value_tier, ['', 'watch'], true)) {
+                    $record->return_value_tier = 'promising';
+                    $changed = true;
+                }
+                $targetReviewAt = Carbon::now()->addDays(30);
+                break;
+
+            default:
+                $targetReviewAt = Carbon::now()->addDays(21);
+                break;
+        }
+
+        if ($targetReviewAt && (!$record->next_review_at || $record->next_review_at->lt($targetReviewAt))) {
+            $record->next_review_at = $targetReviewAt;
+            $changed = true;
+        }
+
+        if ($changed) {
+            $record->save();
+        }
+
+        $briefTitle = $this->resolveClosurePacketTitle($record, $mode);
+        $briefBody = $this->resolveClosurePacketBrief($record, $mode);
+
+        $record->appendTouchpoint(
+            'system',
+            $briefTitle . PHP_EOL . $briefBody,
+            $operatorName,
+            [
+                'touchpoint_channel' => 'system',
+                'touchpoint_outcome' => 'closure_packet_prepared',
+                'touchpoint_at' => Carbon::now(),
+                'next_step_at' => $record->next_review_at,
+                'reference_code' => $record->request_reference,
+                'is_internal' => true,
+                'payload_json' => [
+                    'entry_mode' => 'stewardship_closure_packets',
+                    'captured_from' => 'loyalty_record_update',
+                    'closure_packet_mode' => $mode,
+                    'closure_packet_title' => $briefTitle,
+                    'closure_packet_brief' => $briefBody,
+                    'closure_finish_posture' => $record->stewardship_finish_posture_label,
+                    'closure_window' => $record->closure_window_label,
+                    'continuity_status_snapshot' => $record->continuity_status,
+                    'loyalty_stage_snapshot' => $record->loyalty_stage,
+                    'return_value_tier_snapshot' => $record->return_value_tier,
+                    'referral_ready_snapshot' => (bool) $record->referral_ready,
+                    'latest_prepared_packet_snapshot' => $record->latest_prepared_packet_label,
+                    'execution_status_snapshot' => $record->packet_execution_status_label,
+                    'loop_posture_snapshot' => $record->continuity_loop_posture_label,
+                ],
+            ]
+        );
+
+        Flash::success($successMessage);
+
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+    }
+
+    protected function resolveClosurePacketTitle(LoyaltyRecord $record, string $mode): string
+    {
+        switch ($mode) {
+            case 'reactivation':
+                return 'Prepared reactivation closure packet for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+
+            case 'referral':
+                return 'Prepared referral closure packet for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+
+            case 'return_value':
+                return 'Prepared return-value closure packet for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+
+            default:
+                return 'Prepared closure packet for ' . ($record->request_reference ?: $record->guest_name ?: 'loyalty record') . '.';
+        }
+    }
+
+    protected function resolveClosurePacketBrief(LoyaltyRecord $record, string $mode): string
+    {
+        switch ($mode) {
+            case 'reactivation':
+                return $record->reactivation_closure_packet_brief;
+
+            case 'referral':
+                return $record->referral_closure_packet_brief;
+
+            case 'return_value':
+                return $record->return_value_closure_packet_brief;
+
+            default:
+                return $record->stewardship_snapshot_summary;
         }
     }
 

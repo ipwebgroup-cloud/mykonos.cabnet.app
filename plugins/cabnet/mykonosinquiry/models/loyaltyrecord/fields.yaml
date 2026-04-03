@@ -83,6 +83,29 @@ tabs:
             span: full
             comment: Source, service, and touchpoint rationale that explains why this record belongs in loyalty continuity.
 
+        stewardship_finish_posture_label:
+            label: Stewardship Finish Posture
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Current recommended finish posture for this continuity lane.
+
+        closure_packet_recommendation_label:
+            label: Closure Packet Recommendation
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: The narrowest finish packet recommended for this continuity lane.
+
+        stewardship_snapshot_summary:
+            label: Stewardship Snapshot
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: Record-level closure snapshot for referral, reactivation, or return-value stewardship.
+
         continuity_status:
             label: Continuity Status
             type: dropdown
@@ -170,6 +193,20 @@ tabs:
             readOnly: true
             span: full
             comment: Read-only packet execution frame showing preparation, follow-through, timing, and the latest execution note.
+
+        latest_closure_packet_label:
+            label: Latest Closure Packet
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: Latest explicit stewardship finish packet prepared on this record.
+
+        closure_window_label:
+            label: Closure Window
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Suggested narrow review window for the current finish posture.
 
         continuity_loop_posture_label:
             label: Continuity Loop Posture

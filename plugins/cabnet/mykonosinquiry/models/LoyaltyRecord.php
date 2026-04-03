@@ -34,6 +34,7 @@ class LoyaltyRecord extends Model
     protected $latestTouchpointCache = false;
     protected $latestPreparedPacketTouchpointCache = false;
     protected $latestExecutionTouchpointCache = false;
+    protected $latestClosurePacketTouchpointCache = false;
 
     public static function getWorkspaceInstallState(): array
     {
@@ -209,6 +210,7 @@ class LoyaltyRecord extends Model
             'packet_deferred'       => 'Packet deferred',
             'packet_checkin'        => 'Packet check-in scheduled',
             'packet_completed'      => 'Packet follow-through completed',
+            'closure_packet_prepared'=> 'Stewardship closure packet prepared',
             'state_changed'         => 'State changed',
             'record_created'        => 'Record created',
         ];
@@ -939,6 +941,172 @@ class LoyaltyRecord extends Model
             : implode(PHP_EOL, $lines);
     }
 
+
+    public function getLatestClosurePacketLabelAttribute(): string
+    {
+        $touchpoint = $this->getLatestClosurePacketTouchpoint();
+
+        if (!$touchpoint) {
+            return 'No closure packet prepared yet.';
+        }
+
+        $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+        $mode = trim((string) ($payload['closure_packet_mode'] ?? ''));
+
+        if ($mode !== '') {
+            return ucwords(str_replace('_', ' ', $mode)) . ' closure packet prepared';
+        }
+
+        return 'Closure packet prepared';
+    }
+
+    public function getClosurePacketRecommendationLabelAttribute(): string
+    {
+        $latestTouchpoint = $this->getLatestTouchpointRecord();
+        $latestOutcome = $latestTouchpoint ? (string) $latestTouchpoint->touchpoint_outcome : '';
+        $latestClosureMode = $this->latest_closure_packet_mode;
+
+        if ($latestClosureMode === 'referral' || $this->continuity_status === 'referral_ready' || $this->referral_ready) {
+            return 'Prepare referral closure packet';
+        }
+
+        if ($latestClosureMode === 'return_value' || in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            return 'Prepare return-value closure packet';
+        }
+
+        if ($latestClosureMode === 'reactivation' || in_array($latestOutcome, ['reactivated', 'response_received', 'retained'], true) || $this->loyalty_stage === 're-engaged' || $this->continuity_status === 'dormant') {
+            return 'Prepare reactivation closure packet';
+        }
+
+        return 'Prepare review closure posture';
+    }
+
+    public function getLatestClosurePacketModeAttribute(): string
+    {
+        $touchpoint = $this->getLatestClosurePacketTouchpoint();
+
+        if (!$touchpoint) {
+            return '';
+        }
+
+        $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+        return trim((string) ($payload['closure_packet_mode'] ?? ''));
+    }
+
+    public function getStewardshipFinishPostureLabelAttribute(): string
+    {
+        $mode = $this->latest_closure_packet_mode;
+
+        if ($mode === 'referral' || $this->continuity_status === 'referral_ready' || $this->referral_ready) {
+            return 'Referral goodwill preserved';
+        }
+
+        if ($mode === 'return_value' || in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            return 'Return-value stewardship parked';
+        }
+
+        if ($mode === 'reactivation' || $this->loyalty_stage === 're-engaged') {
+            return 'Reactivated and parked to review';
+        }
+
+        if ($this->continuity_status === 'dormant') {
+            return 'Dormant until reactivation proof';
+        }
+
+        return 'Review posture maintained';
+    }
+
+    public function getClosureWindowLabelAttribute(): string
+    {
+        $mode = $this->latest_closure_packet_mode;
+
+        if ($mode === '') {
+            switch ($this->closure_packet_recommendation_label) {
+                case 'Prepare referral closure packet':
+                    $mode = 'referral';
+                    break;
+                case 'Prepare return-value closure packet':
+                    $mode = 'return_value';
+                    break;
+                case 'Prepare reactivation closure packet':
+                    $mode = 'reactivation';
+                    break;
+                default:
+                    $mode = 'review';
+                    break;
+            }
+        }
+
+        switch ($mode) {
+            case 'referral':
+                return '45-day goodwill window';
+            case 'return_value':
+                return '30-day stewardship window';
+            case 'reactivation':
+                return '14-day reactivation window';
+            default:
+                return '21-day review window';
+        }
+    }
+
+    public function getStewardshipSnapshotSummaryAttribute(): string
+    {
+        return $this->formatSummary([
+            'Finish posture' => $this->stewardship_finish_posture_label,
+            'Closure recommendation' => $this->closure_packet_recommendation_label,
+            'Latest closure packet' => $this->latest_closure_packet_label,
+            'Closure window' => $this->closure_window_label,
+            'Loop posture' => $this->continuity_loop_posture_label,
+            'Execution status' => $this->packet_execution_status_label,
+            'Latest outcome' => $this->latest_touchpoint_outcome_label,
+            'Latest prepared' => $this->latest_prepared_packet_label,
+            'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') : 'Not scheduled',
+        ], 'Stewardship closure snapshot is still minimal.');
+    }
+
+    public function getReactivationClosurePacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Reactivation closure packet',
+            'Close the current loop as re-engaged, park the record back into a narrow review window, and avoid widening into broad messaging.',
+            [
+                'Finish posture' => $this->stewardship_finish_posture_label,
+                'Closure window' => '14-day reactivation window',
+                'Latest execution' => $this->packet_execution_status_label,
+                'Loop posture' => $this->continuity_loop_posture_label,
+            ]
+        );
+    }
+
+    public function getReferralClosurePacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Referral closure packet',
+            'Close the loop by protecting goodwill first, then park the record on a longer referral-safe review window.',
+            [
+                'Finish posture' => $this->stewardship_finish_posture_label,
+                'Closure window' => '45-day goodwill window',
+                'Referral posture' => $this->referral_ready ? 'Referral-ready flag active' : 'Referral posture under operator review',
+                'Loop posture' => $this->continuity_loop_posture_label,
+            ]
+        );
+    }
+
+    public function getReturnValueClosurePacketBriefAttribute(): string
+    {
+        return $this->buildPacketBrief(
+            'Return-value closure packet',
+            'Close the current loop as deliberate stewardship, then park the record on a measured value-watch window instead of broad re-engagement.',
+            [
+                'Finish posture' => $this->stewardship_finish_posture_label,
+                'Closure window' => '30-day stewardship window',
+                'Return-value tier' => $this->return_value_tier_label,
+                'Loop posture' => $this->continuity_loop_posture_label,
+            ]
+        );
+    }
+
     protected function getLatestPreparedPacketTouchpoint(): ?LoyaltyTouchpoint
     {
         if ($this->latestPreparedPacketTouchpointCache !== false) {
@@ -968,6 +1136,23 @@ class LoyaltyRecord extends Model
 
         return $this->latestExecutionTouchpointCache ?: null;
     }
+
+
+    protected function getLatestClosurePacketTouchpoint(): ?LoyaltyTouchpoint
+    {
+        if ($this->latestClosurePacketTouchpointCache !== false) {
+            return $this->latestClosurePacketTouchpointCache ?: null;
+        }
+
+        $this->latestClosurePacketTouchpointCache = $this->findLatestTouchpointByCallback(function (LoyaltyTouchpoint $touchpoint): bool {
+            $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
+
+            return $touchpoint->touchpoint_outcome === 'closure_packet_prepared' || !empty($payload['closure_packet_mode']);
+        });
+
+        return $this->latestClosurePacketTouchpointCache ?: null;
+    }
+
 
     protected function findLatestTouchpointByCallback(callable $callback): ?LoyaltyTouchpoint
     {
@@ -1141,6 +1326,7 @@ class LoyaltyRecord extends Model
         $this->latestTouchpointCache = $touchpoint;
         $this->latestPreparedPacketTouchpointCache = false;
         $this->latestExecutionTouchpointCache = false;
+        $this->latestClosurePacketTouchpointCache = false;
 
         return $touchpoint;
     }

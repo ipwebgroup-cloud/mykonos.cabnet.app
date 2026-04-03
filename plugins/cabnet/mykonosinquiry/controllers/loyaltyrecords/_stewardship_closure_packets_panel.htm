@@ -1,0 +1,68 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$finishPosture = $record ? $record->stewardship_finish_posture_label : 'Review posture maintained';
+$closureRecommendation = $record ? $record->closure_packet_recommendation_label : 'Prepare review closure posture';
+$latestClosurePacket = $record ? $record->latest_closure_packet_label : 'No closure packet prepared yet.';
+$closureWindow = $record ? $record->closure_window_label : '21-day review window';
+$latestOutcome = $record ? $record->latest_touchpoint_outcome_label : 'No outcome recorded yet.';
+$loopPosture = $record ? $record->continuity_loop_posture_label : 'Loop posture unclear';
+$snapshot = $record ? $record->stewardship_snapshot_summary : 'Stewardship closure snapshot is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-flag-checkered"></i>
+        <h4 style="margin-top:0;">Stewardship closure packets</h4>
+        <p>
+            Prepare a clean finish packet for referral, reactivation, or return-value stewardship so the record ends the current loop deliberately without widening into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Finish posture</h4>
+                <p><?= e($finishPosture) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure recommendation</h4>
+                <p><?= e($closureRecommendation) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest closure packet</h4>
+                <p><?= e($latestClosurePacket) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure window</h4>
+                <p><?= e($closureWindow) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest outcome</h4>
+                <p><?= e($latestOutcome) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Loop posture</h4>
+                <p><?= e($loopPosture) ?></p>
+            </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;">
+            <button type="submit" class="btn btn-default oc-icon-refresh" name="_loyalty_action" value="prepare_reactivation_closure_packet">
+                Prepare reactivation closure
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-heart" name="_loyalty_action" value="prepare_referral_closure_packet">
+                Prepare referral closure
+            </button>
+            <button type="submit" class="btn btn-default oc-icon-star" name="_loyalty_action" value="prepare_return_value_closure_packet">
+                Prepare return-value closure
+            </button>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Snapshot:</strong> <?= nl2br(e($snapshot)) ?></li>
+                <li>Use reactivation closure when the loop produced a genuine re-engagement signal and the record should return to a narrow review cadence.</li>
+                <li>Use referral closure when goodwill is strong and the record should be parked with a longer, safer referral window.</li>
+                <li>Use return-value closure when the relationship should be protected as a high-value stewardship lane rather than pushed back into active follow-through.</li>
+            </ul>
+        </div>
+    </div>
+</div>

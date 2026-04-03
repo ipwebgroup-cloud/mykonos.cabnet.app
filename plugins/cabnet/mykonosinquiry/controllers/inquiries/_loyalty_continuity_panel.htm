@@ -133,15 +133,25 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <h4>Next move</h4>
                     <p><?= e($record->next_execution_move_label) ?></p>
                 </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Finish posture</h4>
+                    <p><?= e($record->stewardship_finish_posture_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Latest closure packet</h4>
+                    <p><?= e($record->latest_closure_packet_label) ?></p>
+                </div>
             </div>
 
             <div class="control-list" style="margin-top:15px;">
                 <ul>
                     <li><strong>Review window:</strong> <?= e($record->next_review_window_label) ?></li>
+                    <li><strong>Closure window:</strong> <?= e($record->closure_window_label) ?></li>
                     <li><strong>Referral / value posture:</strong> <?= e($record->return_value_tier_label) ?><?= $record->referral_ready ? ' · referral ready' : '' ?></li>
                     <li><strong>Packet brief:</strong> <?= e($record->operator_action_brief) ?></li>
                     <li><strong>Execution frame:</strong> <?= e($record->packet_execution_summary) ?></li>
                     <li><strong>Trace digest:</strong> <?= e($record->execution_trace_digest) ?></li>
+                    <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

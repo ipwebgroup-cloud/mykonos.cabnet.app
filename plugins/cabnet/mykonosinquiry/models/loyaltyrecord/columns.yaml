@@ -44,6 +44,10 @@ columns:
         label: Loop
         sortable: false
 
+    stewardship_finish_posture_label:
+        label: Finish Posture
+        sortable: false
+
     next_execution_move_label:
         label: Next Move
         sortable: false
