@@ -21,7 +21,10 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('activation_gates_panel') ?>
         <?= $this->makePartial('transition_scorecard_panel') ?>
         <?= $this->makePartial('activation_scenarios_panel') ?>
+        <?= $this->makePartial('handoff_evidence_panel') ?>
+        <?= $this->makePartial('workspace_separation_rules_panel') ?>
         <?= $this->makePartial('operator_routes_panel') ?>
+        <?= $this->makePartial('activation_readiness_checklist_panel') ?>
     <?php else: ?>
         <?= $this->formRender() ?>
     <?php endif ?>
