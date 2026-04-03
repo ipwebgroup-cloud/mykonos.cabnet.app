@@ -282,3 +282,8 @@
 - added a dedicated **Fulfillment** tab to the inquiry update screen
 - introduced **Fulfillment Workspace**, **Execution Readiness Blueprint**, and **Fulfillment Risk Guardrails** panels
 - gives operators a backend-only space to move from proposal posture into execution readiness without touching public `/plan`, schema, or list stability
+
+## v3.3.0 — Confirmation Workspace
+- added a dedicated **Confirmation** tab to the inquiry update screen
+- introduced **Confirmation Workspace**, **Commitment Lock Blueprint**, and **Confirmation Risk Guardrails** panels
+- gives operators a backend-only space to move from fulfillment posture into disciplined commitment language without touching public `/plan`, schema, or list stability

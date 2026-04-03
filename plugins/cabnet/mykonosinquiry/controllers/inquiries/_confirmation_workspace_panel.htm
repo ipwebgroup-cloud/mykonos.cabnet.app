@@ -1,0 +1,118 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$closedAt = trim((string) ($record->closed_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$sourceTitle = trim((string) ($record->source_title ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+
+$gaps = [];
+if ($owner === '') {
+    $gaps[] = 'named owner';
+}
+if ($summary === '') {
+    $gaps[] = 'working summary';
+}
+if ($services === '' && $notes === '') {
+    $gaps[] = 'service continuity';
+}
+if ($arrival === '' || $departure === '') {
+    $gaps[] = 'stay window';
+}
+if ($guests === '' || $guests === '0') {
+    $gaps[] = 'guest count';
+}
+
+$confirmationState = 'Not ready for confirmation language';
+$palette = ['#b45309', '#fff7ed', '#fdba74'];
+if (empty($gaps) && in_array($status, ['confirmed', 'closed_won'], true)) {
+    $confirmationState = 'Confirmation already anchored';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+} elseif (empty($gaps) && in_array($status, ['proposal_sent', 'awaiting_guest', 'contacted'], true)) {
+    $confirmationState = 'Pre-confirmation ready posture';
+    $palette = ['#1d4ed8', '#eff6ff', '#93c5fd'];
+}
+
+$nextMove = 'Keep the next move continuity-led. Confirm only what is actually anchored in the record.';
+if ($confirmationState === 'Pre-confirmation ready posture') {
+    $nextMove = 'Use confirmation-style language carefully: anchor dates, scope, and operator continuity before talking like the plan is locked.';
+}
+if ($confirmationState === 'Confirmation already anchored') {
+    $nextMove = 'Preserve commitment clarity. Keep next-touch language factual, exact, and easy for the next operator to inherit.';
+}
+if ($priority === 'vip' || $priority === 'urgent') {
+    $nextMove .= ' Maintain premium pace without creating invisible promises.';
+}
+
+$signals = [];
+if ($owner !== '') {
+    $signals[] = 'owner visible';
+}
+if ($summary !== '') {
+    $signals[] = 'summary visible';
+}
+if ($followUpDate !== '' || $lastContacted !== '') {
+    $signals[] = 'continuity checkpoints visible';
+}
+if ($sourceTitle !== '' || $sourceType !== '') {
+    $signals[] = 'source context visible';
+}
+if ($closedAt !== '' || $closedReason !== '') {
+    $signals[] = 'closure context visible';
+}
+
+$commitmentNote = in_array($status, ['confirmed', 'closed_won'], true)
+    ? 'The record already carries a commitment-style status. Preserve exact scope, continuity, and closure readability.'
+    : 'The record is not yet at a confirmed state. Use confirmation language only after visible scope, timing, and ownership anchors are stable.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Confirmation Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($confirmationState) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Confirmation posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($nextMove) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible confirmation signals</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($signals) ? implode(', ', $signals) : 'Build the confirmation posture from ownership, summary, checkpoints, and source clarity first.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Commitment note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($commitmentNote) ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($gaps)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Confirmation discipline still depends on: <strong><?= e(implode(', ', $gaps)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries the core anchors needed for careful confirmation-style handling and continuity-safe commitment language.
+        </div>
+    <?php endif; ?>
+</div>

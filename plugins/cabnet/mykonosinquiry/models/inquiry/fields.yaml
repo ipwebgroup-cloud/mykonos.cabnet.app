@@ -251,6 +251,27 @@ tabs:
             tab: Fulfillment
             comment: Read-only guardrails that surface the execution-shaping mistakes most likely to create supplier-like promises, weak hand-offs, or assumption-heavy operational drift.
 
+        confirmation_workspace_panel:
+            label: Confirmation Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confirmation_workspace_panel.htm
+            tab: Confirmation
+            comment: High-level commitment-shaping surface for deciding whether the record is ready for confirmation-style language, a disciplined pre-confirmation move, or one more clarification pass before lock-in posture.
+
+        commitment_lock_blueprint_panel:
+            label: Commitment Lock Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_commitment_lock_blueprint_panel.htm
+            tab: Confirmation
+            comment: Read-only structure guidance for moving toward commitment language without letting scope, timing, or operator continuity drift out of view.
+
+        confirmation_risk_guardrails_panel:
+            label: Confirmation Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confirmation_risk_guardrails_panel.htm
+            tab: Confirmation
+            comment: Read-only guardrails that surface the commitment mistakes most likely to over-confirm, blur accountability, or create fragile reopen/hand-off conditions.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

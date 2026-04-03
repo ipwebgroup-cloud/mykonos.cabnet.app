@@ -1,0 +1,59 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$services = trim((string) ($record->services_list ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+
+$route = 'Use a confirmation-leaning clarification pass';
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $route = 'Use factual commitment reinforcement';
+} elseif (in_array($status, ['proposal_sent', 'awaiting_guest', 'contacted'], true) && $summary !== '' && $arrival !== '' && $departure !== '' && $guests !== '' && $guests !== '0') {
+    $route = 'Use disciplined pre-confirmation language';
+}
+
+$mustAnchor = [];
+$mustAnchor[] = $arrival !== '' || $departure !== '' ? 'stay dates visible' : 'state the current timing posture explicitly';
+$mustAnchor[] = $guests !== '' && $guests !== '0' ? 'group size visible' : 'state guest-count uncertainty clearly';
+$mustAnchor[] = $services !== '' ? 'service scope visible' : 'name the current service scope carefully';
+$mustAnchor[] = $summary !== '' || $details !== '' ? 'brief context visible' : 'restate the guest mission before commitment language';
+
+$avoid = [
+    'Do not speak as if vendors, tables, transport, or villas are locked unless that is clearly true in the record.',
+    'Do not hide timing or guest-count ambiguity under polished premium language.',
+    'Do not let confirmation phrasing outrun the working summary and internal continuity notes.',
+];
+?>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:12px; margin-bottom:16px;">
+    <div style="padding:14px; border:1px solid #bfdbfe; border-radius:14px; background:#eff6ff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:8px;">Commitment Lock Blueprint</div>
+        <div style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($route) ?></div>
+        <div style="font-size:14px; color:#334155;">Choose the safest confirmation posture first, then keep the message exactly aligned with the record.</div>
+    </div>
+    <div style="padding:14px; border:1px solid #cbd5e1; border-radius:14px; background:#fff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:8px;">Must-anchor facts</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($mustAnchor as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <div style="padding:14px; border:1px solid #fecaca; border-radius:14px; background:#fef2f2;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:8px;">Avoid</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($avoid as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

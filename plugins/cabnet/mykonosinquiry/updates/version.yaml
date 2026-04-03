@@ -114,3 +114,6 @@
 
 1.7.0:
     - 'Introduce the Fulfillment Workspace tab with execution readiness and fulfillment guardrail panels'
+
+1.8.0:
+    - 'Introduce the Confirmation Workspace tab with commitment shaping and confirmation guardrail panels'

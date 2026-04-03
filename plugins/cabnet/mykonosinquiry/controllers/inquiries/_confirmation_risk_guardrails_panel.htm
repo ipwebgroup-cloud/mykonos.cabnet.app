@@ -1,0 +1,67 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+
+$risks = [];
+$risks[] = [
+    'title' => 'Ownership drift',
+    'state' => $owner !== '' ? 'controlled' : 'exposed',
+    'detail' => $owner !== ''
+        ? 'A named owner is visible, so commitment language can stay tied to an accountable operator.'
+        : 'Do not use strong confirmation tone while the record still lacks a clearly visible owner.',
+];
+$risks[] = [
+    'title' => 'Scope drift',
+    'state' => ($summary !== '' || $notes !== '') ? 'controlled' : 'exposed',
+    'detail' => ($summary !== '' || $notes !== '')
+        ? 'A working continuity layer exists, so the next operator can inherit the commitment context.'
+        : 'The record lacks enough continuity text. Avoid commitment language that future operators will need to reconstruct.',
+];
+$risks[] = [
+    'title' => 'Timing ambiguity',
+    'state' => ($arrival !== '' && $departure !== '' && $guests !== '' && $guests !== '0') ? 'controlled' : 'exposed',
+    'detail' => ($arrival !== '' && $departure !== '' && $guests !== '' && $guests !== '0')
+        ? 'Core stay anchors are visible.'
+        : 'Keep the next move clarification-led until timing and guest-count anchors are visible.',
+];
+$risks[] = [
+    'title' => 'Continuity checkpoint loss',
+    'state' => ($followUpDate !== '' || $lastContacted !== '' || in_array($status, ['confirmed', 'closed_won'], true)) ? 'controlled' : 'watch',
+    'detail' => ($followUpDate !== '' || $lastContacted !== '' || in_array($status, ['confirmed', 'closed_won'], true))
+        ? 'The record carries a visible continuity checkpoint or already-confirmed posture.'
+        : 'Before a stronger confirmation move, make sure the timeline and next checkpoint stay readable.',
+];
+
+$colorMap = [
+    'controlled' => ['#166534', '#f0fdf4', '#86efac'],
+    'watch' => ['#92400e', '#fffbeb', '#fcd34d'],
+    'exposed' => ['#b91c1c', '#fef2f2', '#fca5a5'],
+];
+?>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px; margin-bottom:16px;">
+    <?php foreach ($risks as $risk): ?>
+        <?php $colors = $colorMap[$risk['state']] ?? $colorMap['watch']; ?>
+        <div style="padding:14px; border:1px solid <?= e($colors[2]) ?>; border-radius:14px; background:<?= e($colors[1]) ?>;">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:8px;">
+                <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($colors[0]) ?>; font-weight:700;"><?= e($risk['title']) ?></div>
+                <div style="font-size:11px; color:<?= e($colors[0]) ?>; font-weight:700;"><?= e(strtoupper($risk['state'])) ?></div>
+            </div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($risk['detail']) ?></div>
+        </div>
+    <?php endforeach; ?>
+</div>
