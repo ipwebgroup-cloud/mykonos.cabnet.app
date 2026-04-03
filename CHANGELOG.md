@@ -1,3 +1,10 @@
+## v5.5.0 — Repeat Guest Readiness Workspace
+- adds a new **Repeat Guest** tab to the backend inquiry update screen
+- introduces a composite **Repeat Guest Readiness Workspace** panel for turning completed or stabilized records into future-ready continuity instead of leaving repeat-value signals buried in review notes
+- adds **Repeat Guest Blueprint** guidance so operators can separate repeatable profile and service-pattern memory from one-time service facts before future outreach or planning begins
+- adds **Repeat Guest Risk Guardrails** to prevent generic repeat assumptions, buried preference memory, source-context loss, and future-service framing that outruns the visible record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.4.0 — Post-Service Review Workspace
 - adds a new **Service Review** tab to the backend inquiry update screen
 - introduces a composite **Post-Service Review Workspace** panel for turning completed or stabilized delivery into one readable outcome review, one lesson path, and one future-useful continuity packet

@@ -1,0 +1,59 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$stayMood = $stringify($record->stay_mood ?? '');
+$history = $stringify($record->history_preview ?? '');
+
+$steps = [
+    'Separate one-time service facts from repeat-useful preference memory before packaging the record for future use.',
+    'Keep one plain-language guest profile visible so travel style, stay mood, or occasion memory does not stay buried in notes.',
+    'Lift repeatable service pattern signals into one readable packet instead of forcing a future operator to reconstruct them from history.',
+    'Leave one explicit re-entry point for future outreach, planning, or premium repeat-service shaping.',
+];
+if ($services !== '') {
+    $steps[] = 'Use the visible service list as the anchor for what is repeatable, what was one-off, and what needs fresh confirmation next time.';
+}
+if ($travelStyle !== '' || $stayMood !== '') {
+    $steps[] = 'Preserve experience-profile cues so repeat handling reflects the real guest posture rather than a generic luxury-service template.';
+}
+$signal = ($summary !== '' || $services !== '' || $history !== '')
+    ? 'The record already has enough visible memory to support a disciplined repeat-guest blueprint.'
+    : 'This record still needs stronger summary, service, or history memory before repeat-readiness packaging can be trusted.';
+?>
+<div style="border:1px dashed #cbd5e1; border-radius:12px; padding:14px; margin-bottom:16px; background:#fff;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#475569; font-weight:700; margin-bottom:8px;">Repeat Guest Blueprint</div>
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:10px;"><?= e($signal) ?></div>
+    <ol style="margin:0; padding-left:18px; color:#0f172a; line-height:1.7; font-size:14px;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin-bottom:6px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

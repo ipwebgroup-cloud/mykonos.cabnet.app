@@ -180,3 +180,6 @@
 
 3.8.0:
     - 'Introduce the Post-Service Review Workspace tab with review blueprint and review guardrail panels'
+
+1.1.25:
+    - 'Add repeat-guest readiness workspace guidance to the operator workflow line'

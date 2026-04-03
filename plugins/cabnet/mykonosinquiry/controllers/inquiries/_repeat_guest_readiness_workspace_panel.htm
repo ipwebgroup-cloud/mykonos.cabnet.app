@@ -1,0 +1,115 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$history = $stringify($record->history_preview ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$stayMood = $stringify($record->stay_mood ?? '');
+$occasionType = $stringify($record->occasion_type ?? '');
+$services = $stringify($record->services_list ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$payload = $record->payload_json ?? null;
+$hasPayloadMemory = false;
+if (is_array($payload)) {
+    $hasPayloadMemory = !empty($payload);
+} elseif (is_object($payload)) {
+    $hasPayloadMemory = true;
+} else {
+    $hasPayloadMemory = trim((string) ($payload ?? '')) !== '';
+}
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($owner !== '') $anchors[] = 'owner memory';
+if ($summary !== '') $anchors[] = 'guest summary';
+if ($workingNotes !== '') $anchors[] = 'working notes';
+if ($history !== '') $anchors[] = 'history trail';
+if ($sourceTitle !== '') $anchors[] = 'source memory';
+if ($travelStyle !== '' || $stayMood !== '' || $occasionType !== '') $anchors[] = 'experience profile';
+if ($services !== '') $anchors[] = 'service pattern';
+if ($lastContacted !== '') $anchors[] = 'last contact trace';
+if ($hasPayloadMemory) $anchors[] = 'payload memory';
+
+$gaps = [];
+if ($summary === '') $gaps[] = 'repeat-useful summary';
+if ($workingNotes === '' && $history === '') $gaps[] = 'operator memory trail';
+if ($services === '') $gaps[] = 'repeatable service pattern';
+if ($owner === '') $gaps[] = 'owner continuity';
+if ($requestReference === '') $gaps[] = 'reference anchor';
+
+$headline = 'Repeat-guest readiness should turn one finished record into future-ready continuity';
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+if (!empty($gaps)) {
+    $headline = 'The record still needs stronger continuity before it can support repeat-guest readiness';
+    $palette = ['#9a3412', '#fff7ed', '#fdba74'];
+} elseif ($summary !== '' && ($services !== '' || $hasPayloadMemory)) {
+    $headline = 'The record has enough visible memory to support disciplined repeat-guest readiness';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+}
+
+$posture = 'Repeat-guest readiness should capture what would matter if this guest, group, or pattern returns later, so the next cycle starts from visible continuity instead of memory reconstruction.';
+if ($travelStyle !== '' || $stayMood !== '' || $occasionType !== '') {
+    $posture .= ' Keep experience-profile signals visible so future service shaping reflects the real guest posture rather than a generic repeat assumption.';
+}
+if ($lastContacted !== '') {
+    $posture .= ' The last contact trail helps show whether the relationship closed warmly, paused, or stayed commercially open for future motion.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Repeat Guest Readiness Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Future-ready anchors</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($anchors ? implode(' • ', $anchors) : 'The record still lacks enough visible anchors for repeat-guest readiness.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Future-use gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural repeat-readiness gaps detected in the visible record.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        A good repeat-guest packet preserves preferences, service pattern memory, and relationship context so the next cycle begins with confidence rather than rediscovery.
+    </div>
+</div>

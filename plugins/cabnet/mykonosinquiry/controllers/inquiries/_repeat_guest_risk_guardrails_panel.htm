@@ -1,0 +1,61 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$services = $stringify($record->services_list ?? '');
+$history = $stringify($record->history_preview ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$travelStyle = $stringify($record->travel_style ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+
+$risks = [
+    'Do not treat a completed service record as automatic permission to assume the same scope next time.',
+    'Do not bury repeat-useful preference memory inside long history or working notes only.',
+    'Do not confuse a good retrospective review with a future-ready repeat-service packet.',
+    'Do not erase source, relationship, or context signals that may matter if the guest returns through a different route later.',
+];
+if ($services === '') {
+    $risks[] = 'The record still lacks a visible repeatable service-pattern anchor.';
+}
+if ($history === '' && $workingNotes === '') {
+    $risks[] = 'The record still lacks enough memory trail for a safe repeat-guest handoff later.';
+}
+if ($travelStyle === '') {
+    $risks[] = 'Travel-style memory is still thin, which raises the risk of generic repeat-service assumptions.';
+}
+if ($sourceTitle === '') {
+    $risks[] = 'Source memory is weak, so future re-entry may lose useful relationship context.';
+}
+?>
+<div style="border:1px dashed #fecaca; border-radius:12px; padding:14px; margin-bottom:16px; background:#fff7f7;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:8px;">Repeat Guest Risk Guardrails</div>
+    <ul style="margin:0; padding-left:18px; color:#7f1d1d; line-height:1.7; font-size:14px;">
+        <?php foreach ($risks as $risk): ?>
+            <li style="margin-bottom:6px;"><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
