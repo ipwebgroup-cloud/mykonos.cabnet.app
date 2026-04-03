@@ -135,3 +135,6 @@
 
 2.3.0:
     - 'Introduce the Planning Workspace tab with next-stage mapping and planning guardrail panels'
+
+2.4.0:
+    - 'Introduce the Intake Workspace tab with structured field normalization and normalization guardrail panels'

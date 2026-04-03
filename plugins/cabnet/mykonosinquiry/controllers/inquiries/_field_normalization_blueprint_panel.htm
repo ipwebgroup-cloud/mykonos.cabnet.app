@@ -1,0 +1,86 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$normalize = function ($value): string {
+    if (is_array($value)) {
+        $flat = [];
+        array_walk_recursive($value, function ($item) use (&$flat) {
+            if (is_scalar($item) || $item === null) {
+                $text = trim((string) ($item ?? ''));
+                if ($text !== '') {
+                    $flat[] = $text;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($flat)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$services = $normalize($record->services_list ?? '');
+$details = $normalize($record->details ?? '');
+$summary = $normalize($record->guest_summary ?? '');
+$sourceType = $normalize($record->source_type ?? '');
+$requestedMode = $normalize($record->requested_mode ?? '');
+$contactPreference = $normalize($record->contact_preference ?? '');
+$followUpDate = $normalize($record->follow_up_date ?? '');
+$owner = $normalize($record->owner_name ?? '');
+
+$firstPass = [
+    $owner !== '' ? 'Confirm the active owner stays visible before cleaning downstream fields.' : 'Set or confirm a named owner so normalization work has accountability.',
+    $summary !== '' ? 'Use the working summary as the normalization target, not the raw payload.' : 'Create a one-screen working summary before polishing preferences and execution fields.',
+    $services !== '' ? 'Normalize requested services into one readable stack the next operator can scan in seconds.' : 'Pull the service stack out of the guest brief or payload before deeper planning.',
+];
+
+$secondPass = [
+    $sourceType !== '' ? 'Keep source type readable outside raw payload.' : 'Populate source type so campaign and reopen continuity do not depend on JSON.',
+    $requestedMode !== '' ? 'Keep requested mode aligned with the actual handling path.' : 'Set requested mode so planning and guest touch pacing stay coherent.',
+    $contactPreference !== '' ? 'Preserve the preferred contact route in structured fields.' : 'Add the preferred contact route before the next guest-facing move.',
+];
+
+$finalPass = [
+    $details !== '' ? 'Leave the guest brief intact as source memory even after summary cleanup.' : 'Do not replace missing brief memory with assumptions inside internal notes.',
+    $followUpDate !== '' ? 'Carry the next checkpoint forward so normalization changes stay operationally meaningful.' : 'Add a follow-up checkpoint after normalization so the record does not drift again.',
+    'Use the Raw tab only as fallback reference when a structured field still cannot be trusted.',
+];
+?>
+<div style="border:1px solid #cbd5e1; background:#ffffff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#475569; font-weight:700; margin-bottom:4px;">Field Normalization Blueprint</div>
+    <div style="font-size:22px; font-weight:700; color:#0f172a; margin-bottom:12px;">Normalize in three passes</div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <div style="padding:12px; border:1px solid #cbd5e1; border-radius:12px; background:#f8fafc;">
+            <div style="font-size:12px; font-weight:700; color:#0f172a; margin-bottom:8px;">Pass 1 — Ownership + summary</div>
+            <ul style="padding-left:18px; margin:0; color:#334155; font-size:14px; line-height:1.55;">
+                <?php foreach ($firstPass as $line): ?>
+                    <li><?= e($line) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div style="padding:12px; border:1px solid #cbd5e1; border-radius:12px; background:#f8fafc;">
+            <div style="font-size:12px; font-weight:700; color:#0f172a; margin-bottom:8px;">Pass 2 — Structured intake fields</div>
+            <ul style="padding-left:18px; margin:0; color:#334155; font-size:14px; line-height:1.55;">
+                <?php foreach ($secondPass as $line): ?>
+                    <li><?= e($line) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div style="padding:12px; border:1px solid #cbd5e1; border-radius:12px; background:#f8fafc;">
+            <div style="font-size:12px; font-weight:700; color:#0f172a; margin-bottom:8px;">Pass 3 — Operational lock-in</div>
+            <ul style="padding-left:18px; margin:0; color:#334155; font-size:14px; line-height:1.55;">
+                <?php foreach ($finalPass as $line): ?>
+                    <li><?= e($line) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</div>

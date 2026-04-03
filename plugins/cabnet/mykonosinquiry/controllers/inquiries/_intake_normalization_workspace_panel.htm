@@ -1,0 +1,127 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$normalize = function ($value): string {
+    if (is_array($value)) {
+        $flat = [];
+        array_walk_recursive($value, function ($item) use (&$flat) {
+            if (is_scalar($item) || $item === null) {
+                $text = trim((string) ($item ?? ''));
+                if ($text !== '') {
+                    $flat[] = $text;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($flat)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($normalize($record->status ?? 'new'));
+$priority = strtolower($normalize($record->priority ?? 'normal'));
+$fullName = $normalize($record->full_name ?? '');
+$email = $normalize($record->email ?? '');
+$phone = $normalize($record->phone ?? '');
+$country = $normalize($record->country ?? '');
+$guests = $normalize($record->guests ?? '');
+$budget = $normalize($record->budget ?? '');
+$arrival = $normalize($record->arrival_date ?? '');
+$departure = $normalize($record->departure_date ?? '');
+$services = $normalize($record->services_list ?? '');
+$sourceType = $normalize($record->source_type ?? '');
+$requestedMode = $normalize($record->requested_mode ?? '');
+$summary = $normalize($record->guest_summary ?? '');
+$details = $normalize($record->details ?? '');
+$contactPreference = $normalize($record->contact_preference ?? '');
+$groupComposition = $normalize($record->group_composition ?? '');
+$arrivalMode = $normalize($record->arrival_mode ?? '');
+$accommodationStatus = $normalize($record->accommodation_status ?? '');
+
+$identityMissing = [];
+if ($fullName === '') { $identityMissing[] = 'full name'; }
+if ($email === '' && $phone === '') { $identityMissing[] = 'reachable contact route'; }
+if ($country === '') { $identityMissing[] = 'country'; }
+
+$tripMissing = [];
+if ($arrival === '' || $departure === '') { $tripMissing[] = 'stay window'; }
+if ($guests === '' || $guests === '0') { $tripMissing[] = 'guest count'; }
+if ($services === '') { $tripMissing[] = 'service stack'; }
+
+$contextMissing = [];
+if ($sourceType === '') { $contextMissing[] = 'source type'; }
+if ($requestedMode === '') { $contextMissing[] = 'requested mode'; }
+if ($summary === '' && $details === '') { $contextMissing[] = 'usable brief'; }
+
+$preferenceCoverage = [];
+if ($contactPreference !== '') { $preferenceCoverage[] = 'contact route'; }
+if ($groupComposition !== '') { $preferenceCoverage[] = 'group composition'; }
+if ($arrivalMode !== '') { $preferenceCoverage[] = 'arrival mode'; }
+if ($accommodationStatus !== '') { $preferenceCoverage[] = 'accommodation posture'; }
+if ($budget !== '') { $preferenceCoverage[] = 'budget posture'; }
+
+$gapCount = count($identityMissing) + count($tripMissing) + count($contextMissing);
+$headline = 'Normalization-first cleanup is recommended';
+$palette = ['#b45309', '#fff7ed', '#fdba74'];
+if ($gapCount <= 1) {
+    $headline = 'Structured intake is mostly normalized';
+    $palette = ['#0f766e', '#f0fdfa', '#99f6e4'];
+} elseif ($gapCount <= 3) {
+    $headline = 'Normalization pass should happen before deeper planning';
+    $palette = ['#1d4ed8', '#eff6ff', '#93c5fd'];
+}
+if (in_array($priority, ['vip', 'urgent'], true)) {
+    $headline .= ' for priority handling';
+}
+
+$safestMove = 'Tighten identity, trip window, and source posture first so later tabs do not compensate for basic intake drift.';
+if ($gapCount <= 1) {
+    $safestMove = 'Keep the structured fields current, then let planning and communication tabs build from the normalized record instead of the raw payload.';
+}
+
+$coverageText = !empty($preferenceCoverage)
+    ? implode(', ', $preferenceCoverage)
+    : 'Preference coverage is still thin, so avoid making planning assumptions from memory.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Intake Normalization Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Identity posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($identityMissing) ? 'Still missing: ' . implode(', ', $identityMissing) : 'Guest identity and contact anchors are visible in structured fields.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Trip posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($tripMissing) ? 'Still missing: ' . implode(', ', $tripMissing) : 'Stay window, guest count, and service stack are readable without opening raw payload.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Preference coverage</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($coverageText) ?></div>
+        </div>
+    </div>
+
+    <div style="padding:12px; border:1px dashed <?= e($palette[2]) ?>; border-radius:12px; background:#fff; font-size:14px; color:#0f172a; margin-bottom:10px;">
+        <strong>Safest next move:</strong> <?= e($safestMove) ?>
+    </div>
+
+    <?php if (!empty($contextMissing)): ?>
+        <div style="font-size:13px; color:#334155;">Context still depends on: <strong><?= e(implode(', ', $contextMissing)) ?></strong>.</div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">Source posture and usable brief are visible enough for disciplined downstream handling.</div>
+    <?php endif; ?>
+</div>

@@ -346,3 +346,8 @@
 - added a dedicated **Planning** tab to the inquiry update screen
 - introduced **Planning Workspace**, **Next Stage Map Blueprint**, and **Planning Risk Guardrails** panels
 - gives operators a backend-only space to sequence the next operator phase after recovery, clarification, or continuity repair without touching public `/plan`, schema, or list stability
+
+## v3.9.0 — Intake Workspace
+- added a dedicated **Intake** tab to the inquiry update screen
+- introduced **Intake Normalization Workspace**, **Field Normalization Blueprint**, and **Normalization Risk Guardrails** panels
+- gives operators a backend-only space to normalize identity, trip, source, and preference fields before deeper planning, execution, or communication work

@@ -1,0 +1,62 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$normalize = function ($value): string {
+    if (is_array($value)) {
+        $flat = [];
+        array_walk_recursive($value, function ($item) use (&$flat) {
+            if (is_scalar($item) || $item === null) {
+                $text = trim((string) ($item ?? ''));
+                if ($text !== '') {
+                    $flat[] = $text;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($flat)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$details = $normalize($record->details ?? '');
+$summary = $normalize($record->guest_summary ?? '');
+$payload = $record->payload_json ?? '';
+$payloadVisible = false;
+if (is_string($payload)) {
+    $payloadVisible = trim($payload) !== '';
+} elseif (is_array($payload)) {
+    $payloadVisible = !empty($payload);
+} elseif (is_object($payload)) {
+    $payloadVisible = true;
+}
+
+$risks = [
+    'Do not replace the guest brief with a polished operator rewrite that hides the original request memory.',
+    'Do not fill structured fields from assumption-heavy memory when the source is only implied.',
+    'Do not let normalization remove source or mode context that later tabs rely on for pacing.',
+    $payloadVisible
+        ? 'Use raw payload only as fallback evidence, not as the day-to-day working surface.'
+        : 'If raw payload is thin, preserve continuity inside summary and history before editing aggressively.',
+    $summary === '' && $details !== ''
+        ? 'Avoid editing preference or execution fields before a concise working summary exists.'
+        : 'Keep the working summary aligned with normalized fields so the next assignee sees one coherent picture.',
+];
+?>
+<div style="border:1px solid #fecaca; background:#fff7f7; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#991b1b; font-weight:700; margin-bottom:4px;">Normalization Risk Guardrails</div>
+    <div style="font-size:22px; font-weight:700; color:#0f172a; margin-bottom:12px;">Keep cleanup from creating new drift</div>
+
+    <ul style="padding-left:18px; margin:0; color:#334155; font-size:14px; line-height:1.65;">
+        <?php foreach ($risks as $risk): ?>
+            <li style="margin-bottom:6px;"><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>

@@ -377,6 +377,27 @@ tabs:
             tab: Planning
             comment: Read-only guardrails that surface the stage-mapping mistakes most likely to blur ownership, hide gaps, or push the record forward without a clean checkpoint.
 
+        intake_normalization_workspace_panel:
+            label: Intake Normalization Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_intake_normalization_workspace_panel.htm
+            tab: Intake
+            comment: High-level intake cleanup surface for tightening structured identity, trip, source, and preference fields before deeper planning or execution tabs take over.
+
+        field_normalization_blueprint_panel:
+            label: Field Normalization Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_field_normalization_blueprint_panel.htm
+            tab: Intake
+            comment: Read-only structure guidance for normalizing the record in a safe sequence so summary, services, source, and contact posture stay aligned.
+
+        normalization_risk_guardrails_panel:
+            label: Normalization Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_normalization_risk_guardrails_panel.htm
+            tab: Intake
+            comment: Read-only guardrails that surface the cleanup mistakes most likely to hide original brief memory, weaken source continuity, or create new structured drift.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial
