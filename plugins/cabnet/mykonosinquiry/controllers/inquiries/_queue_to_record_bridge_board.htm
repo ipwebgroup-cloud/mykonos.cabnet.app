@@ -1,0 +1,100 @@
+<?php
+use Cabnet\MykonosInquiry\Models\Inquiry;
+use Carbon\Carbon;
+
+$today = Carbon::today();
+$closedStatuses = ['closed_won', 'closed_lost', 'spam', 'closed'];
+$activeQuery = Inquiry::query()->whereNotIn('status', $closedStatuses);
+
+$routes = [
+    [
+        'label' => 'Action-first opens',
+        'count' => (clone $activeQuery)
+            ->where(function ($query) use ($today) {
+                $query->where('status', 'new')
+                    ->orWhereDate('follow_up_date', '<', $today)
+                    ->orWhere(function ($q) {
+                        $q->whereNull('owner_name')->orWhere('owner_name', '');
+                    });
+            })
+            ->count(),
+        'tone' => 'critical',
+        'hint' => 'Open these records and start on the Action tab to set the safest next move, owner clarity, and immediate queue control.',
+    ],
+    [
+        'label' => 'Command-first opens',
+        'count' => (clone $activeQuery)
+            ->where(function ($query) {
+                $query->whereIn('priority', ['vip', 'urgent'])
+                    ->orWhereIn('status', ['proposal_sent', 'awaiting_guest', 'confirmed']);
+            })
+            ->count(),
+        'tone' => 'warning',
+        'hint' => 'Open these records and start on the Command tab to scan guest posture, commercial pacing, and the safest guest-facing route.',
+    ],
+    [
+        'label' => 'Source-first opens',
+        'count' => (clone $activeQuery)
+            ->where(function ($query) {
+                $query->whereNull('source_type')->orWhere('source_type', '')
+                    ->orWhereNull('requested_mode')->orWhere('requested_mode', '')
+                    ->orWhereNull('source_title')->orWhere('source_title', '')
+                    ->orWhereNull('source_url')->orWhere('source_url', '');
+            })
+            ->count(),
+        'tone' => 'neutral',
+        'hint' => 'Open these records and start on the Source tab to protect campaign traceability, request context, and reopen continuity.',
+    ],
+    [
+        'label' => 'Continuity-first opens',
+        'count' => (clone $activeQuery)
+            ->where(function ($query) {
+                $query->whereNull('guest_summary')->orWhere('guest_summary', '')
+                    ->orWhereNull('internal_notes')->orWhere('internal_notes', '');
+            })
+            ->count(),
+        'tone' => 'primary',
+        'hint' => 'Open these records and start on the Internal or History tabs to rebuild the working picture before pushing the inquiry forward.',
+    ],
+];
+
+$paletteFor = function ($tone) {
+    switch ($tone) {
+        case 'critical':
+            return ['border' => '#dc3545', 'bg' => '#fff5f5', 'text' => '#842029'];
+        case 'warning':
+            return ['border' => '#fd7e14', 'bg' => '#fff8f0', 'text' => '#9a4d00'];
+        case 'primary':
+            return ['border' => '#0d6efd', 'bg' => '#eef5ff', 'text' => '#084298'];
+        default:
+            return ['border' => '#6c757d', 'bg' => '#f7f8f9', 'text' => '#495057'];
+    }
+};
+?>
+
+<div style="margin-bottom: 18px; border:1px solid #d8dee4; border-radius:12px; background:#fff; overflow:hidden;">
+    <div style="padding:12px 14px; border-bottom:1px solid #e9ecef; background:#f8f9fa;">
+        <div style="font-size:16px; font-weight:700;">Queue-to-record bridge board</div>
+        <div style="font-size:13px; color:#6c757d;">Read-only routing guidance that turns queue conditions into the safest first tab to inspect after opening a record.</div>
+    </div>
+    <div style="padding:14px;">
+        <div class="row">
+            <?php foreach ($routes as $route): ?>
+                <?php $palette = $paletteFor($route['tone']); ?>
+                <div class="col-md-3 col-sm-6" style="margin-bottom:12px;">
+                    <div style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px; min-height:170px;">
+                        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($palette['text']) ?>; opacity:0.8; margin-bottom:8px;">
+                            <?= e($route['label']) ?>
+                        </div>
+                        <div style="font-size:30px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:10px;">
+                            <?= e((string) $route['count']) ?>
+                        </div>
+                        <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.92;">
+                            <?= e($route['hint']) ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>

@@ -1,3 +1,9 @@
+## v2.10.0 — Queue-to-Record Bridge
+- upgrades the backend inquiry list page from queue scanning into record-opening guidance
+- adds a read-only **Queue-to-Record Bridge Board** that maps live queue conditions to the safest first workspace after opening a record
+- adds **Priority Opening Routes** so operators can jump into the right records with a clear Action-first, Command-first, or Source/Internal-first posture
+- adds a **Queue-to-Record Playbook** to keep list-to-detail workflow disciplined without changing schema, filters, quick actions, or the public `/plan` flow
+
 ## v2.9.0 — Action Workspace
 - adds a new **Action** tab to the backend inquiry update screen
 - introduces a composite **Operator Action Workspace** panel for record-level next-move control across queue posture, guest coverage, and continuity

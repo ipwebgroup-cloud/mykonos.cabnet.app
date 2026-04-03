@@ -1,0 +1,117 @@
+<?php
+use Cabnet\MykonosInquiry\Models\Inquiry;
+use Carbon\Carbon;
+
+$today = Carbon::today();
+$closedStatuses = ['closed_won', 'closed_lost', 'spam', 'closed'];
+$activeQuery = Inquiry::query()->whereNotIn('status', $closedStatuses);
+
+$routeSets = [
+    [
+        'title' => 'Start on Action',
+        'tone' => 'critical',
+        'lead' => 'Use when the record needs an owner, first touch, or follow-up rescue before anything else.',
+        'route' => 'Open the record and scan the Action tab first.',
+        'records' => (clone $activeQuery)
+            ->where(function ($query) use ($today) {
+                $query->where('status', 'new')
+                    ->orWhereDate('follow_up_date', '<', $today)
+                    ->orWhere(function ($q) {
+                        $q->whereNull('owner_name')->orWhere('owner_name', '');
+                    });
+            })
+            ->orderByRaw("CASE WHEN owner_name IS NULL OR owner_name = '' THEN 0 ELSE 1 END ASC")
+            ->orderByRaw("CASE WHEN follow_up_date < ? THEN 0 ELSE 1 END ASC", [$today->toDateString()])
+            ->orderBy('created_at', 'desc')
+            ->limit(4)
+            ->get(),
+    ],
+    [
+        'title' => 'Start on Command',
+        'tone' => 'warning',
+        'lead' => 'Use when guest confidence, offer shape, or commercial pacing needs a composite overview first.',
+        'route' => 'Open the record and scan the Command tab first.',
+        'records' => (clone $activeQuery)
+            ->where(function ($query) {
+                $query->whereIn('priority', ['vip', 'urgent'])
+                    ->orWhereIn('status', ['proposal_sent', 'awaiting_guest', 'confirmed']);
+            })
+            ->orderByRaw("CASE WHEN priority IN ('urgent','vip') THEN 0 ELSE 1 END ASC")
+            ->orderBy('updated_at', 'desc')
+            ->limit(4)
+            ->get(),
+    ],
+    [
+        'title' => 'Start on Source / Internal',
+        'tone' => 'primary',
+        'lead' => 'Use when source context or working continuity is too thin to trust the next move yet.',
+        'route' => 'Open the record and scan Source first, then Internal if continuity is still thin.',
+        'records' => (clone $activeQuery)
+            ->where(function ($query) {
+                $query->whereNull('source_type')->orWhere('source_type', '')
+                    ->orWhereNull('source_title')->orWhere('source_title', '')
+                    ->orWhereNull('source_url')->orWhere('source_url', '')
+                    ->orWhereNull('guest_summary')->orWhere('guest_summary', '')
+                    ->orWhereNull('internal_notes')->orWhere('internal_notes', '');
+            })
+            ->orderBy('updated_at', 'desc')
+            ->limit(4)
+            ->get(),
+    ],
+];
+
+$paletteFor = function ($tone) {
+    switch ($tone) {
+        case 'critical':
+            return ['border' => '#dc3545', 'bg' => '#fff5f5', 'text' => '#842029'];
+        case 'warning':
+            return ['border' => '#fd7e14', 'bg' => '#fff8f0', 'text' => '#9a4d00'];
+        case 'primary':
+            return ['border' => '#0d6efd', 'bg' => '#eef5ff', 'text' => '#084298'];
+        default:
+            return ['border' => '#6c757d', 'bg' => '#f7f8f9', 'text' => '#495057'];
+    }
+};
+?>
+
+<div style="margin-bottom: 18px;">
+    <div style="font-size:16px; font-weight:700; margin-bottom:10px;">Priority opening routes</div>
+    <div class="row">
+        <?php foreach ($routeSets as $set): ?>
+            <?php $palette = $paletteFor($set['tone']); ?>
+            <div class="col-md-4" style="margin-bottom:16px;">
+                <div style="border:1px solid <?= e($palette['border']) ?>; border-radius:12px; overflow:hidden; background:#fff; min-height:100%;">
+                    <div style="background:<?= e($palette['bg']) ?>; padding:12px 14px; border-bottom:1px solid <?= e($palette['border']) ?>;">
+                        <div style="font-size:16px; font-weight:700; color:<?= e($palette['text']) ?>;"><?= e($set['title']) ?></div>
+                        <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.9; margin-top:3px;"><?= e($set['lead']) ?></div>
+                    </div>
+                    <div style="padding:12px 14px;">
+                        <div style="font-size:12px; color:#6c757d; margin-bottom:10px;"><?= e($set['route']) ?></div>
+                        <?php if ($set['records']->isEmpty()): ?>
+                            <div style="font-size:13px; color:#6c757d;">No records currently fit this route.</div>
+                        <?php else: ?>
+                            <?php foreach ($set['records'] as $record): ?>
+                                <div style="padding:10px 0; border-bottom:1px solid #eceff3;">
+                                    <div style="font-weight:700; margin-bottom:3px;">
+                                        <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $record->id) ?>">
+                                            <?= e($record->request_reference ?: ('Inquiry #' . $record->id)) ?>
+                                        </a>
+                                    </div>
+                                    <div style="font-size:13px; color:#495057; margin-bottom:3px;">
+                                        <?= e($record->full_name ?: 'Guest name pending') ?>
+                                        <?php if (!empty($record->services_inline)): ?>
+                                            · <?= e($record->services_inline) ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div style="font-size:12px; color:#6c757d;">
+                                        <?= e($record->status_label) ?> · <?= e($record->priority_label) ?> · <?= e($record->owner_display) ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

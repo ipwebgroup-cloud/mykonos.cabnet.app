@@ -105,3 +105,6 @@
 
 1.4.0:
     - 'Introduce the Action Workspace tab with composite next-move execution and transition guardrail panels'
+
+1.5.0:
+    - 'Introduce the Queue-to-Record Bridge on the inquiry list page with first-tab routing guidance and priority opening routes'

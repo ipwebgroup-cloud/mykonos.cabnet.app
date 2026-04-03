@@ -20,3 +20,17 @@
 <?= $this->makePartial('queue_command_board') ?>
 <?= $this->makePartial('queue_lane_board') ?>
 <?= $this->makePartial('operator_triage_playbook') ?>
+
+<div class="callout callout-info no-subheader" style="margin-top: 8px; margin-bottom: 18px;">
+    <div class="header">
+        <i class="icon-random"></i>
+        <h3>Queue-to-Record Bridge</h3>
+        <p>
+            Read-only list-page guidance that helps operators choose the safest first workspace after opening a record, instead of re-scanning every tab by habit.
+        </p>
+    </div>
+</div>
+
+<?= $this->makePartial('queue_to_record_bridge_board') ?>
+<?= $this->makePartial('record_opening_routes_board') ?>
+<?= $this->makePartial('queue_to_record_playbook') ?>
