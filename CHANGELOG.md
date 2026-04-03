@@ -272,3 +272,8 @@
 - added a read-only **Guest Confidence Signals** panel to the Internal tab
 - surfaces ownership clarity, continuity cueing, and the safest next confidence-building move before the next guest touch
 - keeps operator workspace consolidation moving without schema or public-flow changes
+
+## v3.1.0 — Proposal Workspace
+- added a dedicated **Proposal** tab to the inquiry update screen
+- introduced **Proposal Workspace**, **Offer Shape Blueprint**, and **Proposal Risk Guardrails** panels
+- gives operators a backend-only space to shape premium starter offers and proposal follow-up without touching public `/plan`, schema, or list stability

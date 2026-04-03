@@ -109,3 +109,5 @@
 1.5.0:
     - 'Introduce the Communication Workspace tab with reply strategy, blueprint, and communication guardrail panels'
 
+1.6.0:
+    - 'Introduce the Proposal Workspace tab with offer shaping and commercial guardrail panels'

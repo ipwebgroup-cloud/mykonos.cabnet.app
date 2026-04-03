@@ -1,0 +1,89 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$services = trim((string) ($record->services_list ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$occasion = trim((string) ($record->occasion_type ?? ''));
+$contact = trim((string) ($record->contact_preference ?? ''));
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+
+$steps = [];
+$steps[] = 'Open the proposal with one-line ownership and a concise restatement of the guest mission.';
+
+$anchors = [];
+if ($arrival !== '' || $departure !== '') {
+    $anchors[] = 'stay timing';
+}
+if ($guests !== '' && $guests !== '0') {
+    $anchors[] = 'group size';
+}
+if ($services !== '') {
+    $anchors[] = 'service stack';
+}
+if ($occasion !== '') {
+    $anchors[] = 'occasion energy';
+}
+if (!empty($anchors)) {
+    $steps[] = 'Mirror back the visible offer anchors: ' . implode(', ', $anchors) . '.';
+}
+
+if ($summary !== '') {
+    $steps[] = 'Use the operator working summary as the backbone so the proposal feels continuous rather than newly invented.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift one or two concrete brief cues into the offer so it feels custom, not generic.';
+}
+
+if ($budget !== '') {
+    $steps[] = 'Frame the proposal depth to match the visible budget posture, while keeping room for refinement.';
+} else {
+    $steps[] = 'Keep the proposal tier light and exploratory until budget comfort is clearer.';
+}
+
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $steps[] = 'Re-enter with a continuity-led recap and a small next decision, not a full reset of the offer.';
+} else {
+    $steps[] = 'Close with one disciplined next step: confirm, refine, or choose the preferred direction.';
+}
+
+$routeClose = $contact !== ''
+    ? 'Match the closing ask to the preferred contact route already visible on the record.'
+    : 'Keep the closing ask channel-neutral until the preferred route is explicit.';
+
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+$headline = 'Offer blueprint is commercially disciplined';
+if ($budget === '' || $services === '') {
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+    $headline = 'Offer blueprint should stay starter-level';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Offer Shape Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Proposal route: <strong><?= e($status === 'proposal_sent' ? 'continuity follow-up' : 'first shaped offer') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Closing discipline</div>
+        <div style="font-size:14px;"><?= e($routeClose) ?></div>
+    </div>
+</div>

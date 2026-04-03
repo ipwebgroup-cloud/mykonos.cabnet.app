@@ -208,6 +208,28 @@ tabs:
             tab: Communication
             comment: Read-only guardrails that surface the communication mistakes most likely to break trust, blur ownership, or over-promise too early.
 
+
+        proposal_workspace_panel:
+            label: Proposal Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_workspace_panel.htm
+            tab: Proposal
+            comment: High-level commercial shaping surface for deciding whether the record is ready for a starter offer, a continuity-led proposal follow-up, or one more clarification pass.
+
+        offer_shape_blueprint_panel:
+            label: Offer Shape Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_offer_shape_blueprint_panel.htm
+            tab: Proposal
+            comment: Read-only structure guidance for shaping the next premium offer so it stays anchored to the guest mission, visible timing, and commercial discipline.
+
+        proposal_risk_guardrails_panel:
+            label: Proposal Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_risk_guardrails_panel.htm
+            tab: Proposal
+            comment: Read-only guardrails that surface the offer-shaping mistakes most likely to over-promise, blur continuity, or create avoidable commercial drift.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

@@ -1,0 +1,117 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$budget = trim((string) ($record->budget ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$privacy = strtolower(trim((string) ($record->privacy_level ?? '')));
+$accommodation = trim((string) ($record->accommodation_status ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$occasion = trim((string) ($record->occasion_type ?? ''));
+$travelStyle = trim((string) ($record->travel_style ?? ''));
+
+$gaps = [];
+if ($arrival === '' || $departure === '') {
+    $gaps[] = 'stay window';
+}
+if ($guests === '' || $guests === '0') {
+    $gaps[] = 'guest count';
+}
+if ($services === '' && $details === '') {
+    $gaps[] = 'service priorities';
+}
+if ($budget === '') {
+    $gaps[] = 'budget posture';
+}
+if ($owner === '') {
+    $gaps[] = 'owner visibility';
+}
+
+$proposalState = 'Clarification-first packaging';
+$palette = ['#b45309', '#fff7ed', '#fed7aa'];
+if (empty($gaps) && in_array($status, ['new', 'reviewed', 'contacted'], true)) {
+    $proposalState = 'Starter proposal can be shaped';
+    $palette = ['#0f766e', '#f0fdfa', '#99f6e4'];
+} elseif (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $proposalState = 'Proposal continuity follow-up';
+    $palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+} elseif (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $proposalState = 'Execution-led commercial posture';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+}
+
+$proposalShape = 'Keep the next offer narrow and confidence-building rather than over-detailed.';
+if (empty($gaps)) {
+    $proposalShape = 'Shape a concise premium starter proposal around the visible stay window, service focus, and guest profile.';
+}
+if ($priority === 'vip' || $priority === 'urgent') {
+    $proposalShape .= ' Pace it fast, but keep supplier-like promises out until execution details are secured.';
+}
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed'], true)) {
+    $proposalShape .= ' Keep privacy language discreet and explicit.';
+}
+
+$anchorLine = [];
+if ($occasion !== '') {
+    $anchorLine[] = 'occasion context';
+}
+if ($travelStyle !== '') {
+    $anchorLine[] = 'travel style';
+}
+if ($accommodation !== '') {
+    $anchorLine[] = 'accommodation posture';
+}
+if ($summary !== '' || $details !== '') {
+    $anchorLine[] = 'brief narrative';
+}
+
+$commercialNote = $budget !== ''
+    ? 'Budget posture is visible, so offer depth can be framed more deliberately.'
+    : 'Budget posture is still missing, so keep the offer exploratory and avoid false precision.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Proposal Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($proposalState) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Proposal shape</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($proposalShape) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Offer anchors</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($anchorLine) ? implode(', ', $anchorLine) : 'Build anchors from source, guest brief, and service intent before shaping an offer.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Commercial note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($commercialNote) ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($gaps)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Proposal shaping still depends on: <strong><?= e(implode(', ', $gaps)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries the core anchors needed for a disciplined premium offer outline.
+        </div>
+    <?php endif; ?>
+</div>
