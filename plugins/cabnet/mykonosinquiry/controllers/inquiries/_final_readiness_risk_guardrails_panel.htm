@@ -1,0 +1,79 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$requestReference = $stringify($record->request_reference ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+$closedReason = $stringify($record->closed_reason ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+
+$risks = [
+    'Do not let final-readiness language imply that every dependency, timing assumption, or outside coordination is already fully closed.',
+    'Do not collapse the difference between ready-now items and still-conditional items just because the record feels close to completion.',
+    'Do not allow the record to look execution-safe if ownership and the next checkpoint are still implied rather than visible on-screen.',
+    'Do not let a polished document or approved path stand in for true final readiness when the operational fallback path is still missing.',
+];
+if ($requestReference === '') {
+    $risks[] = 'Add a visible request reference before expecting final-readiness packets to survive hand-off, urgency, or later audit reading.';
+}
+if ($summary === '') {
+    $risks[] = 'Strengthen the working summary before using final-readiness language as the basis for execution confidence.';
+}
+if ($services === '') {
+    $risks[] = 'Keep readiness language conservative until scope is visible in structured form.';
+}
+if ($owner === '' || $followUpDate === '') {
+    $risks[] = 'Keep ownership and the next checkpoint explicit so ready-to-execute posture does not become soft accountability.';
+}
+if ($arrival === '' || $departure === '') {
+    $risks[] = 'Keep timing anchors visible so final-readiness review does not pretend the execution window is already understood.';
+}
+if ($closedReason !== '') {
+    $risks[] = 'Preserve earlier closure or pause context so final-readiness language does not overwrite why the record stopped before.';
+}
+
+$severity = 'Final readiness is safe only when the record can handle pressure, ambiguity, and operator change without losing the truth of what is actually ready.';
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $severity = 'High-confidence records still need disciplined final-readiness handling so go-live language does not outrun visible ownership, timing, or fallback logic.';
+}
+?>
+<div style="border:1px solid #fecaca; background:#fff1f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Final Readiness Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Keep near-finished records from pretending they are safer than they really are</div>
+    <div style="font-size:14px; color:#7f1d1d; margin-bottom:12px;"><?= e($severity) ?></div>
+
+    <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.55;">
+        <?php foreach ($risks as $risk): ?>
+            <li style="margin-bottom:8px;"><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>

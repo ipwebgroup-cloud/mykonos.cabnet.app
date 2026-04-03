@@ -1,0 +1,86 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$fullName = $stringify($record->full_name ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$priority = $stringify($record->priority ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$phase = 'Use a final-readiness packet: locked path -> still-conditional items -> active owner -> next execution checkpoint -> fallback if anything slips.';
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $phase = 'Use a go-live packet: what is ready now, what remains conditional, who holds the baton, and what the first recovery move is if execution pressure exposes a gap.';
+}
+if (in_array($status, ['awaiting_guest', 'proposal_sent', 'contacted'], true)) {
+    $phase = 'Use a pre-readiness packet: do not imply final execution posture until commitments, checkpoints, and visible ownership are strong enough to survive hand-off or time pressure.';
+}
+
+$sequence = [
+    'Open with the request reference and one-sentence statement of what the record is actually ready for so later readers do not mistake momentum for readiness.',
+    'Separate ready-now items from still-conditional items so the record shows what can move immediately versus what still depends on human follow-through or timing.',
+    'Name the active owner, the next checkpoint, and the next irreversible move explicitly so the readiness packet remains accountable.',
+    'Preserve one clear fallback path if timing, approvals, supplier reality, or guest direction changes at the last moment.',
+];
+if ($requestedMode !== '') {
+    $sequence[] = 'Keep the packet aligned with the active handling mode so final-readiness language matches the real operating lane.';
+}
+if ($followUpDate !== '') {
+    $sequence[] = 'Tie the packet to the visible follow-up date so the next checkpoint stays trackable even when pressure increases.';
+}
+
+$anchorText = [];
+if ($requestReference !== '') $anchorText[] = 'ref: ' . $requestReference;
+if ($fullName !== '') $anchorText[] = 'guest: ' . $fullName;
+if ($arrival !== '' || $departure !== '') $anchorText[] = 'stay: ' . trim($arrival . ' → ' . $departure, ' →');
+if ($services !== '') $anchorText[] = 'services: ' . $services;
+if ($summary !== '') $anchorText[] = 'summary ready';
+if ($owner !== '') $anchorText[] = 'owner: ' . $owner;
+if ($priority !== '') $anchorText[] = 'priority: ' . $priority;
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#0f766e; font-weight:700; margin-bottom:6px;">Go-Live Readiness Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Turn post-approval momentum into a readable ready-to-execute packet</div>
+    <div style="font-size:14px; color:#334155; margin-bottom:12px;"><?= e($phase) ?></div>
+
+    <div style="padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; margin-bottom:12px;">
+        <div style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:.06em; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+        <div style="font-size:14px; color:#0f172a;"><?= e($anchorText ? implode(' • ', $anchorText) : 'Strengthen the record anchors before treating it as truly ready for final execution posture.') ?></div>
+    </div>
+
+    <ol style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+        <?php foreach ($sequence as $step): ?>
+            <li style="margin-bottom:8px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

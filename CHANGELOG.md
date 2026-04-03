@@ -1,3 +1,10 @@
+## v4.9.0 — Final Readiness Workspace
+- adds a new **Final Readiness** tab to the backend inquiry update screen
+- introduces a composite **Final Readiness Workspace** panel for go-live posture, visible execution anchors, and last-mile accountability
+- adds **Go-Live Readiness Blueprint** guidance so operators can convert post-approval momentum into a readable ready-to-execute packet with locked items, pending dependencies, and fallback clarity
+- adds **Final Readiness Risk Guardrails** to prevent false go-live confidence, checkpoint loss, execution language that outruns the record, and fragile last-mile assumptions
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.8.0 — Post-Approval Workspace
 - adds a new **Post-Approval** tab to the backend inquiry update screen
 - introduces a composite **Post-Approval Workspace** panel for lock handling, dependency visibility, and final-readiness discipline after sign-off

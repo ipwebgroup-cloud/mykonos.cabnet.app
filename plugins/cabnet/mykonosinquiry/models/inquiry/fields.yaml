@@ -592,6 +592,27 @@ tabs:
             tab: Post-Approval
             comment: Read-only guardrails that surface the post-approval mistakes most likely to create false completion, hidden dependencies, or fragile final-readiness assumptions.
 
+        final_readiness_workspace_panel:
+            label: Final Readiness Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_readiness_workspace_panel.htm
+            tab: Final Readiness
+            comment: High-level final-readiness surface for deciding whether the record can safely absorb execution pressure, operator change, and last-mile reality without losing clarity.
+
+        go_live_readiness_blueprint_panel:
+            label: Go-Live Readiness Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_go_live_readiness_blueprint_panel.htm
+            tab: Final Readiness
+            comment: Read-only structure guidance for turning the post-approval record into a ready-to-execute packet with visible locked items, pending dependencies, and fallback clarity.
+
+        final_readiness_risk_guardrails_panel:
+            label: Final Readiness Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_readiness_risk_guardrails_panel.htm
+            tab: Final Readiness
+            comment: Read-only guardrails that surface the final-readiness mistakes most likely to create false go-live confidence, checkpoint loss, or fragile execution posture.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

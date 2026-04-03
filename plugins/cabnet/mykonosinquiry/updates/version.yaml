@@ -165,3 +165,6 @@
 
 3.3.0:
     - 'Introduce the Post-Approval Workspace tab with lock framing and post-approval guardrail panels'
+
+3.4.0:
+    - 'Introduce the Final Readiness Workspace tab with go-live framing and final-readiness guardrail panels'
