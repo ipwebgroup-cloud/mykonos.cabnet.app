@@ -58,6 +58,16 @@ $readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Mediu
                 <h4>History packet</h4>
                 <p><?= $touchpointTableReady ? 'touchpoint ledger installed' : 'touchpoint ledger staged' ?></p>
             </div>
+            <div class="scoreboard-item title-value">
+                <h4>Touchpoint plan</h4>
+                <p><?= $transferReady ? 'outcomes + next window can be framed' : 'wait for closure before continuity timing' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><?= $transferReady ? 'Use the staged loyalty workspace to pre-frame likely touchpoint outcomes and a narrow next-contact window.' : 'Keep this inquiry in the live queue until closure is clear enough to justify continuity timing.' ?></li>
+            </ul>
         </div>
 
         <?php if (!$record && !empty($readinessReasons)): ?>

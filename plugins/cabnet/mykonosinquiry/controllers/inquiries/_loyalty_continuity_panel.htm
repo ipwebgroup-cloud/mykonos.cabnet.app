@@ -50,6 +50,10 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                 <h4>Touchpoint history</h4>
                 <p><?= $touchpointTableReady ? 'ledger installed' : 'ledger staged' ?></p>
             </div>
+            <div class="scoreboard-item title-value">
+                <h4>Continuity timing</h4>
+                <p><?= $transferReady ? 'next-contact window can be staged' : 'timing should stay with active handling' ?></p>
+            </div>
         </div>
 
         <div class="scoreboard" style="margin-top:15px;">
@@ -74,7 +78,7 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                 <?php endif; ?>
 
                 <?php if (!$loyaltyTableReady): ?>
-                    <li>The storage layer is still staged, so the continuity packet shown here remains a dry run until activation is deliberately installed. The same is true for the touchpoint-history ledger introduced in this patch.</li>
+                    <li>The storage layer is still staged, so the continuity packet shown here remains a dry run until activation is deliberately installed. The same is true for the touchpoint-history ledger, outcome taxonomy, and next-contact window matrix introduced in this patch line.</li>
                 <?php endif; ?>
 
                 <?php if (!$record && empty($closedAt)): ?>

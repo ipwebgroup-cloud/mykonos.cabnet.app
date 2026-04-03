@@ -10,8 +10,9 @@ $touchpointTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykon
             <p>
                 The workspace shell is stable and visible. Loyalty records are <?= $loyaltyTableReady ? 'installed' : 'not installed yet' ?> and the
                 touchpoint ledger is <?= $touchpointTableReady ? 'installed' : 'still staged' ?>, so this area continues to operate as a controlled
-                continuity-planning surface. This release adds the first retention-history packet so operators can define how loyalty touchpoints
-                will be preserved once structural activation is intentionally executed.
+                continuity-planning surface. This release extends that staged line with an outcome taxonomy and a next-contact window matrix so
+                operators can define not only what continuity touches are preserved, but also how results and future timing should be interpreted
+                once structural activation is intentionally executed.
             </p>
         </div>
     </div>
