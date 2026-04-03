@@ -10,18 +10,17 @@ use Cabnet\MykonosInquiry\Models\InquiryNote;
 use Cabnet\MykonosInquiry\Models\LoyaltyRecord;
 use Carbon\Carbon;
 use Flash;
-use Schema;
 
 class Inquiries extends Controller
 {
     protected function loyaltyWorkspaceReady(): bool
     {
-        return Schema::hasTable('cabnet_mykonos_loyalty_records');
+        return LoyaltyRecord::workspaceStorageReady();
     }
 
     protected function redirectAfterLoyaltySetupMissing($recordId)
     {
-        Flash::error('Loyalty Continuity tables are not ready yet. Run php artisan plugin:refresh Cabnet.MykonosInquiry first.');
+        Flash::error('Loyalty Continuity storage is not fully ready yet. Apply the loyalty workspace schema upgrade before activating transfer actions.');
         return redirect(\Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $recordId));
     }
 
@@ -263,13 +262,43 @@ class Inquiries extends Controller
 
         return $this->runQuickAction($recordId, function (Inquiry $inquiry): bool {
             $record = LoyaltyRecord::syncFromInquiry($inquiry, [
-                'continuity_status'  => 'return_value_watch',
-                'return_value_tier'  => 'promising',
-                'loyalty_stage'      => 'watch',
+                'continuity_status'      => 'return_value_watch',
+                'return_value_candidate' => true,
+                'return_value_tier'      => 'promising',
+                'loyalty_stage'          => 'watch',
             ], $this->getOperatorName());
 
             return $record !== null;
         }, 'Inquiry marked as a return-value candidate in Loyalty Continuity.', 'Quick action: flagged inquiry as a return-value candidate in Loyalty Continuity.');
+    }
+
+    public function openLoyaltyTransfer($recordId = null)
+    {
+        if (!$this->loyaltyWorkspaceReady()) {
+            return $this->redirectAfterLoyaltySetupMissing($recordId);
+        }
+
+        $inquiry = Inquiry::findOrFail($recordId);
+        $existing = LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
+
+        if ($existing) {
+            Flash::success('Opened linked Loyalty Continuity record.');
+            return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $existing->id));
+        }
+
+        $record = LoyaltyRecord::syncFromInquiry($inquiry, [
+            'continuity_status' => 'active_retention',
+        ], $this->getOperatorName());
+
+        if (!$record) {
+            Flash::error('Loyalty transfer could not be opened because the storage layer is not fully ready yet.');
+            return redirect(\Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $recordId));
+        }
+
+        $this->appendSystemNote($inquiry, 'Quick action: created and opened a Loyalty Continuity record from the inquiry workspace.');
+        Flash::success('Loyalty Continuity record created and opened.');
+
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
     }
 
     protected function dispatchQuickActionFromUpdate($recordId)
@@ -306,6 +335,9 @@ class Inquiries extends Controller
 
             case 'mark_return_value_candidate':
                 return $this->markReturnValueCandidate($recordId);
+
+            case 'open_loyalty_transfer':
+                return $this->openLoyaltyTransfer($recordId);
 
             default:
                 Flash::warning('Unknown quick action.');

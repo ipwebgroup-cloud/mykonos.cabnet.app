@@ -2,10 +2,14 @@
 
 use Carbon\Carbon;
 use Model;
+use Schema;
 
 class LoyaltyRecord extends Model
 {
-    public $table = 'cabnet_mykonos_loyalty_records';
+    public const RECORD_TABLE = 'cabnet_mykonos_loyalty_records';
+    public const TOUCHPOINT_TABLE = 'cabnet_mykonos_loyalty_touchpoints';
+
+    public $table = self::RECORD_TABLE;
 
     protected $guarded = ['id'];
 
@@ -17,7 +21,7 @@ class LoyaltyRecord extends Model
         'updated_at',
     ];
 
-    public $jsonable = ['tags_json'];
+    public $jsonable = ['tags_json', 'payload_json'];
 
     public $hasMany = [
         'touchpoints' => [LoyaltyTouchpoint::class, 'order' => 'created_at desc'],
@@ -27,9 +31,105 @@ class LoyaltyRecord extends Model
         'source_inquiry' => [Inquiry::class, 'key' => 'source_inquiry_id'],
     ];
 
+    public static function getWorkspaceInstallState(): array
+    {
+        $recordTableReady = Schema::hasTable(self::RECORD_TABLE);
+        $touchpointTableReady = Schema::hasTable(self::TOUCHPOINT_TABLE);
+
+        $requiredRecordColumns = [
+            'source_inquiry_id',
+            'request_reference',
+            'continuity_status',
+            'loyalty_stage',
+            'referral_ready',
+            'return_value_tier',
+            'next_review_at',
+            'last_retention_contact_at',
+            'guest_name',
+            'guest_email',
+            'guest_phone',
+            'country',
+            'owner_name',
+            'created_by',
+            'service_focus_summary',
+            'source_summary',
+            'continuity_summary',
+            'retention_notes',
+            'preferred_season',
+            'revisit_window',
+            'last_visit_at',
+            'tags_json',
+            'payload_json',
+        ];
+
+        $requiredTouchpointColumns = [
+            'loyalty_record_id',
+            'source_inquiry_id',
+            'touchpoint_type',
+            'touchpoint_channel',
+            'touchpoint_outcome',
+            'touchpoint_at',
+            'next_step_at',
+            'author_name',
+            'operator_name',
+            'reference_code',
+            'body',
+            'touchpoint_summary',
+            'is_internal',
+            'payload_json',
+        ];
+
+        $missingRecordColumns = [];
+        $missingTouchpointColumns = [];
+
+        if ($recordTableReady) {
+            foreach ($requiredRecordColumns as $column) {
+                if (!Schema::hasColumn(self::RECORD_TABLE, $column)) {
+                    $missingRecordColumns[] = $column;
+                }
+            }
+        } else {
+            $missingRecordColumns = $requiredRecordColumns;
+        }
+
+        if ($touchpointTableReady) {
+            foreach ($requiredTouchpointColumns as $column) {
+                if (!Schema::hasColumn(self::TOUCHPOINT_TABLE, $column)) {
+                    $missingTouchpointColumns[] = $column;
+                }
+            }
+        } else {
+            $missingTouchpointColumns = $requiredTouchpointColumns;
+        }
+
+        $recordSchemaReady = $recordTableReady && empty($missingRecordColumns);
+        $touchpointSchemaReady = $touchpointTableReady && empty($missingTouchpointColumns);
+
+        return [
+            'record_table_ready'        => $recordTableReady,
+            'touchpoint_table_ready'    => $touchpointTableReady,
+            'record_schema_ready'       => $recordSchemaReady,
+            'touchpoint_schema_ready'   => $touchpointSchemaReady,
+            'workspace_storage_ready'   => $recordSchemaReady && $touchpointSchemaReady,
+            'missing_record_columns'    => $missingRecordColumns,
+            'missing_touchpoint_columns'=> $missingTouchpointColumns,
+        ];
+    }
+
+    public static function workspaceStorageReady(): bool
+    {
+        return (bool) static::getWorkspaceInstallState()['workspace_storage_ready'];
+    }
+
+    public static function touchpointStorageReady(): bool
+    {
+        return (bool) static::getWorkspaceInstallState()['touchpoint_schema_ready'];
+    }
+
     public function getContinuityStatusOptions(): array
     {
         return [
+            'draft'              => 'Draft / staged',
             'active_retention'   => 'Active retention',
             'referral_ready'     => 'Referral ready',
             'return_value_watch' => 'Return-value watch',
@@ -63,18 +163,21 @@ class LoyaltyRecord extends Model
     public function getContinuityStatusLabelAttribute(): string
     {
         $options = $this->getContinuityStatusOptions();
+
         return $options[$this->continuity_status] ?? $this->humanizeValue($this->continuity_status) ?? 'Unknown';
     }
 
     public function getLoyaltyStageLabelAttribute(): string
     {
         $options = $this->getLoyaltyStageOptions();
+
         return $options[$this->loyalty_stage] ?? $this->humanizeValue($this->loyalty_stage) ?? 'Review';
     }
 
     public function getReturnValueTierLabelAttribute(): string
     {
         $options = $this->getReturnValueTierOptions();
+
         return $options[$this->return_value_tier] ?? $this->humanizeValue($this->return_value_tier) ?? 'Watch';
     }
 
@@ -97,11 +200,11 @@ class LoyaltyRecord extends Model
     public function getGuestSnapshotAttribute(): string
     {
         return $this->formatSummary([
-            'Guest'        => $this->guest_name,
-            'Email'        => $this->guest_email,
-            'Phone'        => $this->guest_phone,
-            'Country'      => $this->country,
-            'Owner'        => $this->owner_name,
+            'Guest'          => $this->guest_name,
+            'Email'          => $this->guest_email,
+            'Phone'          => $this->guest_phone,
+            'Country'        => $this->country,
+            'Owner'          => $this->owner_name,
             'Referral ready' => $this->referral_ready ? 'Yes' : 'No',
         ], 'Guest continuity basics are still sparse.');
     }
@@ -111,10 +214,13 @@ class LoyaltyRecord extends Model
         $lines = [];
 
         foreach ($this->touchpoints as $touchpoint) {
-            $stamp = optional($touchpoint->created_at)->format('Y-m-d H:i');
+            $stamp = $touchpoint->touchpoint_at instanceof \DateTimeInterface
+                ? $touchpoint->touchpoint_at->format('Y-m-d H:i')
+                : (optional($touchpoint->created_at)->format('Y-m-d H:i') ?: 'Pending');
+
             $type = ucfirst(trim((string) ($touchpoint->touchpoint_type ?: 'internal')));
-            $author = trim((string) ($touchpoint->author_name ?: 'System'));
-            $body = trim((string) $touchpoint->body);
+            $author = trim((string) (($touchpoint->author_name ?: $touchpoint->operator_name) ?: 'System'));
+            $body = trim((string) (($touchpoint->body ?: $touchpoint->touchpoint_summary) ?: ''));
 
             $lines[] = sprintf('[%s] %s / %s', $stamp, $type, $author);
             $lines[] = $body;
@@ -130,7 +236,7 @@ class LoyaltyRecord extends Model
 
     public static function syncFromInquiry(Inquiry $inquiry, array $overrides = [], ?string $operatorName = null): ?self
     {
-        if (!$inquiry || !$inquiry->id) {
+        if (!$inquiry || !$inquiry->id || !static::workspaceStorageReady()) {
             return null;
         }
 
@@ -169,6 +275,7 @@ class LoyaltyRecord extends Model
         $record->continuity_status = $record->continuity_status ?: 'active_retention';
         $record->loyalty_stage = $record->loyalty_stage ?: 'review';
         $record->return_value_tier = $record->return_value_tier ?: 'watch';
+        $record->return_value_candidate = !empty($record->return_value_candidate) || in_array((string) ($overrides['return_value_tier'] ?? $record->return_value_tier), ['promising', 'strong', 'flagship'], true);
         $record->next_review_at = $record->next_review_at ?: Carbon::now()->addDays(14);
 
         foreach ($overrides as $field => $value) {
@@ -181,22 +288,38 @@ class LoyaltyRecord extends Model
             $record->appendTouchpoint(
                 'system',
                 'Created from inquiry continuity handoff' . ($inquiry->request_reference ? ' (' . $inquiry->request_reference . ')' : '') . '.',
-                $operatorName
+                $operatorName,
+                [
+                    'touchpoint_outcome' => 'record_created',
+                    'reference_code'     => $inquiry->request_reference,
+                ]
             );
         }
 
         return $record;
     }
 
-    public function appendTouchpoint(string $type, string $body, ?string $authorName = null): LoyaltyTouchpoint
+    public function appendTouchpoint(string $type, string $body, ?string $authorName = null, array $meta = []): LoyaltyTouchpoint
     {
         $touchpoint = new LoyaltyTouchpoint();
         $touchpoint->loyalty_record_id = $this->id;
+        $touchpoint->source_inquiry_id = $this->source_inquiry_id;
         $touchpoint->touchpoint_type = $type;
+        $touchpoint->touchpoint_channel = $meta['touchpoint_channel'] ?? null;
+        $touchpoint->touchpoint_outcome = $meta['touchpoint_outcome'] ?? null;
+        $touchpoint->touchpoint_at = $meta['touchpoint_at'] ?? Carbon::now();
+        $touchpoint->next_step_at = $meta['next_step_at'] ?? null;
         $touchpoint->author_name = $authorName ?: 'Operator';
+        $touchpoint->operator_name = $touchpoint->author_name;
+        $touchpoint->reference_code = $meta['reference_code'] ?? $this->request_reference;
         $touchpoint->body = trim($body);
-        $touchpoint->is_internal = true;
-        $touchpoint->save();
+        $touchpoint->touchpoint_summary = $touchpoint->body;
+        $touchpoint->is_internal = array_key_exists('is_internal', $meta) ? (bool) $meta['is_internal'] : true;
+        $touchpoint->payload_json = $meta['payload_json'] ?? null;
+
+        if (static::touchpointStorageReady()) {
+            $touchpoint->save();
+        }
 
         return $touchpoint;
     }

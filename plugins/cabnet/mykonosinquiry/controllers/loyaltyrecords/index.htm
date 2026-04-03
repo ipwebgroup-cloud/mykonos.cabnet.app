@@ -1,9 +1,11 @@
 <?php
-$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+$loyaltyStorageReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord')
+    ? \Cabnet\MykonosInquiry\Models\LoyaltyRecord::workspaceStorageReady()
+    : false;
 ?>
 
 <div class="layout">
-    <?php if (!$loyaltyTableReady): ?>
+    <?php if (!$loyaltyStorageReady): ?>
         <?= $this->makePartial('install_state_overview') ?>
         <?= $this->makePartial('structural_activation_foundation_panel') ?>
         <?= $this->makePartial('inquiry_transfer_bridge_panel') ?>
@@ -61,10 +63,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                 <div class="content">
                     <h4 style="margin-top:0;">Current safe use</h4>
                     <p style="margin-bottom:0;">
-                        The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now includes the
-                        first install-ready structural packet plus a staged touchpoint-history ledger while remaining render-safe before activation. Use the planning panels to define
-                        the narrowest possible first continuity cohort, and treat the new schema files as a staged activation artifact rather
-                        than a reason to mix unfinished retention handling into active concierge operations.
+                        The live production workspace remains <strong>Inquiry Queue</strong>. Loyalty Continuity stays render-safe and guarded until both the
+                        loyalty record schema and the touchpoint ledger schema are fully aligned for live use.
                     </p>
                 </div>
             </div>

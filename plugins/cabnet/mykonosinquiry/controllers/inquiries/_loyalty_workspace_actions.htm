@@ -1,19 +1,27 @@
 <?php
 $inquiry = $formModel ?? $model ?? null;
-$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 $loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
-$touchpointTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_touchpoints') : false;
+$installState = $loyaltyModelReady ? \Cabnet\MykonosInquiry\Models\LoyaltyRecord::getWorkspaceInstallState() : [
+    'workspace_storage_ready'    => false,
+    'record_table_ready'         => false,
+    'touchpoint_table_ready'     => false,
+    'record_schema_ready'        => false,
+    'touchpoint_schema_ready'    => false,
+    'missing_record_columns'     => [],
+    'missing_touchpoint_columns' => [],
+];
+$workspaceReady = !empty($installState['workspace_storage_ready']);
 $record = null;
 
-if ($loyaltyTableReady && $loyaltyModelReady && $inquiry && !empty($inquiry->id)) {
+if ($workspaceReady && $inquiry && !empty($inquiry->id)) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
 }
 
 $status = strtolower(trim((string)($inquiry->status ?? '')));
 $closedAt = $inquiry->closed_at ?? null;
 $priority = strtolower(trim((string)($inquiry->priority ?? '')));
-$owner = trim((string)($inquiry->owner ?? ''));
-$followUp = $inquiry->follow_up_at ?? null;
+$owner = trim((string)($inquiry->owner_name ?? ''));
+$followUp = $inquiry->follow_up_date ?? null;
 $transferReady = in_array($status, ['closed_won', 'closed_lost', 'closed', 'won', 'fulfilled', 'complete', 'completed'], true) || !empty($closedAt);
 $readinessScore = 0;
 $readinessReasons = [];
@@ -22,6 +30,8 @@ if ($owner !== '') { $readinessScore += 1; $readinessReasons[] = 'owner set'; }
 if ($priority !== 'urgent' && $priority !== 'high') { $readinessScore += 1; $readinessReasons[] = 'not in urgent handling'; }
 if (!$followUp) { $readinessScore += 1; $readinessReasons[] = 'no active follow-up pending'; }
 $readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Medium' : 'Low');
+$recordColumnsMissing = (array)($installState['missing_record_columns'] ?? []);
+$touchpointColumnsMissing = (array)($installState['missing_touchpoint_columns'] ?? []);
 ?>
 <div class="callout fade in no-subheader">
     <div class="header">
@@ -41,7 +51,7 @@ $readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Mediu
         <?php else: ?>
             <p>
                 <strong>No loyalty record is linked yet.</strong>
-                <?= $loyaltyTableReady ? 'The storage layer is available, but this inquiry has not been bridged into Loyalty Continuity yet.' : 'The loyalty storage layer is still not installed, so transfer remains staged rather than active.' ?>
+                <?= $workspaceReady ? 'The storage layer is available and can now create a real continuity record directly from this inquiry.' : 'The loyalty storage layer is still not fully aligned, so transfer remains staged rather than active.' ?>
             </p>
         <?php endif; ?>
 
@@ -52,32 +62,36 @@ $readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Mediu
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Bridge mode</h4>
-                <p><?= $loyaltyTableReady ? 'installable transfer path' : 'staged dry run only' ?></p>
+                <p><?= $workspaceReady ? 'live transfer available' : 'staged dry run only' ?></p>
             </div>
             <div class="scoreboard-item title-value">
-                <h4>History packet</h4>
-                <p><?= $touchpointTableReady ? 'touchpoint ledger installed' : 'touchpoint ledger staged' ?></p>
+                <h4>Record schema</h4>
+                <p><?= !empty($installState['record_schema_ready']) ? 'workspace-ready' : ($installState['record_table_ready'] ? 'table installed / upgrade needed' : 'not installed') ?></p>
             </div>
             <div class="scoreboard-item title-value">
-                <h4>Touchpoint plan</h4>
-                <p><?= $transferReady ? 'outcomes + next window can be framed' : 'wait for closure before continuity timing' ?></p>
+                <h4>Touchpoint ledger</h4>
+                <p><?= !empty($installState['touchpoint_schema_ready']) ? 'workspace-ready' : ($installState['touchpoint_table_ready'] ? 'table installed / upgrade needed' : 'not installed') ?></p>
             </div>
         </div>
 
         <div class="scoreboard" style="margin-top:15px;">
             <div class="scoreboard-item title-value">
+                <h4>Touchpoint plan</h4>
+                <p><?= $transferReady ? 'outcomes + next window can be framed' : 'wait for closure before continuity timing' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
                 <h4>Execution field set</h4>
                 <p><?= $transferReady ? 'can be staged for first-wave continuity' : 'keep execution fields out of live queue' ?></p>
             </div>
             <div class="scoreboard-item title-value">
-                <h4>Outcome entry surface</h4>
-                <p><?= $transferReady ? 'narrow first-touchpoint capture is sensible' : 'do not frame loyalty outcomes yet' ?></p>
+                <h4>Open-transfer action</h4>
+                <p><?= $workspaceReady ? 'creates and opens the real loyalty record' : 'remains guarded until schema alignment is applied' ?></p>
             </div>
         </div>
 
         <div class="control-list" style="margin-top:15px;">
             <ul>
-                <li><?= $transferReady ? 'Use the staged loyalty workspace to pre-frame likely touchpoint outcomes and a narrow next-contact window.' : 'Keep this inquiry in the live queue until closure is clear enough to justify continuity timing.' ?></li>
+                <li><?= $transferReady ? 'Use the direct open-transfer action only after the inquiry is truly leaving live queue handling.' : 'Keep this inquiry in the live queue until closure is clear enough to justify continuity timing.' ?></li>
             </ul>
         </div>
 
@@ -91,15 +105,32 @@ $readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Mediu
             </div>
         <?php endif; ?>
 
+        <?php if (!$workspaceReady && (!empty($recordColumnsMissing) || !empty($touchpointColumnsMissing))): ?>
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <?php if (!empty($recordColumnsMissing)): ?>
+                        <li><strong>Loyalty record schema upgrade needed:</strong> <?= e(implode(', ', $recordColumnsMissing)) ?></li>
+                    <?php endif; ?>
+                    <?php if (!empty($touchpointColumnsMissing)): ?>
+                        <li><strong>Touchpoint ledger schema upgrade needed:</strong> <?= e(implode(', ', $touchpointColumnsMissing)) ?></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
         <div class="btn-group" style="margin-top:10px;">
             <?php if ($record): ?>
                 <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>" class="btn btn-default oc-icon-external-link">
                     Open linked loyalty record
                 </a>
-            <?php elseif ($loyaltyTableReady && $transferReady): ?>
-                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>" class="btn btn-primary oc-icon-plus">
-                    Start loyalty transfer
-                </a>
+            <?php elseif ($workspaceReady && $transferReady): ?>
+                <form action="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $inquiry->id) ?>" method="post" style="display:inline-block;">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="_quick_action" value="open_loyalty_transfer">
+                    <button type="submit" class="btn btn-primary oc-icon-plus">
+                        Create + open loyalty record
+                    </button>
+                </form>
             <?php else: ?>
                 <button type="button" class="btn btn-default disabled" disabled>
                     Transfer remains staged

@@ -1,19 +1,66 @@
 <?php
-$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
-$touchpointTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_touchpoints') : false;
+$installState = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord')
+    ? \Cabnet\MykonosInquiry\Models\LoyaltyRecord::getWorkspaceInstallState()
+    : [
+        'record_table_ready'         => false,
+        'touchpoint_table_ready'     => false,
+        'record_schema_ready'        => false,
+        'touchpoint_schema_ready'    => false,
+        'workspace_storage_ready'    => false,
+        'missing_record_columns'     => [],
+        'missing_touchpoint_columns' => [],
+    ];
 ?>
 <div class="layout-row">
     <div class="callout fade in no-subheader">
         <div class="header">
             <i class="icon-flag-checkered"></i>
-            <h3>Loyalty Continuity touchpoint-ledger staging workspace</h3>
+            <h3>Loyalty Continuity activation-safe workspace</h3>
             <p>
-                The workspace shell is stable and visible. Loyalty records are <?= $loyaltyTableReady ? 'installed' : 'not installed yet' ?> and the
-                touchpoint ledger is <?= $touchpointTableReady ? 'installed' : 'still staged' ?>, so this area continues to operate as a controlled
-                continuity-planning surface. This release extends that staged line with an outcome taxonomy and a next-contact window matrix so
-                operators can define not only what continuity touches are preserved, but also how results and future timing should be interpreted
-                once structural activation is intentionally executed.
+                The workspace shell is stable and visible. Loyalty records are
+                <?= !empty($installState['record_schema_ready']) ? 'workspace-ready' : (!empty($installState['record_table_ready']) ? 'installed but still need schema alignment' : 'not installed yet') ?>
+                and the touchpoint ledger is
+                <?= !empty($installState['touchpoint_schema_ready']) ? 'workspace-ready' : (!empty($installState['touchpoint_table_ready']) ? 'installed but still need schema alignment' : 'still staged') ?>.
+                This release keeps the area render-safe while making the exact activation gap explicit.
             </p>
+        </div>
+
+        <div class="content">
+            <div class="scoreboard">
+                <div class="scoreboard-item title-value">
+                    <h4>Record table</h4>
+                    <p><?= !empty($installState['record_table_ready']) ? 'present' : 'missing' ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Record schema</h4>
+                    <p><?= !empty($installState['record_schema_ready']) ? 'aligned' : 'upgrade needed' ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Touchpoint table</h4>
+                    <p><?= !empty($installState['touchpoint_table_ready']) ? 'present' : 'missing' ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Touchpoint schema</h4>
+                    <p><?= !empty($installState['touchpoint_schema_ready']) ? 'aligned' : 'upgrade needed' ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Live transfer mode</h4>
+                    <p><?= !empty($installState['workspace_storage_ready']) ? 'ready for controlled activation' : 'guarded until upgrade completes' ?></p>
+                </div>
+            </div>
+
+            <?php if (!empty($installState['missing_record_columns']) || !empty($installState['missing_touchpoint_columns'])): ?>
+                <div class="control-list" style="margin-top:15px;">
+                    <ul>
+                        <?php if (!empty($installState['missing_record_columns'])): ?>
+                            <li><strong>Missing loyalty-record columns:</strong> <?= e(implode(', ', $installState['missing_record_columns'])) ?></li>
+                        <?php endif; ?>
+                        <?php if (!empty($installState['missing_touchpoint_columns'])): ?>
+                            <li><strong>Missing touchpoint-ledger columns:</strong> <?= e(implode(', ', $installState['missing_touchpoint_columns'])) ?></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

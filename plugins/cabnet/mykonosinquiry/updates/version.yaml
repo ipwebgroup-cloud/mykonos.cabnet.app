@@ -114,3 +114,9 @@
 2.3.1:
   - 'Stage the loyalty touchpoint ledger and retention history packet for controlled activation'
   - create_loyalty_touchpoints_table.php
+2.3.2:
+  - 'Align the loyalty record schema with the guarded live workspace model'
+  - upgrade_loyalty_records_table_for_workspace_activation.php
+2.3.3:
+  - 'Align the loyalty touchpoint ledger schema with the guarded live workspace model'
+  - upgrade_loyalty_touchpoints_table_for_workspace_activation.php

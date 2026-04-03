@@ -51,6 +51,34 @@ class LoyaltyRecords extends Controller
         $this->pageTitle = 'Loyalty · ' . $reference;
     }
 
+    public function formExtendFields($form): void
+    {
+        $model = $form->model;
+
+        if (!$model instanceof LoyaltyRecord) {
+            return;
+        }
+
+        $form->addTabFields([
+            'transfer_audit_panel' => [
+                'label'   => 'Transfer Audit',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_transfer_audit_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Read-only carry-over audit from the source inquiry into the loyalty record.',
+            ],
+            'record_detail_structure_panel' => [
+                'label'   => 'Record Detail Structure',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_record_detail_structure_panel.htm',
+                'tab'     => 'Workspace',
+                'span'    => 'full',
+                'comment' => 'Read-only structure check so the continuity record stays narrow, owned, and operationally useful.',
+            ],
+        ]);
+    }
+
     public function formBeforeSave($model): void
     {
         $data = (array) post('LoyaltyRecord', []);
@@ -76,7 +104,10 @@ class LoyaltyRecords extends Controller
             return;
         }
 
-        $model->appendTouchpoint('internal', $this->pendingNewTouchpointNote, $this->getOperatorName());
+        $model->appendTouchpoint('internal', $this->pendingNewTouchpointNote, $this->getOperatorName(), [
+            'touchpoint_outcome' => 'note_added',
+            'reference_code'     => $model->request_reference,
+        ]);
         Flash::success('Loyalty touchpoint saved.');
 
         $this->pendingNewTouchpointNote = null;

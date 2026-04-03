@@ -1,0 +1,67 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$sourceInquiry = $record ? $record->source_inquiry : null;
+
+$checks = [
+    'Request reference'    => [trim((string)($record->request_reference ?? '')), trim((string)($sourceInquiry->request_reference ?? ''))],
+    'Guest name'           => [trim((string)($record->guest_name ?? '')), trim((string)($sourceInquiry->full_name ?? ''))],
+    'Guest email'          => [trim((string)($record->guest_email ?? '')), trim((string)($sourceInquiry->email ?? ''))],
+    'Guest phone'          => [trim((string)($record->guest_phone ?? '')), trim((string)($sourceInquiry->phone ?? ''))],
+    'Country'             => [trim((string)($record->country ?? '')), trim((string)($sourceInquiry->country ?? ''))],
+    'Owner'               => [trim((string)($record->owner_name ?? '')), trim((string)($sourceInquiry->owner_name ?? ''))],
+];
+
+$gaps = [];
+foreach ($checks as $label => $pair) {
+    [$recordValue, $sourceValue] = $pair;
+    if ($recordValue === '' && $sourceValue !== '') {
+        $gaps[] = $label . ' is missing in the loyalty record even though the source inquiry has a value.';
+    }
+}
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-exchange"></i>
+        <h4 style="margin-top:0;">Transfer audit</h4>
+        <p>
+            This audit shows whether the loyalty record is carrying over the minimum continuity anchors from the source inquiry.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Source inquiry</h4>
+                <p><?= $sourceInquiry ? e($record->source_inquiry_display) : 'no source inquiry linked' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Carry-over gaps</h4>
+                <p><?= empty($gaps) ? 'none detected' : e((string)count($gaps)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Continuity summary</h4>
+                <p><?= trim((string)($record->continuity_summary ?? '')) !== '' ? 'present' : 'needs review' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Service focus</h4>
+                <p><?= trim((string)($record->service_focus_summary ?? '')) !== '' ? 'present' : 'needs review' ?></p>
+            </div>
+        </div>
+
+        <?php if (!empty($gaps)): ?>
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <?php foreach ($gaps as $gap): ?>
+                        <li><?= e($gap) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php else: ?>
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <li>The minimum guest and ownership anchors have carried over from the source inquiry.</li>
+                    <li>Keep future edits focused on continuity execution rather than copying the full inquiry payload again.</li>
+                </ul>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

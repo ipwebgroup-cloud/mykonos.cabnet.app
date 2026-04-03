@@ -8,6 +8,19 @@ class LoyaltyTouchpoint extends Model
 
     protected $guarded = ['id'];
 
+    protected $dates = [
+        'touchpoint_at',
+        'next_step_at',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $casts = [
+        'is_internal' => 'boolean',
+    ];
+
+    public $jsonable = ['payload_json'];
+
     public $belongsTo = [
         'loyalty_record' => [LoyaltyRecord::class, 'key' => 'loyalty_record_id'],
     ];

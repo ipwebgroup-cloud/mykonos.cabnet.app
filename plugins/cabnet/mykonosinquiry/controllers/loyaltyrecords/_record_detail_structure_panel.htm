@@ -1,0 +1,47 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$sourceInquiry = $record ? $record->source_inquiry : null;
+$touchpointCount = $record && method_exists($record, 'touchpoints') ? $record->touchpoints()->count() : 0;
+$hasCoreStructure = $record && trim((string)($record->guest_name ?? '')) !== '' && trim((string)($record->continuity_summary ?? '')) !== '' && trim((string)($record->owner_name ?? '')) !== '';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-sitemap"></i>
+        <h4 style="margin-top:0;">Record detail structure</h4>
+        <p>
+            This read-only structure check keeps the loyalty record narrow, owned, and useful without turning it into a second inquiry editor.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Source anchor</h4>
+                <p><?= $sourceInquiry ? e($record->source_inquiry_display) : 'No source inquiry linked' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Core structure</h4>
+                <p><?= $hasCoreStructure ? 'present' : 'needs attention' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Execution owner</h4>
+                <p><?= e(trim((string)($record->owner_name ?? '')) ?: 'unassigned') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Touchpoints</h4>
+                <p><?= e((string)$touchpointCount) ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li>Keep the record centered on continuity execution: status, stage, ownership, timing, and concise value posture.</li>
+                <li>Use the source inquiry as the narrative anchor rather than duplicating every concierge detail here.</li>
+                <li>Append continuity touchpoints as short operational entries instead of writing long freeform histories into multiple places.</li>
+            </ul>
+        </div>
+    </div>
+</div>
