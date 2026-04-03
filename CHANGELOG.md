@@ -183,3 +183,7 @@
 - added a read-only **Confirmation Blockers** panel to the Internal tab
 - surfaces the concrete blockers that still stand between the current inquiry and a confident confirmation-style move
 - keeps operator workspace consolidation moving without schema or public-flow changes
+## v2.6.23 — Guest Confidence Signals Panel
+- added a read-only **Guest Confidence Signals** panel to the Internal tab
+- surfaces ownership clarity, continuity cueing, and the safest next confidence-building move before the next guest touch
+- keeps operator workspace consolidation moving without schema or public-flow changes

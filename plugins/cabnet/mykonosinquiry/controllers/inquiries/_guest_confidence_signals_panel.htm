@@ -1,0 +1,85 @@
+<?php
+use Carbon\Carbon;
+
+$record = $record
+    ?? ($formModel ?? null)
+    ?? ($model ?? null)
+    ?? (($this->vars['formModel'] ?? null) ?? null)
+    ?? ((isset($this->controller) && method_exists($this->controller, 'formGetModel')) ? $this->controller->formGetModel() : null);
+
+if (!$record) {
+    return;
+}
+
+$toneStyles = [
+    'critical' => ['#dc3545', '#fff5f5', '#f5c2c7'],
+    'warning'  => ['#fd7e14', '#fff7ed', '#fed7aa'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral'  => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$status = strtolower((string) ($record->status ?? 'new'));
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUp = !empty($record->follow_up_date) ? Carbon::parse($record->follow_up_date) : null;
+$lastContacted = !empty($record->last_contacted_at) ? Carbon::parse($record->last_contacted_at) : null;
+$contact = strtolower((string) ($record->contact_preference ?? ''));
+$privacy = strtolower((string) ($record->privacy_level ?? ''));
+$details = trim((string) ($record->details ?? ''));
+
+$confidence = 'Developing confidence';
+$cue = 'Use the next touch to reinforce ownership, continuity, and the immediate next checkpoint.';
+$checklist = 'Confirm who is handling the brief, what happens next, and when the guest should expect the follow-up.';
+$tone = 'warning';
+
+if ($owner === '') {
+    $confidence = 'Low confidence';
+    $cue = 'The guest could experience drift unless a named owner is visible immediately.';
+    $checklist = 'Assign a named owner before the next guest touch.';
+    $tone = 'critical';
+} elseif (in_array($status, ['contacted', 'proposal_sent', 'awaiting_guest', 'confirmed'], true) && $lastContacted) {
+    $confidence = 'Stable confidence';
+    $cue = 'The guest has visible continuity. Keep the tone calm, specific, and expectation-led.';
+    $checklist = 'Preserve the latest checkpoint and avoid changing tone or ownership abruptly.';
+    $tone = 'positive';
+} elseif ($followUp && $followUp->isFuture()) {
+    $confidence = 'Scheduled confidence';
+    $cue = 'A clear next checkpoint exists. Keep the guest-facing message aligned with that date.';
+    $checklist = 'Reference the existing checkpoint and avoid opening a conflicting path.';
+    $tone = 'positive';
+}
+
+if ($privacy !== '' && !in_array($privacy, ['open', 'standard', 'normal'], true) && $tone !== 'critical') {
+    $cue = 'Use a more discreet, measured reply style and avoid over-sharing operational detail.';
+}
+
+if ($contact !== '' && in_array($contact, ['whatsapp', 'phone'], true)) {
+    $checklist .= ' Mirror the preferred contact route in the next touch.';
+}
+
+if (mb_strlen($details) < 120 && $tone !== 'critical') {
+    $checklist .= ' Keep the next guest-facing note light and confirmation-led rather than over-detailed.';
+}
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:18px; padding:18px 18px 16px;">
+    <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:#64748b; margin-bottom:8px;">Guest Confidence Signals</div>
+            <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:#fff; border:1px solid <?= e($palette[2]) ?>; color:<?= e($palette[0]) ?>; font-weight:700;">
+                <?= e($confidence) ?>
+            </div>
+        </div>
+        <div style="font-size:12px; color:#64748b; text-align:right;">
+            Owner: <strong style="color:#0f172a;"><?= e($owner !== '' ? $owner : 'Unassigned') ?></strong>
+        </div>
+    </div>
+
+    <div style="margin-top:14px; color:#0f172a; line-height:1.55;">
+        <strong>Confidence cue:</strong> <?= e($cue) ?>
+    </div>
+
+    <div style="margin-top:10px; color:#334155; line-height:1.55;">
+        <strong>Operator check:</strong> <?= e($checklist) ?>
+    </div>
+</div>
