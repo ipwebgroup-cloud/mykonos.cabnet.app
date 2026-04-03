@@ -13,6 +13,9 @@ $priority = (string)($inquiry->priority ?? '');
 $owner = (string)($inquiry->owner ?? '');
 $closedAt = $inquiry->closed_at ?? null;
 $followUp = $inquiry->follow_up_at ?? null;
+$requestReference = (string)($inquiry->request_reference ?? '');
+$requestedMode = (string)($inquiry->requested_mode ?? '');
+$sourceType = (string)($inquiry->source_type ?? '');
 $transferReady = in_array($status, ['closed_won', 'closed_lost', 'closed', 'won', 'fulfilled', 'complete', 'completed'], true) || !empty($closedAt);
 $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'Review for loyalty transfer' : 'Keep in Inquiry Queue');
 ?>
@@ -44,6 +47,17 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
             </div>
         </div>
 
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Packet anchor</h4>
+                <p><?= e($requestReference !== '' ? $requestReference : 'reference pending') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Mode / source</h4>
+                <p><?= e($requestedMode !== '' ? $requestedMode : 'unspecified') ?><?= $sourceType !== '' ? ' / ' . e($sourceType) : '' ?></p>
+            </div>
+        </div>
+
         <div class="control-list" style="margin-top:15px;">
             <ul>
                 <?php if ($record): ?>
@@ -55,7 +69,7 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                 <?php endif; ?>
 
                 <?php if (!$loyaltyTableReady): ?>
-                    <li>The storage layer is still staged, so any bridge here is informational until activation is deliberately installed.</li>
+                    <li>The storage layer is still staged, so the continuity packet shown here remains a dry run until activation is deliberately installed.</li>
                 <?php endif; ?>
 
                 <?php if (!$record && empty($closedAt)): ?>

@@ -10,7 +10,17 @@ if ($loyaltyTableReady && $loyaltyModelReady && $inquiry && !empty($inquiry->id)
 
 $status = strtolower(trim((string)($inquiry->status ?? '')));
 $closedAt = $inquiry->closed_at ?? null;
+$priority = strtolower(trim((string)($inquiry->priority ?? '')));
+$owner = trim((string)($inquiry->owner ?? ''));
+$followUp = $inquiry->follow_up_at ?? null;
 $transferReady = in_array($status, ['closed_won', 'closed_lost', 'closed', 'won', 'fulfilled', 'complete', 'completed'], true) || !empty($closedAt);
+$readinessScore = 0;
+$readinessReasons = [];
+if ($transferReady) { $readinessScore += 2; $readinessReasons[] = 'closure state present'; }
+if ($owner !== '') { $readinessScore += 1; $readinessReasons[] = 'owner set'; }
+if ($priority !== 'urgent' && $priority !== 'high') { $readinessScore += 1; $readinessReasons[] = 'not in urgent handling'; }
+if (!$followUp) { $readinessScore += 1; $readinessReasons[] = 'no active follow-up pending'; }
+$readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Medium' : 'Low');
 ?>
 <div class="callout fade in no-subheader">
     <div class="header">
@@ -32,6 +42,27 @@ $transferReady = in_array($status, ['closed_won', 'closed_lost', 'closed', 'won'
                 <strong>No loyalty record is linked yet.</strong>
                 <?= $loyaltyTableReady ? 'The storage layer is available, but this inquiry has not been bridged into Loyalty Continuity yet.' : 'The loyalty storage layer is still not installed, so transfer remains staged rather than active.' ?>
             </p>
+        <?php endif; ?>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Readiness score</h4>
+                <p><?= e($readinessLabel) ?><?= $readinessScore ? ' (' . e((string)$readinessScore) . '/5)' : '' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Bridge mode</h4>
+                <p><?= $loyaltyTableReady ? 'installable transfer path' : 'staged dry run only' ?></p>
+            </div>
+        </div>
+
+        <?php if (!$record && !empty($readinessReasons)): ?>
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <?php foreach ($readinessReasons as $reason): ?>
+                        <li><?= e(ucfirst($reason)) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
 
         <div class="btn-group" style="margin-top:10px;">
