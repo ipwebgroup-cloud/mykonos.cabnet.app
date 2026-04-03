@@ -1,0 +1,75 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+
+$guardrails = [];
+if ($owner === '') {
+    $guardrails[] = ['label' => 'Planning without ownership', 'detail' => 'Do not build a polished next-stage plan while the handling owner is still ambiguous.', 'level' => 'high'];
+}
+if ($summary === '' && $details === '') {
+    $guardrails[] = ['label' => 'Narrative gap', 'detail' => 'Do not plan from scattered fragments when the working narrative is still thin.', 'level' => 'high'];
+}
+if ($services === '') {
+    $guardrails[] = ['label' => 'Service blur', 'detail' => 'Avoid sequencing next-stage work until the service stack is readable.', 'level' => 'high'];
+}
+if ($arrival === '' || $departure === '') {
+    $guardrails[] = ['label' => 'Timing drift', 'detail' => 'Do not make stage-dependent assumptions before the stay window is visible.', 'level' => 'medium'];
+}
+if ($budget === '' && in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed'], true)) {
+    $guardrails[] = ['label' => 'Commercial mismatch', 'detail' => 'Keep the next-stage plan commercially light if the budget posture is still unknown.', 'level' => 'medium'];
+}
+if ($followUpDate === '') {
+    $guardrails[] = ['label' => 'Checkpoint missing', 'detail' => 'Do not let planning stay conceptual without one explicit next checkpoint.', 'level' => 'medium'];
+}
+if (in_array($priority, ['vip', 'urgent'], true)) {
+    $guardrails[] = ['label' => 'Priority pacing', 'detail' => 'Move quickly, but do not skip continuity or accountability just because the record is urgent.', 'level' => 'medium'];
+}
+
+if (empty($guardrails)) {
+    $guardrails[] = ['label' => 'No major planning blockers', 'detail' => 'The record can support a structured next-stage plan. Keep the plan readable, explicit, and checkpoint-led.', 'level' => 'low'];
+}
+
+$colors = [
+    'high' => ['#b91c1c', '#fef2f2', '#fecaca'],
+    'medium' => ['#b45309', '#fff7ed', '#fed7aa'],
+    'low' => ['#166534', '#f0fdf4', '#bbf7d0'],
+];
+?>
+<div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700;">Planning Risk Guardrails</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;">Prevent continuity-thin or assumption-heavy stage maps</div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($guardrails as $item): ?>
+            <?php $palette = $colors[$item['level']] ?? $colors['medium']; ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:<?= e($palette[1]) ?>;">
+                <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:6px;">
+                    <div style="font-size:14px; font-weight:700; color:#0f172a;"><?= e($item['label']) ?></div>
+                    <span style="display:inline-block; padding:4px 8px; border-radius:999px; background:#fff; border:1px solid <?= e($palette[2]) ?>; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:<?= e($palette[0]) ?>; font-weight:700;"><?= e($item['level']) ?></span>
+                </div>
+                <div style="font-size:13px; color:#334155;"><?= e($item['detail']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

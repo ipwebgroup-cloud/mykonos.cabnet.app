@@ -356,6 +356,27 @@ tabs:
             tab: Recovery
             comment: Read-only guardrails that surface the rebuild mistakes most likely to restart ambiguity, hide scope drift, or push the record forward before continuity is repaired.
 
+        planning_workspace_panel:
+            label: Planning Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_planning_workspace_panel.htm
+            tab: Planning
+            comment: High-level planning surface for sequencing the next operator phase after recovery, clarification, or continuity repair without jumping prematurely into execution language.
+
+        next_stage_map_blueprint_panel:
+            label: Next Stage Map Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_stage_map_blueprint_panel.htm
+            tab: Planning
+            comment: Read-only structure guidance for turning the visible brief, services, timing, and continuity anchors into one explicit next-stage map.
+
+        planning_risk_guardrails_panel:
+            label: Planning Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_planning_risk_guardrails_panel.htm
+            tab: Planning
+            comment: Read-only guardrails that surface the stage-mapping mistakes most likely to blur ownership, hide gaps, or push the record forward without a clean checkpoint.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

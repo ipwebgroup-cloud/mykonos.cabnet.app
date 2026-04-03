@@ -1,0 +1,82 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$services = trim((string) ($record->services_list ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+
+$steps = [];
+$steps[] = 'Open the plan with one-line ownership so the next operator phase stays accountable.';
+
+if ($summary !== '') {
+    $steps[] = 'Use the working summary as the backbone for the next stage map.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift one or two guest-brief anchors into the plan before shaping the next stage.';
+} else {
+    $steps[] = 'Rebuild the narrative first so the next stage is not built on fragmented memory.';
+}
+
+if ($services !== '') {
+    $steps[] = 'Sequence the visible service priorities into the next stage instead of treating every service as equally ready.';
+} else {
+    $steps[] = 'Pin down the service stack before planning proposal, execution, or confirmation posture.';
+}
+
+if ($budget !== '') {
+    $steps[] = 'Keep the stage map commercially realistic by reflecting the current budget posture.';
+}
+
+if ($requestedMode !== '') {
+    $steps[] = 'Respect the visible planning mode so the next stage matches how the inquiry entered the system.';
+}
+
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $steps[] = 'Map the next stage as continuity follow-up, not as a fresh planning reset.';
+} elseif ($status === 'confirmed') {
+    $steps[] = 'Map the next stage around execution and confirmation discipline, not exploratory packaging.';
+} else {
+    $steps[] = 'Close the map with one concrete checkpoint: clarify, shape, confirm, or recover.';
+}
+
+$routeNote = $followUpDate !== ''
+    ? 'A visible checkpoint already exists, so the next stage can be tied to that date rather than operator memory.'
+    : 'No checkpoint is visible yet, so the next stage map should include one explicit date or trigger.';
+
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+$headline = 'Next stage map can stay continuity-led';
+if ($services === '' || ($summary === '' && $details === '')) {
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+    $headline = 'Next stage map should stay recovery-aware';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Next Stage Map Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Planning route: <strong><?= e($status === 'confirmed' ? 'execution/confirmation' : 'continuity sequencing') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Checkpoint discipline</div>
+        <div style="font-size:14px;"><?= e($routeNote) ?></div>
+    </div>
+</div>

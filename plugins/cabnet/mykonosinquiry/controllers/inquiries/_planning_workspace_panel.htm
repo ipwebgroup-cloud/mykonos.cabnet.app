@@ -1,0 +1,118 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+
+$gaps = [];
+if ($owner === '') {
+    $gaps[] = 'named owner';
+}
+if ($summary === '' && $details === '') {
+    $gaps[] = 'working narrative';
+}
+if ($services === '') {
+    $gaps[] = 'service stack';
+}
+if ($arrival === '' || $departure === '') {
+    $gaps[] = 'stay window';
+}
+if ($guests === '' || $guests === '0') {
+    $gaps[] = 'guest count';
+}
+
+$stage = 'Recovery-first planning';
+$palette = ['#b45309', '#fff7ed', '#fed7aa'];
+if (empty($gaps) && in_array($status, ['new', 'reviewed', 'contacted'], true)) {
+    $stage = 'Clarification-led planning';
+    $palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+}
+if (empty($gaps) && in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed'], true)) {
+    $stage = 'Execution-track planning';
+    $palette = ['#0f766e', '#f0fdfa', '#99f6e4'];
+}
+if (in_array($priority, ['vip', 'urgent'], true)) {
+    $stage .= ' with priority pacing';
+}
+
+$planBackbone = [];
+if ($services !== '') {
+    $planBackbone[] = 'service priorities';
+}
+if ($arrival !== '' || $departure !== '') {
+    $planBackbone[] = 'timing';
+}
+if ($guests !== '' && $guests !== '0') {
+    $planBackbone[] = 'group scale';
+}
+if ($budget !== '') {
+    $planBackbone[] = 'budget posture';
+}
+if ($sourceType !== '' || $requestedMode !== '') {
+    $planBackbone[] = 'entry context';
+}
+
+$nextMove = 'Tighten the working narrative, confirm one concrete next checkpoint, and avoid jumping into polished execution language too early.';
+if (empty($gaps)) {
+    $nextMove = 'Use the visible summary, services, and timing to map the next operator move in sequence: clarify, shape, confirm, or execute.';
+}
+if ($followUpDate === '') {
+    $nextMove .= ' Add a visible checkpoint so the next planning hand-off stays anchored.';
+}
+
+$continuityNote = $lastContacted !== ''
+    ? 'Recent outreach is visible, so the next plan can build from live contact continuity.'
+    : 'No recent outreach is visible, so the next plan should avoid assuming guest alignment without a fresh touch.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Planning Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($stage) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Plan backbone</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($planBackbone) ? implode(', ', $planBackbone) : 'Build the next plan from summary, services, timing, and ownership anchors before deep operator shaping.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest next move</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($nextMove) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Continuity note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($continuityNote) ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($gaps)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Planning still depends on: <strong><?= e(implode(', ', $gaps)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries enough visible continuity for disciplined next-stage planning.
+        </div>
+    <?php endif; ?>
+</div>

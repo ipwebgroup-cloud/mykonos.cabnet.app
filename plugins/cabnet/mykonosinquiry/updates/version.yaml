@@ -132,3 +132,6 @@
 
 2.2.1:
     - 'Harden the Recovery Workspace payload handling for array-backed payload_json values'
+
+2.3.0:
+    - 'Introduce the Planning Workspace tab with next-stage mapping and planning guardrail panels'

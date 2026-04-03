@@ -337,3 +337,12 @@
 - added a dedicated **Recovery** tab to the inquiry update screen
 - introduced **Recovery Workspace**, **Continuity Rebuild Blueprint**, and **Recovery Risk Guardrails** panels
 - gives operators a backend-only space to rebuild fragmented or stalled records before reopening, handing off, or restarting guest-facing motion
+
+## v3.7.1 — Recovery Workspace Payload Hotfix
+- hardened **Recovery Workspace** handling for array-backed `payload_json` values
+- restored stable rendering on the inquiry update screen when raw payload is hydrated as structured data
+
+## v3.8.0 — Planning Workspace
+- added a dedicated **Planning** tab to the inquiry update screen
+- introduced **Planning Workspace**, **Next Stage Map Blueprint**, and **Planning Risk Guardrails** panels
+- gives operators a backend-only space to sequence the next operator phase after recovery, clarification, or continuity repair without touching public `/plan`, schema, or list stability
