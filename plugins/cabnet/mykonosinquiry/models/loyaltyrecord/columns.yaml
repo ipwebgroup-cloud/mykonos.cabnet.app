@@ -1,0 +1,33 @@
+columns:
+    request_reference:
+        label: Reference
+        searchable: true
+
+    guest_name:
+        label: Guest
+        searchable: true
+
+    continuity_status_label:
+        label: Continuity
+        sortable: false
+
+    referral_ready:
+        label: Referral Ready
+        type: switch
+
+    return_value_tier_label:
+        label: Return Value
+        sortable: false
+
+    next_review_at:
+        label: Next Review
+        type: datetime
+        format: Y-m-d H:i
+
+    owner_name:
+        label: Owner
+
+    updated_at:
+        label: Updated
+        type: datetime
+        format: Y-m-d H:i

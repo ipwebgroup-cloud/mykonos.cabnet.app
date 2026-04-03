@@ -1,0 +1,26 @@
+scopes:
+    continuity_status:
+        label: Continuity Status
+        type: group
+        conditions: continuity_status in (:filtered)
+        options:
+            active_retention: Active retention
+            referral_ready: Referral ready
+            return_value_watch: Return-value watch
+            dormant: Dormant
+            archived: Archived
+
+    return_value_tier:
+        label: Return-Value Tier
+        type: group
+        conditions: return_value_tier in (:filtered)
+        options:
+            watch: Watch
+            promising: Promising
+            strong: Strong
+            flagship: Flagship
+
+    referral_ready:
+        label: Referral Ready
+        type: switch
+        conditions: referral_ready = true

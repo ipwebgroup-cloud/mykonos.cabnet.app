@@ -1,0 +1,16 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$inquiry = $record ? $record->source_inquiry : null;
+?>
+<div class="form-group span-full">
+    <?php if ($inquiry): ?>
+        <p>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $inquiry->id) ?>" class="btn btn-default">
+                Open Source Inquiry
+            </a>
+        </p>
+        <p class="help-block"><?= e($record->source_inquiry_display) ?></p>
+    <?php else: ?>
+        <p class="help-block">No source inquiry is linked to this loyalty record yet.</p>
+    <?php endif; ?>
+</div>

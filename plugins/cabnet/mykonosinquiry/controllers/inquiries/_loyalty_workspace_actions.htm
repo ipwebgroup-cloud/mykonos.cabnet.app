@@ -1,0 +1,55 @@
+<?php
+$inquiry = $formModel ?? $model ?? null;
+$record = null;
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+
+if (
+    $loyaltyTableReady
+    && $inquiry
+    && !empty($inquiry->id)
+    && class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord')
+) {
+    $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
+}
+?>
+<div class="callout fade in no-icon">
+    <div class="header">
+        <i class="icon-repeat"></i>
+        <h3>Loyalty Continuity Workspace</h3>
+        <p>Use this only for long-cycle retention, referral-ready continuity, and return-value handling after active inquiry triage.</p>
+    </div>
+
+    <div class="content">
+        <?php if (!$loyaltyTableReady): ?>
+            <p class="oc-text-muted">Loyalty Continuity is not active on this installation yet.</p>
+        <?php else: ?>
+            <form method="post">
+                <?= Form::token() ?>
+                <input type="hidden" name="_quick_action" value="">
+                <div class="btn-toolbar">
+                    <button type="submit" class="btn btn-primary"
+                            onclick="this.form._quick_action.value='send_to_loyalty';">
+                        Move to Loyalty
+                    </button>
+
+                    <button type="submit" class="btn btn-default"
+                            onclick="this.form._quick_action.value='mark_referral_ready';">
+                        Mark Referral Ready
+                    </button>
+
+                    <button type="submit" class="btn btn-default"
+                            onclick="this.form._quick_action.value='mark_return_value_candidate';">
+                        Mark Return-Value Candidate
+                    </button>
+
+                    <?php if ($record): ?>
+                        <a class="btn btn-secondary"
+                           href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>">
+                            Open Loyalty Workspace
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </form>
+        <?php endif; ?>
+    </div>
+</div>

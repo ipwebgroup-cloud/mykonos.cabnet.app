@@ -1,0 +1,43 @@
+<?php
+$inquiry = $formModel ?? $model ?? null;
+$record = null;
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+
+if (
+    $loyaltyTableReady
+    && $inquiry
+    && !empty($inquiry->id)
+    && class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord')
+) {
+    $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
+}
+?>
+<div class="callout fade in no-icon">
+    <div class="header">
+        <i class="icon-heart"></i>
+        <h3>Loyalty Continuity Snapshot</h3>
+        <p>Separate retention workspace for guests who should stay visible beyond the active inquiry queue.</p>
+    </div>
+
+    <div class="content">
+        <?php if (!$loyaltyTableReady): ?>
+            <p class="oc-text-muted">Loyalty Continuity is not active on this installation yet.</p>
+        <?php elseif (!$record): ?>
+            <p class="oc-text-muted">This inquiry has not yet been moved into Loyalty Continuity.</p>
+        <?php else: ?>
+            <ul class="list-unstyled">
+                <li><strong>Status:</strong> <?= e($record->continuity_status_label ?? $record->continuity_status ?? 'active') ?></li>
+                <li><strong>Stage:</strong> <?= e($record->loyalty_stage_label ?? $record->loyalty_stage ?? 'retention') ?></li>
+                <li><strong>Referral ready:</strong> <?= !empty($record->referral_ready) ? 'Yes' : 'No' ?></li>
+                <li><strong>Return-value tier:</strong> <?= e($record->return_value_tier_label ?? $record->return_value_tier ?? 'standard') ?></li>
+                <li><strong>Next review:</strong> <?= !empty($record->next_review_at) ? e($record->next_review_at->format('Y-m-d H:i')) : 'Not scheduled' ?></li>
+            </ul>
+
+            <p>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>" class="btn btn-default">
+                    Open Loyalty Record
+                </a>
+            </p>
+        <?php endif; ?>
+    </div>
+</div>

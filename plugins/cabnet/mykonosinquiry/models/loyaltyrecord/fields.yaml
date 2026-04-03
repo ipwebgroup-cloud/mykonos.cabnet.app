@@ -1,0 +1,165 @@
+fields:
+    request_reference:
+        label: Request Reference
+        disabled: true
+        span: left
+
+    source_inquiry_id:
+        label: Source Inquiry ID
+        disabled: true
+        span: right
+        comment: Read-only originating inquiry link reference.
+
+tabs:
+    fields:
+        source_inquiry_link:
+            label: Source Inquiry
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_source_inquiry_link.htm
+            tab: Overview
+            span: full
+            comment: Direct jump back to the originating inquiry record.
+
+        guest_snapshot:
+            label: Guest Snapshot
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Core retention identity and ownership snapshot.
+
+        continuity_summary:
+            label: Continuity Summary
+            type: textarea
+            size: large
+            tab: Overview
+            span: right
+            comment: Working summary of why this guest sits in long-cycle retention.
+
+        service_focus_summary:
+            label: Service Focus Summary
+            type: textarea
+            size: large
+            tab: Overview
+            span: left
+
+        source_summary:
+            label: Source Summary
+            type: textarea
+            size: large
+            tab: Overview
+            span: right
+
+        continuity_status:
+            label: Continuity Status
+            type: dropdown
+            tab: Workspace
+            span: left
+
+        loyalty_stage:
+            label: Loyalty Stage
+            type: dropdown
+            tab: Workspace
+            span: right
+
+        referral_ready:
+            label: Referral Ready
+            type: switch
+            tab: Workspace
+            span: left
+            off: 'No'
+            on: 'Yes'
+
+        return_value_tier:
+            label: Return-Value Tier
+            type: dropdown
+            tab: Workspace
+            span: right
+
+        owner_name:
+            label: Owner / Assignee
+            tab: Workspace
+            span: left
+
+        created_by:
+            label: Created By
+            disabled: true
+            tab: Workspace
+            span: right
+
+        guest_name:
+            label: Guest Name
+            tab: Workspace
+            span: left
+
+        guest_email:
+            label: Guest Email
+            tab: Workspace
+            span: right
+
+        guest_phone:
+            label: Guest Phone
+            tab: Workspace
+            span: left
+
+        country:
+            label: Country
+            tab: Workspace
+            span: right
+
+        preferred_season:
+            label: Preferred Season
+            tab: Workspace
+            span: left
+
+        revisit_window:
+            label: Revisit Window
+            tab: Workspace
+            span: right
+
+        next_review_at:
+            label: Next Review At
+            type: datepicker
+            mode: datetime
+            tab: Workspace
+            span: left
+
+        last_retention_contact_at:
+            label: Last Retention Contact
+            type: datepicker
+            mode: datetime
+            tab: Workspace
+            span: right
+
+        last_visit_at:
+            label: Last Visit Date
+            type: datepicker
+            mode: date
+            tab: Workspace
+            span: left
+
+        retention_notes:
+            label: Retention Notes
+            type: textarea
+            size: giant
+            tab: Workspace
+            span: full
+            comment: Working retention notes for this continuity record.
+
+        history_preview:
+            label: Touchpoint Timeline
+            type: textarea
+            size: giant
+            tab: History
+            readOnly: true
+            span: full
+            comment: Append-only loyalty continuity touchpoints, newest first.
+
+        new_touchpoint_note:
+            label: Add Loyalty Touchpoint
+            type: textarea
+            size: large
+            tab: History
+            span: full
+            comment: This will be saved as a new append-only continuity touchpoint when you click Save.

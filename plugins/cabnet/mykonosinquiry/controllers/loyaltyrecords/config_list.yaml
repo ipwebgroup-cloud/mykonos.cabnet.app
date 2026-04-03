@@ -1,0 +1,10 @@
+title: Loyalty Continuity
+modelClass: Cabnet\MykonosInquiry\Models\LoyaltyRecord
+list: $/cabnet/mykonosinquiry/models/loyaltyrecord/columns.yaml
+recordUrl: cabnet/mykonosinquiry/loyaltyrecords/update/:id
+noRecordsMessage: No loyalty continuity records found.
+showSetup: true
+showCheckboxes: false
+toolbar:
+    buttons: _toolbar.htm
+filter: config_filter.yaml

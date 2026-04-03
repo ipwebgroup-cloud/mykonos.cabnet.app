@@ -1,191 +1,116 @@
 1.0.2:
-    - 'Add request-reference aware inquiry handling and frontend integration support'
-    - create_inquiries_table.php
+  - 'Add request-reference aware inquiry handling and frontend integration support'
+  - create_inquiries_table.php
 1.0.3:
-    - 'Add operator priority handling'
-    - add_priority_to_inquiries_table.php
+  - 'Add operator priority handling'
+  - add_priority_to_inquiries_table.php
 1.0.4:
-    - 'Add inquiry notes history support'
-    - create_inquiry_notes_table.php
+  - 'Add inquiry notes history support'
+  - create_inquiry_notes_table.php
 1.0.5:
-    - 'Add concierge workflow timestamps and automatic timeline logging'
-    - add_workflow_fields_to_inquiries_table.php
+  - 'Add concierge workflow timestamps and automatic timeline logging'
+  - add_workflow_fields_to_inquiries_table.php
 1.0.6:
-    - 'Standardize plan bridge response payload for theme integration'
+  - 'Standardize plan bridge response payload for theme integration'
 1.0.7:
-    - 'Improve backend inquiry readability and active queue filtering'
+  - 'Improve backend inquiry readability and active queue filtering'
 1.0.8:
-    - 'Add backend quick workflow actions for assignment, contact, follow-up, and closing'
-
+  - 'Add backend quick workflow actions for assignment, contact, follow-up, and closing'
 1.0.9:
-    - 'Improve backend history timeline readability for operators'
+  - 'Improve backend history timeline readability for operators'
 1.0.10:
-    - 'Improve assignment and status continuity readability for operators'
-
+  - 'Improve assignment and status continuity readability for operators'
 1.0.11:
-    - 'Improve follow-up queue clarity for overdue, due-today, and unscheduled inquiries'
+  - 'Improve follow-up queue clarity for overdue, due-today, and unscheduled inquiries'
 1.1.0:
-    - 'Start operator workspace consolidation with a unified internal summary panel'
+  - 'Start operator workspace consolidation with a unified internal summary panel'
 1.1.1:
-    - 'Add contact posture scan panel to the operator workspace consolidation line'
+  - 'Add contact posture scan panel to the operator workspace consolidation line'
 1.1.2:
-    - 'Add service posture scan panel to the operator workspace consolidation line'
+  - 'Add service posture scan panel to the operator workspace consolidation line'
 1.1.3:
-    - 'Add stay logistics scan panel to the operator workspace consolidation line'
+  - 'Add stay logistics scan panel to the operator workspace consolidation line'
 1.1.4:
-    - 'Add occasion and lifestyle scan panel to the operator workspace consolidation line'
+  - 'Add occasion and lifestyle scan panel to the operator workspace consolidation line'
 1.1.5:
-    - 'Add source and entry posture scan panel to the operator workspace consolidation line'
+  - 'Add source and entry posture scan panel to the operator workspace consolidation line'
 1.1.6:
-    - 'Add coverage and gaps scan panel to the operator workspace consolidation line'
+  - 'Add coverage and gaps scan panel to the operator workspace consolidation line'
 1.1.7:
-    - 'Add next-step framing scan panel to the operator workspace consolidation line'
+  - 'Add next-step framing scan panel to the operator workspace consolidation line'
 1.1.8:
-    - 'Add risk and sensitivity scan panel to the operator workspace consolidation line'
+  - 'Add risk and sensitivity scan panel to the operator workspace consolidation line'
 1.1.9:
-    - 'Add response packaging scan panel to the operator workspace consolidation line'
+  - 'Add response packaging scan panel to the operator workspace consolidation line'
 1.1.10:
-    - 'Add commercial posture scan panel to the operator workspace consolidation line'
+  - 'Add commercial posture scan panel to the operator workspace consolidation line'
 1.1.11:
-    - 'Add decision posture scan panel to the operator workspace consolidation line'
+  - 'Add decision posture scan panel to the operator workspace consolidation line'
 1.1.12:
-    - 'Add proposal readiness scan panel to the operator workspace consolidation line'
+  - 'Add proposal readiness scan panel to the operator workspace consolidation line'
 1.1.13:
-    - 'Add fulfillment readiness scan panel to the operator workspace consolidation line'
+  - 'Add fulfillment readiness scan panel to the operator workspace consolidation line'
 1.1.14:
-    - 'Add working summary framing scan panel to the operator workspace consolidation line'
+  - 'Add working summary framing scan panel to the operator workspace consolidation line'
 1.1.15:
-    - 'Add reply tone guidance scan panel to the operator workspace consolidation line'
+  - 'Add reply tone guidance scan panel to the operator workspace consolidation line'
 1.1.16:
-    - 'Activate the response packaging panel on the stabilized operator workspace line'
+  - 'Activate the response packaging panel on the stabilized operator workspace line'
 1.1.17:
-    - 'Activate the reply tone guidance panel on the stabilized operator workspace line'
+  - 'Activate the reply tone guidance panel on the stabilized operator workspace line'
 1.1.18:
-    - 'Add clarification targets scan panel to the stabilized operator workspace line'
+  - 'Add clarification targets scan panel to the stabilized operator workspace line'
 1.1.19:
-    - 'Add confirmation blockers scan panel to the stabilized operator workspace line'
+  - 'Add confirmation blockers scan panel to the stabilized operator workspace line'
 1.1.20:
-    - 'Add guest confidence signals scan panel to the stabilized operator workspace line'
-
+  - 'Add guest confidence signals scan panel to the stabilized operator workspace line'
 1.1.21:
-    - 'Activate the remaining operator workspace scan panels on the stabilized inquiry form line'
-
+  - 'Activate the remaining operator workspace scan panels on the stabilized inquiry form line'
 1.1.22:
-    - 'Restore the handoff focus panel to the stabilized operator workspace form line'
-
+  - 'Restore the handoff focus panel to the stabilized operator workspace form line'
 1.1.23:
-    - 'Add closure posture scan panel to the stabilized operator workspace line'
-
+  - 'Add closure posture scan panel to the stabilized operator workspace line'
 1.1.24:
-    - 'Add working notes posture scan panel to the stabilized operator workspace line'
-
+  - 'Add working notes posture scan panel to the stabilized operator workspace line'
 1.1.25:
-    - 'Add history note framing scan panel to the stabilized operator workspace line'
-
+  - 'Add history note framing scan panel to the stabilized operator workspace line'
 1.1.26:
-    - 'Add raw payload framing scan panel to the stabilized operator workspace line'
-
+  - 'Add raw payload framing scan panel to the stabilized operator workspace line'
 1.1.27:
-    - 'Add payload alignment signals scan panel to the stabilized operator workspace line'
-
+  - 'Add payload alignment signals scan panel to the stabilized operator workspace line'
 1.1.28:
-    - 'Add reopen recovery cues scan panel to the stabilized operator workspace line'
-
+  - 'Add reopen recovery cues scan panel to the stabilized operator workspace line'
 1.1.29:
-    - 'Add payload carryover gaps scan panel to the stabilized operator workspace line'
-
+  - 'Add payload carryover gaps scan panel to the stabilized operator workspace line'
 1.1.30:
-    - 'Add source continuity scan panel to the stabilized operator workspace line'
-
+  - 'Add source continuity scan panel to the stabilized operator workspace line'
 1.2.0:
-    - 'Introduce the Operator Command Deck tab with composite operator guidance panels'
-
+  - 'Introduce the Operator Command Deck tab with composite operator guidance panels'
 1.3.0:
-    - 'Introduce the Queue Command Board on the inquiry list page with live triage lanes and operator routing guidance'
-
+  - 'Introduce the Queue Command Board on the inquiry list page with live triage lanes and operator routing guidance'
 1.4.0:
-    - 'Introduce the Action Workspace tab with composite next-move execution and transition guardrail panels'
-
+  - 'Introduce the Action Workspace tab with composite next-move execution and transition guardrail panels'
 1.5.0:
-    - 'Introduce the Communication Workspace tab with reply strategy, blueprint, and communication guardrail panels'
-
+  - 'Introduce the Communication Workspace tab with reply strategy, blueprint, and communication guardrail panels'
 1.6.0:
-    - 'Introduce the Proposal Workspace tab with offer shaping and commercial guardrail panels'
-
+  - 'Introduce the Proposal Workspace tab with offer shaping and commercial guardrail panels'
 1.7.0:
-    - 'Introduce the Fulfillment Workspace tab with execution readiness and fulfillment guardrail panels'
-
+  - 'Introduce the Fulfillment Workspace tab with execution readiness and fulfillment guardrail panels'
 1.8.0:
-    - 'Introduce the Confirmation Workspace tab with commitment shaping and confirmation guardrail panels'
-
+  - 'Introduce the Confirmation Workspace tab with commitment shaping and confirmation guardrail panels'
 1.9.0:
-    - 'Introduce the Closure Workspace tab with explicit close, pause, and reopen discipline panels'
-
+  - 'Introduce the Closure Workspace tab with explicit close, pause, and reopen discipline panels'
 2.0.0:
-    - 'Introduce the Reopen Workspace tab with reactivation and reopen guardrail panels'
-
+  - 'Introduce the Reopen Workspace tab with reactivation and reopen guardrail panels'
 2.1.0:
-    - 'Introduce the Handoff Workspace tab with transfer packet and handoff guardrail panels'
-
+  - 'Introduce the Handoff Workspace tab with transfer packet and handoff guardrail panels'
 2.2.0:
-    - 'Introduce the Recovery Workspace tab with continuity rebuild and recovery guardrail panels'
-
+  - 'Introduce the Recovery Workspace tab with continuity rebuild and recovery guardrail panels'
 2.2.1:
-    - 'Harden the Recovery Workspace payload handling for array-backed payload_json values'
-
+  - 'Harden the Recovery Workspace payload handling for array-backed payload_json values'
 2.3.0:
-    - 'Introduce the Planning Workspace tab with next-stage mapping and planning guardrail panels'
-
-2.4.0:
-    - 'Introduce the Intake Workspace tab with structured field normalization and normalization guardrail panels'
-
-2.5.0:
-    - 'Introduce the Pricing Workspace tab with range framing and pricing guardrail panels'
-
-2.6.0:
-    - 'Introduce the Supplier Readiness Workspace tab with supplier brief framing and supplier guardrail panels'
-
-2.7.0:
-    - 'Introduce the Scheduling Workspace tab with timing coordination and scheduling guardrail panels'
-
-2.8.0:
-    - 'Introduce the Guest Journey Workspace tab with journey sequencing and journey guardrail panels'
-
-2.9.0:
-    - 'Introduce the Partner Coordination Workspace tab with partner alignment and partner guardrail panels'
-
-3.0.0:
-    - 'Introduce the Financial Closure Workspace tab with deposit framing and financial guardrail panels'
-
-3.1.0:
-    - 'Introduce the Documents Workspace tab with document packet framing and document guardrail panels'
-
-3.2.0:
-    - 'Introduce the Approvals Workspace tab with sign-off framing and approval guardrail panels'
-
-3.3.0:
-    - 'Introduce the Post-Approval Workspace tab with lock framing and post-approval guardrail panels'
-
-3.4.0:
-    - 'Introduce the Final Readiness Workspace tab with go-live framing and final-readiness guardrail panels'
-
-3.5.0:
-    - 'Introduce the Service-Day Control Workspace tab with same-day execution and service-day guardrail panels'
-
-3.6.0:
-    - 'Introduce the Live Incident Workspace tab with incident response and incident guardrail panels'
-
-3.7.0:
-    - 'Introduce the Post-Incident Recovery Workspace tab with recovery re-entry and post-incident guardrail panels'
-
-3.8.0:
-    - 'Introduce the Post-Service Review Workspace tab with review blueprint and review guardrail panels'
-
-1.1.25:
-    - 'Add repeat-guest readiness workspace guidance to the operator workflow line'
-
-1.1.26:
-    - 'Add VIP relationship workspace guidance to the operator workflow line'
-
-3.9.0:
-    - 'Introduce the Referral Readiness Workspace tab with referral-path framing and referral guardrail panels'
+  - 'Introduce the Loyalty Continuity Workspace with retention routing from inquiry handling'
+  - create_loyalty_records_table.php
+2.3.1:
+  - 'Add loyalty touchpoint history for long-cycle retention handling'
+  - create_loyalty_touchpoints_table.php

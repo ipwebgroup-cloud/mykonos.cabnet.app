@@ -7,14 +7,28 @@ use Backend\Classes\Controller;
 use BackendMenu;
 use Cabnet\MykonosInquiry\Models\Inquiry;
 use Cabnet\MykonosInquiry\Models\InquiryNote;
+use Cabnet\MykonosInquiry\Models\LoyaltyRecord;
 use Carbon\Carbon;
 use Flash;
+use Schema;
 
 class Inquiries extends Controller
 {
+    protected function loyaltyWorkspaceReady(): bool
+    {
+        return Schema::hasTable('cabnet_mykonos_loyalty_records');
+    }
+
+    protected function redirectAfterLoyaltySetupMissing($recordId)
+    {
+        Flash::error('Loyalty Continuity tables are not ready yet. Run php artisan plugin:refresh Cabnet.MykonosInquiry first.');
+        return redirect(\Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $recordId));
+    }
+
     public $implement = [ListController::class, FormController::class];
 
     public $listConfig = 'config_list.yaml';
+
     public $formConfig = 'config_form.yaml';
 
     public $requiredPermissions = ['cabnet.mykonosinquiry.manage_inquiries'];
@@ -24,19 +38,21 @@ class Inquiries extends Controller
     public function __construct()
     {
         parent::__construct();
+
         BackendMenu::setContext('Cabnet.MykonosInquiry', 'mykonosinquiry', 'inquiries');
     }
-
 
     public function index()
     {
         $this->pageTitle = 'Mykonos Inquiries';
+
         $this->asExtension('ListController')->index();
     }
 
     public function create()
     {
         $this->pageTitle = 'Create Inquiry';
+
         $this->asExtension('FormController')->create();
     }
 
@@ -55,7 +71,36 @@ class Inquiries extends Controller
 
         $inquiry = $recordId ? Inquiry::find($recordId) : null;
         $reference = $inquiry && $inquiry->request_reference ? $inquiry->request_reference : 'Update Inquiry';
+
         $this->pageTitle = 'Inquiry · ' . $reference;
+    }
+
+    public function formExtendFields($form): void
+    {
+        $model = $form->model;
+
+        if (!$model instanceof Inquiry) {
+            return;
+        }
+
+        $form->addTabFields([
+            'loyalty_workspace_actions' => [
+                'label'   => 'Loyalty Workspace Actions',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_workspace_actions.htm',
+                'tab'     => 'Internal',
+                'span'    => 'full',
+                'comment' => 'Move closed or referral-ready records into the Loyalty Continuity workspace without mixing them into VIP or repeat-guest memory.',
+            ],
+            'loyalty_continuity_panel' => [
+                'label'   => 'Loyalty Continuity Snapshot',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm',
+                'tab'     => 'Internal',
+                'span'    => 'full',
+                'comment' => 'Read-only retention and return-value snapshot for this inquiry once it enters the loyalty workspace.',
+            ],
+        ]);
     }
 
     public function formBeforeSave($model): void
@@ -178,6 +223,54 @@ class Inquiries extends Controller
         return $this->closeInquiry($recordId, 'closed_lost', 'Inquiry closed as lost.', 'Quick action: marked inquiry as closed lost.');
     }
 
+    public function sendToLoyalty($recordId = null)
+    {
+        if (!$this->loyaltyWorkspaceReady()) {
+            return $this->redirectAfterLoyaltySetupMissing($recordId);
+        }
+
+        return $this->runQuickAction($recordId, function (Inquiry $inquiry): bool {
+            $record = LoyaltyRecord::syncFromInquiry($inquiry, [
+                'continuity_status' => 'active_retention',
+            ], $this->getOperatorName());
+
+            return $record !== null;
+        }, 'Inquiry moved into Loyalty Continuity.', 'Quick action: moved inquiry into the Loyalty Continuity workspace.');
+    }
+
+    public function markReferralReady($recordId = null)
+    {
+        if (!$this->loyaltyWorkspaceReady()) {
+            return $this->redirectAfterLoyaltySetupMissing($recordId);
+        }
+
+        return $this->runQuickAction($recordId, function (Inquiry $inquiry): bool {
+            $record = LoyaltyRecord::syncFromInquiry($inquiry, [
+                'continuity_status' => 'referral_ready',
+                'referral_ready'    => true,
+                'loyalty_stage'     => 'warm',
+            ], $this->getOperatorName());
+
+            return $record !== null;
+        }, 'Inquiry marked as referral-ready in Loyalty Continuity.', 'Quick action: flagged inquiry as referral-ready in Loyalty Continuity.');
+    }
+
+    public function markReturnValueCandidate($recordId = null)
+    {
+        if (!$this->loyaltyWorkspaceReady()) {
+            return $this->redirectAfterLoyaltySetupMissing($recordId);
+        }
+
+        return $this->runQuickAction($recordId, function (Inquiry $inquiry): bool {
+            $record = LoyaltyRecord::syncFromInquiry($inquiry, [
+                'continuity_status'  => 'return_value_watch',
+                'return_value_tier'  => 'promising',
+                'loyalty_stage'      => 'watch',
+            ], $this->getOperatorName());
+
+            return $record !== null;
+        }, 'Inquiry marked as a return-value candidate in Loyalty Continuity.', 'Quick action: flagged inquiry as a return-value candidate in Loyalty Continuity.');
+    }
 
     protected function dispatchQuickActionFromUpdate($recordId)
     {
@@ -186,18 +279,34 @@ class Inquiries extends Controller
         switch ($action) {
             case 'assign_to_me':
                 return $this->assignToMe($recordId);
+
             case 'mark_contacted':
                 return $this->markContacted($recordId);
+
             case 'follow_up_tomorrow':
                 return $this->scheduleTomorrow($recordId);
+
             case 'follow_up_plus_three':
                 return $this->scheduleInThreeDays($recordId);
+
             case 'reopen_inquiry':
                 return $this->reopenInquiry($recordId);
+
             case 'close_won':
                 return $this->closeWon($recordId);
+
             case 'close_lost':
                 return $this->closeLost($recordId);
+
+            case 'send_to_loyalty':
+                return $this->sendToLoyalty($recordId);
+
+            case 'mark_referral_ready':
+                return $this->markReferralReady($recordId);
+
+            case 'mark_return_value_candidate':
+                return $this->markReturnValueCandidate($recordId);
+
             default:
                 Flash::warning('Unknown quick action.');
                 return redirect(\Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $recordId));
@@ -287,11 +396,13 @@ class Inquiries extends Controller
     protected function getOperatorName(): string
     {
         $user = BackendAuth::getUser();
+
         if (!$user) {
             return 'Operator';
         }
 
         $author = trim((string) (($user->first_name ?? '') . ' ' . ($user->last_name ?? '')));
+
         if ($author === '') {
             $author = $user->login ?? 'Operator';
         }

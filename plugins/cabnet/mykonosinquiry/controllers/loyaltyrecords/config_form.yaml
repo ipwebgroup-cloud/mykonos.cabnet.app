@@ -1,0 +1,10 @@
+name: Loyalty Continuity
+modelClass: Cabnet\MykonosInquiry\Models\LoyaltyRecord
+form: $/cabnet/mykonosinquiry/models/loyaltyrecord/fields.yaml
+defaultRedirect: cabnet/mykonosinquiry/loyaltyrecords
+create:
+    redirect: cabnet/mykonosinquiry/loyaltyrecords/update/:id
+    redirectClose: cabnet/mykonosinquiry/loyaltyrecords
+update:
+    redirect: cabnet/mykonosinquiry/loyaltyrecords
+    redirectClose: cabnet/mykonosinquiry/loyaltyrecords
