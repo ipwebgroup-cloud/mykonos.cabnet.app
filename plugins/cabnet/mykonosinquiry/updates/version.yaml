@@ -174,3 +174,6 @@
 
 3.6.0:
     - 'Introduce the Live Incident Workspace tab with incident response and incident guardrail panels'
+
+3.7.0:
+    - 'Introduce the Post-Incident Recovery Workspace tab with recovery re-entry and post-incident guardrail panels'

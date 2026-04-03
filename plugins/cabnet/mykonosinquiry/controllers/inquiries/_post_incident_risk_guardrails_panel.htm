@@ -1,0 +1,70 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$history = $stringify($record->history_preview ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+
+$risks = [
+    'letting the record fall out of incident posture without a readable stabilized brief',
+    'treating containment as if it automatically completed recovery',
+    'moving the case back into normal workflow before one accountable re-entry checkpoint is visible',
+];
+if ($owner === '') {
+    $risks[] = 'running post-incident recovery without an explicit visible owner';
+}
+if ($followUpDate === '') {
+    $risks[] = 'losing the next recovery checkpoint while the record is supposedly stabilizing';
+}
+if ($summary === '') {
+    $risks[] = 'leaving the visible summary too weak to explain what is now stable after the disruption';
+}
+if ($workingNotes === '' && $history === '') {
+    $risks[] = 'forcing the next operator to rediscover the incident outcome from memory or raw fragments';
+}
+if ($closedReason !== '') {
+    $risks[] = 'forgetting that closure memory may still shape how the record can safely recover or reopen';
+}
+if ($lastContacted === '') {
+    $risks[] = 'resetting workflow without a visible latest-contact anchor';
+}
+?>
+<div style="border:1px solid #fdba74; background:#fff7ed; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#9a3412; font-weight:700; margin-bottom:6px;">Post-Incident Risk Guardrails</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Keep recovery readable, owned, and strong enough for normal workflow to resume safely</div>
+
+    <ul style="margin:0; padding-left:18px; color:#9a3412; line-height:1.75; font-size:14px;">
+        <?php foreach ($risks as $risk): ?>
+            <li><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>

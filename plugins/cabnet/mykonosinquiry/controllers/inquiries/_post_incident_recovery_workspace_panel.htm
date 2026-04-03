@@ -1,0 +1,105 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$history = $stringify($record->history_preview ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+$closedReason = $stringify($record->closed_reason ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($owner !== '') $anchors[] = 'recovery owner';
+if ($summary !== '') $anchors[] = 'recovery brief';
+if ($workingNotes !== '') $anchors[] = 'working notes';
+if ($history !== '') $anchors[] = 'timeline memory';
+if ($followUpDate !== '') $anchors[] = 're-entry checkpoint';
+if ($lastContacted !== '') $anchors[] = 'latest contact signal';
+if ($closedReason !== '') $anchors[] = 'closure reason memory';
+
+$gaps = [];
+if ($owner === '') $gaps[] = 'recovery owner';
+if ($summary === '') $gaps[] = 'recovery brief';
+if ($workingNotes === '' && $history === '') $gaps[] = 'continuity trail';
+if ($followUpDate === '') $gaps[] = 're-entry checkpoint';
+if ($requestReference === '') $gaps[] = 'request reference';
+
+$headline = 'Post-incident recovery should turn disruption memory into a readable stabilized record';
+$palette = ['#92400e', '#fff7ed', '#fed7aa'];
+if (!empty($gaps)) {
+    $headline = 'The record still needs stronger continuity anchors before incident recovery can be trusted';
+    $palette = ['#9a3412', '#fff7ed', '#fdba74'];
+} elseif ($closedAt !== '') {
+    $headline = 'Closed records need recovery framing only when the disruption still matters for reopen, review, or service memory';
+    $palette = ['#7c2d12', '#fff7ed', '#fdba74'];
+} elseif (in_array($status, ['confirmed', 'awaiting_guest', 'contacted', 'proposal_sent'], true)) {
+    $headline = 'The record has enough visible anchors to move from incident control into disciplined recovery posture';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+}
+
+$posture = 'Recovery should answer what is now stable, what still needs explicit repair, and what the next operator must not have to rediscover from memory.';
+if ($closedReason !== '') {
+    $posture .= ' Keep the closure reason visible if the incident pushed the record toward pause, loss, or delayed reopen posture.';
+}
+if ($lastContacted !== '') {
+    $posture .= ' The latest contact signal should stay visible so recovery does not create overlapping guest-facing narratives.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Post-Incident Recovery Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Recovery anchors</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($anchors ? implode(' • ', $anchors) : 'Recovery still lacks enough visible anchors for safe stabilization.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Repair gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural recovery gaps detected in the visible record.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Post-incident recovery should lower reactivity and increase readability: one recovery owner, one stabilized brief, one checkpoint, and less dependence on scattered memory after the live issue has been contained.
+    </div>
+</div>

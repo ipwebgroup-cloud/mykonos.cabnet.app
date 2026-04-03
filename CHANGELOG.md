@@ -1,3 +1,10 @@
+## v5.3.0 — Post-Incident Recovery Workspace
+- adds a new **Incident Recovery** tab to the backend inquiry update screen
+- introduces a composite **Post-Incident Recovery Workspace** panel for stabilizing the record after disruption, rebuilding continuity, and preparing a safe hand-back into normal workflow
+- adds **Recovery Re-entry Blueprint** guidance so operators can convert incident containment into one stabilized brief, one re-entry checkpoint, and one readable continuity lift
+- adds **Post-Incident Risk Guardrails** to prevent recovery drift, weak continuity memory, hidden ownership, and false signals that the record is already stable enough to resume as normal
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.2.0 — Live Incident Workspace
 - adds a new **Incidents** tab to the backend inquiry update screen
 - introduces a composite **Live Incident Workspace** panel for disruption control, visible ownership, and fallback brief discipline when delivery breaks away from plan

@@ -1,0 +1,74 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$summary = $stringify($record->guest_summary ?? '');
+$workingNotes = $stringify($record->working_notes ?? '');
+$history = $stringify($record->history_preview ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+
+$stabilizedBrief = $summary !== ''
+    ? 'Start from the visible guest summary and restate what is now stable after the incident before expanding the next move.'
+    : 'Promote one stabilized recovery brief into the visible summary before the record re-enters normal workflow.';
+$reentryCheckpoint = $followUpDate !== ''
+    ? 'Use the visible follow-up date as the re-entry checkpoint so recovery has one accountable next control time.'
+    : 'Set one explicit re-entry checkpoint before the record leaves incident posture.';
+$continuityLift = $history !== '' || $workingNotes !== ''
+    ? 'Lift the incident outcome and recovery memory into one continuity path so the next operator does not reconstruct the repair from fragments.'
+    : 'Write one concise recovery continuity note before the record is handed back into normal motion.';
+if ($lastContacted !== '') {
+    $continuityLift .= ' Keep the latest contact signal in view so recovery language does not collide with a guest update already in motion.';
+}
+if ($owner !== '') {
+    $reentryCheckpoint .= ' Keep the visible owner attached to the checkpoint so recovery accountability survives the hand-back.';
+}
+if (in_array($status, ['awaiting_guest', 'confirmed'], true)) {
+    $stabilizedBrief .= ' Use calmer, narrower recovery framing when the guest relationship is still active and expects controlled follow-through.';
+}
+?>
+<div style="border:1px solid #cbd5e1; background:#ffffff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#92400e; font-weight:700; margin-bottom:6px;">Recovery Re-entry Blueprint</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Stabilize the record, set one re-entry checkpoint, and hand normal workflow back a readable brief</div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Stabilized brief</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($stabilizedBrief) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Re-entry checkpoint</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($reentryCheckpoint) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Continuity lift</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($continuityLift) ?></div>
+        </div>
+    </div>
+</div>

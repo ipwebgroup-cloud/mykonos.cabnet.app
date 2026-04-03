@@ -676,6 +676,27 @@ tabs:
             tab: Incidents
             comment: Read-only operator guardrails for keeping live incident handling readable, owned, and easy to stabilize under pressure.
 
+        post_incident_recovery_workspace_panel:
+            label: Post-Incident Recovery Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_incident_recovery_workspace_panel.htm
+            tab: Incident Recovery
+            comment: Composite operator framing for stabilizing the record after disruption, rebuilding continuity, and preparing a safe hand-back into normal workflow.
+
+        recovery_reentry_blueprint_panel:
+            label: Recovery Re-entry Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_reentry_blueprint_panel.htm
+            tab: Incident Recovery
+            comment: Read-only operator blueprint for converting incident containment into one stabilized brief, one re-entry checkpoint, and one readable continuity lift.
+
+        post_incident_risk_guardrails_panel:
+            label: Post-Incident Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_incident_risk_guardrails_panel.htm
+            tab: Incident Recovery
+            comment: Read-only operator guardrails for keeping recovery visible, owned, and strong enough for normal workflow to resume safely.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial
