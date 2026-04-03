@@ -1,0 +1,89 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$blockers = [];
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$contact = trim((string) ($record->contact_preference ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$followUp = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+
+if ($owner === '') {
+    $blockers[] = 'Owner is not visible yet.';
+}
+if ($arrival === '' || $departure === '') {
+    $blockers[] = 'Stay window is still incomplete.';
+}
+if ($details === '' && $services === '') {
+    $blockers[] = 'The guest brief still needs clear service or experience priorities.';
+}
+if ($contact === '' && $email === '' && $phone === '') {
+    $blockers[] = 'There is no clear contact route for the next touch.';
+}
+if (in_array($status, ['contacted', 'reviewed', 'proposal_sent', 'awaiting_guest'], true) && $followUp === '') {
+    $blockers[] = 'A follow-up checkpoint is not scheduled.';
+}
+if (in_array($status, ['proposal_sent', 'confirmed'], true) && $budget === '') {
+    $blockers[] = 'Commercial depth is still weak for a confident package or confirmation move.';
+}
+if ($status === 'contacted' && $lastContacted === '') {
+    $blockers[] = 'Status suggests outreach, but Last Contacted is empty.';
+}
+
+$count = count($blockers);
+$headline = 'Low confirmation friction';
+$palette = ['#198754', '#eaf7ef', '#cfe9d8'];
+if ($count >= 4) {
+    $headline = 'High confirmation friction';
+    $palette = ['#b91c1c', '#fef2f2', '#fecaca'];
+} elseif ($count >= 2) {
+    $headline = 'Moderate confirmation friction';
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+}
+
+$topBlockers = array_slice($blockers, 0, 4);
+$nextMove = $topBlockers[0] ?? 'The inquiry has enough structure for the next confirmation-style touch. Keep the next move specific and continuity-led.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Confirmation Blockers</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Open blockers: <strong><?= e((string) $count) ?></strong></div>
+    </div>
+
+    <div style="font-size:13px; color:#334155; margin-bottom:10px;">
+        Use this scan to decide whether the next move should be a confirmation-style touch or a clarification-first step.
+    </div>
+
+    <?php if (!empty($topBlockers)): ?>
+        <ul style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+            <?php foreach ($topBlockers as $item): ?>
+                <li style="margin:0 0 6px 0;"><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <div style="padding:10px 12px; border:1px solid #cfe9d8; background:#ffffff; border-radius:10px; color:#14532d; margin-bottom:12px;">
+            No major blockers are visible right now. The brief has enough structure for a crisp next-step confirmation or package-shaping touch.
+        </div>
+    <?php endif; ?>
+
+    <div style="padding:12px; border:1px dashed <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest next unblocker</div>
+        <div style="font-size:14px;"><?= e($nextMove) ?></div>
+    </div>
+</div>

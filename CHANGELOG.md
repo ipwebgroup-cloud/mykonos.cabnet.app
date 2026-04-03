@@ -174,3 +174,12 @@
 - added a read-only **Working Summary Framing** panel to the Internal tab
 - surfaces the safest summary anchors, write checks, and hand-off framing guidance before updating operator notes
 - keeps operator workspace consolidation moving without schema or public-flow changes
+
+## v2.6.21 — Clarification Targets Panel
+- added a read-only **Clarification Targets** panel to the Internal tab
+- surfaces the highest-value missing facts, continuity-first questions, and the safest next clarification targets before over-shaping a reply
+
+## v2.6.22 — Confirmation Blockers Panel
+- added a read-only **Confirmation Blockers** panel to the Internal tab
+- surfaces the concrete blockers that still stand between the current inquiry and a confident confirmation-style move
+- keeps operator workspace consolidation moving without schema or public-flow changes

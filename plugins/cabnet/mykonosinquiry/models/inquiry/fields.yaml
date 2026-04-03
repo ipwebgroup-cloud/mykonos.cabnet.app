@@ -351,6 +351,13 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of the highest-value missing facts and the safest continuity-first questions for the next guest touch.
 
+        confirmation_blockers_panel:
+            label: Confirmation Blockers
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confirmation_blockers_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of the concrete blockers that still stand between the current inquiry and a confident next confirmation-style move.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal
