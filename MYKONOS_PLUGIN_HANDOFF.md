@@ -8,11 +8,11 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity renders safely even when the loyalty storage layer is not installed.
-- The loyalty workspace is now operating as a guarded activation-blueprint surface rather than a placeholder.
+- The loyalty workspace is now operating as a guarded transition-planning and activation-blueprint surface rather than a placeholder.
 
 ## This patch
-- Version: `v2.5.0`
-- Name: `loyalty activation blueprint workspace`
+- Version: `v2.6.0`
+- Name: `loyalty transition scorecard workspace`
 - Type: plugin-only major patch
 - No schema change
 - No theme change
@@ -27,12 +27,15 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_activation_gates_panel.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_safe_rollout_plan_panel.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_operator_routes_panel.htm`
-- `docs/releases/MYKONOS_V250_LOYALTY_ACTIVATION_BLUEPRINT_WORKSPACE_PATCH.md`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_transition_scorecard_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_activation_scenarios_panel.htm`
+- `docs/releases/MYKONOS_V260_LOYALTY_TRANSITION_SCORECARD_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty workspace was stable again, but it still mostly explained that the data layer was missing. This patch turns the area into a more useful operator-facing activation blueprint with clearer rollout phases, activation gates, and route guidance while the storage layer remains deferred.
+The loyalty workspace was stable again, but it still mostly explained that the data layer was missing. This patch expands the area into a more practical operator-facing transition workspace with a continuity scorecard and activation scenarios while the storage layer remains deferred.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
 - Continue with plugin-only operator-facing patches until the loyalty storage layer is ready.
+- Use the scorecard and scenario panels to prepare a cleaner first storage release.
 - Add the loyalty tables only in a separate, explicitly installable structural release.

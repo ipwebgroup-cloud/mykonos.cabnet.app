@@ -6,6 +6,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
     <?php if (!$loyaltyTableReady): ?>
         <?= $this->makePartial('install_state_overview') ?>
         <?= $this->makePartial('activation_gates_panel') ?>
+        <?= $this->makePartial('transition_scorecard_panel') ?>
+        <?= $this->makePartial('activation_scenarios_panel') ?>
         <?= $this->makePartial('safe_rollout_plan_panel') ?>
         <?= $this->makePartial('operator_routes_panel') ?>
 
@@ -15,7 +17,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Current safe use</h4>
                     <p style="margin-bottom:0;">
                         The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now documents the
-                        activation path clearly so the next structural release can be prepared without mixing incomplete retention logic into the
+                        transition path clearly so the next structural release can be prepared without mixing incomplete retention logic into the
                         active concierge workflow.
                     </p>
                 </div>
