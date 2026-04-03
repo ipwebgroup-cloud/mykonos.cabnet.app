@@ -67,6 +67,17 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
             </div>
         </div>
 
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Execution field set</h4>
+                <p><?= $transferReady ? 'can be staged for first-wave continuity' : 'keep execution fields out of live queue' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Outcome entry surface</h4>
+                <p><?= $transferReady ? 'narrow first-touchpoint capture is sensible' : 'do not frame loyalty outcomes yet' ?></p>
+            </div>
+        </div>
+
         <div class="control-list" style="margin-top:15px;">
             <ul>
                 <?php if ($record): ?>

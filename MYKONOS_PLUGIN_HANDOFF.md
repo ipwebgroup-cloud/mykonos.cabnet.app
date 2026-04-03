@@ -8,35 +8,29 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity still renders safely even when the loyalty storage layer is not installed.
-- The loyalty line now includes a guarded inquiry-side bridge, a dry-run transfer packet, readiness scoring, the first staged touchpoint-history ledger packet, and outcome/timing planning for future continuity execution.
+- The loyalty line now includes a guarded inquiry-side bridge, dry-run transfer scoring, staged loyalty record and touchpoint schema packets, outcome/timing planning, and the first staged touchpoint outcome entry and execution field surfaces.
 
 ## This patch
-- Version: `v4.7.0`
-- Name: `loyalty touchpoint outcomes and next-contact window workspace`
+- Version: `v4.8.0`
+- Name: `loyalty touchpoint entry and execution fields workspace`
 - Type: plugin-only major patch
-- Adds staged outcome and timing planning panels for future loyalty touchpoint execution
+- Adds staged operator surfaces for first-touchpoint outcome entry and the first real continuity execution fields
 - No theme change
 
 ## Files included in this patch
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/index.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/create.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/update.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_install_state_overview.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_touchpoint_ledger_packet_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_touchpoint_outcome_taxonomy_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_next_contact_window_matrix_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_retention_history_blueprint_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_touchpoint_outcome_entry_surface_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_continuity_execution_fields_panel.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_workspace_actions.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
-- `plugins/cabnet/mykonosinquiry/updates/version.yaml`
-- `plugins/cabnet/mykonosinquiry/updates/create_loyalty_records_table.php`
-- `plugins/cabnet/mykonosinquiry/updates/create_loyalty_touchpoints_table.php`
-- `docs/releases/MYKONOS_V470_LOYALTY_TOUCHPOINT_OUTCOMES_AND_NEXT_CONTACT_WINDOW_WORKSPACE_PATCH.md`
+- `docs/releases/MYKONOS_V480_LOYALTY_TOUCHPOINT_ENTRY_AND_EXECUTION_FIELDS_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty bridge line already defined how a closed inquiry could be reviewed for continuity transfer and how staged touchpoint history could eventually be preserved. The next safe step was to define a compact outcome taxonomy and a next-contact window matrix so the first activation wave can classify what happened and when, without pushing the live inquiry queue into long-cycle campaign behavior.
+The loyalty line already defined how outcomes should be classified and when the next contact should happen. The next safe step was to stage the smallest practical operator surface for actually recording a first touchpoint outcome and the narrowest execution field set for a future loyalty record, without turning the live site into an activated retention engine before deliberate rollout.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
-- Treat the loyalty touchpoint ledger, outcome taxonomy, and next-contact window matrix as staged activation assets, not activation triggers by themselves.
-- Next major patches should focus on guarded touchpoint outcome entry surfaces and the first real loyalty record execution fields once activation is intentionally executed.
+- Treat the touchpoint entry surface and execution fields as staged activation assets until loyalty storage is intentionally activated and verified.
+- Next major patches should focus on guarded loyalty record detail structure and the first explicit transfer action wiring once activation is deliberately executed.
