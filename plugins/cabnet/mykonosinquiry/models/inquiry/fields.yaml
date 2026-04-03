@@ -419,6 +419,27 @@ tabs:
             tab: Pricing
             comment: Read-only guardrails that surface the pricing mistakes most likely to over-specify, blur scope, weaken continuity, or create fragile commercial expectations.
 
+        supplier_readiness_workspace_panel:
+            label: Supplier Readiness Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_supplier_readiness_workspace_panel.htm
+            tab: Suppliers
+            comment: High-level supplier-readiness surface for deciding whether the record is ready for external coordination prep, internal supplier framing, or one more continuity pass before any vendor-facing motion.
+
+        supplier_brief_blueprint_panel:
+            label: Supplier Brief Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_supplier_brief_blueprint_panel.htm
+            tab: Suppliers
+            comment: Read-only structure guidance for building a supplier-ready prep brief around scope, timing, guest scale, and continuity anchors without implying confirmation too early.
+
+        supplier_risk_guardrails_panel:
+            label: Supplier Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_supplier_risk_guardrails_panel.htm
+            tab: Suppliers
+            comment: Read-only guardrails that surface the supplier-readiness mistakes most likely to overexpose private details, outrun internal continuity, or create fragile external expectations.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

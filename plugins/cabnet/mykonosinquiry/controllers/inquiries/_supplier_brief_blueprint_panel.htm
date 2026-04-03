@@ -1,0 +1,100 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$guests = $stringify($record->guests ?? '');
+$privacy = strtolower($stringify($record->privacy_level ?? ''));
+$owner = $stringify($record->owner_name ?? '');
+$budget = $stringify($record->budget ?? '');
+$sourceType = $stringify($record->source_type ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+
+$steps = [];
+$steps[] = 'Open the supplier-prep note with one line that states the visible guest mission without presenting anything as externally confirmed.';
+
+$anchors = [];
+if ($services !== '') $anchors[] = 'service stack';
+if ($arrival !== '' || $departure !== '') $anchors[] = 'timing window';
+if ($guests !== '' && $guests !== '0') $anchors[] = 'group size';
+if ($budget !== '') $anchors[] = 'budget posture';
+if ($sourceType !== '') $anchors[] = 'source context';
+if (!empty($anchors)) {
+    $steps[] = 'Build the supplier-ready brief around: ' . implode(', ', $anchors) . '.';
+}
+
+if ($summary !== '') {
+    $steps[] = 'Use the working summary as the backbone so the supplier brief stays continuous with the operator record.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift only the cleanest guest-brief signals into the supplier prep note and leave unresolved details marked as open.';
+} else {
+    $steps[] = 'Create a short operator-only prep note before any supplier-facing move so the next brief does not start from memory.';
+}
+
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed'], true)) {
+    $steps[] = 'Keep identity, villa, and movement cues discreet so supplier preparation does not overexpose sensitive details.';
+}
+
+$steps[] = $owner !== ''
+    ? 'Close the brief with owner-led next-step language so supplier preparation stays accountable to one operator.'
+    : 'Before any supplier-facing motion, assign a clear owner so the next external step does not float between operators.';
+
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+$headline = 'Supplier brief can stay continuity-led';
+if ($services === '' || ($arrival === '' && $departure === '')) {
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+    $headline = 'Supplier brief should stay provisional';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $headline = 'Supplier brief can support execution follow-through';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Supplier Brief Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Route: <strong><?= e($status === 'confirmed' ? 'execution brief prep' : 'readiness prep') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Supplier-ready close</div>
+        <div style="font-size:14px;"><?= e($budget !== '' ? 'Keep the supplier prep aligned with the visible commercial range and avoid converting internal pricing posture into firm supplier commitments.' : 'Treat supplier prep as scope discovery until pricing posture and guest comfort are clearer.') ?></div>
+    </div>
+</div>

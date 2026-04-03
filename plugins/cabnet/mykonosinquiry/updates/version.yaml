@@ -141,3 +141,6 @@
 
 2.5.0:
     - 'Introduce the Pricing Workspace tab with range framing and pricing guardrail panels'
+
+2.6.0:
+    - 'Introduce the Supplier Readiness Workspace tab with supplier brief framing and supplier guardrail panels'

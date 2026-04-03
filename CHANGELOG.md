@@ -358,3 +358,9 @@
 - added a dedicated **Intake** tab to the inquiry update screen
 - introduced **Intake Normalization Workspace**, **Field Normalization Blueprint**, and **Normalization Risk Guardrails** panels
 - gives operators a backend-only space to normalize identity, trip, source, and preference fields before deeper planning, execution, or communication work
+
+## v4.1.0 — Supplier Readiness Workspace
+- added a dedicated **Suppliers** tab to the inquiry update screen
+- introduced **Supplier Readiness Workspace**, **Supplier Brief Blueprint**, and **Supplier Risk Guardrails** panels
+- gives operators a backend-only space to prepare supplier-facing coordination with continuity-safe scope, timing, privacy, and ownership discipline
+
