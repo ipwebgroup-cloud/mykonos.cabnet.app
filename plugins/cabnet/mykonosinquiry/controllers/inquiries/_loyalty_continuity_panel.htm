@@ -158,6 +158,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->owner_timing_signal_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Queue watch</h4>
+                    <p><?= e($record->queue_watch_readiness_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Reopen priority</h4>
+                    <p><?= e($record->deliberate_reopen_priority_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Finish triage</h4>
                     <p><?= e($record->finish_triage_label) ?></p>
                 </div>
@@ -218,6 +226,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
                     <li><strong>Queue compression:</strong> <?= e($record->stewardship_queue_compression_digest) ?></li>
                     <li><strong>Queue scan frame:</strong> <?= e($record->stewardship_queue_scan_frame) ?></li>
+                    <li><strong>Queue watch digest:</strong> <?= e($record->queue_watch_digest) ?></li>
+                    <li><strong>Reopen priority frame:</strong> <?= e($record->reopen_priority_frame) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

@@ -1,0 +1,53 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$watchReadiness = $record ? $record->queue_watch_readiness_label : 'Quiet continuity watch';
+$reopenPriority = $record ? $record->deliberate_reopen_priority_label : 'Low';
+$watchDigest = $record ? $record->queue_watch_digest : 'Queue watch digest is still minimal.';
+$reopenFrame = $record ? $record->reopen_priority_frame : 'Reopen priority framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-eye"></i>
+        <h4 style="margin-top:0;">Queue watch and reopen priority</h4>
+        <p>
+            Make due parked watches and reopened finish lanes surface faster in human review, without widening the loyalty workspace into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Queue watch readiness</h4>
+                <p><?= e($watchReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Deliberate reopen priority</h4>
+                <p><?= e($reopenPriority) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked watch</h4>
+                <p><?= e($record ? $record->parked_lane_watch_label : 'No parked watch active') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen trigger</h4>
+                <p><?= e($record ? $record->parked_lane_reopen_trigger_label : 'No parked lane to reopen yet.') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Queue band</h4>
+                <p><?= e($record ? $record->queue_compression_band_label : 'Quiet review queue') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Queue watch digest:</strong> <?= nl2br(e($watchDigest)) ?></li>
+                <li><strong>Reopen priority frame:</strong> <?= nl2br(e($reopenFrame)) ?></li>
+                <li>Use this panel to decide when a parked lane stays quiet and when it deserves deliberate human reopening.</li>
+                <li>Reopened lanes and due parked windows should rise earlier in review, but still remain operator-owned and non-automated.</li>
+            </ul>
+        </div>
+    </div>
+</div>

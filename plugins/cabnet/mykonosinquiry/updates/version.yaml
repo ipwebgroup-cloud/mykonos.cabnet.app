@@ -152,3 +152,6 @@
 
 2.3.16:
   - 'Introduce conservative stewardship queue compression and list-scan aids for live loyalty records'
+
+2.3.17:
+  - 'Introduce queue-watch readability and deliberate reopen-priority framing for live loyalty records'

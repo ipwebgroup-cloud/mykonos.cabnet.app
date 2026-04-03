@@ -113,6 +113,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Conservative queue-compression panel so finish-ready, parked, and reopen-sensitive records can be scanned faster without widening into automation.',
             ],
+            'queue_watch_reopen_priority_panel' => [
+                'label'   => 'Queue Watch and Reopen Priority',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_queue_watch_reopen_priority_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Extra watch-timing and reopen-priority framing so due parked lanes and reopened records rise faster in deliberate human review.',
+            ],
 
             'stewardship_finish_dashboard_panel' => [
                 'label'   => 'Stewardship Finish Dashboard',

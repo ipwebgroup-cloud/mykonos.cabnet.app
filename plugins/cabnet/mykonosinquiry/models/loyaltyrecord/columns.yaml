@@ -72,6 +72,14 @@ columns:
         label: Scan Aid
         sortable: false
 
+    queue_watch_readiness_label:
+        label: Queue Watch
+        sortable: false
+
+    deliberate_reopen_priority_label:
+        label: Reopen Priority
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

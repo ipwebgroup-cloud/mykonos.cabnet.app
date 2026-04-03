@@ -218,6 +218,38 @@ tabs:
             span: full
             comment: Read-only framing for how this record should sit in the human queue without widening into automation.
 
+        queue_watch_readiness_label:
+            label: Queue Watch Readiness
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Fast read of whether a parked lane is quietly stable, due soon, due now, or already reopened for deliberate review.
+
+        deliberate_reopen_priority_label:
+            label: Deliberate Reopen Priority
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Narrow reopen-priority signal so reopened or due parked lanes rise faster in human review without introducing automation.
+
+        queue_watch_digest:
+            label: Queue Watch Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed queue-watch digest focused on parked-lane timing, reopen pressure, ownership, and the next review window.
+
+        reopen_priority_frame:
+            label: Reopen Priority Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for when a parked lane should stay quiet and when it should rise into deliberate reopen review.
+
         finish_dashboard_status_label:
             label: Finish Dashboard Status
             tab: Overview

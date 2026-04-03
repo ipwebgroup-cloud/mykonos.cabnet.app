@@ -1667,6 +1667,116 @@ public function getStewardshipQueueScanFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getQueueWatchReadinessLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Reopened lane / immediate human review';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Parked watch due now';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Parked watch due soon';
+        }
+
+        return 'Parked watch stable';
+    }
+
+    if ($this->latest_closure_packet_mode !== '') {
+        return 'Closure packet prepared / lane not parked';
+    }
+
+    if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Continuity review due now';
+    }
+
+    if ($this->next_review_window_label === 'Due soon') {
+        return 'Continuity review due soon';
+    }
+
+    return 'Quiet continuity watch';
+}
+
+public function getDeliberateReopenPriorityLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Immediate';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'High';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Medium';
+        }
+
+        return 'Low';
+    }
+
+    if ($this->latest_closure_packet_mode !== '') {
+        return 'Medium';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'High';
+    }
+
+    if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Medium';
+    }
+
+    return 'Low';
+}
+
+public function getQueueWatchDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Queue watch readiness' => $this->queue_watch_readiness_label,
+        'Reopen priority' => $this->deliberate_reopen_priority_label,
+        'Queue band' => $this->queue_compression_band_label,
+        'Parked watch' => $this->parked_lane_watch_label,
+        'Reopen trigger' => $this->parked_lane_reopen_trigger_label,
+        'Owner timing' => $this->owner_timing_signal_label,
+        'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')' : 'Not scheduled',
+        'List scan aid' => $this->list_scan_aid_label,
+    ], 'Queue watch digest is still minimal.');
+}
+
+public function getReopenPriorityFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Queue watch readiness: ' . $this->queue_watch_readiness_label . '.';
+    $lines[] = 'Deliberate reopen priority: ' . $this->deliberate_reopen_priority_label . '.';
+    $lines[] = 'Queue band: ' . $this->queue_compression_band_label . '.';
+    $lines[] = 'Parked watch: ' . $this->parked_lane_watch_label . '.';
+    $lines[] = 'Reopen trigger: ' . rtrim($this->parked_lane_reopen_trigger_label, '.') . '.';
+    $lines[] = 'Owner timing: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is reopened already, the record should sit at the top of deliberate human review until the new proof is interpreted and the lane is either re-parked or advanced.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            $lines[] = 'Because the lane is parked but the watch window is due now, this record should surface early in queue review even though the finish posture remains formally parked.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the lane is parked and the review window is approaching, this record deserves medium-priority human attention before the parked watch quietly drifts overdue.';
+        } else {
+            $lines[] = 'Because the lane is parked and the watch window is stable, the record can stay quiet until the next review window or reopen trigger justifies a deliberate move.';
+        }
+    } elseif ($this->latest_closure_packet_mode !== '') {
+        $lines[] = 'Because a closure packet already exists but the finish lane is not parked yet, this record should not be buried; the next deliberate move is to park the matching lane or reopen it with clear proof.';
+    } else {
+        $lines[] = 'Because no parked finish lane exists yet, this record should stay in conservative continuity review rather than being treated like an automated reopen candidate.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
     public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
