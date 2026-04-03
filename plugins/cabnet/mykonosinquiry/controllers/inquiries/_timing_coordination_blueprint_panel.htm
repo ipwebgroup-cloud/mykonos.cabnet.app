@@ -1,0 +1,93 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$guests = $stringify($record->guests ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+
+$steps = [];
+$steps[] = 'Open the timing note with the clearest live checkpoint: follow-up date, stay window, or last-contact anchor.';
+if ($arrival !== '' || $departure !== '') {
+    $steps[] = 'Frame the schedule around the visible stay window so timing language never floats free of arrival/departure reality.';
+}
+if ($services !== '') {
+    $steps[] = 'Map service timing in sequence so arrivals, experiences, and high-touch requests are not coordinated in isolation.';
+}
+if ($guests !== '' && $guests !== '0') {
+    $steps[] = 'Keep timing choices aligned with group scale, especially when transfers, dining, or staggered movement may be affected.';
+}
+if ($summary !== '') {
+    $steps[] = 'Use the working summary as the continuity spine so the next timing move matches the real guest mission.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift only the clearest brief cues into the scheduling note and mark the rest as open timing assumptions.';
+}
+if ($requestedMode !== '') {
+    $steps[] = 'Match the scheduling route to the requested mode so the cadence suits how the guest expects to continue.';
+}
+$steps[] = $lastContacted !== ''
+    ? 'Close with the next visible checkpoint so the schedule advances from the most recent contact, not from memory.'
+    : 'End with one explicit next checkpoint so the schedule does not advance without a visible operator cadence.';
+
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+$headline = 'Timing coordination can stay continuity-led';
+if ($arrival === '' && $followUpDate === '') {
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+    $headline = 'Timing coordination should stay provisional';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+    $headline = 'Timing coordination can support locked execution';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Timing Coordination Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Route: <strong><?= e($status === 'confirmed' ? 'execution timing' : 'pre-execution coordination') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Scheduling close</div>
+        <div style="font-size:14px;"><?= e($followUpDate !== '' ? 'Tie the next timing move to the visible follow-up checkpoint so coordination remains trackable.' : 'End with one explicit operator-held checkpoint before any timing assumptions spread across guest or supplier communication.') ?></div>
+    </div>
+</div>

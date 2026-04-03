@@ -440,6 +440,29 @@ tabs:
             tab: Suppliers
             comment: Read-only guardrails that surface the supplier-readiness mistakes most likely to overexpose private details, outrun internal continuity, or create fragile external expectations.
 
+
+
+        scheduling_workspace_panel:
+            label: Scheduling Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_scheduling_workspace_panel.htm
+            tab: Scheduling
+            comment: High-level scheduling surface for deciding whether the record is ready for timing coordination, checkpoint-led cadence planning, or one more continuity pass before availability-style motion.
+
+        timing_coordination_blueprint_panel:
+            label: Timing Coordination Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_timing_coordination_blueprint_panel.htm
+            tab: Scheduling
+            comment: Read-only structure guidance for aligning stay dates, follow-up checkpoints, service sequencing, and contact cadence before timing coordination expands.
+
+        scheduling_risk_guardrails_panel:
+            label: Scheduling Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_scheduling_risk_guardrails_panel.htm
+            tab: Scheduling
+            comment: Read-only guardrails that surface the timing mistakes most likely to create cadence drift, checkpoint loss, or premature scheduling confidence.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

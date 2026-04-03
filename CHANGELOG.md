@@ -364,3 +364,9 @@
 - introduced **Supplier Readiness Workspace**, **Supplier Brief Blueprint**, and **Supplier Risk Guardrails** panels
 - gives operators a backend-only space to prepare supplier-facing coordination with continuity-safe scope, timing, privacy, and ownership discipline
 
+
+
+## v4.2.0 — Scheduling Workspace
+- added a dedicated **Scheduling** tab to the inquiry update screen
+- introduced **Scheduling Workspace**, **Timing Coordination Blueprint**, and **Scheduling Risk Guardrails** panels
+- gives operators a backend-only space to coordinate timing, checkpoints, and service cadence without mixing scheduling posture into supplier prep or guest-facing promise language

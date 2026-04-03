@@ -144,3 +144,6 @@
 
 2.6.0:
     - 'Introduce the Supplier Readiness Workspace tab with supplier brief framing and supplier guardrail panels'
+
+2.7.0:
+    - 'Introduce the Scheduling Workspace tab with timing coordination and scheduling guardrail panels'
