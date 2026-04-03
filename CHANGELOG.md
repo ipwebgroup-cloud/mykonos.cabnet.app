@@ -1,3 +1,8 @@
+## v2.6.33 — Source Continuity Panel
+- added a read-only **Source Continuity** panel to the Source tab
+- surfaces whether source type, requested mode, source title/slug, URL, and request reference are preserved clearly enough for campaign traceability and operator hand-off
+- keeps the patch backend-only with no schema, list, quick-action, or public `/plan` flow change
+
 ## v2.6.32 — Payload Carryover Gaps Panel
 - added a read-only **Payload Carryover Gaps** panel to the Raw tab
 - surfaces which preference and logistics cues still live only in payload instead of the structured operator record

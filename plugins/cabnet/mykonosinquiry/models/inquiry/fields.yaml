@@ -160,6 +160,13 @@ tabs:
             readOnly: true
             comment: Readable service summary captured from the public plan flow.
 
+        source_continuity_panel:
+            label: Source Continuity
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_source_continuity_panel.htm
+            tab: Source
+            comment: Read-only operator framing for whether the source trail is clear enough for campaign traceability, hand-off continuity, and reopen review before editing source fields.
+
         source_type:
             label: Source Type
             tab: Source

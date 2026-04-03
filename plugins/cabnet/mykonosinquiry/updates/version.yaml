@@ -93,3 +93,6 @@
 
 1.1.29:
     - 'Add payload carryover gaps scan panel to the stabilized operator workspace line'
+
+1.1.30:
+    - 'Add source continuity scan panel to the stabilized operator workspace line'

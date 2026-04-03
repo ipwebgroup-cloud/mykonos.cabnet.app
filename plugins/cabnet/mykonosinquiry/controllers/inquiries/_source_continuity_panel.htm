@@ -1,0 +1,102 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$sourceType = trim((string) ($record->source_type ?? ''));
+$sourceSlug = trim((string) ($record->source_slug ?? ''));
+$sourceTitle = trim((string) ($record->source_title ?? ''));
+$sourceUrl = trim((string) ($record->source_url ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$requestReference = trim((string) ($record->request_reference ?? ''));
+
+$traceSignals = [];
+$gaps = [];
+
+if ($sourceType !== '') {
+    $traceSignals[] = 'Source type is recorded as “' . $sourceType . '”, so the entry channel is not fully anonymous.';
+} else {
+    $gaps[] = 'Source type is blank. Preserve the entry channel before source context gets reconstructed from memory.';
+}
+
+if ($requestedMode !== '') {
+    $traceSignals[] = 'Requested mode is visible as “' . $requestedMode . '”, which helps explain the original planning posture.';
+} else {
+    $gaps[] = 'Requested mode is missing. Capture whether this began as a plan, transfer, concierge, or other flow before hand-off.';
+}
+
+if ($sourceTitle !== '' || $sourceSlug !== '') {
+    $traceSignals[] = 'Source title/slug gives the next operator a recognizable campaign or page checkpoint.';
+} else {
+    $gaps[] = 'Source title and slug are both blank. The entry context may be too thin for campaign or landing-page continuity.';
+}
+
+if ($sourceUrl !== '') {
+    $traceSignals[] = 'Source URL is present, so the original page context can be reopened if the inquiry needs deeper trace review.';
+} else {
+    $gaps[] = 'Source URL is missing. Reopen or marketing-trace review may rely too heavily on assumptions.';
+}
+
+if ($requestReference !== '') {
+    $traceSignals[] = 'Request reference is preserved, which protects continuity across guest communication and backend handling.';
+} else {
+    $gaps[] = 'Request reference is missing. Cross-surface continuity becomes weaker without a stable reference anchor.';
+}
+
+$gapCount = count($gaps);
+$headline = 'Source continuity looks stable';
+$palette = ['#198754', '#eaf7ef', '#cfe9d8'];
+if ($gapCount >= 3) {
+    $headline = 'Source continuity needs reinforcement';
+    $palette = ['#b91c1c', '#fef2f2', '#fecaca'];
+} elseif ($gapCount >= 1) {
+    $headline = 'Source continuity is partially covered';
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+}
+
+$nextMove = $gaps[0] ?? 'Source context is reasonably covered. Keep edits factual so campaign and page-entry continuity remain trustworthy.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Source Continuity</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Open source gaps: <strong><?= e((string) $gapCount) ?></strong></div>
+    </div>
+
+    <div style="font-size:13px; color:#334155; margin-bottom:10px;">
+        Keep the source record clear enough that the next operator can understand where this inquiry came from and what kind of entry context shaped the first guest touch.
+    </div>
+
+    <?php if (!empty($traceSignals)): ?>
+        <div style="padding:12px; border:1px solid #dbeafe; background:#ffffff; border-radius:12px; color:#0f172a; margin-bottom:12px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:6px;">Trace anchors present</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#0f172a;">
+                <?php foreach (array_slice($traceSignals, 0, 4) as $item): ?>
+                    <li style="margin:0 0 6px 0;"><?= e($item) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($gaps)): ?>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; background:#ffffff; border-radius:12px; color:#0f172a; margin-bottom:12px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">What still needs to be preserved</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#0f172a;">
+                <?php foreach (array_slice($gaps, 0, 4) as $item): ?>
+                    <li style="margin:0 0 6px 0;"><?= e($item) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <div style="padding:12px; border:1px dashed <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest next source move</div>
+        <div style="font-size:14px;"><?= e($nextMove) ?></div>
+    </div>
+</div>
