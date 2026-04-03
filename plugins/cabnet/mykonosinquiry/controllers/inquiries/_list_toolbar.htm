@@ -1,38 +1,94 @@
-<?= $this->makePartial('operator_list_ui_styles') ?>
+<?= makePartial('operator_list_ui_styles') ?>
+<?= makePartial('operator_list_workspace_styles') ?>
 
-<div class="control-toolbar">
-    <div class="toolbar-item toolbar-primary">
-        <a
-            href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>"
-            class="btn btn-primary oc-icon-plus"
-        >New inquiry</a>
-    </div>
+<div class="toolbar-item toolbar-primary">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">
+        New inquiry
+    </a>
 </div>
 
-<div class="callout callout-info no-subheader" style="margin-top: 0; margin-bottom: 18px;">
-    <div class="header">
-        <i class="icon-life-ring"></i>
-        <h3>Queue Command Board</h3>
-        <p>
-            Backend-only triage surface for safer operator scanning. It reads the live inquiry model without changing the conservative stable filter setup.
+<div class="operator-list-workspace-note">
+    <div class="operator-list-workspace-note__title">List Workspace Shell</div>
+    <p class="operator-list-workspace-note__body">
+        This update reduces queue-page scroll fatigue by grouping the operator boards into expandable workspace sections.
+        Keep the queue overview open, and expand the bridge sections only when routing decisions need extra help.
+    </p>
+</div>
+
+<nav class="operator-list-workspace-nav" aria-label="List workspace quick links">
+    <a class="operator-list-workspace-nav__link" href="#workspace-queue-overview">Queue overview</a>
+    <a class="operator-list-workspace-nav__link" href="#workspace-triage-lanes">Triage lanes</a>
+    <a class="operator-list-workspace-nav__link" href="#workspace-triage-playbook">Queue playbook</a>
+    <a class="operator-list-workspace-nav__link" href="#workspace-record-bridge">Queue-to-record bridge</a>
+</nav>
+
+<details id="workspace-queue-overview" class="operator-list-workspace-section" open>
+    <summary>
+        <span>
+            <span class="operator-list-workspace-section__title">Queue overview</span>
+            <span class="operator-list-workspace-section__subtitle">
+                Start here for live queue posture before drilling into individual records.
+            </span>
+        </span>
+        <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
+    </summary>
+    <div class="operator-list-workspace-section__body">
+        <?= makePartial('queue_command_board') ?>
+    </div>
+</details>
+
+<details id="workspace-triage-lanes" class="operator-list-workspace-section" open>
+    <summary>
+        <span>
+            <span class="operator-list-workspace-section__title">Live triage lanes</span>
+            <span class="operator-list-workspace-section__subtitle">
+                Open this section when assigning owners, clearing overdue follow-up, or handling today’s checkpoints.
+            </span>
+        </span>
+        <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
+    </summary>
+    <div class="operator-list-workspace-section__body">
+        <?= makePartial('queue_lane_board') ?>
+    </div>
+</details>
+
+<details id="workspace-triage-playbook" class="operator-list-workspace-section">
+    <summary>
+        <span>
+            <span class="operator-list-workspace-section__title">Operator triage playbook</span>
+            <span class="operator-list-workspace-section__subtitle">
+                Expand for queue discipline guidance before opening records one by one.
+            </span>
+        </span>
+        <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
+    </summary>
+    <div class="operator-list-workspace-section__body">
+        <p class="operator-list-workspace-inline-note">
+            Use this section when you need to reset queue handling order without adding more list filters.
         </p>
+        <?= makePartial('operator_triage_playbook') ?>
     </div>
-</div>
+</details>
 
-<?= $this->makePartial('queue_command_board') ?>
-<?= $this->makePartial('queue_lane_board') ?>
-<?= $this->makePartial('operator_triage_playbook') ?>
-
-<div class="callout callout-info no-subheader" style="margin-top: 8px; margin-bottom: 18px;">
-    <div class="header">
-        <i class="icon-random"></i>
-        <h3>Queue-to-Record Bridge</h3>
-        <p>
-            Read-only list-page guidance that helps operators choose the safest first workspace after opening a record, instead of re-scanning every tab by habit.
-        </p>
+<details id="workspace-record-bridge" class="operator-list-workspace-section">
+    <summary>
+        <span>
+            <span class="operator-list-workspace-section__title">Queue-to-record bridge</span>
+            <span class="operator-list-workspace-section__subtitle">
+                Expand only when operators need help choosing the safest first tab after opening an inquiry.
+            </span>
+        </span>
+        <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
+    </summary>
+    <div class="operator-list-workspace-section__body operator-list-workspace-stack">
+        <div>
+            <?= makePartial('queue_to_record_bridge_board') ?>
+        </div>
+        <div>
+            <?= makePartial('record_opening_routes_board') ?>
+        </div>
+        <div>
+            <?= makePartial('queue_to_record_playbook') ?>
+        </div>
     </div>
-</div>
-
-<?= $this->makePartial('queue_to_record_bridge_board') ?>
-<?= $this->makePartial('record_opening_routes_board') ?>
-<?= $this->makePartial('queue_to_record_playbook') ?>
+</details>
