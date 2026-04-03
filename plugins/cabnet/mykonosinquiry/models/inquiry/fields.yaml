@@ -335,6 +335,27 @@ tabs:
             tab: Handoff
             comment: Read-only guardrails that surface the transfer mistakes most likely to blur accountability, lose continuity, or force the receiving operator to reconstruct the case.
 
+        recovery_workspace_panel:
+            label: Recovery Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_workspace_panel.htm
+            tab: Recovery
+            comment: High-level recovery shaping surface for rebuilding stalled, fragmented, or drifted records before pushing them back into communication, reopen, handoff, or commercial motion.
+
+        continuity_rebuild_blueprint_panel:
+            label: Continuity Rebuild Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_continuity_rebuild_blueprint_panel.htm
+            tab: Recovery
+            comment: Read-only structure guidance for turning scattered notes, raw payload memory, and partial operator context into one readable recovery packet.
+
+        recovery_risk_guardrails_panel:
+            label: Recovery Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_risk_guardrails_panel.htm
+            tab: Recovery
+            comment: Read-only guardrails that surface the rebuild mistakes most likely to restart ambiguity, hide scope drift, or push the record forward before continuity is repaired.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

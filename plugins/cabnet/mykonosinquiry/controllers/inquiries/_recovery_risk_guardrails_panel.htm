@@ -1,0 +1,45 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+
+$risks = [];
+$risks[] = $owner === '' ? 'Owner is not explicit, so recovery could restart ambiguity instead of repairing it.' : 'Owner is visible, which strengthens accountability during recovery.';
+$risks[] = ($summary === '' && $notes === '') ? 'Continuity text is too thin, so recovery may depend on memory or raw payload reconstruction.' : 'Continuity text exists, which lowers reconstruction cost during recovery.';
+$risks[] = ($services === '' && $details === '') ? 'Mission scope is not visible enough, so the rebuilt record may drift before the next move.' : 'Mission scope exists, which protects recovery from vague next-step decisions.';
+$risks[] = ($sourceType === '' && $requestedMode === '') ? 'Source memory is weak, so campaign or entry context may be lost during rebuild.' : 'Source memory is visible, which supports a cleaner rebuild packet.';
+$risks[] = ($followUpDate === '' && $closedReason === '') ? 'Recovery timing and reason are both thin, so the rebuilt record may look active without a clear why-now.' : 'Recovery timing or reason is visible, which gives the rebuild a clearer why-now anchor.';
+
+$headline = 'Recover only after continuity repair';
+$palette = ['#92400e', '#fffbeb', '#fcd34d'];
+if ($owner !== '' && ($summary !== '' || $notes !== '') && ($services !== '' || $details !== '') && ($sourceType !== '' || $requestedMode !== '') && ($followUpDate !== '' || $closedReason !== '' || in_array($status, ['closed_won', 'closed_lost', 'closed'], true))) {
+    $headline = 'Recovery guardrails mostly satisfied';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Recovery Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;"><?= e($headline) ?></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($risks as $risk): ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; font-size:14px; color:#0f172a; line-height:1.6;">
+                <?= e($risk) ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

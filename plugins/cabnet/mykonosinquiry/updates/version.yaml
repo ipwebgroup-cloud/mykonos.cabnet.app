@@ -126,3 +126,6 @@
 
 2.1.0:
     - 'Introduce the Handoff Workspace tab with transfer packet and handoff guardrail panels'
+
+2.2.0:
+    - 'Introduce the Recovery Workspace tab with continuity rebuild and recovery guardrail panels'

@@ -1,0 +1,121 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$payload = trim((string) ($record->payload_json ?? ''));
+
+$missing = [];
+if ($owner === '') {
+    $missing[] = 'named owner';
+}
+if ($summary === '' && $notes === '') {
+    $missing[] = 'continuity text';
+}
+if ($services === '' && $details === '') {
+    $missing[] = 'mission scope';
+}
+if ($sourceType === '' && $requestedMode === '') {
+    $missing[] = 'source memory';
+}
+if ($followUpDate === '' && $lastContacted === '') {
+    $missing[] = 'checkpoint cadence';
+}
+
+$state = 'Recovery rebuild required';
+$palette = ['#92400e', '#fffbeb', '#fcd34d'];
+if (count($missing) <= 2) {
+    $state = 'Recovery path visible';
+    $palette = ['#1d4ed8', '#eff6ff', '#93c5fd'];
+}
+if (empty($missing)) {
+    $state = 'Recovery-ready posture';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+}
+
+$nextMove = 'Rebuild this record before trying to communicate, reopen, or hand it off. Recovery should restore a named owner, readable mission scope, source memory, and the next checkpoint.';
+if ($state === 'Recovery path visible') {
+    $nextMove = 'A recovery move is possible now, but finish the missing anchors first so the next action does not depend on guesswork or raw payload alone.';
+}
+if ($state === 'Recovery-ready posture') {
+    $nextMove = 'The record carries the core anchors needed for disciplined recovery. Use this tab to tighten the continuity packet before resuming motion.';
+}
+if (in_array($priority, ['vip', 'urgent'], true)) {
+    $nextMove .= ' VIP / urgent posture increases the cost of a vague rebuild path.';
+}
+
+$signals = [];
+if ($owner !== '') {
+    $signals[] = 'owner visible';
+}
+if ($summary !== '' || $notes !== '') {
+    $signals[] = 'continuity text visible';
+}
+if ($services !== '' || $details !== '') {
+    $signals[] = 'mission scope visible';
+}
+if ($sourceType !== '' || $requestedMode !== '') {
+    $signals[] = 'source memory visible';
+}
+if ($followUpDate !== '' || $lastContacted !== '') {
+    $signals[] = 'checkpoint visible';
+}
+if ($payload !== '') {
+    $signals[] = 'raw payload available';
+}
+
+$recoveryNote = 'Recovery should produce a cleaner record than the one that stalled, drifted, or fragmented.';
+if ($closedReason !== '') {
+    $recoveryNote = 'Closure memory exists. Keep that visible while rebuilding the record so recovery does not erase why momentum broke earlier.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Recovery Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($state) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Recovery posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($nextMove) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible recovery signals</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($signals) ? implode(', ', $signals) : 'Start with owner, continuity text, source memory, and the current mission scope.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Recovery note</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($recoveryNote) ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($missing)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Clean recovery still depends on: <strong><?= e(implode(', ', $missing)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record carries the anchors needed for disciplined recovery without forcing the next operator to reconstruct the case from raw payload or memory alone.
+        </div>
+    <?php endif; ?>
+</div>

@@ -327,3 +327,8 @@
 - added a dedicated **Confirmation** tab to the inquiry update screen
 - introduced **Confirmation Workspace**, **Commitment Lock Blueprint**, and **Confirmation Risk Guardrails** panels
 - gives operators a backend-only space to move from fulfillment posture into disciplined commitment language without touching public `/plan`, schema, or list stability
+
+## v3.7.0 — Recovery Workspace
+- added a dedicated **Recovery** tab to the inquiry update screen
+- introduced **Recovery Workspace**, **Continuity Rebuild Blueprint**, and **Recovery Risk Guardrails** panels
+- gives operators a backend-only space to rebuild fragmented or stalled records before reopening, handing off, or restarting guest-facing motion

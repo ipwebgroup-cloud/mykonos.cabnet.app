@@ -1,0 +1,65 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+
+$route = 'Run a continuity rebuild first';
+if (($summary !== '' || $notes !== '') && ($services !== '' || $details !== '') && $owner !== '' && ($sourceType !== '' || $requestedMode !== '')) {
+    $route = 'Use a structured recovery pass now';
+}
+if (in_array($status, ['closed_won'], true)) {
+    $route = 'Use recovery discipline only if the record truly needs to be revived';
+}
+
+$mustCapture = [];
+$mustCapture[] = $owner !== '' ? 'named owner remains visible' : 'assign explicit owner before recovering the record';
+$mustCapture[] = ($summary !== '' || $notes !== '') ? 'continuity text remains visible' : 'write one readable continuity block';
+$mustCapture[] = ($services !== '' || $details !== '') ? 'mission scope remains visible' : 'state the current mission scope or scope uncertainty';
+$mustCapture[] = ($sourceType !== '' || $requestedMode !== '') ? 'source / entry context remains visible' : 'restore source and entry context';
+$mustCapture[] = $followUpDate !== '' ? 'next checkpoint already visible' : 'state the next checkpoint after recovery';
+$mustCapture[] = $closedReason !== '' ? 'closure memory already captured' : 'state why the record needs recovery now';
+
+$avoid = [
+    'Do not treat recovery as a long narrative dump with no obvious owner, mission, or next checkpoint.',
+    'Do not revive scattered notes without first turning them into a readable continuity packet.',
+    'Do not force communication, proposal, reopen, or handoff moves before the record can be scanned cleanly in one pass.',
+];
+?>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:12px; margin-bottom:16px;">
+    <div style="padding:14px; border:1px solid #bfdbfe; border-radius:14px; background:#eff6ff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:8px;">Continuity Rebuild Blueprint</div>
+        <div style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($route) ?></div>
+        <div style="font-size:14px; color:#334155;">Recovery should leave the record more readable, more accountable, and easier to move than before the stall or drift.</div>
+    </div>
+    <div style="padding:14px; border:1px solid #cbd5e1; border-radius:14px; background:#fff;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:8px;">Must-capture recovery facts</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($mustCapture as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <div style="padding:14px; border:1px solid #fecaca; border-radius:14px; background:#fef2f2;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:8px;">Avoid</div>
+        <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.6;">
+            <?php foreach ($avoid as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
