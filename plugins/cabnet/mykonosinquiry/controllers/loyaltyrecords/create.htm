@@ -8,10 +8,9 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
             <div class="callout fade in no-subheader">
                 <div class="header">
                     <i class="icon-info"></i>
-                    <h3>Loyalty Continuity is not ready for manual record creation yet</h3>
+                    <h3>Loyalty Continuity is in launch-readiness mode</h3>
                     <p>
-                        The loyalty workspace is installed at the UI level, but the required loyalty database tables are not present.
-                        This guard prevents backend crashes and keeps the live inquiry workflow stable.
+                        Manual loyalty record creation is intentionally blocked because the loyalty storage tables are not installed in this environment yet.
                     </p>
                 </div>
             </div>
@@ -22,12 +21,16 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                 <table class="table data">
                     <tbody>
                         <tr>
-                            <td style="width:260px;"><strong>Recommended live workspace</strong></td>
-                            <td>Inquiry Queue</td>
+                            <td style="width:280px;"><strong>Current mode</strong></td>
+                            <td>Guarded pre-launch workspace</td>
                         </tr>
                         <tr>
-                            <td><strong>Loyalty manual creation</strong></td>
-                            <td>Temporarily locked until storage is installed</td>
+                            <td><strong>Use instead</strong></td>
+                            <td>Inquiry Queue for live handling and qualification</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Create action</strong></td>
+                            <td>Will unlock only after the loyalty storage layer is deployed</td>
                         </tr>
                     </tbody>
                 </table>

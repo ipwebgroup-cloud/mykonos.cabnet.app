@@ -7,12 +7,11 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <div class="layout-row">
             <div class="callout fade in no-subheader">
                 <div class="header">
-                    <i class="icon-info"></i>
-                    <h3>Loyalty Continuity is not installed in this environment yet</h3>
+                    <i class="icon-flag-checkered"></i>
+                    <h3>Loyalty Continuity launch readiness workspace</h3>
                     <p>
-                        The loyalty workspace shell is present, but the loyalty database tables are not available yet.
-                        The main inquiry queue remains safe and usable. Once the loyalty storage layer is added in a controlled release,
-                        this workspace will begin rendering records normally.
+                        The Loyalty Continuity shell is installed and protected. The data layer is still intentionally absent in this
+                        environment, so this workspace now acts as a launch-readiness surface instead of a live record queue.
                     </p>
                 </div>
             </div>
@@ -23,26 +22,68 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                 <table class="table data">
                     <thead>
                         <tr>
-                            <th><span>Workspace Status</span></th>
+                            <th><span>Readiness Area</span></th>
                             <th><span>Current State</span></th>
+                            <th><span>Operator Meaning</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Inquiry Queue</td>
+                            <td><strong>Live</strong></td>
+                            <td>Primary operational workspace for active handling</td>
+                        </tr>
+                        <tr>
                             <td>Loyalty UI shell</td>
-                            <td>Installed and rendering safely</td>
+                            <td><strong>Installed</strong></td>
+                            <td>Navigation and guarded screens are present</td>
                         </tr>
                         <tr>
                             <td>Loyalty storage tables</td>
-                            <td>Not installed in this environment</td>
+                            <td><strong>Pending</strong></td>
+                            <td>No live loyalty records should be expected yet</td>
                         </tr>
                         <tr>
-                            <td>Inquiry Queue</td>
-                            <td>Should remain the active operational workspace</td>
+                            <td>Manual record creation</td>
+                            <td><strong>Locked</strong></td>
+                            <td>Disabled until storage is introduced in a controlled release</td>
                         </tr>
                         <tr>
-                            <td>Manual loyalty record creation</td>
-                            <td>Locked until storage exists</td>
+                            <td>Record editing</td>
+                            <td><strong>Locked</strong></td>
+                            <td>Disabled until storage and real records exist</td>
+                        </tr>
+                        <tr>
+                            <td>Inquiry-side loyalty cues</td>
+                            <td><strong>Active</strong></td>
+                            <td>Operators can still assess readiness from the inquiry workspace</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="layout-row">
+            <div class="control-list">
+                <table class="table data">
+                    <thead>
+                        <tr>
+                            <th><span>Recommended Route</span></th>
+                            <th><span>Use When</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Inquiry Queue</strong></td>
+                            <td>Guest request is still in qualification, coordination, follow-up, or closure handling</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Review for Continuity</strong></td>
+                            <td>Case is stabilizing and may later become a retention candidate</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Loyalty Continuity</strong></td>
+                            <td>Reserved for post-service retention once the storage layer is launched</td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,10 +93,10 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <div class="layout-row">
             <div class="callout fade in no-subheader">
                 <div class="content">
-                    <h4 style="margin-top:0;">Controlled next step</h4>
+                    <h4 style="margin-top:0;">Controlled next release target</h4>
                     <p style="margin-bottom:0;">
-                        Keep using <strong>Inquiry Queue</strong> for live concierge handling. Loyalty Continuity should remain a post-service
-                        retention workspace and should only be activated once the database layer is introduced in a verified release.
+                        The next structural step should add the loyalty storage layer in a dedicated release. Until then, this workspace should
+                        remain informational and guarded, while operators continue to work from the live inquiry queue.
                     </p>
                 </div>
             </div>

@@ -5,18 +5,15 @@
 - Active plugin: `plugins/cabnet/mykonosinquiry`
 - Public source-of-truth direction remains the DB-backed inquiry workflow from the v41 integration line.
 
-## Current emergency status
-- Inquiry workspace remains stable after loyalty partial, render, toolbar, and table-guard hotfixes.
-- Loyalty Continuity now opens safely even when the loyalty database tables are not installed.
-- The current safe behavior is:
-  - inquiry pages continue to work
-  - loyalty pages render guarded install-state messaging
-  - toolbar actions remain locked until storage exists
+## Current stability state
+- Inquiry Queue remains the live operational workspace.
+- Loyalty Continuity now renders safely even when the loyalty storage layer is not installed.
+- The loyalty workspace is currently running in a guarded launch-readiness mode.
 
 ## This patch
-- Version: `v2.3.12`
-- Name: `loyalty install-state workspace polish`
-- Type: plugin-only safety patch
+- Version: `v2.4.0`
+- Name: `loyalty launch readiness workspace`
+- Type: plugin-only operator-facing major patch
 - No schema change
 - No theme change
 
@@ -26,12 +23,12 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/update.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
-- `docs/releases/MYKONOS_V2312_LOYALTY_INSTALL_STATE_WORKSPACE_POLISH_PATCH.md`
+- `docs/releases/MYKONOS_V240_LOYALTY_LAUNCH_READINESS_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The workspace was restored safely, but it still exposed an active-looking toolbar and minimal install-state feedback. This patch makes the current non-installed state more explicit and operator-friendly while keeping the inquiry queue as the live operational surface.
+The guarded workspace was stable again, but it still behaved like a placeholder. This patch turns Loyalty Continuity into a structured pre-launch workspace with clearer readiness, routing, and operator guidance while the storage layer remains deferred.
 
 ## Safest next direction
-- Keep the inquiry queue stable.
-- Do not introduce schema work through live hotfixes.
-- Continue with plugin-only operator-facing polish until the loyalty storage layer is prepared in a separate controlled release.
+- Keep Inquiry Queue stable as the live workspace.
+- Continue using plugin-only operator-facing polish.
+- Prepare the loyalty storage layer separately in a controlled, explicitly installable release.

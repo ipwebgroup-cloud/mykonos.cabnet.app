@@ -8,10 +8,9 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
             <div class="callout fade in no-subheader">
                 <div class="header">
                     <i class="icon-info"></i>
-                    <h3>Loyalty Continuity is not ready for record editing yet</h3>
+                    <h3>Loyalty Continuity editing is waiting for storage activation</h3>
                     <p>
-                        The loyalty workspace is present, but the loyalty storage layer is not installed in this environment.
-                        This page is intentionally guarded until the data layer is introduced safely.
+                        This workspace remains protected until the loyalty database tables are introduced in a controlled release.
                     </p>
                 </div>
             </div>
@@ -22,12 +21,16 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                 <table class="table data">
                     <tbody>
                         <tr>
-                            <td style="width:260px;"><strong>Current mode</strong></td>
-                            <td>Readiness guard</td>
+                            <td style="width:280px;"><strong>Editing state</strong></td>
+                            <td>Locked safely</td>
                         </tr>
                         <tr>
                             <td><strong>Reason</strong></td>
-                            <td>Loyalty storage tables are not installed yet</td>
+                            <td>Loyalty records cannot exist without the storage layer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operational route</strong></td>
+                            <td>Continue case handling from Inquiry Queue until the launch release is ready</td>
                         </tr>
                     </tbody>
                 </table>
