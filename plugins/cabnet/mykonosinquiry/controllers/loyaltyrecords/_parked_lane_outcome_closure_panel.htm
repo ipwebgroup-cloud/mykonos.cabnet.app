@@ -1,0 +1,55 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$parkedOutcome = $record ? $record->parked_lane_outcome_label : 'No parked outcome yet';
+$parkedWatch = $record ? $record->parked_lane_watch_label : 'No parked watch active';
+$reopenTrigger = $record ? $record->parked_lane_reopen_trigger_label : 'No parked lane to reopen yet.';
+$closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
+$latestOutcome = $record ? $record->latest_touchpoint_outcome_label : 'No outcome recorded yet.';
+$parkedOutcomeDigest = $record ? $record->parked_lane_outcome_digest : 'Parked-lane outcome readability is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-flag-checkered"></i>
+        <h4 style="margin-top:0;">Parked-lane outcome closure</h4>
+        <p>
+            Read what the parked finish lane currently means, why it is being held, and what would justify reopening it without rebuilding the whole closure story from scattered notes.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Parked-lane outcome</h4>
+                <p><?= e($parkedOutcome) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked watch</h4>
+                <p><?= e($parkedWatch) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen trigger</h4>
+                <p><?= e($reopenTrigger) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($closureReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest outcome</h4>
+                <p><?= e($latestOutcome) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Parked-lane outcome digest:</strong> <?= nl2br(e($parkedOutcomeDigest)) ?></li>
+                <li>Referral lanes should remain goodwill-safe and low-pressure even when closure looks complete.</li>
+                <li>Return-value lanes should stay stewardship-led and reopen only on real premium intent or deliberate owner review.</li>
+                <li>Reactivation lanes should stay short-window and proof-sensitive rather than drifting into broad outreach.</li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -52,6 +52,10 @@ columns:
         label: Finish Lane
         sortable: false
 
+    finish_dashboard_status_label:
+        label: Finish Dashboard
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

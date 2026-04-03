@@ -1,0 +1,76 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$dashboardStatus = $record ? $record->finish_dashboard_status_label : 'Finish posture still emerging';
+$finishPosture = $record ? $record->stewardship_finish_posture_label : 'Review posture maintained';
+$closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
+$parkedOutcome = $record ? $record->parked_lane_outcome_label : 'No parked outcome yet';
+$finishLaneStatus = $record ? $record->finish_lane_status_label : 'No finish lane parked';
+$latestFinishLane = $record ? $record->latest_finish_lane_label : 'No finish lane parked yet.';
+$latestClosurePacket = $record ? $record->latest_closure_packet_label : 'No closure packet prepared yet.';
+$parkedWatch = $record ? $record->parked_lane_watch_label : 'No parked watch active';
+$nextFinishMove = $record ? $record->next_finish_move_label : 'Keep finish handling narrow';
+$finishDashboardSummary = $record ? $record->finish_dashboard_summary : 'Finish dashboard readability is still minimal.';
+$finishDashboardFrame = $record ? $record->stewardship_finish_dashboard_frame : 'Finish dashboard framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-dashboard"></i>
+        <h4 style="margin-top:0;">Stewardship finish dashboard</h4>
+        <p>
+            Read closure posture, parked-lane meaning, and the next safe stewardship move from one narrow dashboard instead of reconstructing the whole finish story manually.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Dashboard status</h4>
+                <p><?= e($dashboardStatus) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish posture</h4>
+                <p><?= e($finishPosture) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($closureReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked-lane outcome</h4>
+                <p><?= e($parkedOutcome) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish lane status</h4>
+                <p><?= e($finishLaneStatus) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest finish lane</h4>
+                <p><?= e($latestFinishLane) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest closure packet</h4>
+                <p><?= e($latestClosurePacket) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Parked watch</h4>
+                <p><?= e($parkedWatch) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($nextFinishMove) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Finish dashboard summary:</strong> <?= nl2br(e($finishDashboardSummary)) ?></li>
+                <li><strong>Dashboard frame:</strong> <?= nl2br(e($finishDashboardFrame)) ?></li>
+                <li>Use this dashboard to decide whether the record is still in execution, ready for a closure packet, deliberately parked, or intentionally reopened for fresh finish review.</li>
+                <li>Keep finish handling human-owned and narrow even when the dashboard looks complete.</li>
+            </ul>
+        </div>
+    </div>
+</div>

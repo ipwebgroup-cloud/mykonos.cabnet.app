@@ -147,6 +147,38 @@ tabs:
             span: full
             comment: Read-only finish framing that keeps stewardship closure readable without widening into automation.
 
+        finish_dashboard_status_label:
+            label: Finish Dashboard Status
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: At-a-glance dashboard reading of whether the record is still open, ready to close, prepared, parked, or reopened.
+
+        parked_lane_outcome_label:
+            label: Parked-Lane Outcome
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Fast reading of what the current parked finish lane means operationally.
+
+        finish_dashboard_summary:
+            label: Finish Dashboard Summary
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow finish dashboard digest for closure posture, parked lane meaning, and the next safe move.
+
+        stewardship_finish_dashboard_frame:
+            label: Stewardship Finish Dashboard Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing that turns finish posture into a single human-readable dashboard.
+
         continuity_status:
             label: Continuity Status
             type: dropdown
@@ -436,6 +468,15 @@ tabs:
             readOnly: true
             span: full
             comment: Short trace of the latest prepared packet, execution state, and resulting outcome.
+
+        parked_lane_outcome_digest:
+            label: Parked-Lane Outcome Digest
+            type: textarea
+            size: large
+            tab: History
+            readOnly: true
+            span: full
+            comment: Closure-side digest that explains what the current parked finish lane means and when it should be reopened.
 
         history_preview:
             label: Touchpoint Timeline

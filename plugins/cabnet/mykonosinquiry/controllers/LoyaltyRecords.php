@@ -97,6 +97,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Read-only finish framing that keeps closure recommendations grounded in the latest loop and outcome.',
             ],
+            'stewardship_finish_dashboard_panel' => [
+                'label'   => 'Stewardship Finish Dashboard',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_stewardship_finish_dashboard_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Single-screen finish dashboard so operators can read closure posture, parked-lane outcome, and the next safe move without rebuilding the whole lane.',
+            ],
             'record_detail_structure_panel' => [
                 'label'   => 'Record Detail Structure',
                 'type'    => 'partial',
@@ -168,6 +176,14 @@ class LoyaltyRecords extends Controller
                 'tab'     => 'History',
                 'span'    => 'full',
                 'comment' => 'Readable closing-loop view showing what was prepared, executed, and what happened next.',
+            ],
+            'parked_lane_outcome_closure_panel' => [
+                'label'   => 'Parked-Lane Outcome Closure',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_lane_outcome_closure_panel.htm',
+                'tab'     => 'History',
+                'span'    => 'full',
+                'comment' => 'Readable parked-lane outcome digest so referral, reactivation, and return-value finish states are easier to judge from one narrow closure view.',
             ],
         ]);
     }

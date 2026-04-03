@@ -143,3 +143,7 @@
 
 2.3.13:
   - 'Introduce parked-state digest polish and lane-watch framing for live loyalty finish lanes'
+
+2.3.14:
+  - 'Introduce parked-lane outcome closure readability and a stewardship finish dashboard for live loyalty records'
+

@@ -1288,6 +1288,139 @@ public function getParkedStateVisibilityFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getParkedLaneOutcomeLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Reopened for deliberate finish review';
+    }
+
+    if ($this->latest_finish_lane_mode === '') {
+        if ($this->latest_closure_packet_mode !== '') {
+            return 'Closure packet ready for lane parking';
+        }
+
+        if ($this->closure_readiness_label === 'Ready for finish packet') {
+            return 'Ready for closure decision';
+        }
+
+        return 'No parked outcome yet';
+    }
+
+    if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Parked lane due for human review';
+    }
+
+    switch ($this->latest_finish_lane_mode) {
+        case 'referral':
+            return 'Referral goodwill held in parked posture';
+        case 'return_value':
+            return 'Return-value stewardship held in parked posture';
+        case 'reactivation':
+            return 'Reactivation lane parked for proof watch';
+        default:
+            return 'Parked finish posture active';
+    }
+}
+
+public function getParkedLaneOutcomeDigestAttribute(): string
+{
+    $nextReview = $this->next_review_at
+        ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')'
+        : 'Not scheduled';
+
+    return $this->formatSummary([
+        'Finish dashboard' => $this->finish_dashboard_status_label,
+        'Parked lane outcome' => $this->parked_lane_outcome_label,
+        'Finish posture' => $this->stewardship_finish_posture_label,
+        'Finish lane status' => $this->finish_lane_status_label,
+        'Latest finish lane' => $this->latest_finish_lane_label,
+        'Parked watch' => $this->parked_lane_watch_label,
+        'Closure readiness' => $this->closure_readiness_label,
+        'Next finish move' => $this->next_finish_move_label,
+        'Latest outcome' => $this->latest_touchpoint_outcome_label,
+        'Latest touchpoint' => $this->latest_touchpoint_summary,
+        'Next review' => $nextReview,
+    ], 'Parked-lane outcome readability is still minimal.');
+}
+
+public function getFinishDashboardStatusLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Reopened / awaiting fresh finish decision';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Parked / review window active';
+        }
+
+        return 'Parked / stewardship watch running';
+    }
+
+    if ($this->latest_closure_packet_mode !== '') {
+        return 'Closure packet prepared / lane pending';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Ready / finish decision can be made';
+        case 'Timed for later finish':
+            return 'Timed / not yet ready to close';
+        case 'Execution still open':
+            return 'Execution open / do not finish yet';
+        case 'Prepared but not yet executed':
+            return 'Prepared / execution still pending';
+        default:
+            return 'Finish posture still emerging';
+    }
+}
+
+public function getFinishDashboardSummaryAttribute(): string
+{
+    $nextReview = $this->next_review_at
+        ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')'
+        : 'Not scheduled';
+
+    return $this->formatSummary([
+        'Dashboard status' => $this->finish_dashboard_status_label,
+        'Finish posture' => $this->stewardship_finish_posture_label,
+        'Closure readiness' => $this->closure_readiness_label,
+        'Parked lane outcome' => $this->parked_lane_outcome_label,
+        'Latest finish lane' => $this->latest_finish_lane_label,
+        'Latest closure packet' => $this->latest_closure_packet_label,
+        'Parked watch' => $this->parked_lane_watch_label,
+        'Next finish move' => $this->next_finish_move_label,
+        'Latest outcome' => $this->latest_touchpoint_outcome_label,
+        'Next review' => $nextReview,
+    ], 'Finish dashboard readability is still minimal.');
+}
+
+public function getStewardshipFinishDashboardFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Dashboard status: ' . $this->finish_dashboard_status_label . '.';
+    $lines[] = 'Finish posture: ' . $this->stewardship_finish_posture_label . '.';
+    $lines[] = 'Closure readiness: ' . $this->closure_readiness_label . '.';
+    $lines[] = 'Parked lane outcome: ' . $this->parked_lane_outcome_label . '.';
+    $lines[] = 'Next finish move: ' . $this->next_finish_move_label . '.';
+
+    if ($this->latest_finish_lane_mode !== '') {
+        $lines[] = 'Latest finish lane: ' . $this->latest_finish_lane_label . ' with a ' . $this->parked_finish_window_label . '.';
+    } elseif ($this->latest_closure_packet_mode !== '') {
+        $lines[] = 'Latest closure packet: ' . $this->latest_closure_packet_label . ' with a ' . $this->closure_window_label . '.';
+    } else {
+        $lines[] = 'No finish lane is explicit yet, so the record should stay narrow until a human operator closes or parks the lane deliberately.';
+    }
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the lane is reopened, the parked posture is suspended and the next human signal should rebuild the finish decision.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        $lines[] = 'Because the lane is parked, the record should remain quiet until the reopen trigger or review window justifies another deliberate move.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
     public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

@@ -9,40 +9,42 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity is active as a guarded plugin-only workspace and can operate live when storage is aligned.
-- Loyalty records now support transfer bridging, live touchpoint capture, continuity decision framing, retention packet preparation, packet follow-through execution framing, cleaner closing-loop readability, explicit stewardship closure packets, outcome-driven finish recommendations, and explicit finish-lane parking/reopening for referral, reactivation, and return-value handling.
-- The guarded non-ready loyalty index, create, and update views now tolerate missing staged partials instead of assuming every historical staging partial is present.
+- Loyalty records now support transfer bridging, live touchpoint capture, continuity decision framing, retention packet preparation, packet follow-through execution framing, cleaner closing-loop readability, explicit stewardship closure packets, outcome-driven finish recommendations, explicit finish-lane parking/reopening, parked-state digest framing, and a single-screen stewardship finish dashboard.
+- The guarded non-ready loyalty index, create, and update views tolerate missing staged partials instead of assuming every historical staging partial is present.
 
 ## This patch
-- Version: `v5.9.0`
-- Name: `parked-state digest polish and lane-watch framing workspace`
+- Version: `v6.0.0`
+- Name: `parked-lane outcome closure readability and stewardship finish dashboard workspace`
 - Type: plugin-only major patch
-- Adds parked-state digest polish so referral, reactivation, and return-value finish lanes are easier to read from the loyalty record, list, and linked inquiry snapshot
+- Adds a single-screen finish dashboard and a dedicated parked-lane outcome closure digest so referral, reactivation, and return-value finish lanes are easier to read from the loyalty record, list, and linked inquiry snapshot
 - No theme change
 - No schema change
 
 ## Files included in this patch
 - `plugins/cabnet/mykonosinquiry/controllers/LoyaltyRecords.php`
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_lane_follow_through_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_finish_state_digest_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_lane_outcome_closure_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_stewardship_finish_dashboard_panel.htm`
 - `plugins/cabnet/mykonosinquiry/models/LoyaltyRecord.php`
 - `plugins/cabnet/mykonosinquiry/models/loyaltyrecord/fields.yaml`
 - `plugins/cabnet/mykonosinquiry/models/loyaltyrecord/columns.yaml`
 - `plugins/cabnet/mykonosinquiry/updates/version.yaml`
-- `docs/releases/MYKONOS_V590_PARKED_STATE_DIGEST_POLISH_AND_LANE_WATCH_FRAMING_WORKSPACE_PATCH.md`
+- `docs/releases/MYKONOS_V600_PARKED_LANE_OUTCOME_CLOSURE_READABILITY_AND_STEWARDSHIP_FINISH_DASHBOARD_WORKSPACE_PATCH.md`
 - `MYKONOS_PLUGIN_HANDOFF.md`
 
 ## Why this patch exists
-The live loyalty line could already park or reopen finish lanes, but operators still had to reconstruct what a parked lane actually meant from scattered finish fields.
+The live loyalty line could already prepare closure packets, park finish lanes, reopen them deliberately, and expose parked-state digests.
 
-This patch makes parked stewardship easier to read by:
-- introducing a parked finish state digest panel
-- adding lane-watch and reopen-trigger readouts
-- surfacing parked-state digest details directly on the loyalty list and linked inquiry snapshot
-- keeping finish-lane handling narrow, human-owned, and plugin-only
+The remaining friction was closure readability: operators still had to reconstruct what a parked finish lane actually meant from several different watch, readiness, and stewardship fields.
+
+This patch makes that easier by:
+- introducing a single-screen stewardship finish dashboard
+- introducing a dedicated parked-lane outcome closure digest
+- surfacing the same finish framing directly on the loyalty list and linked inquiry snapshot
+- keeping finish handling narrow, human-owned, plugin-only, and non-automated
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live operational workspace.
 - Keep loyalty continuity narrow, operator-owned, and readable.
-- Keep explicit finish-lane parking human-owned and narrow.
-- Next major patches should focus on parked-lane outcome closure readability and a cleaner at-a-glance stewardship finish dashboard without drifting into automation or theme work.
+- Keep finish-lane parking and reopening human-owned and explicit.
+- Next major patches should focus on even cleaner stewardship snapshot compression and list-level finish triage without drifting into campaign logic, theme work, or automation.
