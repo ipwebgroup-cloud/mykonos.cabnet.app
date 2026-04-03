@@ -1,0 +1,176 @@
+<?php
+$record = null;
+
+if (isset($vars['formModel']) && $vars['formModel'] && $vars['formModel']->exists) {
+    $record = $vars['formModel'];
+} elseif (isset($formModel) && $formModel && $formModel->exists) {
+    $record = $formModel;
+} elseif (isset($model) && $model && $model->exists) {
+    $record = $model;
+} elseif (isset($this->controller) && method_exists($this->controller, 'formGetModel')) {
+    $record = $this->controller->formGetModel();
+}
+
+if (!$record) { ?>
+    <p class="form-control-static">History note framing becomes available after the inquiry is created.</p>
+<?php return; }
+
+$escape = function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+$normalize = function ($value, string $fallback = 'Not captured'): string {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map('trim', $value)));
+    }
+
+    $value = trim((string) $value);
+
+    return $value !== '' ? $value : $fallback;
+};
+
+$noteCollection = collect();
+
+if (method_exists($record, 'notes')) {
+    $noteCollection = $record->notes()->orderBy('created_at', 'desc')->get();
+}
+
+$latestEntry = $noteCollection->first();
+$latestInternal = $noteCollection->first(function ($entry) {
+    return strtolower(trim((string) ($entry->note_type ?? 'internal'))) === 'internal';
+});
+$latestSystem = $noteCollection->first(function ($entry) {
+    return strtolower(trim((string) ($entry->note_type ?? 'system'))) === 'system';
+});
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUp = $record->follow_up_date ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$guestSummary = trim((string) ($record->guest_summary ?? ''));
+$workingNotes = trim((string) ($record->internal_notes ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$operatorIntent = trim((string) ($record->operator_intent ?? ''));
+$services = trim((string) ($record->services_inline ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$noteCount = method_exists($noteCollection, 'count') ? $noteCollection->count() : 0;
+
+$latestType = $latestEntry ? strtolower(trim((string) ($latestEntry->note_type ?? 'internal'))) : '';
+$latestAuthor = $normalize($latestEntry->author_name ?? '', 'System');
+$latestStamp = $normalize($latestEntry->created_at ?? null, 'Not yet available');
+$latestBody = trim((string) ($latestEntry->body ?? ''));
+$latestInternalStamp = $normalize($latestInternal->created_at ?? null, 'No internal note yet');
+
+$nowTs = time();
+$latestInternalTs = ($latestInternal && !empty($latestInternal->created_at))
+    ? strtotime((string) $latestInternal->created_at)
+    : false;
+$daysSinceInternal = $latestInternalTs ? (int) floor(($nowTs - $latestInternalTs) / 86400) : null;
+
+$toneStyles = [
+    'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+    'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$tone = 'neutral';
+$headline = 'The next history note should preserve the change, not duplicate the whole record';
+$guidance = 'Use the append-only history box to explain what changed, why it changed, and what the next operator should know without rewriting the full inquiry narrative.';
+$nextMove = 'Record the live change in one compact entry: guest posture, operator action, next checkpoint, and any non-obvious caution.';
+if ($noteCount === 0) {
+    $tone = 'critical';
+    $headline = 'Timeline has no recorded operator context yet';
+    $guidance = 'The record can be saved without a meaningful append-only trail, but that makes reopen and hand-off scanning much weaker.';
+    $nextMove = 'Use the first internal note to anchor owner, guest posture, current service direction, and the next checkpoint.';
+} elseif (!$latestInternal) {
+    $tone = 'warning';
+    $headline = 'Timeline is still system-led with no operator note';
+    $guidance = 'System entries show field changes, but they do not explain operator thinking, guest posture, or the intended next move.';
+    $nextMove = 'Add an internal note that explains what happened after the system change and what the next operator should do.';
+} elseif ($isClosed && $closedReason === '') {
+    $tone = 'critical';
+    $headline = 'Closed record needs a closure-aligned history note';
+    $guidance = 'Closure is visible in workflow fields, but the append-only trail should make the outcome and any reopen trigger explicit.';
+    $nextMove = 'Add a concise closure note that mirrors the factual outcome and avoids leaving the timeline ambiguous.';
+} elseif ($daysSinceInternal !== null && $daysSinceInternal >= 7 && !$isClosed) {
+    $tone = 'warning';
+    $headline = 'History note continuity is getting stale';
+    $guidance = 'The active inquiry still has history, but the latest operator-authored entry is old enough that a new handler may not trust the timeline without rereading the whole record.';
+    $nextMove = 'Refresh the timeline with what changed since the last operator note, not a full recap of old context.';
+} elseif ($latestType === 'internal') {
+    $tone = 'positive';
+    $headline = 'Timeline already has operator-authored continuity';
+    $guidance = 'The latest history entry is already operator-written, so the next note should only be added when the posture, checkpoint, or guest-facing plan actually changes.';
+    $nextMove = 'When you add a new note, write only the delta: what changed, what remains open, and what the next checkpoint is.';
+}
+
+$signals = [
+    'Status: ' . $normalize(method_exists($record, 'getStatusLabelAttribute') ? $record->status_label : ucwords(str_replace('_', ' ', $status)), 'Unknown'),
+    'Owner: ' . $normalize($owner, 'Unassigned'),
+    'Follow-up: ' . $normalize($followUp, 'Not scheduled'),
+    'Last contacted: ' . $normalize($lastContacted, 'Not contacted yet'),
+    'Operator intent: ' . $normalize($operatorIntent, 'Not captured'),
+    'Service focus: ' . $normalize($services, 'General planning'),
+    'Brief depth: ' . (mb_strlen($details) >= 280 ? 'Rich brief' : (trim($details) !== '' ? 'Starter brief' : 'Very light brief')),
+    'Working summary: ' . ($guestSummary !== '' ? 'Present' : 'Blank'),
+    'Working notes: ' . ($workingNotes !== '' ? 'Present' : 'Blank'),
+    'Latest timeline entry: ' . ($latestType !== '' ? ucfirst(str_replace('_', ' ', $latestType)) . ' by ' . $latestAuthor . ' on ' . $latestStamp : 'No entries yet'),
+    'Latest internal note: ' . $latestInternalStamp,
+];
+
+$writeChecks = [
+    'Lead with the change, not a full narrative recap.',
+    'Name the guest posture or operator decision that changed.',
+    'Preserve the next checkpoint or deadline if one exists.',
+    'Capture one non-obvious caution or dependency, not every field on the form.',
+    $isClosed
+        ? 'Keep closure notes factual and outcome-led.'
+        : 'Keep active-work notes continuity-led so the next operator can pick up quickly.',
+];
+
+if ($latestBody !== '') {
+    $writeChecks[] = 'Latest entry body is already present, so the new note should add delta only.';
+} else {
+    $writeChecks[] = 'The next note may need to create the first readable continuity trail.';
+}
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+?>
+<div style="border:1px solid <?= $escape($palette[2]) ?>;background:<?= $escape($palette[1]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:<?= $escape($palette[0]) ?>;margin-bottom:6px;">History Note Framing</div>
+    <div style="font-size:20px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:8px;"><?= $escape($headline) ?></div>
+    <p style="margin:0 0 14px 0;color:#374151;line-height:1.6;"><?= $escape($guidance) ?></p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Safest append-only move</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;line-height:1.55;"><?= $escape($nextMove) ?></div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Write checks</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($writeChecks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Timeline signals</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($signals as $signal): ?>
+                        <li><?= $escape($signal) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

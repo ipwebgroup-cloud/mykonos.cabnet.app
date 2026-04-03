@@ -1,3 +1,7 @@
+## v2.6.28 — History Note Framing Panel
+- added a read-only **History Note Framing** panel to the History tab
+- bridges the gap between timeline scanning and append-only note entry so operators record cleaner continuity notes
+- keeps the patch backend-only with no schema, list, quick-action, or public-flow change
 
 
 ## v2.6.27 — Working Notes Posture Panel

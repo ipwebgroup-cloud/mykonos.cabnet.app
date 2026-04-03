@@ -481,6 +481,14 @@ tabs:
             tab: History
             comment: Latest entries appear first in a card-based timeline for faster operator scanning.
 
+
+        history_note_framing_panel:
+            label: History Note Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_history_note_framing_panel.htm
+            tab: History
+            comment: Read-only operator guidance for what the next append-only history note should preserve so the timeline remains useful during hand-off, follow-up, and reopen review.
+
         new_internal_note:
             label: Add Internal Note
             type: textarea
