@@ -1,0 +1,95 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+$sourceType = $stringify($record->source_type ?? '');
+$budget = $stringify($record->budget ?? '');
+
+$steps = [];
+$steps[] = 'Open the coordination brief with the clearest operator-owned checkpoint so cross-party motion remains tied to an internal control point.';
+if ($arrival !== '' || $departure !== '') {
+    $steps[] = 'Frame every partner conversation around the visible stay window so timing never outruns travel reality.';
+}
+if ($services !== '') {
+    $steps[] = 'Convert the service mix into a partner-readable scope outline without drifting into promises that the guest has not yet locked.';
+}
+if ($summary !== '') {
+    $steps[] = 'Use the working summary as the continuity spine so every partner touch reflects the same core mission and operator intent.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift only the clearest stable cues from the guest brief and mark everything else as provisional until the record is tighter.';
+}
+if ($requestedMode !== '') {
+    $steps[] = 'Match the coordination brief to the requested mode so external motion does not feel more committed than the guest-facing handling route.';
+}
+if ($sourceType !== '') {
+    $steps[] = 'Keep the source trail readable in the background so operator context survives if more than one party touches the case.';
+}
+if ($budget !== '') {
+    $steps[] = 'Use budget posture as a boundary signal, not as an automatic approval to expose detailed commercial assumptions externally.';
+}
+$steps[] = $followUpDate !== ''
+    ? 'Close with the visible follow-up checkpoint so partner coordination stays accountable to the next operator-held review.'
+    : 'End with one explicit next checkpoint before partner coordination expands further.';
+
+$palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+$headline = 'Partner alignment can stay provisional but useful';
+if (($arrival !== '' || $departure !== '') && $services !== '') {
+    $headline = 'Partner alignment can be built around visible timing and scope';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+    $headline = 'Partner alignment can support execution-level coordination';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Partner Alignment Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Route: <strong><?= e($status === 'confirmed' ? 'execution coordination' : 'pre-commit coordination') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Coordination close</div>
+        <div style="font-size:14px;"><?= e($followUpDate !== '' ? 'Tie external coordination back to the visible follow-up checkpoint so the operator retains control of pace and disclosure.' : 'Finish with one explicit internal checkpoint before more partner detail leaves the record.') ?></div>
+    </div>
+</div>

@@ -1,3 +1,24 @@
+## v4.4.0 — Partner Coordination Workspace
+- adds a new **Partners** tab to the backend inquiry update screen
+- introduces a composite **Partner Coordination Workspace** panel for cross-party motion, disclosure boundaries, and operator-controlled checkpoints
+- adds **Partner Alignment Blueprint** guidance so operators can turn the live record into a partner-readable coordination brief without implying confirmed scope, timing, or spend too early
+- adds **Partner Risk Guardrails** to prevent disclosure drift, ownership blur, checkpoint loss, and fragile external expectations
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v4.2.0 — Scheduling Workspace
+- adds a new **Scheduling** tab to the backend inquiry update screen
+- introduces a composite **Scheduling Workspace** panel for timing coordination, stay-window rhythm, and checkpoint-led cadence planning
+- adds **Timing Coordination Blueprint** guidance so operators can shape timing logic around visible dates, service sequence, and follow-up checkpoints
+- adds **Scheduling Risk Guardrails** to prevent cadence drift, checkpoint loss, and premature scheduling confidence
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v4.1.0 — Supplier Readiness Workspace
+- adds a new **Suppliers** tab to the backend inquiry update screen
+- introduces a composite **Supplier Readiness Workspace** panel for external prep posture and supplier-safe coordination discipline
+- adds **Supplier Brief Blueprint** guidance so operators can shape a supplier-readable prep brief around scope, timing, and continuity anchors without implying confirmation too early
+- adds **Supplier Risk Guardrails** to prevent overexposure of private details, continuity drift, and fragile external expectations
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.3.0 — Guest Journey Workspace
 - adds a new **Journey** tab to the backend inquiry update screen
 - introduces a composite **Guest Journey Workspace** panel for shaping the experience arc across arrival, stay rhythm, services, and operator checkpoints

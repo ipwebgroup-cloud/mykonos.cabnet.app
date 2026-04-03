@@ -150,3 +150,6 @@
 
 2.8.0:
     - 'Introduce the Guest Journey Workspace tab with journey sequencing and journey guardrail panels'
+
+2.9.0:
+    - 'Introduce the Partner Coordination Workspace tab with partner alignment and partner guardrail panels'

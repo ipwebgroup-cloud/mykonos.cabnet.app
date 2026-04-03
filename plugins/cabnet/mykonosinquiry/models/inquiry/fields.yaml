@@ -485,6 +485,28 @@ tabs:
             tab: Journey
             comment: Read-only guardrails that surface the guest-journey mistakes most likely to over-design, hide gaps, or turn provisional sequencing into implied commitments.
 
+
+        partner_coordination_workspace_panel:
+            label: Partner Coordination Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_coordination_workspace_panel.htm
+            tab: Partners
+            comment: High-level partner-coordination surface for shaping cross-party motion, disclosure boundaries, and operator-controlled checkpoints before external coordination becomes too confident.
+
+        partner_alignment_blueprint_panel:
+            label: Partner Alignment Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_alignment_blueprint_panel.htm
+            tab: Partners
+            comment: Read-only structure guidance for turning the live record into a partner-readable coordination brief without implying confirmed scope, timing, or commercial approval too early.
+
+        partner_risk_guardrails_panel:
+            label: Partner Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_risk_guardrails_panel.htm
+            tab: Partners
+            comment: Read-only guardrails that surface the partner-coordination mistakes most likely to create disclosure drift, ownership blur, or fragile external expectations.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

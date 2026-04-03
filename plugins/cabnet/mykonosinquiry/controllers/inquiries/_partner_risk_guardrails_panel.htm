@@ -1,0 +1,101 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$owner = $stringify($record->owner_name ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$budget = $stringify($record->budget ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$sourceType = $stringify($record->source_type ?? '');
+
+$guardrails = [];
+if ($owner === '') {
+    $guardrails[] = ['label' => 'Ownership missing', 'detail' => 'Do not let partner coordination expand before a visible operator owner is accountable for scope and disclosure.', 'level' => 'high'];
+}
+if ($arrival === '' || $departure === '') {
+    $guardrails[] = ['label' => 'Timing frame incomplete', 'detail' => 'Avoid confident partner coordination before the stay window is visible enough to anchor timing.', 'level' => 'high'];
+}
+if ($services === '') {
+    $guardrails[] = ['label' => 'Scope blur risk', 'detail' => 'Do not brief partners on a polished service picture while the scope is still too loose.', 'level' => 'high'];
+}
+if ($summary === '') {
+    $guardrails[] = ['label' => 'Continuity spine thin', 'detail' => 'Strengthen the working summary before multiple parties rely on the record for context.', 'level' => 'medium'];
+}
+if ($followUpDate === '') {
+    $guardrails[] = ['label' => 'Checkpoint missing', 'detail' => 'Keep one visible checkpoint so partner coordination stays tied to operator cadence.', 'level' => 'medium'];
+}
+if ($budget === '') {
+    $guardrails[] = ['label' => 'Commercial boundary unclear', 'detail' => 'Do not let partner coordination imply approved spend when budget posture is still unclear.', 'level' => 'medium'];
+}
+if ($requestedMode === '') {
+    $guardrails[] = ['label' => 'Handling mode unclear', 'detail' => 'Keep coordination conservative if the guest-facing handling route is not yet explicit.', 'level' => 'low'];
+}
+if ($sourceTitle === '' && $sourceType === '') {
+    $guardrails[] = ['label' => 'Source trail thin', 'detail' => 'Preserve origin context so cross-party coordination can still be traced back cleanly later.', 'level' => 'low'];
+}
+if (in_array($status, ['closed_lost', 'spam'], true)) {
+    $guardrails[] = ['label' => 'Status mismatch', 'detail' => 'Do not expand partner coordination while the record still reads as closed-lost or spam.', 'level' => 'high'];
+}
+
+if (empty($guardrails)) {
+    $guardrails[] = ['label' => 'No major coordination blockers', 'detail' => 'The record can support controlled partner coordination. Keep checkpoints, disclosure boundaries, and ownership explicit.', 'level' => 'low'];
+}
+
+$colors = [
+    'high' => ['#b91c1c', '#fef2f2', '#fecaca'],
+    'medium' => ['#b45309', '#fff7ed', '#fed7aa'],
+    'low' => ['#166534', '#f0fdf4', '#bbf7d0'],
+];
+?>
+<div style="border:1px solid #bfdbfe; background:#f8fbff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700;">Partner Risk Guardrails</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;">Prevent premature coordination and disclosure drift</div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($guardrails as $item): ?>
+            <?php $palette = $colors[$item['level']] ?? $colors['medium']; ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:<?= e($palette[1]) ?>;">
+                <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:6px;">
+                    <div style="font-size:14px; font-weight:700; color:#0f172a;"><?= e($item['label']) ?></div>
+                    <span style="display:inline-block; padding:4px 8px; border-radius:999px; background:#fff; border:1px solid <?= e($palette[2]) ?>; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:<?= e($palette[0]) ?>; font-weight:700;"><?= e($item['level']) ?></span>
+                </div>
+                <div style="font-size:13px; color:#334155;"><?= e($item['detail']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
