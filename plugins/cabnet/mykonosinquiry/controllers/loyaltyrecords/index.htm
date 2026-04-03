@@ -30,6 +30,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('frequency_cap_rules_panel') ?>
         <?= $this->makePartial('consent_discipline_panel') ?>
         <?= $this->makePartial('approval_checkpoints_panel') ?>
+        <?= $this->makePartial('pilot_experiment_ledger_panel') ?>
+        <?= $this->makePartial('rollback_criteria_panel') ?>
         <?= $this->makePartial('handoff_evidence_panel') ?>
         <?= $this->makePartial('workspace_separation_rules_panel') ?>
         <?= $this->makePartial('safe_rollout_plan_panel') ?>
@@ -43,7 +45,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <p style="margin-bottom:0;">
                         The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now documents the
                         transition path clearly so the next structural release can be prepared without mixing incomplete retention logic into the
-                        active concierge workflow. The new qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, escalation-threshold, ownership-matrix, suppression controls, frequency-cap rules, consent-discipline, approval-checkpoint, and intent-mapping panels help define the safest first live cohort before storage activation.
+                        active concierge workflow. The new qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, escalation-threshold, ownership-matrix, suppression controls, frequency-cap rules, consent-discipline, approval-checkpoint, pilot-experiment-ledger, and rollback-criteria panels help define the safest first live cohort before storage activation.
                     </p>
                 </div>
             </div>
