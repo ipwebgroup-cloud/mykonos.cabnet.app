@@ -8,6 +8,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('activation_gates_panel') ?>
         <?= $this->makePartial('transition_scorecard_panel') ?>
         <?= $this->makePartial('activation_scenarios_panel') ?>
+        <?= $this->makePartial('first_wave_qualification_panel') ?>
+        <?= $this->makePartial('retention_timing_windows_panel') ?>
         <?= $this->makePartial('handoff_evidence_panel') ?>
         <?= $this->makePartial('workspace_separation_rules_panel') ?>
         <?= $this->makePartial('safe_rollout_plan_panel') ?>
@@ -21,7 +23,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <p style="margin-bottom:0;">
                         The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now documents the
                         transition path clearly so the next structural release can be prepared without mixing incomplete retention logic into the
-                        active concierge workflow.
+                        active concierge workflow. The new qualification and timing panels help define the safest first live cohort before storage activation.
                     </p>
                 </div>
             </div>

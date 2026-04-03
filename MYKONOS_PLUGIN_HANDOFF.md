@@ -8,11 +8,11 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity renders safely even when the loyalty storage layer is not installed.
-- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, and handoff-evidence surface rather than a placeholder.
+- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, first-wave qualification, and timing-guidance surface rather than a placeholder.
 
 ## This patch
-- Version: `v2.7.0`
-- Name: `loyalty handoff evidence workspace`
+- Version: `v2.8.0`
+- Name: `loyalty first-wave qualification workspace`
 - Type: plugin-only major patch
 - No schema change
 - No theme change
@@ -24,16 +24,15 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_install_state_overview.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_handoff_evidence_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_workspace_separation_rules_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_activation_readiness_checklist_panel.htm`
-- `docs/releases/MYKONOS_V270_LOYALTY_HANDOFF_EVIDENCE_WORKSPACE_PATCH.md`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_first_wave_qualification_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_retention_timing_windows_panel.htm`
+- `docs/releases/MYKONOS_V280_LOYALTY_FIRST_WAVE_QUALIFICATION_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty workspace had become stable and informative, but it still needed clearer operator-facing proof points for when a case should remain in Inquiry Queue versus when it should later qualify for continuity. This patch adds handoff evidence, separation rules, and readiness checks without activating storage yet.
+The loyalty workspace was already stable and informative, but it still needed a clearer way to define the safest first live cohort once storage is eventually activated. This patch adds first-wave qualification and timing guidance so activation planning can become narrower and more operationally useful without enabling storage yet.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
 - Continue with plugin-only operator-facing patches until the loyalty storage layer is ready.
-- Use the evidence and separation panels to define a narrower first activation cohort.
+- Use the qualification, timing, evidence, and separation panels to define a very narrow first live cohort.
 - Add the loyalty tables only in a separate, explicitly installable structural release.
