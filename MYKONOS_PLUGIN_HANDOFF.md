@@ -6,15 +6,16 @@
 - Public source-of-truth direction remains the DB-backed inquiry workflow from the v41 integration line.
 
 ## Current emergency status
-- Inquiry workspace has been kept stable after loyalty partial and render hotfixes.
-- Loyalty Continuity UI routes now exist, but the loyalty database table is still not installed on the live environment.
+- Inquiry workspace remains stable after loyalty partial, render, toolbar, and table-guard hotfixes.
+- Loyalty Continuity now opens safely even when the loyalty database tables are not installed.
 - The current safe behavior is:
   - inquiry pages continue to work
-  - loyalty pages render a guarded message instead of crashing
+  - loyalty pages render guarded install-state messaging
+  - toolbar actions remain locked until storage exists
 
 ## This patch
-- Version: `v2.3.11`
-- Name: `loyalty workspace table guard`
+- Version: `v2.3.12`
+- Name: `loyalty install-state workspace polish`
 - Type: plugin-only safety patch
 - No schema change
 - No theme change
@@ -25,14 +26,12 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/update.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
-- `docs/releases/MYKONOS_V2311_LOYALTY_WORKSPACE_TABLE_GUARD_PATCH.md`
+- `docs/releases/MYKONOS_V2312_LOYALTY_INSTALL_STATE_WORKSPACE_POLISH_PATCH.md`
 
 ## Why this patch exists
-The Loyalty Continuity backend page advanced past the earlier blank-page and missing-toolbar failures, but then failed on direct database list loading because `cabnet_mykonos_loyalty_records` does not exist yet in the live database.
-
-This patch guards the loyalty controller views so the backend remains usable without forcing destructive plugin refresh behavior.
+The workspace was restored safely, but it still exposed an active-looking toolbar and minimal install-state feedback. This patch makes the current non-installed state more explicit and operator-friendly while keeping the inquiry queue as the live operational surface.
 
 ## Safest next direction
 - Keep the inquiry queue stable.
-- Do not broaden loyalty behavior until the real loyalty migration strategy is confirmed against the live database state.
-- Continue with plugin-only, production-safe guardrail patches.
+- Do not introduce schema work through live hotfixes.
+- Continue with plugin-only operator-facing polish until the loyalty storage layer is prepared in a separate controlled release.

@@ -16,6 +16,23 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                 </div>
             </div>
         </div>
+
+        <div class="layout-row">
+            <div class="control-list">
+                <table class="table data">
+                    <tbody>
+                        <tr>
+                            <td style="width:260px;"><strong>Current mode</strong></td>
+                            <td>Readiness guard</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reason</strong></td>
+                            <td>Loyalty storage tables are not installed yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     <?php else: ?>
         <?= $this->formRender() ?>
     <?php endif ?>

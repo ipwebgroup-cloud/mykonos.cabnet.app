@@ -1,7 +1,16 @@
+<?php
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+?>
 <div data-control="toolbar">
-    <a
-        href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
-        class="btn btn-primary oc-icon-plus">
-        New Loyalty Record
-    </a>
+    <?php if ($loyaltyTableReady): ?>
+        <a
+            href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
+            class="btn btn-primary oc-icon-plus">
+            New Loyalty Record
+        </a>
+    <?php else: ?>
+        <button type="button" class="btn btn-default disabled" disabled>
+            Loyalty storage not installed yet
+        </button>
+    <?php endif ?>
 </div>
