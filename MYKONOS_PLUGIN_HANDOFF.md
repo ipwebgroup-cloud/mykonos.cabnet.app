@@ -1,27 +1,28 @@
-# Mykonos Plugin Handoff
+# MYKONOS PLUGIN HANDOFF
 
-## Current patch line
-- Latest delivered patch: v2.3.7 loyalty routing cues
-- Patch type: plugin-only
-- Archive root: `mykonos.cabnet.app/`
+## Current line
+- Project: `mykonos.cabnet.app`
+- Plugin: `plugins/cabnet/mykonosinquiry`
+- Current patch line delivered in chat: **v2.3.8 loyalty workspace render fix**
+- Archive root convention: zip contents begin with `mykonos.cabnet.app/` so extraction starts from `/home/cabnet/public_html/`
 
-## Current safe state
-- Inquiry update screen remains protected from loyalty-partial crashes.
-- Loyalty continuity still behaves as a guarded post-triage layer.
-- Operators now see a recommended route that distinguishes active handling from continuity review and linked loyalty work.
+## Stable intent
+The stable source-of-truth direction remains the database-backed inquiry workflow introduced in the v41 integration line. Public `/plan` saves through the plugin and backend work should continue from that plugin-first flow.
 
-## Files touched by this patch
-- `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_workspace_actions.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
-- `docs/releases/MYKONOS_V237_LOYALTY_ROUTING_CUES_PATCH.md`
-- `MYKONOS_PLUGIN_HANDOFF.md`
+## What has been stabilized in this chat
+- loyalty inquiry partial crashes were guarded
+- loyalty inquiry panels now avoid hard failure when loyalty tables are absent or the workspace is only partially active
+- loyalty routing / readiness / guardrail messaging was added on the inquiry side
+- loyalty workspace blank backend body was fixed by adding the missing controller render templates
 
-## Intent of this patch
-- make the next handling lane clearer inside the inquiry workspace
-- keep retention work separate from active inquiry handling
-- preserve a root continuity note in case the chat is interrupted
+## Current expectation after v2.3.8
+- **Inquiry Queue** should render
+- inquiry update pages should render
+- **Loyalty Continuity** should no longer show a blank body
+- no destructive refresh should be used casually on the live plugin line
 
-## Next recommended direction
-- continue with plugin-only loyalty refinements
-- avoid schema change until the loyalty workspace is ready end-to-end
-- keep the public theme untouched unless a specific frontend requirement appears
+## Next safest step
+- continue with plugin-only backend polish
+- keep schema untouched unless explicitly needed
+- preserve the live inquiry queue and public `/plan` flow
+- prefer conservative OctoberCMS controller/view completions over risky structural rewrites

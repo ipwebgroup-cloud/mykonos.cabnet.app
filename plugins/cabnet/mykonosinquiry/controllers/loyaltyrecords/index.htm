@@ -1,0 +1,12 @@
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Inquiry Queue</a></li>
+        <li><?= e($this->pageTitle ?: 'Loyalty Continuity') ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
+<div class="layout">
+    <div class="layout-row">
+        <?= $this->listRender() ?>
+    </div>
+</div>
