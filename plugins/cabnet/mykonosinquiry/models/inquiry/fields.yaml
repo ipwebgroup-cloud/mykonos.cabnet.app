@@ -293,6 +293,27 @@ tabs:
             tab: Closure
             comment: Read-only guardrails that surface the closure mistakes most likely to hide outcomes, weaken reopen continuity, or make future hand-off recovery harder.
 
+        reopen_workspace_panel:
+            label: Reopen Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_workspace_panel.htm
+            tab: Reopen
+            comment: High-level reactivation shaping surface for deciding whether the record is truly ready to reopen, what continuity needs to be restored first, and whether the safest move is reactivation, pause, or one more internal rebuild pass.
+
+        reactivation_blueprint_panel:
+            label: Reactivation Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reactivation_blueprint_panel.htm
+            tab: Reopen
+            comment: Read-only structure guidance for bringing a paused or closed record back into motion without losing source trail, owner clarity, timing anchors, or the current guest mission.
+
+        reopen_risk_guardrails_panel:
+            label: Reopen Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_risk_guardrails_panel.htm
+            tab: Reopen
+            comment: Read-only guardrails that surface the reactivation mistakes most likely to revive stale assumptions, blur ownership, or create a fragile second-cycle hand-off.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

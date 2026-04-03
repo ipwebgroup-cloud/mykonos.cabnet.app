@@ -121,3 +121,5 @@
 1.9.0:
     - 'Introduce the Closure Workspace tab with explicit close, pause, and reopen discipline panels'
 
+2.0.0:
+    - 'Introduce the Reopen Workspace tab with reactivation and reopen guardrail panels'

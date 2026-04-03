@@ -1,3 +1,10 @@
+## v3.5.0 — Reopen Workspace
+- adds a new **Reopen** tab to the backend inquiry update screen
+- introduces a composite **Reopen Workspace** panel for disciplined reactivation, continuity rebuilding, and second-cycle ownership clarity
+- adds **Reactivation Blueprint** guidance so operators can revive paused or closed records without losing source trail, guest mission, timing anchors, or operator continuity
+- adds **Reopen Risk Guardrails** to prevent stale assumptions, soft ownership, hidden blockers, and fragile hand-off posture during reactivation
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v3.4.0 — Closure Workspace
 - adds a new **Closure** tab to the backend inquiry update screen
 - introduces a composite **Closure Workspace** panel for close / lost / pause / reopen posture before momentum fades into ambiguity

@@ -1,0 +1,43 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$owner = trim((string) ($record->owner_name ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$notes = trim((string) ($record->internal_notes ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$sourceType = trim((string) ($record->source_type ?? ''));
+
+$risks = [];
+$risks[] = $owner === '' ? 'Owner is not explicit, so second-cycle accountability may blur immediately.' : 'Owner is visible, which strengthens second-cycle accountability.';
+$risks[] = ($summary === '' && $notes === '') ? 'There is not enough continuity text to reopen confidently without reconstruction.' : 'Continuity text exists, which lowers reopen reconstruction cost.';
+$risks[] = ($followUpDate === '' && $lastContacted === '') ? 'There is no current checkpoint trail, so reactivation timing may drift.' : 'Checkpoint trail exists, which makes reactivation cadence easier to inherit.';
+$risks[] = $closedReason === '' ? 'Closure reason is thin or absent, so the reason for reopening can become guesswork.' : 'Closure reason exists, which protects reopen context.';
+$risks[] = $sourceType === '' ? 'Source memory is weak, so campaign or entry context may be lost during reactivation.' : 'Source memory is visible, which supports cleaner re-entry context.';
+
+$headline = 'Reopen only after continuity repair';
+$palette = ['#92400e', '#fffbeb', '#fcd34d'];
+if (($owner !== '') && ($summary !== '' || $notes !== '') && ($followUpDate !== '' || $lastContacted !== '') && ($closedReason !== '' || in_array($status, ['closed_won', 'closed_lost', 'closed'], true))) {
+    $headline = 'Reopen guardrails mostly satisfied';
+    $palette = ['#166534', '#f0fdf4', '#86efac'];
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Reopen Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;"><?= e($headline) ?></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <?php foreach ($risks as $risk): ?>
+            <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; font-size:14px; color:#0f172a; line-height:1.6;">
+                <?= e($risk) ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
