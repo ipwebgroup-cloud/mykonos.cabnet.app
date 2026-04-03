@@ -96,12 +96,12 @@ if ($overdueCount > 0 || $unassignedCount > 0) {
 $headlinePalette = $paletteFor($headlineTone);
 ?>
 
-<div style="margin-bottom: 18px;">
+<div class="myk-operator-list-ui">
     <div style="border:1px solid <?= e($headlinePalette['border']) ?>; background:<?= e($headlinePalette['bg']) ?>; border-radius:12px; padding:14px 16px; margin-bottom:14px;">
-        <div style="font-size:18px; font-weight:700; color:<?= e($headlinePalette['text']) ?>; margin-bottom:4px;">
+        <div class="mk-copy" style="font-size:18px; font-weight:700; color:<?= e($headlinePalette['text']) ?>; margin-bottom:4px;">
             <?= e($headline) ?>
         </div>
-        <div style="font-size:13px; color:<?= e($headlinePalette['text']) ?>; opacity:0.92;">
+        <div class="mk-copy" style="font-size:13px; color:<?= e($headlinePalette['text']) ?>; opacity:0.92;">
             Prioritize owner clarity, overdue follow-ups, and first-touch discipline before deep proposal shaping.
         </div>
     </div>
@@ -110,14 +110,14 @@ $headlinePalette = $paletteFor($headlineTone);
         <?php foreach ($metrics as $metric): ?>
             <?php $palette = $paletteFor($metric['tone']); ?>
             <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                <div style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px; min-height:118px;">
-                    <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($palette['text']) ?>; opacity:0.8; margin-bottom:8px;">
+                <div class="mk-card mk-stat-card" style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px;">
+                    <div class="mk-copy" style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($palette['text']) ?>; opacity:0.8; margin-bottom:8px;">
                         <?= e($metric['label']) ?>
                     </div>
-                    <div style="font-size:30px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:8px;">
+                    <div class="mk-stat-value" style="font-size:30px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:8px;">
                         <?= e((string) $metric['value']) ?>
                     </div>
-                    <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.9;">
+                    <div class="mk-copy mk-stat-hint" style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.9;">
                         <?= e($metric['hint']) ?>
                     </div>
                 </div>

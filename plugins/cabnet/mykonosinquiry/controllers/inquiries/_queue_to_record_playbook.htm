@@ -67,17 +67,17 @@ $steps = [
 ];
 ?>
 
-<div style="margin-bottom: 16px; border:1px solid #d8dee4; border-radius:12px; background:#fff; overflow:hidden;">
-    <div style="padding:12px 14px; border-bottom:1px solid #e9ecef; background:#f8f9fa;">
-        <div style="font-size:16px; font-weight:700;">Queue-to-record playbook</div>
-        <div style="font-size:13px; color:#6c757d;">Read-only discipline for moving from queue lane scanning into the safest record-level workspace.</div>
+<div class="myk-operator-list-ui mk-panel">
+    <div class="mk-panel-head">
+        <div class="mk-panel-title">Queue-to-record playbook</div>
+        <div class="mk-panel-subtitle mk-copy">Read-only discipline for moving from queue lane scanning into the safest record-level workspace.</div>
     </div>
-    <div style="padding:14px;">
-        <ol style="margin:0; padding-left:18px;">
+    <div class="mk-panel-body">
+        <ol class="mk-list">
             <?php foreach ($steps as $step): ?>
-                <li style="margin-bottom:12px;">
-                    <div style="font-weight:700; margin-bottom:3px;"><?= e($step['title']) ?></div>
-                    <div style="font-size:13px; color:#495057;"><?= e($step['detail']) ?></div>
+                <li>
+                    <div class="mk-copy" style="font-weight:700; margin-bottom:3px;"><?= e($step['title']) ?></div>
+                    <div class="mk-copy" style="font-size:13px; color:#495057;"><?= e($step['detail']) ?></div>
                 </li>
             <?php endforeach; ?>
         </ol>

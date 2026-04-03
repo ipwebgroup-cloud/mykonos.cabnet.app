@@ -1,3 +1,8 @@
+## v2.11.0 — Operator List UI Foundation
+- stabilizes the backend inquiry list page after the new queue and bridge boards introduced text-overlap risk on real screens
+- adds a shared read-only list-page UI foundation so metric cards, triage lanes, and opening-route cards wrap and stack safely
+- improves queue-side readability without changing schema, filters, quick actions, or the public `/plan` flow
+
 ## v2.10.0 — Queue-to-Record Bridge
 - upgrades the backend inquiry list page from queue scanning into record-opening guidance
 - adds a read-only **Queue-to-Record Bridge Board** that maps live queue conditions to the safest first workspace after opening a record

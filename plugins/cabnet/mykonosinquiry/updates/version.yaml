@@ -108,3 +108,6 @@
 
 1.5.0:
     - 'Introduce the Queue-to-Record Bridge on the inquiry list page with first-tab routing guidance and priority opening routes'
+
+1.6.0:
+    - 'Introduce a responsive operator list UI foundation for queue and bridge panels'

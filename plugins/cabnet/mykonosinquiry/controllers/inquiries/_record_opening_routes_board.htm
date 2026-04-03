@@ -74,21 +74,21 @@ $paletteFor = function ($tone) {
 };
 ?>
 
-<div style="margin-bottom: 18px;">
-    <div style="font-size:16px; font-weight:700; margin-bottom:10px;">Priority opening routes</div>
+<div class="myk-operator-list-ui">
+    <div class="mk-section-title">Priority opening routes</div>
     <div class="row">
         <?php foreach ($routeSets as $set): ?>
             <?php $palette = $paletteFor($set['tone']); ?>
             <div class="col-md-4" style="margin-bottom:16px;">
-                <div style="border:1px solid <?= e($palette['border']) ?>; border-radius:12px; overflow:hidden; background:#fff; min-height:100%;">
+                <div class="mk-card mk-route-card" style="border:1px solid <?= e($palette['border']) ?>; border-radius:12px; overflow:hidden; background:#fff;">
                     <div style="background:<?= e($palette['bg']) ?>; padding:12px 14px; border-bottom:1px solid <?= e($palette['border']) ?>;">
-                        <div style="font-size:16px; font-weight:700; color:<?= e($palette['text']) ?>;"><?= e($set['title']) ?></div>
-                        <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.9; margin-top:3px;"><?= e($set['lead']) ?></div>
+                        <div class="mk-copy" style="font-size:16px; font-weight:700; color:<?= e($palette['text']) ?>;"><?= e($set['title']) ?></div>
+                        <div class="mk-copy" style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.9; margin-top:3px;"><?= e($set['lead']) ?></div>
                     </div>
                     <div style="padding:12px 14px;">
-                        <div style="font-size:12px; color:#6c757d; margin-bottom:10px;"><?= e($set['route']) ?></div>
+                        <div class="mk-copy" style="font-size:12px; color:#6c757d; margin-bottom:10px;"><?= e($set['route']) ?></div>
                         <?php if ($set['records']->isEmpty()): ?>
-                            <div style="font-size:13px; color:#6c757d;">No records currently fit this route.</div>
+                            <div class="mk-copy" style="font-size:13px; color:#6c757d;">No records currently fit this route.</div>
                         <?php else: ?>
                             <?php foreach ($set['records'] as $record): ?>
                                 <div style="padding:10px 0; border-bottom:1px solid #eceff3;">
@@ -97,13 +97,13 @@ $paletteFor = function ($tone) {
                                             <?= e($record->request_reference ?: ('Inquiry #' . $record->id)) ?>
                                         </a>
                                     </div>
-                                    <div style="font-size:13px; color:#495057; margin-bottom:3px;">
+                                    <div class="mk-copy" style="font-size:13px; color:#495057; margin-bottom:3px;">
                                         <?= e($record->full_name ?: 'Guest name pending') ?>
                                         <?php if (!empty($record->services_inline)): ?>
                                             · <?= e($record->services_inline) ?>
                                         <?php endif; ?>
                                     </div>
-                                    <div style="font-size:12px; color:#6c757d;">
+                                    <div class="mk-copy mk-record-meta">
                                         <?= e($record->status_label) ?> · <?= e($record->priority_label) ?> · <?= e($record->owner_display) ?>
                                     </div>
                                 </div>

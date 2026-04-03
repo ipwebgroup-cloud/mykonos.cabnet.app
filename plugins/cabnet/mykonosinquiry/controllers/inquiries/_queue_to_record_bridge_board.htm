@@ -72,24 +72,24 @@ $paletteFor = function ($tone) {
 };
 ?>
 
-<div style="margin-bottom: 18px; border:1px solid #d8dee4; border-radius:12px; background:#fff; overflow:hidden;">
-    <div style="padding:12px 14px; border-bottom:1px solid #e9ecef; background:#f8f9fa;">
-        <div style="font-size:16px; font-weight:700;">Queue-to-record bridge board</div>
-        <div style="font-size:13px; color:#6c757d;">Read-only routing guidance that turns queue conditions into the safest first tab to inspect after opening a record.</div>
+<div class="myk-operator-list-ui mk-panel">
+    <div class="mk-panel-head">
+        <div class="mk-panel-title">Queue-to-record bridge board</div>
+        <div class="mk-panel-subtitle mk-copy">Read-only routing guidance that turns queue conditions into the safest first tab to inspect after opening a record.</div>
     </div>
-    <div style="padding:14px;">
+    <div class="mk-panel-body">
         <div class="row">
             <?php foreach ($routes as $route): ?>
                 <?php $palette = $paletteFor($route['tone']); ?>
                 <div class="col-md-3 col-sm-6" style="margin-bottom:12px;">
-                    <div style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px; min-height:170px;">
-                        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($palette['text']) ?>; opacity:0.8; margin-bottom:8px;">
+                    <div class="mk-card mk-stat-card" style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px;">
+                        <div class="mk-copy" style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($palette['text']) ?>; opacity:0.8; margin-bottom:8px;">
                             <?= e($route['label']) ?>
                         </div>
-                        <div style="font-size:30px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:10px;">
+                        <div class="mk-stat-value" style="font-size:30px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:10px;">
                             <?= e((string) $route['count']) ?>
                         </div>
-                        <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.92;">
+                        <div class="mk-copy mk-stat-hint" style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:0.92;">
                             <?= e($route['hint']) ?>
                         </div>
                     </div>
