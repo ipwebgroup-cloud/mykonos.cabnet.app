@@ -164,3 +164,7 @@
 
 2.3.20:
   - 'Introduce close-handoff grouping and finish-review exit readability for live loyalty records'
+
+2.3.21:
+  - 'Introduce finish-lane handback readability and explicit post-close hold framing for live loyalty records'
+

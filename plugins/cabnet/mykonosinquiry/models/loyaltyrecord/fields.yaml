@@ -314,6 +314,46 @@ tabs:
             span: right
             comment: Read-only framing for the clean next exit from finish review, parked watch, or reopened close posture.
 
+        finish_lane_handback_label:
+            label: Finish-Lane Handback
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Conservative handback cue showing who or what the finish lane should return to next without widening into automation.
+
+        post_close_hold_label:
+            label: Post-Close Hold
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Narrow hold posture showing whether the record can rest quietly after close-side work or should not stay in a quiet hold.
+
+        finish_handback_digest:
+            label: Finish Handback Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining finish-lane handback, post-close hold, close handoff, and the next finish move.
+
+        post_close_hold_frame:
+            label: Post-Close Hold Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for when a close-side hold can stay quiet and when it should return to active human review.
+
+        finish_handback_post_close_hold_panel:
+            label: Finish-Lane Handback and Post-Close Hold
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_handback_post_close_hold_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative handback and hold panel for the finish lane without introducing automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

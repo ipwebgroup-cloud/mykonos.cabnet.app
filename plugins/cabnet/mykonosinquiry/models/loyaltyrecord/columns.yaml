@@ -96,6 +96,14 @@ columns:
         label: Review Exit
         sortable: false
 
+    finish_lane_handback_label:
+        label: Handback
+        sortable: false
+
+    post_close_hold_label:
+        label: Post-Close Hold
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false
