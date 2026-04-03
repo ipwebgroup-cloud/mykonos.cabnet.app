@@ -1,0 +1,83 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$missing = [];
+$services = trim((string) ($record->services_list ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$contact = trim((string) ($record->contact_preference ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+
+if ($arrival === '' || $departure === '') {
+    $missing[] = 'Confirm the exact stay window so transport, accommodation, and planning proposals stay aligned.';
+}
+if ($guests === '' || $guests === '0') {
+    $missing[] = 'Confirm guest count and group shape before shaping a package or service bundle.';
+}
+if ($services === '' && $details === '') {
+    $missing[] = 'Confirm the highest-priority services or experience goals so the next reply feels specific.';
+}
+if ($budget === '') {
+    $missing[] = 'Clarify budget comfort zone to avoid shaping a package at the wrong commercial depth.';
+}
+if ($contact === '') {
+    $missing[] = 'Confirm the preferred contact route so the next touch matches the guest’s expected pace.';
+}
+if ($owner === '' && in_array($status, ['new', 'reviewed', 'contacted'], true)) {
+    $missing[] = 'Make ownership visible so continuity does not drift between operators.';
+}
+
+$priorityTargets = array_slice($missing, 0, 4);
+$count = count($missing);
+$headline = 'Low clarification pressure';
+$palette = ['#198754', '#eaf7ef', '#cfe9d8'];
+if ($count >= 4) {
+    $headline = 'High clarification pressure';
+    $palette = ['#b91c1c', '#fef2f2', '#fecaca'];
+} elseif ($count >= 2) {
+    $headline = 'Moderate clarification pressure';
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+}
+
+$nextQuestion = $priorityTargets[0] ?? 'The brief is reasonably covered. Use the next touch to confirm sequencing rather than reopen basics.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Clarification Targets</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Open clarification points: <strong><?= e((string) $count) ?></strong></div>
+    </div>
+
+    <div style="font-size:13px; color:#334155; margin-bottom:10px;">
+        Focus the next guest touch on the fewest questions that unlock the clearest next move.
+    </div>
+
+    <?php if (!empty($priorityTargets)): ?>
+        <ul style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+            <?php foreach ($priorityTargets as $item): ?>
+                <li style="margin:0 0 6px 0;"><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <div style="padding:10px 12px; border:1px solid #cfe9d8; background:#ffffff; border-radius:10px; color:#14532d; margin-bottom:12px;">
+            The brief already has enough shape for the next reply or package step. Keep the next touch continuity-led instead of opening unnecessary questions.
+        </div>
+    <?php endif; ?>
+
+    <div style="padding:12px; border:1px dashed <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Continuity-first question</div>
+        <div style="font-size:14px;"><?= e($nextQuestion) ?></div>
+    </div>
+</div>

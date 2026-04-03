@@ -343,6 +343,14 @@ tabs:
             tab: Internal
             comment: Read-only operator framing for safest reply tone, pacing, route, and guest-facing response shape before the next touch.
 
+
+        clarification_targets_panel:
+            label: Clarification Targets
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_clarification_targets_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of the highest-value missing facts and the safest continuity-first questions for the next guest touch.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

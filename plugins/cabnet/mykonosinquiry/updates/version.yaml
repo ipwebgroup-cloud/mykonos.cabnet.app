@@ -60,3 +60,5 @@
     - 'Activate the response packaging panel on the stabilized operator workspace line'
 1.1.17:
     - 'Activate the reply tone guidance panel on the stabilized operator workspace line'
+1.1.18:
+    - 'Add clarification targets scan panel to the stabilized operator workspace line'

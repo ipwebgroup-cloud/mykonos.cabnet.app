@@ -1,4 +1,10 @@
 
+## v2.6.21 — Clarification Targets Panel
+- added a read-only **Clarification Targets** panel to the Internal tab
+- surfaces the highest-value missing facts, continuity-first questions, and what to confirm on the next guest touch before over-shaping the reply or package
+- keeps the patch backend-only with no schema or public-flow change
+
+
 ## v2.6.20 — Reply Tone Guidance Activation
 - safely activates the read-only **Reply Tone Guidance** panel on the Internal tab
 - surfaces the safest reply tone, pacing, contact route, and guest-facing response shape
