@@ -1,3 +1,9 @@
+## v2.6.30 — Payload Alignment Signals Panel
+- added a read-only **Payload Alignment Signals** panel to the Raw tab
+- compares normalized inquiry fields against the saved payload so operators can spot drift before using raw JSON as a fallback continuity source
+- keeps the patch backend-only with no schema, list, quick-action, or public-flow change
+
+
 ## v2.6.29 — Raw Payload Framing Panel
 - added a read-only **Raw Payload Framing** panel to the Raw tab
 - helps operators interpret the saved payload as a continuity fallback, source check, and reopen reference before scanning the raw JSON block

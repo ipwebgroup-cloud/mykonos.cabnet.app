@@ -503,6 +503,13 @@ tabs:
             tab: Raw
             comment: Read-only operator guidance for using the saved payload as a continuity fallback, source check, and reopen reference without editing the raw record.
 
+        payload_alignment_signals_panel:
+            label: Payload Alignment Signals
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_payload_alignment_signals_panel.htm
+            tab: Raw
+            comment: Read-only operator comparison of normalized inquiry fields against saved payload so reopen and hand-off review can spot drift before relying on raw JSON.
+
         payload_pretty_json:
             label: Raw Payload
             type: textarea

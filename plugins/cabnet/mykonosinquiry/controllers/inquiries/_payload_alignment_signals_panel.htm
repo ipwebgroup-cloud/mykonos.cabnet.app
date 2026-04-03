@@ -1,0 +1,312 @@
+<?php
+$record = null;
+
+if (isset($vars['formModel']) && $vars['formModel'] && $vars['formModel']->exists) {
+    $record = $vars['formModel'];
+} elseif (isset($formModel) && $formModel && $formModel->exists) {
+    $record = $formModel;
+} elseif (isset($model) && $model && $model->exists) {
+    $record = $model;
+} elseif (isset($this->controller) && method_exists($this->controller, 'formGetModel')) {
+    $record = $this->controller->formGetModel();
+}
+
+if (!$record) { ?>
+    <p class="form-control-static">Payload alignment signals become available after the inquiry is created.</p>
+<?php return; }
+
+$escape = function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+$normalizeText = function ($value): string {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map(static function ($item) {
+            return trim((string) $item);
+        }, $value)));
+    }
+
+    $value = trim((string) $value);
+    return preg_replace('/\s+/u', ' ', $value);
+};
+
+$normalizeCompare = function ($value) use ($normalizeText): string {
+    $value = mb_strtolower($normalizeText($value), 'UTF-8');
+    return trim($value);
+};
+
+$readPayload = function ($payloadRaw): array {
+    if (is_array($payloadRaw)) {
+        return $payloadRaw;
+    }
+
+    if (is_string($payloadRaw)) {
+        $payloadRaw = trim($payloadRaw);
+        if ($payloadRaw !== '') {
+            $decoded = json_decode($payloadRaw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
+    }
+
+    return [];
+};
+
+$getPayloadValue = function (array $payload, array $paths) {
+    foreach ($paths as $path) {
+        $segments = explode('.', $path);
+        $cursor = $payload;
+        $found = true;
+
+        foreach ($segments as $segment) {
+            if (is_array($cursor) && array_key_exists($segment, $cursor)) {
+                $cursor = $cursor[$segment];
+            } else {
+                $found = false;
+                break;
+            }
+        }
+
+        if ($found) {
+            return $cursor;
+        }
+    }
+
+    return null;
+};
+
+$payload = $readPayload($record->payload_json ?? null);
+
+$checks = [
+    [
+        'label' => 'Request reference',
+        'record' => $record->request_reference ?? null,
+        'paths' => ['request_reference', 'reference', 'requestReference'],
+        'why' => 'The identifier should line up before the payload is used for reopen or hand-off tracing.',
+    ],
+    [
+        'label' => 'Source type',
+        'record' => $record->source_type ?? null,
+        'paths' => ['source_type', 'source.type', 'sourceType'],
+        'why' => 'Source posture should remain readable outside the raw payload.',
+    ],
+    [
+        'label' => 'Requested mode',
+        'record' => $record->requested_mode ?? null,
+        'paths' => ['requested_mode', 'mode', 'request.mode'],
+        'why' => 'Planning mode drift can distort the next operator move.',
+    ],
+    [
+        'label' => 'Guest name',
+        'record' => $record->full_name ?? null,
+        'paths' => ['full_name', 'name', 'guest.name', 'guest.full_name'],
+        'why' => 'The normalized record should preserve who the inquiry belongs to.',
+    ],
+    [
+        'label' => 'Guest email',
+        'record' => $record->email ?? null,
+        'paths' => ['email', 'guest.email', 'contact.email'],
+        'why' => 'Follow-up continuity depends on the working contact route being visible outside raw JSON.',
+    ],
+    [
+        'label' => 'Guest phone',
+        'record' => $record->phone ?? null,
+        'paths' => ['phone', 'guest.phone', 'contact.phone', 'mobile'],
+        'why' => 'Contact-route checks are safer when the phone signal is not trapped only in payload.',
+    ],
+    [
+        'label' => 'Guest country',
+        'record' => $record->country ?? null,
+        'paths' => ['country', 'guest.country', 'residence_country'],
+        'why' => 'Country context often affects language, pacing, and timing assumptions.',
+    ],
+    [
+        'label' => 'Guests',
+        'record' => $record->guests ?? null,
+        'paths' => ['guests', 'guest_count', 'party_size', 'party.guests'],
+        'why' => 'Group size should stay aligned because it shapes service and commercial posture.',
+    ],
+    [
+        'label' => 'Arrival date',
+        'record' => $record->arrival_date ?? null,
+        'paths' => ['arrival_date', 'arrival', 'trip.arrival_date', 'stay.arrival_date'],
+        'why' => 'Trip timing is one of the highest-value continuity anchors.',
+    ],
+    [
+        'label' => 'Departure date',
+        'record' => $record->departure_date ?? null,
+        'paths' => ['departure_date', 'departure', 'trip.departure_date', 'stay.departure_date'],
+        'why' => 'Departure context affects urgency and package shape.',
+    ],
+    [
+        'label' => 'Services summary',
+        'record' => $record->services_inline ?? null,
+        'paths' => ['services_inline', 'services', 'service_focus', 'request.services'],
+        'why' => 'Service intent should be promoted out of raw payload and into the working surface.',
+    ],
+    [
+        'label' => 'Guest brief',
+        'record' => $record->details ?? null,
+        'paths' => ['details', 'brief', 'guest_brief', 'notes', 'request.details'],
+        'why' => 'If the guest brief only survives in payload, reopen review becomes slower and riskier.',
+    ],
+];
+
+$rows = [];
+$matchCount = 0;
+$mismatchCount = 0;
+$recordOnlyCount = 0;
+$payloadOnlyCount = 0;
+$bothMissingCount = 0;
+
+foreach ($checks as $item) {
+    $recordValue = $item['record'];
+    $payloadValue = $getPayloadValue($payload, $item['paths']);
+
+    $recordText = $normalizeText($recordValue);
+    $payloadText = $normalizeText($payloadValue);
+
+    $recordCompare = $normalizeCompare($recordValue);
+    $payloadCompare = $normalizeCompare($payloadValue);
+
+    $state = 'Both missing';
+    $tone = 'neutral';
+
+    if ($recordCompare !== '' && $payloadCompare !== '') {
+        if ($recordCompare === $payloadCompare) {
+            $state = 'Aligned';
+            $tone = 'positive';
+            $matchCount++;
+        } else {
+            $state = 'Mismatch';
+            $tone = 'warning';
+            $mismatchCount++;
+        }
+    } elseif ($recordCompare !== '') {
+        $state = 'Record only';
+        $tone = 'positive';
+        $recordOnlyCount++;
+    } elseif ($payloadCompare !== '') {
+        $state = 'Payload only';
+        $tone = 'warning';
+        $payloadOnlyCount++;
+    } else {
+        $bothMissingCount++;
+    }
+
+    $rows[] = [
+        'label' => $item['label'],
+        'state' => $state,
+        'tone' => $tone,
+        'record' => $recordText !== '' ? $recordText : 'Not captured on record',
+        'payload' => $payloadText !== '' ? $payloadText : 'Not visible in payload',
+        'why' => $item['why'],
+    ];
+}
+
+$workingSummary = trim((string) ($record->guest_summary ?? ''));
+$workingNotes = trim((string) ($record->internal_notes ?? ''));
+$continuityPromoted = $workingSummary !== '' || $workingNotes !== '';
+$payloadAvailable = !empty($payload);
+
+$toneStyles = [
+    'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+    'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$tone = 'neutral';
+$headline = 'Payload and working fields are reasonably aligned';
+$guidance = 'The raw payload still deserves occasional validation, but the normalized inquiry record is carrying the main continuity signals operators need.';
+$nextMove = 'Use the Raw tab for spot-checking, then keep the working summary and notes current so the next assignee does not need to reconstruct the inquiry from JSON.';
+
+if (!$payloadAvailable) {
+    $tone = 'critical';
+    $headline = 'No structured payload is available to compare against the record';
+    $guidance = 'Alignment scanning is limited because the raw payload is empty or not decodable, so the normalized record and history become the only practical continuity sources.';
+    $nextMove = 'Rely on the live fields and timeline, and keep new history entries precise because there is little payload safety net.';
+} elseif ($mismatchCount >= 3) {
+    $tone = 'warning';
+    $headline = 'Several core fields drift from the saved payload';
+    $guidance = 'The inquiry is still workable, but record-to-payload mismatches increase reopen friction and make it harder to trust the Raw tab as a fallback truth source.';
+    $nextMove = 'Treat normalized record fields as primary, then refresh any stale summary or note context so the next operator is not forced to arbitrate between two versions.';
+} elseif ($payloadOnlyCount >= 3 && !$continuityPromoted) {
+    $tone = 'warning';
+    $headline = 'Too much useful context still lives only in payload';
+    $guidance = 'The payload contains meaningful planning signals that have not yet been promoted into working fields or notes, which weakens fast operator continuity.';
+    $nextMove = 'Promote the important payload-only facts into the working summary or timeline rather than leaving them buried in JSON.';
+} elseif ($matchCount >= 6 && $mismatchCount === 0) {
+    $tone = 'positive';
+    $headline = 'Payload alignment is strong across the main continuity fields';
+    $guidance = 'The saved payload and normalized record tell a consistent story, which makes reopen review, source tracing, and hand-off continuity safer.';
+    $nextMove = 'Continue using the working tabs as the primary surface, with the Raw tab reserved for validation and deeper source review.';
+}
+
+$summaryChecks = [
+    'Aligned fields: ' . $matchCount,
+    'Mismatched fields: ' . $mismatchCount,
+    'Record-only fields: ' . $recordOnlyCount,
+    'Payload-only fields: ' . $payloadOnlyCount,
+    'Missing on both sides: ' . $bothMissingCount,
+    'Working continuity promoted: ' . ($continuityPromoted ? 'Yes' : 'Still thin'),
+];
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+
+$badgeStyles = [
+    'Aligned' => 'background:#eaf7ef;color:#198754;border:1px solid #cfe9d8;',
+    'Mismatch' => 'background:#fff3e8;color:#fd7e14;border:1px solid #ffe0bf;',
+    'Payload only' => 'background:#fff3e8;color:#fd7e14;border:1px solid #ffe0bf;',
+    'Record only' => 'background:#eef6ff;color:#2563eb;border:1px solid #cfe0ff;',
+    'Both missing' => 'background:#f8fafc;color:#475569;border:1px solid #e2e8f0;',
+];
+?>
+<div style="border:1px solid <?= $escape($palette[2]) ?>;background:<?= $escape($palette[1]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:<?= $escape($palette[0]) ?>;margin-bottom:6px;">Payload Alignment Signals</div>
+    <div style="font-size:20px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:8px;"><?= $escape($headline) ?></div>
+    <p style="margin:0 0 14px 0;color:#374151;line-height:1.6;"><?= $escape($guidance) ?></p>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Safest next move</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;line-height:1.55;"><?= $escape($nextMove) ?></div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Alignment summary</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($summaryChecks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:10px;">Key field comparison</div>
+
+                <?php foreach ($rows as $row): ?>
+                    <div style="border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+                            <div style="font-size:14px;font-weight:700;color:#111827;"><?= $escape($row['label']) ?></div>
+                            <div style="font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:4px 9px;<?= $escape($badgeStyles[$row['state']] ?? $badgeStyles['Both missing']) ?>">
+                                <?= $escape($row['state']) ?>
+                            </div>
+                        </div>
+                        <div style="font-size:13px;color:#374151;line-height:1.55;margin-bottom:6px;">
+                            <strong>Record:</strong> <?= $escape($row['record']) ?><br>
+                            <strong>Payload:</strong> <?= $escape($row['payload']) ?>
+                        </div>
+                        <div style="font-size:12px;color:#6b7280;line-height:1.5;"><?= $escape($row['why']) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
