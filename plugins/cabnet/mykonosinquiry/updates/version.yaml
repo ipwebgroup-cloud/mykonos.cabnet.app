@@ -66,3 +66,6 @@
     - 'Add confirmation blockers scan panel to the stabilized operator workspace line'
 1.1.20:
     - 'Add guest confidence signals scan panel to the stabilized operator workspace line'
+
+1.1.21:
+    - 'Activate the remaining operator workspace scan panels on the stabilized inquiry form line'

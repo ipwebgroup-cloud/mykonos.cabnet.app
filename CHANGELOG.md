@@ -1,3 +1,8 @@
+## v2.6.24 — Operator Workspace Activation Alignment
+- safely activates the remaining read-only Internal-tab panels that already exist in the repo but were not yet wired into the current inquiry form
+- brings **Risk & Sensitivity**, **Commercial Posture**, **Decision Posture**, **Proposal Readiness**, **Fulfillment Readiness**, **Working Summary Framing**, and **Guest Confidence Signals** into the live operator workspace
+- keeps the patch backend-only with no schema change and no public `/plan` flow change
+
 
 ## v2.6.21 — Clarification Targets Panel
 - added a read-only **Clarification Targets** panel to the Internal tab

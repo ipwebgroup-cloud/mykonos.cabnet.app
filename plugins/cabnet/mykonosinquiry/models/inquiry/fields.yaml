@@ -307,6 +307,13 @@ tabs:
             comment: Read-only operator scan of celebration intent, dining posture, nightlife appetite, and special-moment signals before shaping the guest experience plan.
 
 
+        risk_sensitivity_panel:
+            label: Risk & Sensitivity
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_risk_sensitivity_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of urgency, privacy, family, and dietary signals that should stay visible during hand-off and follow-up.
+
         source_entry_panel:
             label: Source & Entry Posture
             type: partial
@@ -328,6 +335,34 @@ tabs:
             tab: Internal
             comment: Read-only operator framing of the most appropriate next move based on live workflow, contact posture, and follow-up discipline.
 
+        commercial_posture_panel:
+            label: Commercial Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_commercial_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of budget, package depth, and commercial pacing before the next offer-shaping move.
+
+        decision_posture_panel:
+            label: Decision Posture
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_decision_posture_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of the safest next decision across assignment, contact, packaging, and pacing.
+
+        proposal_readiness_panel:
+            label: Proposal Readiness
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_readiness_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of whether the inquiry is ready for a starter package, deeper proposal shaping, or one more clarification pass.
+
+        fulfillment_readiness_panel:
+            label: Fulfillment Readiness
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_readiness_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of whether the inquiry is ready to move from shaping into concrete sourcing and execution planning.
+
         response_packaging_panel:
             label: Response Packaging
             type: partial
@@ -335,6 +370,12 @@ tabs:
             tab: Internal
             comment: Read-only operator framing for what should go into the next guest-facing package or clarification response.
 
+        guest_confidence_signals_panel:
+            label: Guest Confidence Signals
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_confidence_signals_panel.htm
+            tab: Internal
+            comment: Read-only operator scan of ownership clarity, continuity cueing, and the safest next confidence-building move before the next guest touch.
 
         reply_tone_guidance_panel:
             label: Reply Tone Guidance
@@ -374,6 +415,13 @@ tabs:
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_queue_panel.htm
             tab: Internal
             comment: Read-only queue checkpoint summary for follow-up state, due date, and operator action.
+
+        working_summary_framing_panel:
+            label: Working Summary Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_working_summary_framing_panel.htm
+            tab: Internal
+            comment: Read-only operator framing of the safest anchors, write checks, and hand-off shape before updating the working summary.
 
         guest_summary:
             label: Operator Working Summary
