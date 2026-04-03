@@ -1,0 +1,91 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$guests = $stringify($record->guests ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+
+$steps = [];
+$steps[] = 'Open the journey map with the clearest live travel anchor: arrival, departure, or the next operator-held checkpoint.';
+if ($arrival !== '' || $departure !== '') {
+    $steps[] = 'Frame the experience around the stay window so arrival, in-stay highlights, and departure support never float free of travel reality.';
+}
+if ($services !== '') {
+    $steps[] = 'Sequence the service mix into an experience arc so transfers, dining, leisure, and premium moments read as one journey instead of isolated tasks.';
+}
+if ($guests !== '' && $guests !== '0') {
+    $steps[] = 'Keep the pace aligned with guest scale so movement, privacy, and service cadence suit the actual group.';
+}
+if ($summary !== '') {
+    $steps[] = 'Use the working summary as the continuity spine so the journey stays faithful to the real guest mission.';
+} elseif ($details !== '') {
+    $steps[] = 'Lift only the clearest experiential cues from the guest brief and mark everything else as provisional until continuity improves.';
+}
+if ($requestedMode !== '') {
+    $steps[] = 'Match the journey voice to the requested mode so the sequencing feels appropriate for how the guest expects the plan to evolve.';
+}
+$steps[] = $followUpDate !== ''
+    ? 'Close with the next visible checkpoint so the journey sequence stays trackable after this planning pass.'
+    : 'End with one explicit next checkpoint so the journey remains operator-held instead of becoming free-floating narrative.';
+
+$palette = ['#7c3aed', '#faf5ff', '#ddd6fe'];
+$headline = 'Journey sequencing can stay provisional but useful';
+if (($arrival !== '' || $departure !== '') && $services !== '') {
+    $headline = 'Journey sequencing can be shaped around the live experience arc';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+    $headline = 'Journey sequencing can support execution-level experience continuity';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Journey Sequence Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Route: <strong><?= e($status === 'confirmed' ? 'experience execution sequence' : 'pre-experience sequence') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($steps as $step): ?>
+            <li style="margin:0 0 8px 0;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Sequence close</div>
+        <div style="font-size:14px;"><?= e($followUpDate !== '' ? 'Tie the next journey move to the visible follow-up checkpoint so the sequence remains operationally grounded.' : 'End with a single explicit checkpoint before the journey narrative grows beyond what the record can currently support.') ?></div>
+    </div>
+</div>

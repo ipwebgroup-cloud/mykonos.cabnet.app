@@ -1,3 +1,10 @@
+## v4.3.0 — Guest Journey Workspace
+- adds a new **Journey** tab to the backend inquiry update screen
+- introduces a composite **Guest Journey Workspace** panel for shaping the experience arc across arrival, stay rhythm, services, and operator checkpoints
+- adds **Journey Sequence Blueprint** guidance so operators can map arrival, pacing, and high-touch moments into one coherent journey sequence without implying premature commitments
+- adds **Journey Risk Guardrails** to prevent over-design, hidden coverage gaps, checkpoint loss, and experience sequencing that outruns the visible record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.0.0 — Pricing Workspace
 - adds a new **Pricing** tab to the backend inquiry update screen
 - introduces a composite **Pricing Workspace** panel for directional range posture and disciplined commercial framing

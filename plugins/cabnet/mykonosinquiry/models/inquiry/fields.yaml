@@ -463,6 +463,28 @@ tabs:
             tab: Scheduling
             comment: Read-only guardrails that surface the timing mistakes most likely to create cadence drift, checkpoint loss, or premature scheduling confidence.
 
+
+        guest_journey_workspace_panel:
+            label: Guest Journey Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_journey_workspace_panel.htm
+            tab: Journey
+            comment: High-level guest-journey surface for shaping the experience arc across arrival, stay, service rhythm, and operator checkpoints before guest-facing sequencing becomes too confident.
+
+        journey_sequence_blueprint_panel:
+            label: Journey Sequence Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_journey_sequence_blueprint_panel.htm
+            tab: Journey
+            comment: Read-only structure guidance for sequencing arrival, experiences, pacing, and checkpoint visibility into one coherent journey map.
+
+        journey_risk_guardrails_panel:
+            label: Journey Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_journey_risk_guardrails_panel.htm
+            tab: Journey
+            comment: Read-only guardrails that surface the guest-journey mistakes most likely to over-design, hide gaps, or turn provisional sequencing into implied commitments.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial
