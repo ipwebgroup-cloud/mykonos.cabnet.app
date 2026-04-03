@@ -58,3 +58,5 @@
     - 'Add reply tone guidance scan panel to the operator workspace consolidation line'
 1.1.16:
     - 'Activate the response packaging panel on the stabilized operator workspace line'
+1.1.17:
+    - 'Activate the reply tone guidance panel on the stabilized operator workspace line'

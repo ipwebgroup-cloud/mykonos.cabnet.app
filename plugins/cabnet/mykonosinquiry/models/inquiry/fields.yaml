@@ -335,6 +335,14 @@ tabs:
             tab: Internal
             comment: Read-only operator framing for what should go into the next guest-facing package or clarification response.
 
+
+        reply_tone_guidance_panel:
+            label: Reply Tone Guidance
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_tone_guidance_panel.htm
+            tab: Internal
+            comment: Read-only operator framing for safest reply tone, pacing, route, and guest-facing response shape before the next touch.
+
         urgency_hint:
             label: Urgency Hint
             tab: Internal

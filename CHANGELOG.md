@@ -1,3 +1,9 @@
+
+## v2.6.20 — Reply Tone Guidance Activation
+- safely activates the read-only **Reply Tone Guidance** panel on the Internal tab
+- surfaces the safest reply tone, pacing, contact route, and guest-facing response shape
+- keeps operator workspace consolidation moving without schema or public-flow changes
+
 ## v2.6.19 — Response Packaging Activation
 - reintroduced the read-only **Response Packaging** panel on the Internal tab
 - surfaces what should go into the next guest-facing package, what still needs confirmation, and whether the inquiry is ready for a starter package or fuller shaping
