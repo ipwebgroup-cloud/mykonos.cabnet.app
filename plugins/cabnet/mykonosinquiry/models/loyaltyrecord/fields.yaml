@@ -82,6 +82,33 @@ tabs:
             tab: Workspace
             span: left
 
+        next_step_visibility:
+            label: Next-Step Visibility
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Immediate continuity posture, next review window, and ownership visibility.
+
+        continuity_decision_frame:
+            label: Continuity Decision Frame
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: full
+            comment: Read-only framing to keep referral and return-value handling deliberate rather than drifting broad.
+
+        referral_return_value_summary:
+            label: Referral / Return-Value Framing
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: full
+            comment: Read-only summary of why this record should stay in referral, stewardship, or watch posture.
+
         created_by:
             label: Created By
             disabled: true
@@ -146,6 +173,24 @@ tabs:
             tab: Workspace
             span: full
             comment: Working retention notes for this continuity record.
+
+        outcome_digest:
+            label: Latest Outcome Digest
+            type: textarea
+            size: large
+            tab: History
+            readOnly: true
+            span: left
+            comment: Structured visibility into the latest touchpoint outcome and next-step marker.
+
+        latest_touchpoint_body_preview:
+            label: Latest Touchpoint Narrative
+            type: textarea
+            size: large
+            tab: History
+            readOnly: true
+            span: right
+            comment: Latest touchpoint narrative preview for fast continuity reading.
 
         history_preview:
             label: Touchpoint Timeline

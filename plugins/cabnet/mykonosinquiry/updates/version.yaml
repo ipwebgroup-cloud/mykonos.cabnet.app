@@ -122,3 +122,6 @@
   - upgrade_loyalty_touchpoints_table_for_workspace_activation.php
 2.3.4:
   - 'Introduce first live loyalty touchpoint capture and continuity command deck actions'
+2.3.5:
+  - 'Introduce loyalty decision framing and next-step visibility polish for live continuity records'
+

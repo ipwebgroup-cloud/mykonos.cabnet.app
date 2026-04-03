@@ -10,6 +10,18 @@ scopes:
             dormant: Dormant
             archived: Archived
 
+    loyalty_stage:
+        label: Loyalty Stage
+        type: group
+        conditions: loyalty_stage in (:filtered)
+        options:
+            review: Review
+            watch: Watch
+            warm: Warm
+            retained: Retained
+            re-engaged: Re-engaged
+            completed: Completed
+
     return_value_tier:
         label: Return-Value Tier
         type: group

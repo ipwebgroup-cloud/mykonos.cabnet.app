@@ -11,6 +11,10 @@ columns:
         label: Continuity
         sortable: false
 
+    decision_focus_label:
+        label: Decision Focus
+        sortable: false
+
     referral_ready:
         label: Referral Ready
         type: switch
@@ -26,6 +30,10 @@ columns:
 
     latest_touchpoint_summary:
         label: Latest Touchpoint
+        sortable: false
+
+    next_review_window_label:
+        label: Review Window
         sortable: false
 
     next_review_at:

@@ -101,6 +101,17 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <h4>Next review</h4>
                     <p><?= $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
                 </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Decision focus</h4>
+                    <p><?= e($record->decision_focus_label) ?></p>
+                </div>
+            </div>
+
+            <div class="control-list" style="margin-top:15px;">
+                <ul>
+                    <li><strong>Review window:</strong> <?= e($record->next_review_window_label) ?></li>
+                    <li><strong>Referral / value posture:</strong> <?= e($record->return_value_tier_label) ?><?= $record->referral_ready ? ' · referral ready' : '' ?></li>
+                </ul>
             </div>
         <?php endif; ?>
 

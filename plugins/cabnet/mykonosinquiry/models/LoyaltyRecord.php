@@ -319,6 +319,179 @@ class LoyaltyRecord extends Model
         return trim(implode(PHP_EOL, $lines));
     }
 
+    public function getLatestTouchpointOutcomeLabelAttribute(): string
+    {
+        $touchpoint = $this->getLatestTouchpointRecord();
+
+        if (!$touchpoint || !$touchpoint->touchpoint_outcome) {
+            return 'No outcome recorded yet.';
+        }
+
+        $options = $this->getTouchpointOutcomeOptions();
+        $outcome = (string) $touchpoint->touchpoint_outcome;
+
+        return $options[$outcome] ?? ($this->humanizeValue($outcome) ?? 'No outcome recorded yet.');
+    }
+
+    public function getLatestTouchpointChannelLabelAttribute(): string
+    {
+        $touchpoint = $this->getLatestTouchpointRecord();
+
+        if (!$touchpoint || !$touchpoint->touchpoint_channel) {
+            return 'No channel recorded yet.';
+        }
+
+        $options = $this->getTouchpointChannelOptions();
+        $channel = (string) $touchpoint->touchpoint_channel;
+
+        return $options[$channel] ?? ($this->humanizeValue($channel) ?? 'No channel recorded yet.');
+    }
+
+    public function getNextReviewWindowLabelAttribute(): string
+    {
+        if (!$this->next_review_at) {
+            return 'Unscheduled';
+        }
+
+        $now = Carbon::now();
+        $reviewAt = $this->next_review_at instanceof \DateTimeInterface
+            ? Carbon::instance($this->next_review_at)
+            : Carbon::parse($this->next_review_at);
+
+        if ($reviewAt->lt($now->copy()->startOfDay())) {
+            return 'Overdue';
+        }
+
+        if ($reviewAt->isSameDay($now)) {
+            return 'Due today';
+        }
+
+        if ($reviewAt->lte($now->copy()->addDays(3)->endOfDay())) {
+            return 'Due soon';
+        }
+
+        if ($reviewAt->lte($now->copy()->addDays(14)->endOfDay())) {
+            return 'Near-term';
+        }
+
+        return 'Future';
+    }
+
+    public function getDecisionFocusLabelAttribute(): string
+    {
+        if ($this->continuity_status === 'referral_ready' || $this->referral_ready) {
+            return 'Referral cultivation';
+        }
+
+        if (in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            return 'Return-value stewardship';
+        }
+
+        if ($this->continuity_status === 'dormant') {
+            return 'Reactivation decision';
+        }
+
+        if ($this->getNextReviewWindowLabelAttribute() === 'Overdue' || $this->getNextReviewWindowLabelAttribute() === 'Due today') {
+            return 'Review now';
+        }
+
+        $touchpoint = $this->getLatestTouchpointRecord();
+        if ($touchpoint && $touchpoint->touchpoint_outcome === 'no_reply') {
+            return 'Re-engagement decision';
+        }
+
+        return 'Retention watch';
+    }
+
+    public function getOutcomeDigestAttribute(): string
+    {
+        $touchpoint = $this->getLatestTouchpointRecord();
+
+        if (!$touchpoint) {
+            return 'No touchpoint outcome has been captured yet.';
+        }
+
+        $author = trim((string) (($touchpoint->author_name ?: $touchpoint->operator_name) ?: 'System'));
+        $body = trim((string) ($touchpoint->body ?: $touchpoint->touchpoint_summary ?: 'No narrative captured.'));
+
+        return $this->formatSummary([
+            'Latest outcome' => $this->getLatestTouchpointOutcomeLabelAttribute(),
+            'Channel' => $this->getLatestTouchpointChannelLabelAttribute(),
+            'Logged at' => $touchpoint->touchpoint_at,
+            'Next step at' => $touchpoint->next_step_at,
+            'Logged by' => $author,
+            'Internal only' => $touchpoint->is_internal ? 'Yes' : 'No',
+            'Narrative' => $body,
+        ], 'No touchpoint outcome has been captured yet.');
+    }
+
+    public function getNextStepVisibilityAttribute(): string
+    {
+        $nextReview = $this->next_review_at
+            ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')'
+            : 'No next review is currently scheduled.';
+
+        $lastTouch = $this->latest_touchpoint_summary ?: 'No touchpoint logged yet.';
+        $owner = trim((string) $this->owner_name) !== '' ? trim((string) $this->owner_name) : 'Owner not assigned';
+
+        return $this->formatSummary([
+            'Decision focus' => $this->decision_focus_label,
+            'Next review' => $nextReview,
+            'Last touchpoint' => $lastTouch,
+            'Owner' => $owner,
+        ], 'Next-step visibility is still limited.');
+    }
+
+    public function getReferralReturnValueSummaryAttribute(): string
+    {
+        $recommendation = 'Keep under watch until stronger continuity signals appear.';
+
+        if ($this->continuity_status === 'referral_ready' || $this->referral_ready) {
+            $recommendation = 'Use referral-safe follow-up language and protect goodwill before asking for introductions.';
+        } elseif (in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            $recommendation = 'Treat this guest as high return-value and preserve continuity ownership tightly.';
+        } elseif ($this->continuity_status === 'dormant') {
+            $recommendation = 'Frame the next move as a reactivation check rather than an active value ask.';
+        }
+
+        return $this->formatSummary([
+            'Referral ready' => $this->referral_ready ? 'Yes' : 'No',
+            'Continuity status' => $this->continuity_status_label,
+            'Return-value tier' => $this->return_value_tier_label,
+            'Decision focus' => $this->decision_focus_label,
+            'Recommendation' => $recommendation,
+        ], 'Referral and return-value posture is still minimal.');
+    }
+
+    public function getContinuityDecisionFrameAttribute(): string
+    {
+        $frame = [];
+        $frame[] = 'Current posture: ' . $this->continuity_status_label . ' / ' . $this->loyalty_stage_label . '.';
+        $frame[] = 'Primary focus: ' . $this->decision_focus_label . '.';
+
+        if ($this->latest_touchpoint_summary && $this->latest_touchpoint_summary !== 'No touchpoint logged yet.') {
+            $frame[] = 'Latest touchpoint: ' . $this->latest_touchpoint_summary . '.';
+        }
+
+        if ($this->next_review_at) {
+            $frame[] = 'Next review window: ' . $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ').';
+        } else {
+            $frame[] = 'Next review window: unscheduled.';
+        }
+
+        if ($this->referral_ready) {
+            $frame[] = 'Referral posture is active, so any outreach should protect relationship quality before requesting introductions.';
+        } elseif (in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+            $frame[] = 'Return-value posture is elevated, so continuity actions should favor stewardship over broad outreach.';
+        } elseif ($this->continuity_status === 'dormant') {
+            $frame[] = 'This record is dormant and should be treated as a reactivation decision rather than an active retention cycle.';
+        } else {
+            $frame[] = 'This record remains in a narrow loyalty watch posture and should not drift into campaign-style handling.';
+        }
+
+        return implode(PHP_EOL, $frame);
+    }
+
     public function getLatestTouchpointRecord(): ?LoyaltyTouchpoint
     {
         if ($this->latestTouchpointCache !== false) {
