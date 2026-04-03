@@ -4,8 +4,8 @@ $record = null;
 
 $hasInquiry = $inquiry && !empty($inquiry->id);
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
-$loyaltyModelReady = class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord');
-$loyaltyControllerReady = class_exists('\\Cabnet\\MykonosInquiry\\Controllers\\LoyaltyRecords');
+$loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
+$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
 $loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
 
 if ($loyaltyUiReady && $hasInquiry) {
@@ -32,6 +32,24 @@ $status = trim((string) ($inquiry->status ?? ''));
 $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
 $focusLabel = $servicesInline !== '' ? $servicesInline : 'General planning';
 $inquiryAnchor = trim((string) ($inquiry->request_reference ?? ''));
+$priority = trim((string) ($inquiry->priority ?? ''));
+$ownerName = trim((string) ($inquiry->owner_name ?? ''));
+$lastContacted = $formatDate($inquiry->last_contacted_at ?? null, 'Not recorded');
+$followUpDate = $formatDate($inquiry->follow_up_date ?? null);
+
+$signals = [];
+if ($priority !== '') {
+    $signals[] = 'Priority: ' . ucwords(str_replace(['_', '-'], ' ', $priority));
+}
+if ($ownerName !== '') {
+    $signals[] = 'Owner: ' . $ownerName;
+}
+if ($status !== '') {
+    $signals[] = 'Status: ' . ucwords(str_replace(['_', '-'], ' ', $status));
+}
+if (!$signals) {
+    $signals[] = 'No routing signals recorded yet';
+}
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
@@ -53,7 +71,18 @@ $inquiryAnchor = trim((string) ($inquiry->request_reference ?? ''));
                 <li><strong>Inquiry anchor:</strong> <?= e($inquiryAnchor !== '' ? $inquiryAnchor : 'Not assigned') ?></li>
                 <li><strong>Current inquiry status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
                 <li><strong>Service focus:</strong> <?= e($focusLabel) ?></li>
+                <li><strong>Last contacted:</strong> <?= e($lastContacted) ?></li>
+                <li><strong>Follow-up date:</strong> <?= e($followUpDate) ?></li>
             </ul>
+
+            <div class="form-group" style="margin-top:15px;">
+                <label class="control-label">Routing Signals</label>
+                <ul class="list-unstyled oc-text-muted" style="margin-bottom:0;">
+                    <?php foreach ($signals as $signal): ?>
+                        <li><?= e($signal) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php else: ?>
             <ul class="list-unstyled">
                 <li><strong>Status:</strong> <?= e($record->continuity_status_label ?? $record->continuity_status ?? 'Active retention') ?></li>
@@ -74,6 +103,15 @@ $inquiryAnchor = trim((string) ($inquiry->request_reference ?? ''));
                     <pre style="white-space:pre-wrap;word-break:break-word;"><?= e($record->continuity_summary) ?></pre>
                 </div>
             <?php endif; ?>
+
+            <div class="form-group">
+                <label class="control-label">Routing Signals</label>
+                <ul class="list-unstyled oc-text-muted" style="margin-bottom:0;">
+                    <?php foreach ($signals as $signal): ?>
+                        <li><?= e($signal) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
 
             <div class="form-group">
                 <label class="control-label">Retention Lens</label>

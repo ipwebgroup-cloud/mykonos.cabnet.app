@@ -4,8 +4,8 @@ $record = null;
 
 $hasInquiry = $inquiry && !empty($inquiry->id);
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
-$loyaltyModelReady = class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord');
-$loyaltyControllerReady = class_exists('\\Cabnet\\MykonosInquiry\\Controllers\\LoyaltyRecords');
+$loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
+$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
 $loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
 
 if ($loyaltyUiReady && $hasInquiry) {
@@ -20,6 +20,7 @@ $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
 $closedAt = trim((string) ($inquiry->closed_at ?? '')) !== '';
 $lastContactedAt = trim((string) ($inquiry->last_contacted_at ?? '')) !== '';
 $followUpDate = trim((string) ($inquiry->follow_up_date ?? '')) !== '';
+$priority = trim((string) ($inquiry->priority ?? ''));
 
 $isRecommendedStage = in_array($normalizedStatus, ['reviewed', 'contacted', 'proposal_sent', 'confirmed', 'closed_won', 'closed_lost'], true);
 $isStrongRetentionStage = in_array($normalizedStatus, ['confirmed', 'closed_won'], true) || $closedAt;
@@ -61,6 +62,22 @@ $readinessSummary = $passedChecks === 3
 $continuityLens = $isStrongRetentionStage
     ? 'This looks more like post-service retention work than live queue triage.'
     : 'This still reads as an active inquiry unless the operator intentionally promotes it to continuity.';
+
+$routeLabel = 'Active Handling';
+$routeTone = 'text-danger';
+$routeHint = 'Work this request inside the live queue first.';
+if ($record) {
+    $routeLabel = 'Loyalty Continuity';
+    $routeTone = 'text-success';
+    $routeHint = 'A loyalty record is already linked, so continuity work belongs in the retention workspace.';
+} elseif ($passedChecks >= 2) {
+    $routeLabel = 'Review for Continuity';
+    $routeTone = 'text-warning';
+    $routeHint = 'The inquiry is approaching retention readiness, but the operator should confirm intent before handoff.';
+}
+
+$priorityLabel = $priority !== '' ? ucwords(str_replace(['_', '-'], ' ', $priority)) : 'Not set';
+$focusLabel = $servicesInline !== '' ? $servicesInline : 'General planning';
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
@@ -77,14 +94,17 @@ $continuityLens = $isStrongRetentionStage
         <?php else: ?>
             <div class="mb-3">
                 <p><strong>Readiness:</strong> <span class="<?= e($readinessTone) ?>"><?= e($readinessSummary) ?></span></p>
+                <p><strong>Recommended Route:</strong> <span class="<?= e($routeTone) ?>"><?= e($routeLabel) ?></span></p>
+                <p class="oc-text-muted" style="margin-bottom:10px;"><?= e($routeHint) ?></p>
                 <p class="oc-text-muted" style="margin-bottom:10px;"><?= e($continuityLens) ?></p>
                 <ul class="list-unstyled oc-text-muted" style="margin-bottom:10px;">
                     <li><strong>Status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
                     <li><strong>Reference:</strong> <?= e($hasReference ? $inquiry->request_reference : 'Not yet assigned') ?></li>
+                    <li><strong>Priority:</strong> <?= e($priorityLabel) ?></li>
                     <li><strong>Owner:</strong> <?= e($hasOwner ? $inquiry->owner_name : 'Unassigned') ?></li>
                     <li><strong>Last contacted:</strong> <?= e($lastContactedAt ? (string) $inquiry->last_contacted_at : 'Not recorded') ?></li>
                     <li><strong>Follow-up date:</strong> <?= e($followUpDate ? (string) $inquiry->follow_up_date : 'Not scheduled') ?></li>
-                    <li><strong>Focus:</strong> <?= e($servicesInline !== '' ? $servicesInline : 'General planning') ?></li>
+                    <li><strong>Focus:</strong> <?= e($focusLabel) ?></li>
                     <li><strong>Loyalty record:</strong> <?= $record ? 'Already linked' : 'Not linked yet' ?></li>
                 </ul>
             </div>
@@ -113,6 +133,12 @@ $continuityLens = $isStrongRetentionStage
             <?php elseif (!$record): ?>
                 <div class="alert alert-success">
                     This inquiry is ready for post-triage loyalty handling without mixing retention work into the live queue.
+                </div>
+            <?php endif; ?>
+
+            <?php if ($record): ?>
+                <div class="alert alert-info">
+                    This inquiry already has a loyalty link. Continue retention work in the Loyalty Continuity workspace instead of re-routing it through queue actions.
                 </div>
             <?php endif; ?>
 
