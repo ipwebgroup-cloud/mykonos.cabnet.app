@@ -218,6 +218,38 @@ tabs:
             span: full
             comment: Read-only framing for how this record should sit in the human queue without widening into automation.
 
+        finish_watch_signal_label:
+            label: Finish Watch Signal
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed finish-watch signal that merges queue-watch timing, finish posture, and dashboard meaning into one narrow read.
+
+        reopen_queue_cue_label:
+            label: Reopen Queue Cue
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Action-oriented reopen cue so the next queue move is easier to scan without reopening the whole finish story.
+
+        finish_watch_dashboard_digest:
+            label: Finish-Watch Dashboard Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining finish dashboard status, queue-watch timing, reopen priority, and the next safe move.
+
+        reopen_queue_cue_frame:
+            label: Reopen Queue Cue Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for when to interpret new proof now, when to check a parked watch before due, and when to hold quietly.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

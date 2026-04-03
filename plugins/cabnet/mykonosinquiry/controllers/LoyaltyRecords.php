@@ -121,6 +121,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Extra watch-timing and reopen-priority framing so due parked lanes and reopened records rise faster in deliberate human review.',
             ],
+            'finish_watch_dashboard_compression_panel' => [
+                'label'   => 'Finish-Watch Dashboard Compression',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_watch_dashboard_compression_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Compressed finish-watch readout so the next queue cue is visible without expanding the whole finish dashboard in your head.',
+            ],
 
             'stewardship_finish_dashboard_panel' => [
                 'label'   => 'Stewardship Finish Dashboard',

@@ -1,0 +1,60 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$finishWatchSignal = $record ? $record->finish_watch_signal_label : 'Quiet continuity review';
+$reopenCue = $record ? $record->reopen_queue_cue_label : 'Keep conservative review';
+$dashboardDigest = $record ? $record->finish_watch_dashboard_digest : 'Finish-watch dashboard digest is still minimal.';
+$cueFrame = $record ? $record->reopen_queue_cue_frame : 'Reopen queue cue framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-compress"></i>
+        <h4 style="margin-top:0;">Finish-watch dashboard compression</h4>
+        <p>
+            Compress finish posture, queue-watch timing, and reopen pressure into one narrow read so the next queue cue is easier to see without widening the workspace into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Finish watch</h4>
+                <p><?= e($finishWatchSignal) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen cue</h4>
+                <p><?= e($reopenCue) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish dashboard</h4>
+                <p><?= e($record ? $record->finish_dashboard_status_label : 'Open continuity dashboard') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Queue watch</h4>
+                <p><?= e($record ? $record->queue_watch_readiness_label : 'Quiet continuity watch') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen priority</h4>
+                <p><?= e($record ? $record->deliberate_reopen_priority_label : 'Low') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($record ? $record->next_finish_move_label : 'Review continuity') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Unassigned / no review set') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Finish-watch dashboard digest:</strong> <?= nl2br(e($dashboardDigest)) ?></li>
+                <li><strong>Reopen queue cue frame:</strong> <?= nl2br(e($cueFrame)) ?></li>
+                <li>This panel compresses the record into one queue-facing finish-watch signal and one action cue while leaving the deeper dashboard detail intact below.</li>
+            </ul>
+        </div>
+    </div>
+</div>

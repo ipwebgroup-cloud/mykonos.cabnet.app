@@ -155,3 +155,7 @@
 
 2.3.17:
   - 'Introduce queue-watch readability and deliberate reopen-priority framing for live loyalty records'
+
+2.3.18:
+  - 'Introduce finish-watch dashboard compression and reopen queue cues for live loyalty records'
+
