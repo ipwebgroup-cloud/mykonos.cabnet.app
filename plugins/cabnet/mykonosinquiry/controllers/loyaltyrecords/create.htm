@@ -12,7 +12,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Create mode is intentionally locked</h4>
                     <p style="margin-bottom:0;">
                         Manual loyalty record creation stays disabled until the dedicated storage layer is installed. This protects production from
-                        partial retention workflows and preserves the Inquiry Queue as the live operational surface. Use the qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, intent-mapping, measurement, return-value, and treatment-lane panels below to define the first activation cohort instead.
+                        partial retention workflows and preserves the Inquiry Queue as the live operational surface. Use the qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression controls, frequency-cap rules, intent-mapping, measurement, return-value, and treatment-lane panels below to define the first activation cohort instead.
                     </p>
                 </div>
             </div>
@@ -39,6 +39,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('exception_routing_panel') ?>
         <?= $this->makePartial('escalation_thresholds_panel') ?>
         <?= $this->makePartial('ownership_matrix_panel') ?>
+        <?= $this->makePartial('suppression_controls_panel') ?>
+        <?= $this->makePartial('frequency_cap_rules_panel') ?>
         <?= $this->makePartial('handoff_evidence_panel') ?>
         <?= $this->makePartial('workspace_separation_rules_panel') ?>
         <?= $this->makePartial('operator_routes_panel') ?>
