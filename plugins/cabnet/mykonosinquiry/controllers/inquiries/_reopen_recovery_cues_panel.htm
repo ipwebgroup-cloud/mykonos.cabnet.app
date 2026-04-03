@@ -1,0 +1,234 @@
+<?php
+$record = null;
+
+if (isset($vars['formModel']) && $vars['formModel'] && $vars['formModel']->exists) {
+    $record = $vars['formModel'];
+} elseif (isset($formModel) && $formModel && $formModel->exists) {
+    $record = $formModel;
+} elseif (isset($model) && $model && $model->exists) {
+    $record = $model;
+} elseif (isset($this->controller) && method_exists($this->controller, 'formGetModel')) {
+    $record = $this->controller->formGetModel();
+}
+
+if (!$record) { ?>
+    <p class="form-control-static">Reopen recovery cues become available after the inquiry is created.</p>
+<?php return; }
+
+$escape = static function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+$normalizeText = static function ($value): string {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map(static function ($item) {
+            return trim((string) $item);
+        }, $value)));
+    }
+
+    $value = trim((string) $value);
+    return preg_replace('/\s+/u', ' ', $value);
+};
+
+$readPayload = static function ($payloadRaw): array {
+    if (is_array($payloadRaw)) {
+        return $payloadRaw;
+    }
+
+    if (is_string($payloadRaw)) {
+        $payloadRaw = trim($payloadRaw);
+        if ($payloadRaw !== '') {
+            $decoded = json_decode($payloadRaw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
+    }
+
+    return [];
+};
+
+$getStatusLabel = static function ($status): string {
+    $labels = [
+        'new' => 'New',
+        'reviewed' => 'Reviewed',
+        'contacted' => 'Contacted',
+        'proposal_sent' => 'Proposal sent',
+        'awaiting_guest' => 'Awaiting guest',
+        'confirmed' => 'Confirmed',
+        'closed_won' => 'Closed won',
+        'closed_lost' => 'Closed lost',
+        'closed' => 'Closed (legacy)',
+        'spam' => 'Spam',
+        'triage' => 'Triage (legacy)',
+        'proposal' => 'Proposal shaping (legacy)',
+    ];
+
+    $status = trim((string) $status);
+    return $labels[$status] ?? ($status !== '' ? ucfirst(str_replace('_', ' ', $status)) : 'Unspecified');
+};
+
+$payload = $readPayload($record->payload_json ?? null);
+$payloadAvailable = !empty($payload);
+$status = trim((string) ($record->status ?? ''));
+$isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed'], true);
+
+$workingSummary = trim((string) ($record->guest_summary ?? ''));
+$workingNotes = trim((string) ($record->internal_notes ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$services = $normalizeText($record->services_inline ?? null);
+$sourceSignals = array_filter([
+    trim((string) ($record->source_type ?? '')),
+    trim((string) ($record->requested_mode ?? '')),
+    trim((string) ($record->source_title ?? '')),
+    trim((string) ($record->source_url ?? '')),
+]);
+
+$historyCount = null;
+try {
+    if (method_exists($record, 'notes')) {
+        $historyCount = (int) $record->notes()->count();
+    }
+} catch (Throwable $e) {
+    $historyCount = null;
+}
+
+$continuityStrength = 0;
+$continuityChecks = [];
+
+$continuityChecks[] = [
+    'label' => 'Working summary',
+    'state' => $workingSummary !== '' ? 'Present' : 'Missing',
+    'why' => 'This is the fastest hand-off surface when the inquiry is reopened.',
+];
+if ($workingSummary !== '') { $continuityStrength++; }
+
+$continuityChecks[] = [
+    'label' => 'Working notes',
+    'state' => $workingNotes !== '' ? 'Present' : 'Missing',
+    'why' => 'Rolling notes help the next operator avoid reconstructing the whole case.',
+];
+if ($workingNotes !== '') { $continuityStrength++; }
+
+$continuityChecks[] = [
+    'label' => 'Guest brief anchor',
+    'state' => $details !== '' ? 'Present' : 'Thin',
+    'why' => 'A preserved brief anchor makes reopen review much safer than relying on memory or payload alone.',
+];
+if ($details !== '') { $continuityStrength++; }
+
+$continuityChecks[] = [
+    'label' => 'Service anchor',
+    'state' => $services !== '' ? 'Present' : 'Thin',
+    'why' => 'Service intent should remain visible outside the raw JSON block.',
+];
+if ($services !== '') { $continuityStrength++; }
+
+$continuityChecks[] = [
+    'label' => 'Source cues',
+    'state' => !empty($sourceSignals) ? 'Present' : 'Thin',
+    'why' => 'Source and entry context help the operator understand how the inquiry arrived and what framing to preserve.',
+];
+if (!empty($sourceSignals)) { $continuityStrength++; }
+
+$continuityChecks[] = [
+    'label' => 'Timeline depth',
+    'state' => $historyCount === null ? 'Unknown' : ($historyCount >= 2 ? 'Usable' : ($historyCount === 1 ? 'Thin' : 'Missing')),
+    'why' => 'Append-only history becomes more important when a record is revisited after time has passed.',
+];
+if ($historyCount !== null && $historyCount >= 2) { $continuityStrength++; }
+
+$toneStyles = [
+    'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
+    'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
+];
+
+$tone = 'neutral';
+$headline = 'Recovery cues are moderately usable';
+$guidance = 'The record has some continuity anchors, but reopen review may still need careful checking across the working tabs and raw payload.';
+$nextMove = 'Refresh the working summary and one append-only note before the next major hand-off so the record can stand on its own.';
+
+if (!$payloadAvailable && $continuityStrength <= 2) {
+    $tone = 'critical';
+    $headline = 'Recovery posture is fragile because both payload and operator continuity are thin';
+    $guidance = 'There is very little fallback material if this record is revisited later, which raises hand-off and reopen risk.';
+    $nextMove = 'Before closing or parking the inquiry, write a concise working summary and a factual history entry so continuity is not lost.';
+} elseif ($isClosed && $continuityStrength <= 3) {
+    $tone = 'warning';
+    $headline = 'Closed records deserve stronger reopen cues than this';
+    $guidance = 'The inquiry may be closable in workflow terms, but the continuity surface is still too thin for a comfortable reopen later.';
+    $nextMove = 'Tighten the closure reason, working summary, and latest history note so a future operator can understand the case quickly.';
+} elseif ($payloadAvailable && $continuityStrength <= 2) {
+    $tone = 'warning';
+    $headline = 'Too much recovery context still depends on the raw payload';
+    $guidance = 'The saved payload gives a fallback, but the working record is not yet carrying enough continuity for fast operator review.';
+    $nextMove = 'Promote the most important payload facts into the working summary or a new internal note before the inquiry cools off.';
+} elseif ($continuityStrength >= 5) {
+    $tone = 'positive';
+    $headline = 'Recovery posture is strong for reopen and hand-off continuity';
+    $guidance = 'The inquiry record already carries most of the anchor facts a future operator would need without diving into raw JSON first.';
+    $nextMove = 'Keep the working summary and latest note updated, and reserve the Raw tab for validation rather than first-pass reconstruction.';
+}
+
+$summaryChecks = [
+    'Current status: ' . $getStatusLabel($status),
+    'Payload fallback available: ' . ($payloadAvailable ? 'Yes' : 'No'),
+    'Continuity anchors present: ' . $continuityStrength . ' / 6',
+    'Working summary: ' . ($workingSummary !== '' ? 'Present' : 'Missing'),
+    'Working notes: ' . ($workingNotes !== '' ? 'Present' : 'Missing'),
+    'History depth: ' . ($historyCount === null ? 'Unknown' : (string) $historyCount . ' entr' . ($historyCount === 1 ? 'y' : 'ies')),
+];
+
+$palette = $toneStyles[$tone] ?? $toneStyles['neutral'];
+$badgeStyles = [
+    'Present' => 'background:#eaf7ef;color:#198754;border:1px solid #cfe9d8;',
+    'Usable' => 'background:#eaf7ef;color:#198754;border:1px solid #cfe9d8;',
+    'Thin' => 'background:#fff3e8;color:#fd7e14;border:1px solid #ffe0bf;',
+    'Missing' => 'background:#fdebec;color:#b02a37;border:1px solid #f7c6cc;',
+    'Unknown' => 'background:#f8fafc;color:#475569;border:1px solid #e2e8f0;',
+];
+?>
+<div style="border:1px solid <?= $escape($palette[2]) ?>;background:<?= $escape($palette[1]) ?>;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:<?= $escape($palette[0]) ?>;margin-bottom:6px;">Reopen Recovery Cues</div>
+    <div style="font-size:20px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:8px;"><?= $escape($headline) ?></div>
+    <p style="margin:0 0 14px 0;color:#374151;line-height:1.6;"><?= $escape($guidance) ?></p>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Safest next move</div>
+                <div style="font-size:15px;font-weight:600;color:#111827;line-height:1.55;"><?= $escape($nextMove) ?></div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Recovery summary</div>
+                <ul style="margin:0;padding-left:18px;color:#374151;line-height:1.6;">
+                    <?php foreach ($summaryChecks as $check): ?>
+                        <li><?= $escape($check) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:14px 16px;height:100%;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:10px;">Continuity anchors for future recovery</div>
+                <?php foreach ($continuityChecks as $row): ?>
+                    <div style="border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+                            <div style="font-size:14px;font-weight:700;color:#111827;"><?= $escape($row['label']) ?></div>
+                            <div style="font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:4px 9px;<?= $escape($badgeStyles[$row['state']] ?? $badgeStyles['Unknown']) ?>">
+                                <?= $escape($row['state']) ?>
+                            </div>
+                        </div>
+                        <div style="font-size:12px;color:#6b7280;line-height:1.5;"><?= $escape($row['why']) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

@@ -510,6 +510,13 @@ tabs:
             tab: Raw
             comment: Read-only operator comparison of normalized inquiry fields against saved payload so reopen and hand-off review can spot drift before relying on raw JSON.
 
+        reopen_recovery_cues_panel:
+            label: Reopen Recovery Cues
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_recovery_cues_panel.htm
+            tab: Raw
+            comment: Read-only operator check of whether the inquiry can be safely reopened or handed off later without depending too heavily on memory or raw JSON.
+
         payload_pretty_json:
             label: Raw Payload
             type: textarea

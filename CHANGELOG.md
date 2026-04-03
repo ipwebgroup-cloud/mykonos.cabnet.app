@@ -1,3 +1,9 @@
+## v2.6.31 — Reopen Recovery Cues Panel
+- added a read-only **Reopen Recovery Cues** panel to the Raw tab
+- surfaces whether the inquiry can be safely reopened or handed off later without depending too heavily on memory or raw JSON
+- keeps the patch backend-only with no schema, list, quick-action, or public-flow change
+
+
 ## v2.6.30 — Payload Alignment Signals Panel
 - added a read-only **Payload Alignment Signals** panel to the Raw tab
 - compares normalized inquiry fields against the saved payload so operators can spot drift before using raw JSON as a fallback continuity source

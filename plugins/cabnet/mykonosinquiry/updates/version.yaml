@@ -87,3 +87,6 @@
 
 1.1.27:
     - 'Add payload alignment signals scan panel to the stabilized operator workspace line'
+
+1.1.28:
+    - 'Add reopen recovery cues scan panel to the stabilized operator workspace line'
