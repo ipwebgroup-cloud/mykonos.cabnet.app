@@ -1,13 +1,22 @@
-<?php Block::put('breadcrumb') ?>
-    <ul>
-        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Inquiry Queue</a></li>
-        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>">Loyalty Continuity</a></li>
-        <li><?= e($this->pageTitle ?: 'Create Loyalty Record') ?></li>
-    </ul>
-<?php Block::endPut() ?>
+<?php
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+?>
 
-<?= Form::open(['class' => 'layout']) ?>
-    <div class="layout-row">
+<div class="layout">
+    <?php if (!$loyaltyTableReady): ?>
+        <div class="layout-row">
+            <div class="callout fade in no-subheader">
+                <div class="header">
+                    <i class="icon-info"></i>
+                    <h3>Loyalty Continuity is not ready for manual record creation yet</h3>
+                    <p>
+                        The loyalty workspace is installed at the UI level, but the required loyalty database tables are not present.
+                        This guard prevents backend crashes and keeps the live inquiry workflow stable.
+                    </p>
+                </div>
+            </div>
+        </div>
+    <?php else: ?>
         <?= $this->formRender() ?>
-    </div>
-<?= Form::close() ?>
+    <?php endif ?>
+</div>

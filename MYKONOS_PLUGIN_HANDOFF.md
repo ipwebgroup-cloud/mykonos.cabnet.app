@@ -1,29 +1,38 @@
 # MYKONOS PLUGIN HANDOFF
 
-## Current live continuity checkpoint
-- Stable base remains the Mykonos inquiry operator workflow line.
-- Current emergency fix line is focused on Loyalty Continuity backend render safety.
-- Do not introduce schema changes unless explicitly requested and verified.
-- Keep the public `/plan` flow untouched.
+## Current line
+- Live project root: `mykonos.cabnet.app`
+- Active plugin: `plugins/cabnet/mykonosinquiry`
+- Public source-of-truth direction remains the DB-backed inquiry workflow from the v41 integration line.
 
-## Latest delivered patch
-- v2.3.10 loyalty double-toolbar render fix
+## Current emergency status
+- Inquiry workspace has been kept stable after loyalty partial and render hotfixes.
+- Loyalty Continuity UI routes now exist, but the loyalty database table is still not installed on the live environment.
+- The current safe behavior is:
+  - inquiry pages continue to work
+  - loyalty pages render a guarded message instead of crashing
 
-## What this patch does
-- plugin-only
-- no schema change
-- no theme change
-- adds the missing double-underscore toolbar partial expected by the current Loyalty Continuity list configuration:
-  - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
+## This patch
+- Version: `v2.3.11`
+- Name: `loyalty workspace table guard`
+- Type: plugin-only safety patch
+- No schema change
+- No theme change
 
-## Why this was needed
-- the loyalty list screen was throwing:
-  - `The partial '__toolbar.htm' is not found.`
-- the live archive state already contains:
-  - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
-- the current list configuration/runtime is attempting to resolve `__toolbar.htm`, so this patch satisfies the expected partial name without changing schema or workflow behavior.
+## Files included in this patch
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/index.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/create.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/update.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
+- `docs/releases/MYKONOS_V2311_LOYALTY_WORKSPACE_TABLE_GUARD_PATCH.md`
+
+## Why this patch exists
+The Loyalty Continuity backend page advanced past the earlier blank-page and missing-toolbar failures, but then failed on direct database list loading because `cabnet_mykonos_loyalty_records` does not exist yet in the live database.
+
+This patch guards the loyalty controller views so the backend remains usable without forcing destructive plugin refresh behavior.
 
 ## Safest next direction
-- verify the Loyalty Continuity list renders
-- then continue with small operator-facing polish patches only
-- avoid plugin refresh / destructive schema operations during live recovery work
+- Keep the inquiry queue stable.
+- Do not broaden loyalty behavior until the real loyalty migration strategy is confirmed against the live database state.
+- Continue with plugin-only, production-safe guardrail patches.

@@ -1,13 +1,22 @@
-<?php Block::put('breadcrumb') ?>
-    <ul>
-        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Inquiry Queue</a></li>
-        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>">Loyalty Continuity</a></li>
-        <li><?= e($this->pageTitle ?: 'Update Loyalty Record') ?></li>
-    </ul>
-<?php Block::endPut() ?>
+<?php
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+?>
 
-<?= Form::open(['class' => 'layout']) ?>
-    <div class="layout-row">
+<div class="layout">
+    <?php if (!$loyaltyTableReady): ?>
+        <div class="layout-row">
+            <div class="callout fade in no-subheader">
+                <div class="header">
+                    <i class="icon-info"></i>
+                    <h3>Loyalty Continuity is not ready for record editing yet</h3>
+                    <p>
+                        The loyalty workspace is present, but the loyalty storage layer is not installed in this environment.
+                        This page is intentionally guarded until the data layer is introduced safely.
+                    </p>
+                </div>
+            </div>
+        </div>
+    <?php else: ?>
         <?= $this->formRender() ?>
-    </div>
-<?= Form::close() ?>
+    <?php endif ?>
+</div>

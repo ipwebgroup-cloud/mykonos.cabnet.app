@@ -1,12 +1,25 @@
-<?php Block::put('breadcrumb') ?>
-    <ul>
-        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Inquiry Queue</a></li>
-        <li><?= e($this->pageTitle ?: 'Loyalty Continuity') ?></li>
-    </ul>
-<?php Block::endPut() ?>
+<?php
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+?>
 
 <div class="layout">
-    <div class="layout-row">
-        <?= $this->listRender() ?>
-    </div>
+    <?php if (!$loyaltyTableReady): ?>
+        <div class="layout-row">
+            <div class="callout fade in no-subheader">
+                <div class="header">
+                    <i class="icon-info"></i>
+                    <h3>Loyalty Continuity is not installed in this environment yet</h3>
+                    <p>
+                        The loyalty workspace shell is present, but the loyalty database tables are not available yet.
+                        The main inquiry queue remains safe and usable. Once the loyalty storage layer is added in a controlled release,
+                        this workspace will begin rendering records normally.
+                    </p>
+                </div>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="layout-row">
+            <?= $this->listRender() ?>
+        </div>
+    <?php endif ?>
 </div>
