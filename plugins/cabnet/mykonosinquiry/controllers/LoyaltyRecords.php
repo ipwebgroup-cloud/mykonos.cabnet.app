@@ -129,6 +129,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Structured first-wave touchpoint entry aligned to the live loyalty ledger.',
             ],
+            'execution_trace_readability_panel' => [
+                'label'   => 'Execution Trace Readability',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_execution_trace_readability_panel.htm',
+                'tab'     => 'History',
+                'span'    => 'full',
+                'comment' => 'Readable closing-loop view showing what was prepared, executed, and what happened next.',
+            ],
         ]);
     }
 

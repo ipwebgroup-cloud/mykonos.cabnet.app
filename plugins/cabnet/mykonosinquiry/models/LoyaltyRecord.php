@@ -855,6 +855,90 @@ class LoyaltyRecord extends Model
         ], 'Packet execution framing is still sparse.');
     }
 
+    public function getContinuityLoopPostureLabelAttribute(): string
+    {
+        $status = $this->packet_execution_status_label;
+        $latestOutcome = trim((string) optional($this->getLatestTouchpointRecord())->touchpoint_outcome);
+
+        if ($status === 'No packet execution started') {
+            return $this->latest_prepared_packet_mode !== ''
+                ? 'Prepared loop / awaiting start'
+                : 'No loop started';
+        }
+
+        switch ($status) {
+            case 'Prepared / awaiting follow-through':
+                return 'Prepared loop / awaiting start';
+
+            case 'Follow-through in progress':
+                return 'Open loop / in progress';
+
+            case 'Deferred for later review':
+                return 'Deferred loop / review later';
+
+            case 'Check-in scheduled':
+                return 'Timed loop / check-in scheduled';
+
+            case 'Follow-through completed':
+                if (in_array($latestOutcome, ['response_received', 'retained', 'revisit_signal', 'referral_ready', 'return_value_promoted', 'reactivated'], true)) {
+                    return 'Closed loop / positive signal';
+                }
+
+                if (in_array($latestOutcome, ['no_reply', 'dormant'], true)) {
+                    return 'Closed loop / later re-entry';
+                }
+
+                return 'Closed loop / review posture';
+        }
+
+        return 'Loop posture unclear';
+    }
+
+    public function getExecutionTraceDigestAttribute(): string
+    {
+        $latestPrepared = $this->latest_prepared_packet_label;
+        $latestExecution = $this->getLatestExecutionTouchpoint();
+        $latestTouchpoint = $this->getLatestTouchpointRecord();
+        $executionAt = $latestExecution
+            ? ($latestExecution->touchpoint_at ?: $latestExecution->created_at)
+            : null;
+
+        return $this->formatSummary([
+            'Loop posture' => $this->continuity_loop_posture_label,
+            'Prepared packet' => $latestPrepared,
+            'Execution status' => $this->packet_execution_status_label,
+            'Latest outcome' => $this->latest_touchpoint_outcome_label,
+            'Execution logged at' => $executionAt,
+            'Latest execution note' => $this->firstMeaningfulLine($this->latest_execution_note_preview, 'No packet follow-through note has been captured yet.'),
+            'Next review' => $this->next_review_at ? $this->next_review_at->format('Y-m-d H:i') . ' (' . $this->next_review_window_label . ')' : 'Not scheduled',
+            'Owner' => $this->owner_name ?: 'Owner not assigned',
+        ], 'Execution trace readability is still limited.');
+    }
+
+    public function getRecentExecutionTraceAttribute(): string
+    {
+        $lines = [];
+        $seen = [];
+
+        $candidates = [
+            'Prepared packet' => $this->getLatestPreparedPacketTouchpoint(),
+            'Execution state' => $this->getLatestExecutionTouchpoint(),
+            'Latest outcome' => $this->getLatestTouchpointRecord(),
+        ];
+
+        foreach ($candidates as $label => $touchpoint) {
+            $line = $this->buildTraceLine($label, $touchpoint, $seen);
+
+            if ($line !== null) {
+                $lines[] = $line;
+            }
+        }
+
+        return empty($lines)
+            ? 'No continuity trace has been captured yet.'
+            : implode(PHP_EOL, $lines);
+    }
+
     protected function getLatestPreparedPacketTouchpoint(): ?LoyaltyTouchpoint
     {
         if ($this->latestPreparedPacketTouchpointCache !== false) {
@@ -1005,6 +1089,31 @@ class LoyaltyRecord extends Model
         }
 
         return $record;
+    }
+
+    protected function buildTraceLine(string $label, ?LoyaltyTouchpoint $touchpoint, array &$seen): ?string
+    {
+        if (!$touchpoint || !$touchpoint->id || in_array($touchpoint->id, $seen, true)) {
+            return null;
+        }
+
+        $seen[] = $touchpoint->id;
+
+        $stamp = $touchpoint->touchpoint_at instanceof \DateTimeInterface
+            ? $touchpoint->touchpoint_at->format('Y-m-d H:i')
+            : (optional($touchpoint->created_at)->format('Y-m-d H:i') ?: 'Pending');
+
+        $outcome = $touchpoint->touchpoint_outcome
+            ? ($this->getTouchpointOutcomeOptions()[$touchpoint->touchpoint_outcome] ?? $this->humanizeValue($touchpoint->touchpoint_outcome) ?? 'Outcome pending')
+            : 'Outcome pending';
+
+        $channel = $touchpoint->touchpoint_channel
+            ? ($this->getTouchpointChannelOptions()[$touchpoint->touchpoint_channel] ?? $this->humanizeValue($touchpoint->touchpoint_channel) ?? 'Channel pending')
+            : 'Channel pending';
+
+        $body = $this->firstMeaningfulLine($touchpoint->body ?: $touchpoint->touchpoint_summary, 'No narrative captured.');
+
+        return sprintf('%s · %s · %s · %s · %s', $label, $stamp, $outcome, $channel, $body);
     }
 
     public function appendTouchpoint(string $type, string $body, ?string $authorName = null, array $meta = []): LoyaltyTouchpoint

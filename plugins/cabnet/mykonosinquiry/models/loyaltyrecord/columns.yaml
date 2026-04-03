@@ -40,6 +40,10 @@ columns:
         label: Execution
         sortable: false
 
+    continuity_loop_posture_label:
+        label: Loop
+        sortable: false
+
     next_execution_move_label:
         label: Next Move
         sortable: false

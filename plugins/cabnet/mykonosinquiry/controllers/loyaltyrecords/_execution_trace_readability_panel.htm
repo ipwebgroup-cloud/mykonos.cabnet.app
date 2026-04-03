@@ -1,0 +1,45 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$loopPosture = $record ? $record->continuity_loop_posture_label : 'No loop started';
+$traceDigest = $record ? $record->execution_trace_digest : 'Execution trace readability is still limited.';
+$recentTrace = $record ? $record->recent_execution_trace : 'No continuity trace has been captured yet.';
+$latestOutcome = $record ? $record->latest_touchpoint_outcome_label : 'No outcome recorded yet.';
+$latestPrepared = $record ? $record->latest_prepared_packet_label : 'No packet prepared yet.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-random"></i>
+        <h4 style="margin-top:0;">Execution trace readability</h4>
+        <p>
+            Read the last continuity loop as a closed sequence: what was prepared, what follow-through happened, and what the latest outcome now suggests.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Loop posture</h4>
+                <p><?= e($loopPosture) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest prepared</h4>
+                <p><?= e($latestPrepared) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest outcome</h4>
+                <p><?= e($latestOutcome) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Trace digest:</strong> <?= e($traceDigest) ?></li>
+                <li><strong>Recent trace:</strong> <?= nl2br(e($recentTrace)) ?></li>
+                <li>This view keeps loyalty follow-through readable as a deliberate loop rather than scattered notes.</li>
+            </ul>
+        </div>
+    </div>
+</div>

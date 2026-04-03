@@ -3,6 +3,8 @@ $record = $formModel ?? $model ?? null;
 $executionStatus = $record ? $record->packet_execution_status_label : 'No packet execution started';
 $nextMove = $record ? $record->next_execution_move_label : 'Prepare review packet';
 $executionSummary = $record ? $record->packet_execution_summary : 'Packet execution framing is still sparse.';
+$loopPosture = $record ? $record->continuity_loop_posture_label : 'No loop started';
+$traceDigest = $record ? $record->execution_trace_digest : 'Execution trace readability is still limited.';
 $latestPrepared = $record ? $record->latest_prepared_packet_label : 'No packet prepared yet.';
 $latestNote = $record ? $record->latest_execution_note_preview : 'No packet follow-through note has been captured yet.';
 ?>
@@ -27,6 +29,10 @@ $latestNote = $record ? $record->latest_execution_note_preview : 'No packet foll
             <div class="scoreboard-item title-value">
                 <h4>Next move</h4>
                 <p><?= e($nextMove) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Loop posture</h4>
+                <p><?= e($loopPosture) ?></p>
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Owner</h4>
@@ -60,6 +66,7 @@ $latestNote = $record ? $record->latest_execution_note_preview : 'No packet foll
         <div class="control-list" style="margin-top:15px;">
             <ul>
                 <li><strong>Execution frame:</strong> <?= e($executionSummary) ?></li>
+                <li><strong>Trace digest:</strong> <?= e($traceDigest) ?></li>
                 <li><strong>Latest execution note:</strong> <?= e($latestNote) ?></li>
                 <li>Start follow-through when a prepared packet should move into a real next move.</li>
                 <li>Defer when timing is wrong but the packet still belongs on the record.</li>

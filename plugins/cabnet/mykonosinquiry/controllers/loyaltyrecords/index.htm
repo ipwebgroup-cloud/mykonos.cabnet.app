@@ -2,61 +2,80 @@
 $loyaltyStorageReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord')
     ? \Cabnet\MykonosInquiry\Models\LoyaltyRecord::workspaceStorageReady()
     : false;
+
+$guardedPartials = [
+    'install_state_overview',
+    'structural_activation_foundation_panel',
+    'inquiry_transfer_bridge_panel',
+    'transfer_staging_rules_panel',
+    'activation_readiness_score_panel',
+    'transfer_packet_preview_panel',
+    'touchpoint_ledger_packet_panel',
+    'retention_history_blueprint_panel',
+    'touchpoint_outcome_taxonomy_panel',
+    'next_contact_window_matrix_panel',
+    'touchpoint_outcome_entry_surface_panel',
+    'continuity_execution_fields_panel',
+    'installable_schema_packet_panel',
+    'activation_gates_panel',
+    'transition_scorecard_panel',
+    'activation_scenarios_panel',
+    'first_wave_qualification_panel',
+    'retention_timing_windows_panel',
+    'pilot_candidate_lanes_panel',
+    'reengagement_intent_map_panel',
+    'offer_architecture_panel',
+    'reactivation_cadence_panel',
+    'channel_priority_map_panel',
+    'message_framework_panel',
+    'trigger_library_panel',
+    'continuity_measurement_panel',
+    'return_value_signals_panel',
+    'segment_strategy_panel',
+    'treatment_lane_playbook_panel',
+    'journey_state_framing_panel',
+    'intervention_matrix_panel',
+    'exception_routing_panel',
+    'escalation_thresholds_panel',
+    'ownership_matrix_panel',
+    'suppression_controls_panel',
+    'frequency_cap_rules_panel',
+    'consent_discipline_panel',
+    'approval_checkpoints_panel',
+    'pilot_experiment_ledger_panel',
+    'activation_cutover_sequence_panel',
+    'dependency_map_panel',
+    'launch_decision_register_panel',
+    'risk_register_panel',
+    'mitigation_playbook_panel',
+    'rollback_criteria_panel',
+    'post_launch_review_guardrails_panel',
+    'handoff_evidence_panel',
+    'workspace_separation_rules_panel',
+    'safe_rollout_plan_panel',
+    'operator_routes_panel',
+    'activation_readiness_checklist_panel',
+];
+
+$availableGuardedPartials = [];
+$missingGuardedPartials = [];
+
+foreach ($guardedPartials as $partialName) {
+    $partialPath = plugins_path('cabnet/mykonosinquiry/controllers/loyaltyrecords/_' . $partialName . '.htm');
+
+    if (file_exists($partialPath)) {
+        $availableGuardedPartials[] = $partialName;
+    } else {
+        $missingGuardedPartials[] = $partialName;
+    }
+}
 ?>
 
 <div class="layout">
     <?php if (!$loyaltyStorageReady): ?>
-        <?= $this->makePartial('install_state_overview') ?>
-        <?= $this->makePartial('structural_activation_foundation_panel') ?>
-        <?= $this->makePartial('inquiry_transfer_bridge_panel') ?>
-        <?= $this->makePartial('transfer_staging_rules_panel') ?>
-        <?= $this->makePartial('activation_readiness_score_panel') ?>
-        <?= $this->makePartial('transfer_packet_preview_panel') ?>
-        <?= $this->makePartial('touchpoint_ledger_packet_panel') ?>
-        <?= $this->makePartial('retention_history_blueprint_panel') ?>
-        <?= $this->makePartial('touchpoint_outcome_taxonomy_panel') ?>
-        <?= $this->makePartial('next_contact_window_matrix_panel') ?>
-        <?= $this->makePartial('touchpoint_outcome_entry_surface_panel') ?>
-        <?= $this->makePartial('continuity_execution_fields_panel') ?>
-        <?= $this->makePartial('installable_schema_packet_panel') ?>
-        <?= $this->makePartial('activation_gates_panel') ?>
-        <?= $this->makePartial('transition_scorecard_panel') ?>
-        <?= $this->makePartial('activation_scenarios_panel') ?>
-        <?= $this->makePartial('first_wave_qualification_panel') ?>
-        <?= $this->makePartial('retention_timing_windows_panel') ?>
-        <?= $this->makePartial('pilot_candidate_lanes_panel') ?>
-        <?= $this->makePartial('reengagement_intent_map_panel') ?>
-        <?= $this->makePartial('offer_architecture_panel') ?>
-        <?= $this->makePartial('reactivation_cadence_panel') ?>
-        <?= $this->makePartial('channel_priority_map_panel') ?>
-        <?= $this->makePartial('message_framework_panel') ?>
-        <?= $this->makePartial('trigger_library_panel') ?>
-        <?= $this->makePartial('continuity_measurement_panel') ?>
-        <?= $this->makePartial('return_value_signals_panel') ?>
-        <?= $this->makePartial('segment_strategy_panel') ?>
-        <?= $this->makePartial('treatment_lane_playbook_panel') ?>
-        <?= $this->makePartial('journey_state_framing_panel') ?>
-        <?= $this->makePartial('intervention_matrix_panel') ?>
-        <?= $this->makePartial('exception_routing_panel') ?>
-        <?= $this->makePartial('escalation_thresholds_panel') ?>
-        <?= $this->makePartial('ownership_matrix_panel') ?>
-        <?= $this->makePartial('suppression_controls_panel') ?>
-        <?= $this->makePartial('frequency_cap_rules_panel') ?>
-        <?= $this->makePartial('consent_discipline_panel') ?>
-        <?= $this->makePartial('approval_checkpoints_panel') ?>
-        <?= $this->makePartial('pilot_experiment_ledger_panel') ?>
-        <?= $this->makePartial('activation_cutover_sequence_panel') ?>
-        <?= $this->makePartial('dependency_map_panel') ?>
-        <?= $this->makePartial('launch_decision_register_panel') ?>
-        <?= $this->makePartial('risk_register_panel') ?>
-        <?= $this->makePartial('mitigation_playbook_panel') ?>
-        <?= $this->makePartial('rollback_criteria_panel') ?>
-        <?= $this->makePartial('post_launch_review_guardrails_panel') ?>
-        <?= $this->makePartial('handoff_evidence_panel') ?>
-        <?= $this->makePartial('workspace_separation_rules_panel') ?>
-        <?= $this->makePartial('safe_rollout_plan_panel') ?>
-        <?= $this->makePartial('operator_routes_panel') ?>
-        <?= $this->makePartial('activation_readiness_checklist_panel') ?>
+        <?php foreach ($availableGuardedPartials as $partialName): ?>
+            <?= $this->makePartial($partialName) ?>
+        <?php endforeach; ?>
 
         <div class="layout-row">
             <div class="callout fade in no-subheader">
@@ -66,6 +85,11 @@ $loyaltyStorageReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord
                         The live production workspace remains <strong>Inquiry Queue</strong>. Loyalty Continuity stays render-safe and guarded until both the
                         loyalty record schema and the touchpoint ledger schema are fully aligned for live use.
                     </p>
+                    <?php if (!empty($missingGuardedPartials)): ?>
+                        <p style="margin-top:10px; margin-bottom:0;">
+                            Some staged guarded partials are not present in this deployment, but the list screen now stays render-safe.
+                        </p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -171,6 +171,22 @@ tabs:
             span: full
             comment: Read-only packet execution frame showing preparation, follow-through, timing, and the latest execution note.
 
+        continuity_loop_posture_label:
+            label: Continuity Loop Posture
+            tab: Workspace
+            readOnly: true
+            span: left
+            comment: Fast reading of whether the latest continuity loop is open, timed, deferred, or cleanly closed.
+
+        execution_trace_digest:
+            label: Execution Trace Digest
+            type: textarea
+            size: large
+            tab: Workspace
+            readOnly: true
+            span: right
+            comment: Closing-loop digest showing what was prepared, executed, and what happened next.
+
         referral_return_value_summary:
             label: Referral / Return-Value Framing
             type: textarea
@@ -269,6 +285,15 @@ tabs:
             readOnly: true
             span: right
             comment: Latest touchpoint narrative preview for fast continuity reading.
+
+        recent_execution_trace:
+            label: Recent Execution Trace
+            type: textarea
+            size: large
+            tab: History
+            readOnly: true
+            span: full
+            comment: Short trace of the latest prepared packet, execution state, and resulting outcome.
 
         history_preview:
             label: Touchpoint Timeline
