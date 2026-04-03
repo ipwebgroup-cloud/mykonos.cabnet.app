@@ -4,8 +4,8 @@ $record = null;
 
 $hasInquiry = $inquiry && !empty($inquiry->id);
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
-$loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
-$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
+$loyaltyModelReady = class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord');
+$loyaltyControllerReady = class_exists('\\Cabnet\\MykonosInquiry\\Controllers\\LoyaltyRecords');
 $loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
 
 if ($loyaltyUiReady && $hasInquiry) {
@@ -18,6 +18,9 @@ $isRecommendedStage = in_array($status, $recommendedStatuses, true);
 $hasOwner = trim((string) ($inquiry->owner_name ?? '')) !== '';
 $hasReference = trim((string) ($inquiry->request_reference ?? '')) !== '';
 $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
+$buttonLocked = !$record && !$isRecommendedStage;
+$readinessLabel = $isRecommendedStage ? 'Good candidate for loyalty handoff.' : 'Still early in active handling.';
+$readinessClass = $isRecommendedStage ? 'text-success' : 'text-warning';
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
@@ -33,23 +36,22 @@ $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
             <p class="oc-text-muted">Loyalty Continuity is not fully active on this installation yet. The inquiry queue remains safe and unchanged.</p>
         <?php else: ?>
             <div class="mb-3">
-                <p><strong>Readiness:</strong>
-                    <?php if ($isRecommendedStage): ?>
-                        <span class="text-success">Good candidate for loyalty handoff.</span>
-                    <?php else: ?>
-                        <span class="text-warning">Still early in active handling.</span>
-                    <?php endif; ?>
-                </p>
+                <p><strong>Readiness:</strong> <span class="<?= e($readinessClass) ?>"><?= e($readinessLabel) ?></span></p>
                 <ul class="list-unstyled oc-text-muted">
                     <li><strong>Status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
                     <li><strong>Reference:</strong> <?= e($hasReference ? $inquiry->request_reference : 'Not yet assigned') ?></li>
                     <li><strong>Owner:</strong> <?= e($hasOwner ? $inquiry->owner_name : 'Unassigned') ?></li>
                     <li><strong>Focus:</strong> <?= e($servicesInline !== '' ? $servicesInline : 'General planning') ?></li>
+                    <li><strong>Loyalty record:</strong> <?= $record ? 'Already linked' : 'Not linked yet' ?></li>
                 </ul>
             </div>
 
-            <?php if (!$isRecommendedStage && !$record): ?>
-                <p class="oc-text-muted">Best used after review, contact, proposal progression, or closure so long-cycle retention does not get mixed into active concierge handling.</p>
+            <?php if ($buttonLocked): ?>
+                <div class="alert alert-warning">
+                    Loyalty handoff is intentionally guarded until the inquiry reaches a later handling stage. This keeps retention work separate from active concierge queue processing.
+                </div>
+            <?php elseif (!$record): ?>
+                <p class="oc-text-muted">This inquiry is ready for post-triage loyalty handling.</p>
             <?php endif; ?>
 
             <form method="post">
@@ -57,16 +59,19 @@ $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
                 <input type="hidden" name="_quick_action" value="">
                 <div class="btn-toolbar">
                     <button type="submit" class="btn btn-primary"
+                            <?= $buttonLocked ? 'disabled="disabled" title="Move this inquiry further through active handling before loyalty handoff."' : '' ?>
                             onclick="this.form._quick_action.value='send_to_loyalty';">
                         Move to Loyalty
                     </button>
 
                     <button type="submit" class="btn btn-default"
+                            <?= $buttonLocked ? 'disabled="disabled" title="Use once the inquiry has progressed beyond early handling."' : '' ?>
                             onclick="this.form._quick_action.value='mark_referral_ready';">
                         Mark Referral Ready
                     </button>
 
                     <button type="submit" class="btn btn-default"
+                            <?= $buttonLocked ? 'disabled="disabled" title="Use once the inquiry has progressed beyond early handling."' : '' ?>
                             onclick="this.form._quick_action.value='mark_return_value_candidate';">
                         Mark Return-Value Candidate
                     </button>
@@ -76,6 +81,10 @@ $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
                            href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>">
                             Open Loyalty Workspace
                         </a>
+                    <?php elseif ($record): ?>
+                        <button type="button" class="btn btn-secondary" disabled="disabled" title="Loyalty record exists but the workspace controller is not active on this installation.">
+                            Loyalty Workspace Unavailable
+                        </button>
                     <?php endif; ?>
                 </div>
             </form>

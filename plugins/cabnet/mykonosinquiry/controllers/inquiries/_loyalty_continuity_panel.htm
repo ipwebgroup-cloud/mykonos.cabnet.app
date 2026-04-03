@@ -4,13 +4,29 @@ $record = null;
 
 $hasInquiry = $inquiry && !empty($inquiry->id);
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
-$loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
-$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
+$loyaltyModelReady = class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord');
+$loyaltyControllerReady = class_exists('\\Cabnet\\MykonosInquiry\\Controllers\\LoyaltyRecords');
 $loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
 
 if ($loyaltyUiReady && $hasInquiry) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
 }
+
+$formatDate = function ($value) {
+    if (!$value) {
+        return 'Not scheduled';
+    }
+
+    if ($value instanceof DateTimeInterface) {
+        return $value->format('Y-m-d H:i');
+    }
+
+    try {
+        return (new DateTime((string) $value))->format('Y-m-d H:i');
+    } catch (Exception $e) {
+        return (string) $value;
+    }
+};
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
@@ -33,7 +49,9 @@ if ($loyaltyUiReady && $hasInquiry) {
                 <li><strong>Referral ready:</strong> <?= !empty($record->referral_ready) ? 'Yes' : 'No' ?></li>
                 <li><strong>Return-value tier:</strong> <?= e($record->return_value_tier_label ?? $record->return_value_tier ?? 'Watch') ?></li>
                 <li><strong>Owner:</strong> <?= e(trim((string) ($record->owner_name ?? '')) !== '' ? $record->owner_name : 'Unassigned') ?></li>
-                <li><strong>Next review:</strong> <?= !empty($record->next_review_at) ? e($record->next_review_at->format('Y-m-d H:i')) : 'Not scheduled' ?></li>
+                <li><strong>Next review:</strong> <?= e($formatDate($record->next_review_at ?? null)) ?></li>
+                <li><strong>Last retention contact:</strong> <?= e($formatDate($record->last_retention_contact_at ?? null)) ?></li>
+                <li><strong>Preferred season:</strong> <?= e(trim((string) ($record->preferred_season ?? '')) !== '' ? $record->preferred_season : 'Not set') ?></li>
             </ul>
 
             <?php if (!empty($record->continuity_summary)): ?>
