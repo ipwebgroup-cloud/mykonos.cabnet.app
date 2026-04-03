@@ -96,3 +96,6 @@
 
 1.1.30:
     - 'Add source continuity scan panel to the stabilized operator workspace line'
+
+1.2.0:
+    - 'Introduce the Operator Command Deck tab with composite operator guidance panels'

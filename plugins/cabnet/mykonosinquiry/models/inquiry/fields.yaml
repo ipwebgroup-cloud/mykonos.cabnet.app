@@ -145,6 +145,27 @@ tabs:
             readOnly: true
             comment: Consolidated operator-ready summary of services, preferences, and guest brief.
 
+        operator_command_deck_panel:
+            label: Operator Command Deck
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_command_deck_panel.htm
+            tab: Command
+            comment: High-level scan-first control surface for live queue posture, guest readiness, commercial clarity, and safest next action before drilling into detailed tabs.
+
+        next_guest_touch_blueprint_panel:
+            label: Next Guest Touch Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_guest_touch_blueprint_panel.htm
+            tab: Command
+            comment: Read-only operator blueprint for the safest next guest-facing touch, including route, tone, focus, and highest-value clarifications.
+
+        handoff_packet_readiness_panel:
+            label: Handoff Packet Readiness
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_packet_readiness_panel.htm
+            tab: Command
+            comment: Read-only check of whether assignment, source, notes, timing, and closure context are strong enough for a clean internal hand-off or reopen later.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

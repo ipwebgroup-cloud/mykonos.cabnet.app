@@ -1,0 +1,148 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$humanize = function ($value) {
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+
+    return ucwords(str_replace(['_', '-'], ' ', $value));
+};
+
+$status = trim((string) ($record->status ?? 'new'));
+$contactPreference = trim((string) ($record->contact_preference ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$services = (array) ($record->services_json ?? []);
+$services = array_values(array_filter(array_map('trim', $services)));
+$guestName = trim((string) ($record->full_name ?? ''));
+
+$route = 'Email-first';
+if ($contactPreference !== '') {
+    $route = $humanize($contactPreference);
+} elseif ($phone !== '') {
+    $route = 'Phone / WhatsApp';
+}
+
+$tone = 'Warm, concise, confidence-building';
+$messageGoal = 'Acknowledge the inquiry, establish ownership, and secure the few facts needed to move forward cleanly.';
+$pace = 'Keep the next touch light and deliberate. Avoid sending a heavy package before core facts are stable.';
+
+if ($status === 'contacted') {
+    $messageGoal = 'Carry momentum forward, confirm the live checkpoint, and remove the next planning ambiguity.';
+    $pace = 'Assume some rapport already exists. Move the thread forward instead of restarting it.';
+} elseif ($status === 'proposal_sent') {
+    $tone = 'Polished, invitational, non-pushy';
+    $messageGoal = 'Check response posture, invite reactions, and surface blockers to the current proposal shape.';
+    $pace = 'Do not resend a full package unless the guest asks. Focus on what is blocking progress.';
+} elseif ($status === 'awaiting_guest') {
+    $tone = 'Gentle, respectful, low-pressure';
+    $messageGoal = 'Re-open the conversation without sounding repetitive or needy.';
+    $pace = 'Keep the follow-up short and easy to answer.';
+} elseif ($status === 'confirmed') {
+    $tone = 'Calm, precise, execution-ready';
+    $messageGoal = 'Confirm the next operational checkpoint and keep logistics explicit.';
+    $pace = 'Prefer clarity over persuasion. Avoid adding unnecessary new questions.';
+} elseif (in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true)) {
+    $tone = 'No active guest touch recommended';
+    $messageGoal = 'Only reopen if active work genuinely resumes or a factual correction is needed.';
+    $pace = 'Preserve internal continuity rather than generating fresh outreach.';
+}
+
+$questions = [];
+if (trim((string) ($record->arrival_date ?? '')) === '') {
+    $questions[] = 'What date are you planning to arrive in Mykonos?';
+}
+if (trim((string) ($record->departure_date ?? '')) === '') {
+    $questions[] = 'How long will you be staying, or what is your departure date?';
+}
+if ((int) ($record->guests ?? 0) <= 0) {
+    $questions[] = 'How many guests are travelling in the group?';
+}
+if (trim((string) ($record->budget ?? '')) === '') {
+    $questions[] = 'Do you already have a budget range in mind for the experience?';
+}
+if (empty($services)) {
+    $questions[] = 'Which parts of the stay would you like us to shape first?';
+}
+if (trim((string) ($record->accommodation_status ?? '')) === '') {
+    $questions[] = 'Is accommodation already arranged, or should we include villa or hotel support?';
+}
+if (trim((string) ($record->arrival_mode ?? '')) === '') {
+    $questions[] = 'Will you be arriving by ferry, commercial flight, or private aviation?';
+}
+
+if (empty($questions)) {
+    $questions[] = 'What would make the next step feel easiest and most useful for you right now?';
+}
+
+$opening = $guestName !== ''
+    ? 'Open by acknowledging ' . $guestName . ' by name and restating the most relevant part of the brief.'
+    : 'Open by acknowledging the inquiry and restating the clearest part of the current brief.';
+
+$payload = [];
+if (!empty($services)) {
+    $payload[] = 'Anchor the reply around ' . implode(', ', array_slice(array_map($humanize, $services), 0, 3)) . '.';
+}
+if (trim((string) ($record->special_moments ?? '')) !== '') {
+    $payload[] = 'Reflect the celebration or special-moment context so the reply feels tailored.';
+}
+if (trim((string) ($record->privacy_level ?? '')) !== '') {
+    $payload[] = 'Keep privacy posture visible in the wording and service suggestions.';
+}
+if (empty($payload)) {
+    $payload[] = 'Keep the message tailored to the current trip timing, service intent, and guest comfort level.';
+}
+?>
+<div style="border:1px solid #e9d5ff; background:#fcf7ff; border-radius:16px; padding:18px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:14px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700;">Next Guest Touch Blueprint</div>
+            <div style="font-size:21px; font-weight:700; color:#0f172a; margin-top:4px;">Shape the next outreach before writing it</div>
+        </div>
+        <div style="font-size:12px; color:#475569; max-width:320px; text-align:right;">
+            Route <strong><?= e($route) ?></strong>
+            · Tone <strong><?= e($tone) ?></strong>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px; margin-bottom:14px;">
+        <div style="border:1px solid #ddd6fe; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">Message goal</div>
+            <div style="font-size:15px; color:#0f172a; font-weight:600;"><?= e($messageGoal) ?></div>
+        </div>
+        <div style="border:1px solid #ddd6fe; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">Pacing guidance</div>
+            <div style="font-size:14px; color:#334155;"><?= e($pace) ?></div>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="border:1px solid #ddd6fe; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">Recommended structure</div>
+            <ol style="margin:0 0 0 18px; padding:0; color:#0f172a; font-size:14px;">
+                <li style="margin:0 0 6px 0;"><?= e($opening) ?></li>
+                <?php foreach (array_slice($payload, 0, 2) as $line): ?>
+                    <li style="margin:0 0 6px 0;"><?= e($line) ?></li>
+                <?php endforeach; ?>
+                <li style="margin:0 0 6px 0;">Ask only the highest-value unanswered questions, not everything at once.</li>
+                <li style="margin:0;">Close with a clear next step or invitation to reply in the easiest format.</li>
+            </ol>
+        </div>
+        <div style="border:1px solid #ddd6fe; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#7c3aed; font-weight:700; margin-bottom:6px;">Highest-value questions</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#0f172a; font-size:14px;">
+                <?php foreach (array_slice($questions, 0, 4) as $question): ?>
+                    <li style="margin:0 0 6px 0;"><?= e($question) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</div>

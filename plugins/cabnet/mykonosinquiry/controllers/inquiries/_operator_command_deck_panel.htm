@@ -1,0 +1,231 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$humanize = function ($value) {
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+
+    return ucwords(str_replace(['_', '-'], ' ', $value));
+};
+
+$formatDate = function ($value, $format = 'Y-m-d') {
+    if ($value instanceof DateTimeInterface) {
+        return $value->format($format);
+    }
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+    try {
+        return (new DateTime($value))->format($format);
+    } catch (Throwable $e) {
+        return $value;
+    }
+};
+
+$status = trim((string) ($record->status ?? 'new'));
+$priority = trim((string) ($record->priority ?? 'normal'));
+$owner = trim((string) ($record->owner_name ?? ''));
+$followUp = $formatDate($record->follow_up_date ?? null);
+$lastContacted = $formatDate($record->last_contacted_at ?? null, 'Y-m-d H:i');
+$requestReference = trim((string) ($record->request_reference ?? ''));
+$guestName = trim((string) ($record->full_name ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$arrival = $formatDate($record->arrival_date ?? null);
+$departure = $formatDate($record->departure_date ?? null);
+$services = (array) ($record->services_json ?? []);
+$services = array_values(array_filter(array_map('trim', $services)));
+$sourceType = trim((string) ($record->source_type ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$guestSummary = trim((string) ($record->guest_summary ?? ''));
+$internalNotes = trim((string) ($record->internal_notes ?? ''));
+$contactPreference = trim((string) ($record->contact_preference ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+
+$isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+
+$workflowTone = 'positive';
+$workflowHeadline = 'Queue ownership looks stable';
+$workflowBody = [];
+if ($isClosed) {
+    $workflowHeadline = 'Inquiry is currently closed';
+    $workflowBody[] = $closedReason !== ''
+        ? 'Closure reason is recorded, which keeps future reopen review grounded.'
+        : 'Closure reason is still thin. Add a short factual close-out for future reopen review.';
+} else {
+    if ($owner === '') {
+        $workflowTone = 'critical';
+        $workflowHeadline = 'Queue ownership needs reinforcement';
+        $workflowBody[] = 'No named owner is visible yet, so hand-off and guest follow-up could drift.';
+    } else {
+        $workflowBody[] = 'Assigned owner is visible as “' . $owner . '”.';
+    }
+
+    if ($followUp === '') {
+        if ($workflowTone !== 'critical') {
+            $workflowTone = 'warning';
+            $workflowHeadline = 'Queue posture is only partially covered';
+        }
+        $workflowBody[] = 'No follow-up checkpoint is scheduled yet.';
+    } else {
+        $workflowBody[] = 'Next follow-up checkpoint is set for ' . $followUp . '.';
+    }
+
+    if ($lastContacted !== '') {
+        $workflowBody[] = 'Last successful contact is logged at ' . $lastContacted . '.';
+    }
+}
+
+$guestTone = 'positive';
+$guestHeadline = 'Guest brief is workable';
+$guestBody = [];
+$guestGaps = 0;
+if ($guestName === '') { $guestGaps++; $guestBody[] = 'Guest name is missing.'; }
+if ($email === '' && $phone === '') { $guestGaps++; $guestBody[] = 'No direct contact route is visible.'; }
+if ($arrival === '') { $guestGaps++; $guestBody[] = 'Arrival date is still missing.'; }
+if ($departure === '') { $guestGaps++; $guestBody[] = 'Departure date is still missing.'; }
+if (empty($services)) { $guestGaps++; $guestBody[] = 'No clear service focus is captured yet.'; }
+if ($guestGaps >= 4) {
+    $guestTone = 'critical';
+    $guestHeadline = 'Guest brief is still thin';
+} elseif ($guestGaps >= 2) {
+    $guestTone = 'warning';
+    $guestHeadline = 'Guest brief needs reinforcement';
+}
+if ($guestGaps === 0) {
+    $guestBody[] = 'Core identity, timing, and service intent are visible enough for active handling.';
+}
+
+$commercialTone = 'positive';
+$commercialHeadline = 'Commercial posture is visible';
+$commercialBody = [];
+$commercialGaps = 0;
+if ($budget === '') { $commercialGaps++; $commercialBody[] = 'Budget is not yet explicit.'; }
+if (empty($services)) { $commercialGaps++; $commercialBody[] = 'Service scope is not yet concrete enough for packaging.'; }
+if (trim((string) ($record->accommodation_status ?? '')) === '') { $commercialGaps++; $commercialBody[] = 'Accommodation posture is missing.'; }
+if ($commercialGaps >= 3) {
+    $commercialTone = 'critical';
+    $commercialHeadline = 'Commercial shaping is still early';
+} elseif ($commercialGaps >= 1) {
+    $commercialTone = 'warning';
+    $commercialHeadline = 'Commercial shaping is partially defined';
+}
+if ($commercialGaps === 0) {
+    $commercialBody[] = 'Budget, service scope, and accommodation posture are visible enough for offer shaping.';
+}
+
+$continuityTone = 'positive';
+$continuityHeadline = 'Continuity anchors look stable';
+$continuityBody = [];
+$continuityGaps = 0;
+if ($requestReference === '') { $continuityGaps++; $continuityBody[] = 'Request reference is missing.'; }
+if ($sourceType === '' && $requestedMode === '') { $continuityGaps++; $continuityBody[] = 'Source trail is too thin for reliable entry-context recall.'; }
+if ($guestSummary === '') { $continuityGaps++; $continuityBody[] = 'Operator working summary is blank.'; }
+if ($internalNotes === '') { $continuityGaps++; $continuityBody[] = 'Working notes are blank.'; }
+if ($continuityGaps >= 3) {
+    $continuityTone = 'critical';
+    $continuityHeadline = 'Continuity anchors need reinforcement';
+} elseif ($continuityGaps >= 1) {
+    $continuityTone = 'warning';
+    $continuityHeadline = 'Continuity anchors are only partially covered';
+}
+if ($continuityGaps === 0) {
+    $continuityBody[] = 'Reference, source trail, summary, and notes all give the next operator a stable continuation point.';
+}
+
+$topRisks = [];
+if ($owner === '' && !$isClosed) { $topRisks[] = 'No named owner is visible.'; }
+if ($followUp === '' && !$isClosed) { $topRisks[] = 'No next checkpoint is scheduled.'; }
+if ($guestGaps >= 2) { $topRisks[] = 'Guest brief still has material coverage gaps.'; }
+if ($commercialGaps >= 2) { $topRisks[] = 'Commercial posture is not ready for a confident package yet.'; }
+if ($continuityGaps >= 2) { $topRisks[] = 'Hand-off continuity would depend too heavily on memory.'; }
+if (empty($topRisks)) {
+    $topRisks[] = 'No critical control risks are visible right now. Keep the record current as work progresses.';
+}
+
+$nextAction = 'Keep the current owner, summary, and next checkpoint aligned.';
+if ($isClosed) {
+    $nextAction = $closedReason === ''
+        ? 'Add a concise closure reason so reopen review stays factual.'
+        : 'Keep closure context concise and reopen only if active work resumes.';
+} elseif ($owner === '') {
+    $nextAction = 'Assign a named owner before the next hand-off or guest touch.';
+} elseif ($guestGaps >= 3) {
+    $nextAction = 'Run a clarification-first guest touch before trying to package or confirm.';
+} elseif ($commercialGaps >= 2) {
+    $nextAction = 'Tighten budget, accommodation, and service scope before shaping the next offer.';
+} elseif ($followUp === '') {
+    $nextAction = 'Set the next follow-up checkpoint so the inquiry stays explicitly owned.';
+} elseif ($continuityGaps >= 2) {
+    $nextAction = 'Update the working summary and notes so the record is safe for hand-off.';
+}
+
+$paletteMap = [
+    'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
+    'warning' => ['#b45309', '#fff7ed', '#fed7aa'],
+    'critical' => ['#b91c1c', '#fef2f2', '#fecaca'],
+];
+
+$cards = [
+    ['eyebrow' => 'Queue', 'headline' => $workflowHeadline, 'body' => $workflowBody, 'tone' => $workflowTone],
+    ['eyebrow' => 'Guest readiness', 'headline' => $guestHeadline, 'body' => $guestBody, 'tone' => $guestTone],
+    ['eyebrow' => 'Commercial posture', 'headline' => $commercialHeadline, 'body' => $commercialBody, 'tone' => $commercialTone],
+    ['eyebrow' => 'Continuity', 'headline' => $continuityHeadline, 'body' => $continuityBody, 'tone' => $continuityTone],
+];
+?>
+<div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:16px; padding:18px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:14px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700;">Operator Command Deck</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;">One-tab control view for the live inquiry</div>
+        </div>
+        <div style="font-size:12px; color:#475569; max-width:340px; text-align:right;">
+            Status <strong><?= e($humanize($status) ?: 'New') ?></strong>
+            · Priority <strong><?= e($humanize($priority) ?: 'Normal') ?></strong>
+            <?php if ($requestReference !== ''): ?>· Ref <strong><?= e($requestReference) ?></strong><?php endif; ?>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
+        <?php foreach ($cards as $card): $palette = $paletteMap[$card['tone']]; ?>
+            <div style="border:1px solid <?= e($palette[2]) ?>; background:#fff; border-radius:14px; padding:14px;">
+                <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;"><?= e($card['eyebrow']) ?></div>
+                <div style="font-size:17px; font-weight:700; color:#0f172a; margin-bottom:8px;"><?= e($card['headline']) ?></div>
+                <ul style="margin:0 0 0 18px; padding:0; color:#334155; font-size:13px;">
+                    <?php foreach (array_slice($card['body'], 0, 3) as $line): ?>
+                        <li style="margin:0 0 6px 0;"><?= e($line) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1.1fr .9fr; gap:12px;">
+        <div style="border:1px solid #dbeafe; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1d4ed8; font-weight:700; margin-bottom:6px;">Top control risks</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#0f172a; font-size:14px;">
+                <?php foreach (array_slice($topRisks, 0, 4) as $line): ?>
+                    <li style="margin:0 0 6px 0;"><?= e($line) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div style="border:1px dashed #93c5fd; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest next operator move</div>
+            <div style="font-size:15px; color:#0f172a; font-weight:600; margin-bottom:10px;"><?= e($nextAction) ?></div>
+            <div style="font-size:13px; color:#475569;">
+                Preferred guest route: <strong><?= e($humanize($contactPreference) ?: ($phone !== '' ? 'Phone / WhatsApp possible' : 'Email-first')) ?></strong><br>
+                Service focus: <strong><?= e(!empty($services) ? implode(', ', array_slice(array_map($humanize, $services), 0, 3)) : 'General planning') ?></strong>
+            </div>
+        </div>
+    </div>
+</div>

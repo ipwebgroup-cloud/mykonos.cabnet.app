@@ -1,3 +1,10 @@
+## v2.7.0 — Operator Command Deck
+- added a new **Command** tab to the backend inquiry update screen
+- introduced a composite **Operator Command Deck** panel for queue posture, guest readiness, commercial clarity, and safest next action
+- added **Next Guest Touch Blueprint** guidance for response route, tone, message goal, and highest-value clarifications
+- added **Handoff Packet Readiness** checks so assignment, notes, source trail, and closure context are easier to trust during hand-off or reopen review
+- kept the update backend-only with no schema, list, quick-action, or public `/plan` change
+
 ## v2.6.33 — Source Continuity Panel
 - added a read-only **Source Continuity** panel to the Source tab
 - surfaces whether source type, requested mode, source title/slug, URL, and request reference are preserved clearly enough for campaign traceability and operator hand-off

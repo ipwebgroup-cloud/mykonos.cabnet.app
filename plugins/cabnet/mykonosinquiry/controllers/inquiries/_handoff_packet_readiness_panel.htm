@@ -1,0 +1,100 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = trim((string) ($record->status ?? 'new'));
+$isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true);
+$services = (array) ($record->services_json ?? []);
+$services = array_values(array_filter(array_map('trim', $services)));
+$notesCount = 0;
+if (isset($record->notes) && is_iterable($record->notes)) {
+    foreach ($record->notes as $note) {
+        $notesCount++;
+    }
+}
+
+$checks = [
+    'Named owner is visible' => trim((string) ($record->owner_name ?? '')) !== '',
+    'Next checkpoint is scheduled' => trim((string) ($record->follow_up_date ?? '')) !== '' || $isClosed,
+    'Working summary is present' => trim((string) ($record->guest_summary ?? '')) !== '',
+    'Working notes are present' => trim((string) ($record->internal_notes ?? '')) !== '',
+    'Source trail is visible' => trim((string) ($record->source_type ?? '')) !== '' || trim((string) ($record->source_title ?? '')) !== '' || trim((string) ($record->source_url ?? '')) !== '',
+    'Guest identity is recoverable' => trim((string) ($record->full_name ?? '')) !== '' || trim((string) ($record->email ?? '')) !== '' || trim((string) ($record->phone ?? '')) !== '',
+    'Trip basics are captured' => trim((string) ($record->arrival_date ?? '')) !== '' && trim((string) ($record->departure_date ?? '')) !== '' && (int) ($record->guests ?? 0) > 0,
+    'Service focus is visible' => !empty($services),
+    'History trail exists' => $notesCount > 0,
+    'Closure context is preserved when closed' => !$isClosed || trim((string) ($record->closed_reason ?? '')) !== '',
+];
+
+$passCount = 0;
+$failures = [];
+foreach ($checks as $label => $passed) {
+    if ($passed) {
+        $passCount++;
+    } else {
+        $failures[] = $label;
+    }
+}
+$total = count($checks);
+$score = $total > 0 ? (int) round(($passCount / $total) * 100) : 0;
+$headline = 'Handoff packet looks strong';
+$palette = ['#198754', '#eaf7ef', '#cfe9d8'];
+if ($score < 55) {
+    $headline = 'Handoff packet needs reinforcement';
+    $palette = ['#b91c1c', '#fef2f2', '#fecaca'];
+} elseif ($score < 80) {
+    $headline = 'Handoff packet is workable but incomplete';
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+}
+
+$nextMove = empty($failures)
+    ? 'The record is in good shape for a clean hand-off. Keep the next checkpoint and summary current as work moves.'
+    : 'Before the next hand-off, tighten the first one or two missing anchors so the next operator does not need to reconstruct the whole case.';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:16px; padding:18px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:14px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Handoff Packet Readiness</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; max-width:300px; text-align:right;">
+            Readiness score <strong><?= e((string) $score) ?>%</strong>
+            · Passed <strong><?= e((string) $passCount) ?>/<?= e((string) $total) ?></strong>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+        <div style="border:1px solid <?= e($palette[2]) ?>; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Checks passing now</div>
+            <ul style="margin:0 0 0 18px; padding:0; color:#0f172a; font-size:14px;">
+                <?php foreach ($checks as $label => $passed): ?>
+                    <?php if ($passed): ?>
+                        <li style="margin:0 0 6px 0;"><?= e($label) ?></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div style="border:1px solid <?= e($palette[2]) ?>; background:#fff; border-radius:14px; padding:14px;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">What is still weak</div>
+            <?php if (!empty($failures)): ?>
+                <ul style="margin:0 0 0 18px; padding:0; color:#0f172a; font-size:14px;">
+                    <?php foreach ($failures as $label): ?>
+                        <li style="margin:0 0 6px 0;"><?= e($label) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <div style="font-size:14px; color:#0f172a;">No material hand-off gaps are visible right now.</div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div style="border:1px dashed <?= e($palette[2]) ?>; background:#fff; border-radius:14px; padding:14px;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest next hand-off move</div>
+        <div style="font-size:15px; color:#0f172a; font-weight:600;"><?= e($nextMove) ?></div>
+    </div>
+</div>
