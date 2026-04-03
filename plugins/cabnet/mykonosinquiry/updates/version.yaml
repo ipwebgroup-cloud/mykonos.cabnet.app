@@ -171,3 +171,6 @@
 
 3.5.0:
     - 'Introduce the Service-Day Control Workspace tab with same-day execution and service-day guardrail panels'
+
+3.6.0:
+    - 'Introduce the Live Incident Workspace tab with incident response and incident guardrail panels'

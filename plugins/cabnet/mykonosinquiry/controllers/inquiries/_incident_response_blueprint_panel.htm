@@ -1,0 +1,73 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$containment = $summary !== ''
+    ? 'Start from the visible working summary and use it as the containment brief before expanding any incident response language.'
+    : 'Promote one clean containment brief into the working summary before incident handling spreads across channels.';
+$checkpoint = $followUpDate !== ''
+    ? 'Use the visible checkpoint as the next control time for escalation, regrouping, or guest-facing follow-up.'
+    : 'Set one explicit control checkpoint before the incident response widens.';
+$messaging = $lastContacted !== ''
+    ? 'Check the latest contact signal before sending new incident language so the guest does not receive overlapping or contradictory updates.'
+    : 'Assume communication may still be unsent and keep the first incident message tightly aligned to one owner and one next step.';
+if ($services !== '') {
+    $containment .= ' Keep the response anchored to the visible service scope so the incident does not outrun the confirmed record.';
+}
+if ($owner !== '') {
+    $checkpoint .= ' Keep the visible owner attached to each step so accountability survives rapid escalation.';
+}
+if ($requestedMode !== '') {
+    $messaging .= ' Match the response style to the active handling mode so operator control and guest-facing language stay aligned.';
+}
+?>
+<div style="border:1px solid #cbd5e1; background:#ffffff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#991b1b; font-weight:700; margin-bottom:6px;">Incident Response Blueprint</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Shape incident handling around containment, one control checkpoint, and one clean message path</div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Containment brief</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($containment) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Control checkpoint</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($checkpoint) ?></div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Message path</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.6;"><?= e($messaging) ?></div>
+        </div>
+    </div>
+</div>

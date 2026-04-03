@@ -1,3 +1,10 @@
+## v5.2.0 — Live Incident Workspace
+- adds a new **Incidents** tab to the backend inquiry update screen
+- introduces a composite **Live Incident Workspace** panel for disruption control, visible ownership, and fallback brief discipline when delivery breaks away from plan
+- adds **Incident Response Blueprint** guidance so operators can contain a live issue around one readable brief, one control checkpoint, and one clear message path
+- adds **Incident Risk Guardrails** to prevent ownership blur, off-record escalation, checkpoint loss, and incident language that outruns the visible record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.1.0 — Service-Day Control Workspace
 - adds a new **Service Day** tab to the backend inquiry update screen
 - introduces a composite **Service-Day Control Workspace** panel for same-day ownership, live sequence stability, and fallback control

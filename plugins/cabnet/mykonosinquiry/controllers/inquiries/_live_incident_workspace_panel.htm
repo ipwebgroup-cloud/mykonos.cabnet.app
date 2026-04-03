@@ -1,0 +1,102 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+$details = $stringify($record->details ?? '');
+$history = $stringify($record->history_preview ?? '');
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($owner !== '') $anchors[] = 'incident owner';
+if ($summary !== '') $anchors[] = 'fallback brief';
+if ($services !== '') $anchors[] = 'visible service scope';
+if ($followUpDate !== '') $anchors[] = 'control checkpoint';
+if ($lastContacted !== '') $anchors[] = 'latest contact signal';
+if ($details !== '') $anchors[] = 'guest brief memory';
+if ($history !== '') $anchors[] = 'history trail';
+
+$gaps = [];
+if ($owner === '') $gaps[] = 'incident owner';
+if ($summary === '') $gaps[] = 'fallback brief';
+if ($services === '') $gaps[] = 'visible service scope';
+if ($followUpDate === '') $gaps[] = 'control checkpoint';
+if ($requestReference === '') $gaps[] = 'request reference';
+
+$headline = 'Live incident control should keep the record usable when delivery breaks away from plan';
+$palette = ['#991b1b', '#fff1f2', '#fecdd3'];
+if (!empty($gaps)) {
+    $headline = 'The record still needs clearer incident anchors before it can safely absorb live disruption';
+    $palette = ['#9a3412', '#fff7ed', '#fed7aa'];
+} elseif (in_array($status, ['confirmed', 'closed_won'], true) && $closedAt === '') {
+    $headline = 'The record carries a workable incident posture with visible ownership, fallback brief, and control checkpoints';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+} elseif ($closedAt !== '' || in_array($status, ['closed_lost', 'closed'], true)) {
+    $headline = 'Use incident control as a recovery readback only when the record is already closed';
+    $palette = ['#7c2d12', '#fff7ed', '#fdba74'];
+}
+
+$posture = 'Incident control should answer three questions fast: who owns the disruption right now, what part of the live service picture is breaking first, and what fallback brief another operator can trust if the incident widens.';
+if ($lastContacted !== '') {
+    $posture .= ' Keep the latest contact signal visible so the operator knows whether guest-facing communication is already in motion.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700; margin-bottom:6px;">Live Incident Workspace</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; line-height:1.25;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569; background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:999px; padding:6px 10px;">
+            Status: <strong><?= e($status !== '' ? $status : 'new') ?></strong>
+        </div>
+    </div>
+
+    <div style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:12px;"><?= e($posture) ?></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Incident anchors</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($anchors ? implode(' • ', $anchors) : 'Incident handling still lacks enough visible anchors for safe live response.') ?></div>
+        </div>
+        <div style="background:#fff; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; padding:12px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#64748b; font-weight:700; margin-bottom:6px;">Exposure gaps</div>
+            <div style="font-size:14px; color:#0f172a; line-height:1.5;"><?= e($gaps ? implode(' • ', $gaps) : 'No obvious structural incident gaps detected in the live record.') ?></div>
+        </div>
+    </div>
+
+    <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Live incident control should reduce panic and memory-dependence: one visible owner, one readable fallback brief, one checkpoint, and less off-record improvisation while the service picture is moving.
+    </div>
+</div>

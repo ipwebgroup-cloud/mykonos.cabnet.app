@@ -655,6 +655,27 @@ tabs:
             tab: Service Day
             comment: Read-only operator guardrails for keeping same-day execution readable, accountable, and easy to stabilize under pressure.
 
+        live_incident_workspace_panel:
+            label: Live Incident Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_live_incident_workspace_panel.htm
+            tab: Incidents
+            comment: Composite operator framing for live issue control, disruption containment, and incident ownership when service delivery breaks away from plan.
+
+        incident_response_blueprint_panel:
+            label: Incident Response Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_incident_response_blueprint_panel.htm
+            tab: Incidents
+            comment: Read-only operator blueprint for containing the incident around one fallback brief, one control checkpoint, and one clean message path.
+
+        incident_risk_guardrails_panel:
+            label: Incident Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_incident_risk_guardrails_panel.htm
+            tab: Incidents
+            comment: Read-only operator guardrails for keeping live incident handling readable, owned, and easy to stabilize under pressure.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

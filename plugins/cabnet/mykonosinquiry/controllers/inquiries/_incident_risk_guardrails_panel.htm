@@ -1,0 +1,69 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$lastContacted = $stringify($record->last_contacted_at ?? '');
+$closedAt = $stringify($record->closed_at ?? '');
+
+$risks = [
+    'letting incident language spread across channels before one operator-owned response path is visible',
+    'treating day-of noise as if it automatically explains the full incident picture',
+    'making live promises while the fallback brief and control checkpoint are still unclear',
+];
+if ($owner === '') {
+    $risks[] = 'running incident response without an explicit visible owner';
+}
+if ($followUpDate === '') {
+    $risks[] = 'losing the next control checkpoint while the disruption is still unfolding';
+}
+if ($services === '') {
+    $risks[] = 'letting incident handling outrun visible service scope';
+}
+if ($summary === '') {
+    $risks[] = 'forcing another operator to rebuild the incident picture from fragments';
+}
+if ($lastContacted === '') {
+    $risks[] = 'sending incident messages without a visible latest-contact anchor';
+}
+if ($closedAt !== '') {
+    $risks[] = 'using live incident posture on a record that still reads as explicitly closed';
+}
+?>
+<div style="border:1px solid #fecaca; background:#fef2f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Incident Risk Guardrails</div>
+    <div style="font-size:18px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:12px;">Keep live issue handling readable, owned, and easy to stabilize under pressure</div>
+
+    <ul style="margin:0; padding-left:18px; color:#7f1d1d; line-height:1.75; font-size:14px;">
+        <?php foreach ($risks as $risk): ?>
+            <li><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
