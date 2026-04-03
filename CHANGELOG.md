@@ -1,3 +1,10 @@
+## v4.6.0 — Documents Workspace
+- adds a new **Documents** tab to the backend inquiry update screen
+- introduces a composite **Documents Workspace** panel for quote, confirmation, and attachment readiness
+- adds **Document Packet Blueprint** guidance so operators can package the record into a portable document packet without losing reference, scope, timing, or owner clarity
+- adds **Document Risk Guardrails** to prevent paperwork from overstating certainty, blurring accountability, or outrunning the live record
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.5.0 — Financial Closure Workspace
 - adds a new **Financials** tab to the backend inquiry update screen
 - introduces a composite **Financial Closure Workspace** panel for deposit posture, payment checkpoints, and commercial lock discipline

@@ -1,0 +1,110 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$fullName = $stringify($record->full_name ?? '');
+$requestReference = $stringify($record->request_reference ?? '');
+$email = $stringify($record->email ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$details = $stringify($record->details ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$sourceTitle = $stringify($record->source_title ?? '');
+$sourceUrl = $stringify($record->source_url ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$gaps = [];
+if ($requestReference === '') $gaps[] = 'request reference';
+if ($fullName === '' || $email === '') $gaps[] = 'guest identity anchors';
+if ($arrival === '' || $departure === '') $gaps[] = 'stay dates';
+if ($services === '' && $details === '') $gaps[] = 'service brief';
+if ($summary === '') $gaps[] = 'working summary';
+if ($owner === '') $gaps[] = 'document owner';
+
+$headline = 'Document readiness should stay controlled until the record can stand on its own';
+$palette = ['#2563eb', '#eff6ff', '#bfdbfe'];
+if (empty($gaps) && in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed', 'closed_won'], true)) {
+    $headline = 'The record is document-ready enough for disciplined quote and confirmation packaging';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+} elseif (in_array($status, ['new', 'reviewed', 'contacted'], true)) {
+    $headline = 'Use documents to support continuity, not to replace missing scope clarity';
+    $palette = ['#7c3aed', '#faf5ff', '#ddd6fe'];
+}
+
+$posture = 'Treat documents as continuity packets: they should restate visible scope, timing, ownership, and the next checkpoint before they carry stronger commercial or confirmation weight.';
+if ($sourceTitle !== '' || $sourceUrl !== '') {
+    $posture .= ' Keep the entry/source trail visible so any quote or confirmation packet can be traced back to the original inquiry context.';
+}
+if ($requestedMode !== '') {
+    $posture .= ' Keep the handling mode explicit so documents match the way the record is actually being managed.';
+}
+if ($followUpDate !== '') {
+    $posture .= ' Anchor every document step to the visible follow-up checkpoint so paperwork does not outrun live operator cadence.';
+}
+
+$anchors = [];
+if ($requestReference !== '') $anchors[] = 'request reference';
+if ($fullName !== '' || $email !== '') $anchors[] = 'guest identity';
+if ($arrival !== '' || $departure !== '') $anchors[] = 'stay dates';
+if ($services !== '') $anchors[] = 'service scope';
+if ($summary !== '') $anchors[] = 'working summary';
+if ($owner !== '') $anchors[] = 'operator ownership';
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Documents Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Reference: <strong><?= e($requestReference !== '' ? $requestReference : 'pending') ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Document posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($posture) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(!empty($anchors) ? implode(', ', $anchors) : 'Bring reference, guest identity, dates, scope, and owner clarity into view before packaging any quote or confirmation-style document.') ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Readiness signal</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e(empty($gaps) ? 'The record carries the core anchors needed for disciplined document packaging.' : 'Strengthen the visible record before documents start implying certainty, commercial lock, or execution commitment.') ?></div>
+        </div>
+    </div>
+
+    <?php if (!empty($gaps)): ?>
+        <div style="font-size:13px; color:#334155;">Document readiness still depends on: <strong><?= e(implode(', ', $gaps)) ?></strong>.</div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">The record is carrying the visible anchors needed for controlled document packaging.</div>
+    <?php endif; ?>
+</div>

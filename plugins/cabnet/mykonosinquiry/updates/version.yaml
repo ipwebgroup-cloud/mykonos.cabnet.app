@@ -156,3 +156,6 @@
 
 3.0.0:
     - 'Introduce the Financial Closure Workspace tab with deposit framing and financial guardrail panels'
+
+3.1.0:
+    - 'Introduce the Documents Workspace tab with document packet framing and document guardrail panels'

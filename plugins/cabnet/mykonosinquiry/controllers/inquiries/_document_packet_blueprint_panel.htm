@@ -1,0 +1,86 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$fullName = $stringify($record->full_name ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$guests = $stringify($record->guests ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$phase = 'Use a continuity-led packet: reference -> guest/stay anchors -> visible scope -> next checkpoint.';
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $phase = 'Use a proposal-support packet: visible scope -> timing anchors -> directional commercial context -> next decision checkpoint.';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $phase = 'Use a confirmation-support packet: committed scope, timing anchors, owner checkpoint, and what still remains operator-controlled.';
+}
+
+$sequence = [
+    'Open with the request reference and guest/stay anchors so the document can stand on its own without re-reading the entire record.',
+    'Restate the visible service scope in plain language before commercial, scheduling, or supplier-style specifics tighten.',
+    'Keep one clear operator owner and one visible next checkpoint so documents reinforce accountability instead of hiding it.',
+    'Separate what is confirmed, what is directional, and what still depends on live follow-up or supplier coordination.',
+];
+if ($requestedMode !== '') {
+    $sequence[] = 'Reflect the handling mode so the document tone matches the live operating posture of the inquiry.';
+}
+if ($followUpDate !== '') {
+    $sequence[] = 'Tie the document to the visible follow-up checkpoint so paperwork follows the operator cadence instead of creating a parallel workflow.';
+}
+
+$anchorText = [];
+if ($requestReference !== '') $anchorText[] = 'ref: ' . $requestReference;
+if ($fullName !== '') $anchorText[] = 'guest: ' . $fullName;
+if ($arrival !== '' || $departure !== '') $anchorText[] = 'stay: ' . trim($arrival . ' → ' . $departure, ' →');
+if ($guests !== '') $anchorText[] = 'guests: ' . $guests;
+if ($services !== '') $anchorText[] = 'services: ' . $services;
+if ($summary !== '') $anchorText[] = 'summary ready';
+if ($owner !== '') $anchorText[] = 'owner: ' . $owner;
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#2563eb; font-weight:700; margin-bottom:6px;">Document Packet Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Package the record so a quote, summary, or confirmation document can stand on its own</div>
+    <div style="font-size:14px; color:#334155; margin-bottom:12px;"><?= e($phase) ?></div>
+
+    <div style="padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; margin-bottom:12px;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+        <div style="font-size:14px; color:#0f172a;"><?= e(!empty($anchorText) ? implode(' | ', $anchorText) : 'Bring reference, guest identity, stay window, visible scope, and owner clarity into view before building any guest-facing or operator-support document.') ?></div>
+    </div>
+
+    <ol style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.55;">
+        <?php foreach ($sequence as $step): ?>
+            <li style="margin-bottom:8px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

@@ -529,6 +529,27 @@ tabs:
             tab: Financials
             comment: Read-only guardrails that surface the commercial mistakes most likely to overstate commitment, outrun visible scope, or create fragile payment expectations.
 
+        documents_workspace_panel:
+            label: Documents Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_documents_workspace_panel.htm
+            tab: Documents
+            comment: High-level document-readiness surface for packaging quotes, confirmations, and supporting packets without letting paperwork outrun continuity, ownership, or visible scope.
+
+        document_packet_blueprint_panel:
+            label: Document Packet Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_document_packet_blueprint_panel.htm
+            tab: Documents
+            comment: Read-only structure guidance for turning the live record into a portable document packet with clear reference, timing, ownership, and pending-item discipline.
+
+        document_risk_guardrails_panel:
+            label: Document Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_document_risk_guardrails_panel.htm
+            tab: Documents
+            comment: Read-only guardrails that surface the document mistakes most likely to overstate certainty, blur accountability, or let attachments outrun the record.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial
