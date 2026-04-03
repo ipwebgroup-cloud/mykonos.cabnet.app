@@ -147,6 +147,77 @@ tabs:
             span: full
             comment: Read-only finish framing that keeps stewardship closure readable without widening into automation.
 
+        finish_triage_label:
+            label: Finish Triage
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Fast list-friendly triage read of whether this record needs review, execution, finish parking, or a quiet parked watch.
+
+        finish_triage_urgency_label:
+            label: Finish Triage Urgency
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Narrow urgency signal so operators can decide whether the finish lane needs attention now, soon, or later.
+
+        stewardship_snapshot_compressed:
+            label: Stewardship Snapshot Compressed
+            type: textarea
+            size: small
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: Compressed one-line stewardship read for fast scanning without rebuilding the whole closure story.
+
+        finish_triage_digest:
+            label: Finish Triage Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: Triage-focused digest that compresses urgency, dashboard posture, parked watch, and the next finish move.
+
+        queue_compression_band_label:
+            label: Queue Compression Band
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Conservative queue bucket showing whether this record belongs in active finish handling, parked watch, or quiet review.
+
+        list_scan_aid_label:
+            label: List Scan Aid
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Short next-move cue meant for rapid list scanning and queue triage.
+
+        owner_timing_signal_label:
+            label: Owner Timing Signal
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Combined ownership and timing signal so unassigned or due records surface faster in human review.
+
+        stewardship_queue_compression_digest:
+            label: Stewardship Queue Compression
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Conservative queue digest that compresses band, scan aid, owner timing, and finish posture into one narrow operator read.
+
+        stewardship_queue_scan_frame:
+            label: Stewardship Queue Scan Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: Read-only framing for how this record should sit in the human queue without widening into automation.
+
         finish_dashboard_status_label:
             label: Finish Dashboard Status
             tab: Overview

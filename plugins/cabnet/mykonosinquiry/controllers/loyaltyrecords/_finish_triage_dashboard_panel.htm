@@ -1,0 +1,56 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$triage = $record ? $record->finish_triage_label : 'Review continuity';
+$urgency = $record ? $record->finish_triage_urgency_label : 'Medium';
+$dashboardStatus = $record ? $record->finish_dashboard_status_label : 'Finish posture still emerging';
+$closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
+$nextMove = $record ? $record->next_finish_move_label : 'Keep finish handling narrow';
+$compressedSnapshot = $record ? $record->stewardship_snapshot_compressed : 'Stewardship snapshot compression is still minimal.';
+$triageDigest = $record ? $record->finish_triage_digest : 'Finish triage digest is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-tasks"></i>
+        <h4 style="margin-top:0;">Finish triage dashboard</h4>
+        <p>
+            Compress the finish story into one fast operator read so list scanning, record opening, and inquiry-linked reviews all point to the same narrow next move.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Finish triage</h4>
+                <p><?= e($triage) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Triage urgency</h4>
+                <p><?= e($urgency) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish dashboard</h4>
+                <p><?= e($dashboardStatus) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($closureReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($nextMove) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Compressed snapshot:</strong> <?= nl2br(e($compressedSnapshot)) ?></li>
+                <li><strong>Finish triage digest:</strong> <?= nl2br(e($triageDigest)) ?></li>
+                <li>Use this compressed view for fast finish-lane scanning before reading the broader dashboard or parked-state details.</li>
+                <li>Keep closure handling human-owned and deliberate even when the triage looks obvious.</li>
+            </ul>
+        </div>
+    </div>
+</div>

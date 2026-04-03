@@ -56,6 +56,22 @@ columns:
         label: Finish Dashboard
         sortable: false
 
+    finish_triage_label:
+        label: Finish Triage
+        sortable: false
+
+    finish_triage_urgency_label:
+        label: Triage Urgency
+        sortable: false
+
+    queue_compression_band_label:
+        label: Queue Band
+        sortable: false
+
+    list_scan_aid_label:
+        label: Scan Aid
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

@@ -1,0 +1,56 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$queueBand = $record ? $record->queue_compression_band_label : 'Quiet review queue';
+$scanAid = $record ? $record->list_scan_aid_label : 'Hold continuity review';
+$ownerTiming = $record ? $record->owner_timing_signal_label : 'Unassigned / no review set';
+$triage = $record ? $record->finish_triage_label : 'Review continuity';
+$urgency = $record ? $record->finish_triage_urgency_label : 'Medium';
+$queueDigest = $record ? $record->stewardship_queue_compression_digest : 'Stewardship queue compression is still minimal.';
+$queueFrame = $record ? $record->stewardship_queue_scan_frame : 'Stewardship queue scan framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-filter"></i>
+        <h4 style="margin-top:0;">Stewardship queue scan</h4>
+        <p>
+            Compress finish posture into a conservative queue read so operators can scan what needs action now, what can stay parked, and what should remain quiet in review.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Queue band</h4>
+                <p><?= e($queueBand) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Scan aid</h4>
+                <p><?= e($scanAid) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($ownerTiming) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish triage</h4>
+                <p><?= e($triage) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Triage urgency</h4>
+                <p><?= e($urgency) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review</h4>
+                <p><?= $record && $record->next_review_at ? e($record->next_review_at->format('Y-m-d H:i')) : 'not scheduled' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Queue compression:</strong> <?= nl2br(e($queueDigest)) ?></li>
+                <li><strong>Queue scan frame:</strong> <?= nl2br(e($queueFrame)) ?></li>
+                <li>Use this panel to scan the human queue conservatively, not to automate finish handling.</li>
+                <li>Records with reopened lanes or due parked windows should rise earlier in review, while stable parked lanes can stay quiet.</li>
+            </ul>
+        </div>
+    </div>
+</div>

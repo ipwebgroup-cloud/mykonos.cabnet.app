@@ -146,6 +146,26 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->finish_dashboard_status_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Queue band</h4>
+                    <p><?= e($record->queue_compression_band_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Scan aid</h4>
+                    <p><?= e($record->list_scan_aid_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Owner timing</h4>
+                    <p><?= e($record->owner_timing_signal_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Finish triage</h4>
+                    <p><?= e($record->finish_triage_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Triage urgency</h4>
+                    <p><?= e($record->finish_triage_urgency_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Parked-lane outcome</h4>
                     <p><?= e($record->parked_lane_outcome_label) ?></p>
                 </div>
@@ -186,6 +206,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Finish reason:</strong> <?= e($record->finish_recommendation_reason_summary) ?></li>
                     <li><strong>Closure evidence:</strong> <?= e($record->closure_evidence_digest) ?></li>
                     <li><strong>Outcome-driven finish frame:</strong> <?= e($record->outcome_driven_finish_frame) ?></li>
+                    <li><strong>Stewardship snapshot compressed:</strong> <?= e($record->stewardship_snapshot_compressed) ?></li>
+                    <li><strong>Finish triage digest:</strong> <?= e($record->finish_triage_digest) ?></li>
                     <li><strong>Finish dashboard summary:</strong> <?= e($record->finish_dashboard_summary) ?></li>
                     <li><strong>Finish dashboard frame:</strong> <?= e($record->stewardship_finish_dashboard_frame) ?></li>
                     <li><strong>Finish lane snapshot:</strong> <?= e($record->finish_lane_snapshot_summary) ?></li>
@@ -194,6 +216,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Parked-state frame:</strong> <?= e($record->parked_state_visibility_frame) ?></li>
                     <li><strong>Finish lane frame:</strong> <?= e($record->finish_lane_follow_through_frame) ?></li>
                     <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
+                    <li><strong>Queue compression:</strong> <?= e($record->stewardship_queue_compression_digest) ?></li>
+                    <li><strong>Queue scan frame:</strong> <?= e($record->stewardship_queue_scan_frame) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

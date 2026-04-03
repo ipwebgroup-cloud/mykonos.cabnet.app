@@ -147,3 +147,8 @@
 2.3.14:
   - 'Introduce parked-lane outcome closure readability and a stewardship finish dashboard for live loyalty records'
 
+2.3.15:
+  - 'Introduce stewardship snapshot compression and list-level finish triage for live loyalty records'
+
+2.3.16:
+  - 'Introduce conservative stewardship queue compression and list-scan aids for live loyalty records'

@@ -97,6 +97,23 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Read-only finish framing that keeps closure recommendations grounded in the latest loop and outcome.',
             ],
+            'finish_triage_dashboard_panel' => [
+                'label'   => 'Finish Triage Dashboard',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_triage_dashboard_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Compressed stewardship triage view so operators can scan finish urgency, next move, and parked posture faster from one narrow panel.',
+            ],
+            'stewardship_queue_scan_panel' => [
+                'label'   => 'Stewardship Queue Scan',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_stewardship_queue_scan_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Conservative queue-compression panel so finish-ready, parked, and reopen-sensitive records can be scanned faster without widening into automation.',
+            ],
+
             'stewardship_finish_dashboard_panel' => [
                 'label'   => 'Stewardship Finish Dashboard',
                 'type'    => 'partial',
