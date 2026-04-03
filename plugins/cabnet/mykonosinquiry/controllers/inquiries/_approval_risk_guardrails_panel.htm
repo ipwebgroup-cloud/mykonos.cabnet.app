@@ -1,0 +1,74 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$requestReference = $stringify($record->request_reference ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$services = $stringify($record->services_list ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$status = strtolower($stringify($record->status ?? 'new'));
+$closedReason = $stringify($record->closed_reason ?? '');
+
+$risks = [
+    'Do not let approval language imply confirmed scope when the record still carries only directional or partial detail.',
+    'Do not collapse operator review, guest agreement, partner alignment, and financial commitment into one vague sign-off step.',
+    'Do not let approvals outrun owner clarity; every decision checkpoint should still resolve back to one visible operator owner.',
+    'Do not treat approval notes as a substitute for continuity — the record should remain readable even if the sign-off packet is separated from the screen.',
+];
+if ($requestReference === '') {
+    $risks[] = 'Add a visible request reference before expecting the decision path to travel safely across operators or approvers.';
+}
+if ($summary === '') {
+    $risks[] = 'Strengthen the working summary before turning the record into an approval request.';
+}
+if ($services === '') {
+    $risks[] = 'Keep approval wording conservative until the requested scope is visible in structured form.';
+}
+if ($owner === '' || $followUpDate === '') {
+    $risks[] = 'Keep ownership and next checkpoint explicit so approvals do not create soft accountability or invisible timing drift.';
+}
+if ($closedReason !== '') {
+    $risks[] = 'Preserve the closure/reopen context so new sign-off requests do not erase why the earlier decision path paused or failed.';
+}
+
+$severity = 'Approval posture is safe when the decision path is visible, narrow, and easy to audit later.';
+if (in_array($status, ['proposal_sent', 'awaiting_guest', 'confirmed'], true)) {
+    $severity = 'Higher-stakes approval phases require tighter separation between internal review, guest approval, commercial lock, and live execution readiness.';
+}
+?>
+<div style="border:1px solid #fecaca; background:#fff1f2; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#b91c1c; font-weight:700; margin-bottom:6px;">Approval Risk Guardrails</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Keep sign-off useful without letting it blur ownership or certainty</div>
+    <div style="font-size:14px; color:#7f1d1d; margin-bottom:12px;"><?= e($severity) ?></div>
+
+    <ul style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.55;">
+        <?php foreach ($risks as $risk): ?>
+            <li style="margin-bottom:8px;"><?= e($risk) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</div>

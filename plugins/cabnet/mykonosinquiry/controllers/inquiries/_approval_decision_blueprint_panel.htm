@@ -1,0 +1,86 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$stringify = static function ($value): string {
+    if (is_array($value)) {
+        $parts = [];
+        array_walk_recursive($value, static function ($item) use (&$parts) {
+            if (is_scalar($item)) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $parts[] = $item;
+                }
+            }
+        });
+        return trim(implode(', ', array_unique($parts)));
+    }
+    if (is_object($value)) {
+        return method_exists($value, '__toString') ? trim((string) $value) : '';
+    }
+    return trim((string) ($value ?? ''));
+};
+
+$status = strtolower($stringify($record->status ?? 'new'));
+$requestReference = $stringify($record->request_reference ?? '');
+$fullName = $stringify($record->full_name ?? '');
+$arrival = $stringify($record->arrival_date ?? '');
+$departure = $stringify($record->departure_date ?? '');
+$services = $stringify($record->services_list ?? '');
+$summary = $stringify($record->guest_summary ?? '');
+$owner = $stringify($record->owner_name ?? '');
+$followUpDate = $stringify($record->follow_up_date ?? '');
+$priority = $stringify($record->priority ?? '');
+$requestedMode = $stringify($record->requested_mode ?? '');
+
+$phase = 'Use a decision-led approval packet: what is being approved -> visible basis -> who owns the next move -> what remains pending.';
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $phase = 'Use a pre-commit approval packet: visible scope -> directional commercial/timing basis -> decision checkpoint -> controlled next move.';
+}
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $phase = 'Use a commitment-lock approval packet: approved scope, visible owner, live checkpoint, and any still-pending dependencies.';
+}
+
+$sequence = [
+    'Open with the request reference and one-sentence decision context so the approver can see what is actually being asked without reconstructing the whole record.',
+    'Restate only the visible scope, timing, and commercial anchors that already exist on the record before introducing approval language.',
+    'Name the operator owner and the next checkpoint explicitly so sign-off reinforces accountability instead of obscuring it.',
+    'Separate approved items, directional assumptions, and still-pending dependencies so the decision path stays readable later.',
+];
+if ($requestedMode !== '') {
+    $sequence[] = 'Keep the approval framing consistent with the active handling mode so the decision packet matches the real operating lane.';
+}
+if ($followUpDate !== '') {
+    $sequence[] = 'Tie the approval request to the visible follow-up checkpoint so sign-off does not drift into an orphaned decision trail.';
+}
+
+$anchorText = [];
+if ($requestReference !== '') $anchorText[] = 'ref: ' . $requestReference;
+if ($fullName !== '') $anchorText[] = 'guest: ' . $fullName;
+if ($arrival !== '' || $departure !== '') $anchorText[] = 'stay: ' . trim($arrival . ' → ' . $departure, ' →');
+if ($services !== '') $anchorText[] = 'services: ' . $services;
+if ($summary !== '') $anchorText[] = 'summary ready';
+if ($owner !== '') $anchorText[] = 'owner: ' . $owner;
+if ($priority !== '') $anchorText[] = 'priority: ' . $priority;
+?>
+<div style="border:1px solid #cbd5e1; background:#fff; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#2563eb; font-weight:700; margin-bottom:6px;">Approval Decision Blueprint</div>
+    <div style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:10px;">Shape sign-off so the decision path can be trusted later</div>
+    <div style="font-size:14px; color:#334155; margin-bottom:12px;"><?= e($phase) ?></div>
+
+    <div style="padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; margin-bottom:12px;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Visible anchors</div>
+        <div style="font-size:14px; color:#0f172a;"><?= e(!empty($anchorText) ? implode(' | ', $anchorText) : 'Bring reference, guest/stay anchors, visible scope, one owner, and one next checkpoint into view before building any approval request or sign-off packet.') ?></div>
+    </div>
+
+    <ol style="margin:0; padding-left:18px; color:#0f172a; font-size:14px; line-height:1.55;">
+        <?php foreach ($sequence as $step): ?>
+            <li style="margin-bottom:8px;"><?= e($step) ?></li>
+        <?php endforeach; ?>
+    </ol>
+</div>

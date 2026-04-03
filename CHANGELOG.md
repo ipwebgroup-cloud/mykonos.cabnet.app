@@ -1,3 +1,10 @@
+## v4.7.0 — Approvals Workspace
+- adds a new **Approvals** tab to the backend inquiry update screen
+- introduces a composite **Approvals Workspace** panel for sign-off posture, decision checkpoints, and owner-visible approval handling
+- adds **Approval Decision Blueprint** guidance so operators can package what is being approved, on what basis, by whom, and what still remains pending
+- adds **Approval Risk Guardrails** to prevent ownership blur, premature commitment language, and approval packets that erase why a decision path paused
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v4.6.0 — Documents Workspace
 - adds a new **Documents** tab to the backend inquiry update screen
 - introduces a composite **Documents Workspace** panel for quote, confirmation, and attachment readiness

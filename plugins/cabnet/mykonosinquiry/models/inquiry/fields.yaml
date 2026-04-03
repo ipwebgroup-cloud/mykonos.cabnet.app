@@ -550,6 +550,27 @@ tabs:
             tab: Documents
             comment: Read-only guardrails that surface the document mistakes most likely to overstate certainty, blur accountability, or let attachments outrun the record.
 
+        approvals_workspace_panel:
+            label: Approvals Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_approvals_workspace_panel.htm
+            tab: Approvals
+            comment: High-level approval-readiness surface for shaping sign-off posture, decision checkpoints, and owner-visible approval handling without letting commitment language outrun the live record.
+
+        approval_decision_blueprint_panel:
+            label: Approval Decision Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_approval_decision_blueprint_panel.htm
+            tab: Approvals
+            comment: Read-only structure guidance for turning the live record into a clear approval packet with visible basis, decision scope, owner clarity, and next checkpoint discipline.
+
+        approval_risk_guardrails_panel:
+            label: Approval Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_approval_risk_guardrails_panel.htm
+            tab: Approvals
+            comment: Read-only guardrails that surface the approval mistakes most likely to blur ownership, imply premature commitment, or hide why the decision path paused.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

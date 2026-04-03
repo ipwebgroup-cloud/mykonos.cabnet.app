@@ -159,3 +159,6 @@
 
 3.1.0:
     - 'Introduce the Documents Workspace tab with document packet framing and document guardrail panels'
+
+3.2.0:
+    - 'Introduce the Approvals Workspace tab with sign-off framing and approval guardrail panels'
