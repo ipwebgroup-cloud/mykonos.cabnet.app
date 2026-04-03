@@ -1,16 +1,17 @@
 <?php
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+$touchpointTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_touchpoints') : false;
 ?>
 <div class="layout-row">
     <div class="callout fade in no-subheader">
         <div class="header">
             <i class="icon-flag-checkered"></i>
-            <h3>Loyalty Continuity transfer-packet staging workspace</h3>
+            <h3>Loyalty Continuity touchpoint-ledger staging workspace</h3>
             <p>
-                The workspace shell is stable and visible. The loyalty storage layer is <?= $loyaltyTableReady ? 'active' : 'not installed yet' ?>,
-                so this area currently serves as a controlled continuity-planning surface. This release adds a dry-run transfer packet and
-                readiness scoring layer so operators can qualify future Loyalty Continuity handoffs before any active storage rollout changes
-                the live operating rhythm of Inquiry Queue.
+                The workspace shell is stable and visible. Loyalty records are <?= $loyaltyTableReady ? 'installed' : 'not installed yet' ?> and the
+                touchpoint ledger is <?= $touchpointTableReady ? 'installed' : 'still staged' ?>, so this area continues to operate as a controlled
+                continuity-planning surface. This release adds the first retention-history packet so operators can define how loyalty touchpoints
+                will be preserved once structural activation is intentionally executed.
             </p>
         </div>
     </div>

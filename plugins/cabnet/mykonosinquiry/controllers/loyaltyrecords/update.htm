@@ -10,6 +10,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('transfer_staging_rules_panel') ?>
         <?= $this->makePartial('activation_readiness_score_panel') ?>
         <?= $this->makePartial('transfer_packet_preview_panel') ?>
+        <?= $this->makePartial('touchpoint_ledger_packet_panel') ?>
+        <?= $this->makePartial('retention_history_blueprint_panel') ?>
         <?= $this->makePartial('installable_schema_packet_panel') ?>
 
         <div class="layout-row">

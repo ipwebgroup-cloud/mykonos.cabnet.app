@@ -8,13 +8,13 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity still renders safely even when the loyalty storage layer is not installed.
-- The loyalty line now includes a guarded inquiry-side bridge plus a dry-run transfer packet and readiness scoring layer so operators can evaluate future continuity handoffs without activating live storage too early.
+- The loyalty line now includes a guarded inquiry-side bridge, a dry-run transfer packet, readiness scoring, and the first staged touchpoint-history ledger packet for future continuity retention tracking.
 
 ## This patch
-- Version: `v4.5.0`
-- Name: `loyalty transfer packet and dry-run scoring workspace`
+- Version: `v4.6.0`
+- Name: `loyalty touchpoint ledger and retention history packet workspace`
 - Type: plugin-only major patch
-- No schema change
+- Adds install-ready schema packet files for loyalty touchpoint history
 - No theme change
 
 ## Files included in this patch
@@ -22,16 +22,19 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/create.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/update.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_install_state_overview.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_activation_readiness_score_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_transfer_packet_preview_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_touchpoint_ledger_packet_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_retention_history_blueprint_panel.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_workspace_actions.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
-- `docs/releases/MYKONOS_V450_LOYALTY_TRANSFER_PACKET_AND_DRY_RUN_SCORING_WORKSPACE_PATCH.md`
+- `plugins/cabnet/mykonosinquiry/updates/version.yaml`
+- `plugins/cabnet/mykonosinquiry/updates/create_loyalty_records_table.php`
+- `plugins/cabnet/mykonosinquiry/updates/create_loyalty_touchpoints_table.php`
+- `docs/releases/MYKONOS_V460_LOYALTY_TOUCHPOINT_LEDGER_AND_RETENTION_HISTORY_PACKET_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty bridge line already clarified when an inquiry should remain in active handling and when it could become a continuity candidate. The next safe step was to make that transition more concrete without forcing activation: define the dry-run transfer packet, add a basic readiness score, and improve inquiry-side continuity anchors so operators can preview a disciplined handoff before the storage rollout is intentionally executed.
+The loyalty bridge line already defined how a closed inquiry could be reviewed for continuity transfer. The next safe structural step was to stage the first touchpoint-history ledger so the future Loyalty Continuity rollout can preserve retention evidence, outcomes, and next-step timing without turning the current inquiry queue into a CRM-style long-cycle timeline.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
-- Treat loyalty readiness scoring as guidance, not automation.
-- Next major patches should focus on the first real transfer action packet and touchpoint-history structure once the storage rollout is explicitly activated.
+- Treat the loyalty touchpoint ledger as an install-ready packet, not an activation trigger by itself.
+- Next major patches should focus on the first real loyalty record form structure and guarded touchpoint list wiring once activation is intentionally executed.

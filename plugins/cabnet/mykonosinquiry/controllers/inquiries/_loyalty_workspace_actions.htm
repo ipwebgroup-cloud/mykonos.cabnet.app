@@ -2,6 +2,7 @@
 $inquiry = $formModel ?? $model ?? null;
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 $loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
+$touchpointTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_touchpoints') : false;
 $record = null;
 
 if ($loyaltyTableReady && $loyaltyModelReady && $inquiry && !empty($inquiry->id)) {
@@ -52,6 +53,10 @@ $readinessLabel = $readinessScore >= 4 ? 'High' : ($readinessScore >= 2 ? 'Mediu
             <div class="scoreboard-item title-value">
                 <h4>Bridge mode</h4>
                 <p><?= $loyaltyTableReady ? 'installable transfer path' : 'staged dry run only' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>History packet</h4>
+                <p><?= $touchpointTableReady ? 'touchpoint ledger installed' : 'touchpoint ledger staged' ?></p>
             </div>
         </div>
 

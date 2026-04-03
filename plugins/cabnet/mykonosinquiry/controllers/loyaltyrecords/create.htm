@@ -10,6 +10,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('transfer_staging_rules_panel') ?>
         <?= $this->makePartial('activation_readiness_score_panel') ?>
         <?= $this->makePartial('transfer_packet_preview_panel') ?>
+        <?= $this->makePartial('touchpoint_ledger_packet_panel') ?>
+        <?= $this->makePartial('retention_history_blueprint_panel') ?>
         <?= $this->makePartial('installable_schema_packet_panel') ?>
 
         <div class="layout-row">
@@ -18,7 +20,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Create mode is intentionally locked</h4>
                     <p style="margin-bottom:0;">
                         Manual loyalty record creation stays disabled until the dedicated storage layer is installed and verified. This release
-                        stages the first structural packet, but production should continue using Inquiry Queue until activation is explicitly
+                        stages the first structural packet and the first retention-history touchpoint packet, but production should continue using Inquiry Queue until activation is explicitly
                         performed on the proper rollout path.
                     </p>
                 </div>

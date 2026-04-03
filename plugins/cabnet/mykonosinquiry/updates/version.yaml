@@ -111,3 +111,6 @@
 2.3.0:
   - 'Stage the first loyalty structural activation foundation files and guarded workspace install packet'
   - create_loyalty_records_table.php
+2.3.1:
+  - 'Stage the loyalty touchpoint ledger and retention history packet for controlled activation'
+  - create_loyalty_touchpoints_table.php

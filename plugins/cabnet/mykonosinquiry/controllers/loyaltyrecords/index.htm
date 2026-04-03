@@ -10,6 +10,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('transfer_staging_rules_panel') ?>
         <?= $this->makePartial('activation_readiness_score_panel') ?>
         <?= $this->makePartial('transfer_packet_preview_panel') ?>
+        <?= $this->makePartial('touchpoint_ledger_packet_panel') ?>
+        <?= $this->makePartial('retention_history_blueprint_panel') ?>
         <?= $this->makePartial('installable_schema_packet_panel') ?>
         <?= $this->makePartial('activation_gates_panel') ?>
         <?= $this->makePartial('transition_scorecard_panel') ?>
@@ -56,8 +58,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Current safe use</h4>
                     <p style="margin-bottom:0;">
                         The live production workspace remains <strong>Inquiry Queue</strong>. This Loyalty Continuity section now includes the
-                        first install-ready structural packet while remaining render-safe before activation. Use the planning panels to define
-                        the narrowest possible first continuity cohort, and treat the new schema file as a staged activation artifact rather
+                        first install-ready structural packet plus a staged touchpoint-history ledger while remaining render-safe before activation. Use the planning panels to define
+                        the narrowest possible first continuity cohort, and treat the new schema files as a staged activation artifact rather
                         than a reason to mix unfinished retention handling into active concierge operations.
                     </p>
                 </div>

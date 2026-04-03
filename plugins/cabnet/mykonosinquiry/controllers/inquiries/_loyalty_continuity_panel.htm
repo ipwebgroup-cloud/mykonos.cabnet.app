@@ -3,6 +3,7 @@ $inquiry = $formModel ?? $model ?? null;
 $record = null;
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 $loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
+$touchpointTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_touchpoints') : false;
 
 if ($loyaltyTableReady && $loyaltyModelReady && $inquiry && !empty($inquiry->id)) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
@@ -45,6 +46,10 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                 <h4>Loyalty storage</h4>
                 <p><?= $loyaltyTableReady ? 'installed' : 'not installed yet' ?></p>
             </div>
+            <div class="scoreboard-item title-value">
+                <h4>Touchpoint history</h4>
+                <p><?= $touchpointTableReady ? 'ledger installed' : 'ledger staged' ?></p>
+            </div>
         </div>
 
         <div class="scoreboard" style="margin-top:15px;">
@@ -69,7 +74,7 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                 <?php endif; ?>
 
                 <?php if (!$loyaltyTableReady): ?>
-                    <li>The storage layer is still staged, so the continuity packet shown here remains a dry run until activation is deliberately installed.</li>
+                    <li>The storage layer is still staged, so the continuity packet shown here remains a dry run until activation is deliberately installed. The same is true for the touchpoint-history ledger introduced in this patch.</li>
                 <?php endif; ?>
 
                 <?php if (!$record && empty($closedAt)): ?>
