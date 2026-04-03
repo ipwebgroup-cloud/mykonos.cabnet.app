@@ -12,21 +12,26 @@ if ($loyaltyUiReady && $hasInquiry) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
 }
 
-$formatDate = function ($value) {
+$formatDate = function ($value, $fallback = 'Not scheduled') {
     if (!$value) {
-        return 'Not scheduled';
+        return $fallback;
     }
 
-    if ($value instanceof DateTimeInterface) {
+    if ($value instanceof \DateTimeInterface) {
         return $value->format('Y-m-d H:i');
     }
 
     try {
-        return (new DateTime((string) $value))->format('Y-m-d H:i');
-    } catch (Exception $e) {
+        return (new \DateTime((string) $value))->format('Y-m-d H:i');
+    } catch (\Exception $e) {
         return (string) $value;
     }
 };
+
+$status = trim((string) ($inquiry->status ?? ''));
+$servicesInline = trim((string) ($inquiry->services_inline ?? ''));
+$focusLabel = $servicesInline !== '' ? $servicesInline : 'General planning';
+$inquiryAnchor = trim((string) ($inquiry->request_reference ?? ''));
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
@@ -41,7 +46,14 @@ $formatDate = function ($value) {
         <?php elseif (!$loyaltyUiReady): ?>
             <p class="oc-text-muted">Loyalty Continuity is not fully active on this installation yet.</p>
         <?php elseif (!$record): ?>
-            <p class="oc-text-muted">This inquiry has not yet been moved into Loyalty Continuity.</p>
+            <div class="alert alert-info">
+                No linked loyalty record exists yet. Use the workspace actions only when this inquiry is ready to move from active handling into retention continuity.
+            </div>
+            <ul class="list-unstyled oc-text-muted">
+                <li><strong>Inquiry anchor:</strong> <?= e($inquiryAnchor !== '' ? $inquiryAnchor : 'Not assigned') ?></li>
+                <li><strong>Current inquiry status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
+                <li><strong>Service focus:</strong> <?= e($focusLabel) ?></li>
+            </ul>
         <?php else: ?>
             <ul class="list-unstyled">
                 <li><strong>Status:</strong> <?= e($record->continuity_status_label ?? $record->continuity_status ?? 'Active retention') ?></li>
@@ -52,6 +64,8 @@ $formatDate = function ($value) {
                 <li><strong>Next review:</strong> <?= e($formatDate($record->next_review_at ?? null)) ?></li>
                 <li><strong>Last retention contact:</strong> <?= e($formatDate($record->last_retention_contact_at ?? null)) ?></li>
                 <li><strong>Preferred season:</strong> <?= e(trim((string) ($record->preferred_season ?? '')) !== '' ? $record->preferred_season : 'Not set') ?></li>
+                <li><strong>Source inquiry:</strong> <?= e($inquiryAnchor !== '' ? $inquiryAnchor : ('#' . $inquiry->id)) ?></li>
+                <li><strong>Original focus:</strong> <?= e($focusLabel) ?></li>
             </ul>
 
             <?php if (!empty($record->continuity_summary)): ?>
@@ -60,6 +74,13 @@ $formatDate = function ($value) {
                     <pre style="white-space:pre-wrap;word-break:break-word;"><?= e($record->continuity_summary) ?></pre>
                 </div>
             <?php endif; ?>
+
+            <div class="form-group">
+                <label class="control-label">Retention Lens</label>
+                <p class="oc-text-muted" style="margin-bottom:0;">
+                    Keep Loyalty Continuity focused on return-value follow-up, referral readiness, and future re-engagement rather than live request fulfillment.
+                </p>
+            </div>
 
             <?php if ($loyaltyControllerReady): ?>
                 <p>

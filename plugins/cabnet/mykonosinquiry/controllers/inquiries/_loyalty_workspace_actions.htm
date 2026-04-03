@@ -13,14 +13,54 @@ if ($loyaltyUiReady && $hasInquiry) {
 }
 
 $status = trim((string) ($inquiry->status ?? ''));
-$recommendedStatuses = ['reviewed', 'contacted', 'proposal_sent', 'confirmed', 'closed_won', 'closed_lost'];
-$isRecommendedStage = in_array($status, $recommendedStatuses, true);
+$normalizedStatus = strtolower(str_replace('-', '_', $status));
 $hasOwner = trim((string) ($inquiry->owner_name ?? '')) !== '';
 $hasReference = trim((string) ($inquiry->request_reference ?? '')) !== '';
 $servicesInline = trim((string) ($inquiry->services_inline ?? ''));
-$buttonLocked = !$record && !$isRecommendedStage;
-$readinessLabel = $isRecommendedStage ? 'Good candidate for loyalty handoff.' : 'Still early in active handling.';
-$readinessClass = $isRecommendedStage ? 'text-success' : 'text-warning';
+$closedAt = trim((string) ($inquiry->closed_at ?? '')) !== '';
+$lastContactedAt = trim((string) ($inquiry->last_contacted_at ?? '')) !== '';
+$followUpDate = trim((string) ($inquiry->follow_up_date ?? '')) !== '';
+
+$isRecommendedStage = in_array($normalizedStatus, ['reviewed', 'contacted', 'proposal_sent', 'confirmed', 'closed_won', 'closed_lost'], true);
+$isStrongRetentionStage = in_array($normalizedStatus, ['confirmed', 'closed_won'], true) || $closedAt;
+$hasOperationalContext = $hasOwner || $lastContactedAt || $followUpDate;
+
+$readinessChecks = [
+    [
+        'label' => 'Inquiry has reached a later handling stage',
+        'ok' => $isRecommendedStage,
+        'hint' => 'Move the request further through active handling first.',
+    ],
+    [
+        'label' => 'Reference is assigned',
+        'ok' => $hasReference,
+        'hint' => 'A reference helps retention work map cleanly back to the inquiry line.',
+    ],
+    [
+        'label' => 'Operational context exists',
+        'ok' => $hasOperationalContext,
+        'hint' => 'At least one operational signal should exist before continuity handoff.',
+    ],
+];
+
+$passedChecks = 0;
+$blockers = [];
+foreach ($readinessChecks as $check) {
+    if ($check['ok']) {
+        $passedChecks++;
+    } else {
+        $blockers[] = $check['hint'];
+    }
+}
+
+$buttonLocked = !$record && $passedChecks < 2;
+$readinessTone = $passedChecks === 3 ? 'text-success' : ($passedChecks >= 2 ? 'text-warning' : 'text-danger');
+$readinessSummary = $passedChecks === 3
+    ? 'Ready for loyalty continuity handoff.'
+    : ($passedChecks >= 2 ? 'Conditionally ready. Review operator context before handoff.' : 'Keep this inquiry in the active handling queue.');
+$continuityLens = $isStrongRetentionStage
+    ? 'This looks more like post-service retention work than live queue triage.'
+    : 'This still reads as an active inquiry unless the operator intentionally promotes it to continuity.';
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
@@ -36,22 +76,44 @@ $readinessClass = $isRecommendedStage ? 'text-success' : 'text-warning';
             <p class="oc-text-muted">Loyalty Continuity is not fully active on this installation yet. The inquiry queue remains safe and unchanged.</p>
         <?php else: ?>
             <div class="mb-3">
-                <p><strong>Readiness:</strong> <span class="<?= e($readinessClass) ?>"><?= e($readinessLabel) ?></span></p>
-                <ul class="list-unstyled oc-text-muted">
+                <p><strong>Readiness:</strong> <span class="<?= e($readinessTone) ?>"><?= e($readinessSummary) ?></span></p>
+                <p class="oc-text-muted" style="margin-bottom:10px;"><?= e($continuityLens) ?></p>
+                <ul class="list-unstyled oc-text-muted" style="margin-bottom:10px;">
                     <li><strong>Status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
                     <li><strong>Reference:</strong> <?= e($hasReference ? $inquiry->request_reference : 'Not yet assigned') ?></li>
                     <li><strong>Owner:</strong> <?= e($hasOwner ? $inquiry->owner_name : 'Unassigned') ?></li>
+                    <li><strong>Last contacted:</strong> <?= e($lastContactedAt ? (string) $inquiry->last_contacted_at : 'Not recorded') ?></li>
+                    <li><strong>Follow-up date:</strong> <?= e($followUpDate ? (string) $inquiry->follow_up_date : 'Not scheduled') ?></li>
                     <li><strong>Focus:</strong> <?= e($servicesInline !== '' ? $servicesInline : 'General planning') ?></li>
                     <li><strong>Loyalty record:</strong> <?= $record ? 'Already linked' : 'Not linked yet' ?></li>
                 </ul>
             </div>
 
-            <?php if ($buttonLocked): ?>
+            <div class="form-group">
+                <label class="control-label">Readiness Checklist</label>
+                <ul class="list-unstyled">
+                    <?php foreach ($readinessChecks as $check): ?>
+                        <li>
+                            <strong><?= $check['ok'] ? '✓' : '–' ?></strong>
+                            <?= e($check['label']) ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <?php if (!$record && !empty($blockers)): ?>
                 <div class="alert alert-warning">
-                    Loyalty handoff is intentionally guarded until the inquiry reaches a later handling stage. This keeps retention work separate from active concierge queue processing.
+                    <strong>Why handoff is guarded:</strong>
+                    <ul style="margin:8px 0 0 18px;">
+                        <?php foreach ($blockers as $blocker): ?>
+                            <li><?= e($blocker) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             <?php elseif (!$record): ?>
-                <p class="oc-text-muted">This inquiry is ready for post-triage loyalty handling.</p>
+                <div class="alert alert-success">
+                    This inquiry is ready for post-triage loyalty handling without mixing retention work into the live queue.
+                </div>
             <?php endif; ?>
 
             <form method="post">
@@ -59,19 +121,19 @@ $readinessClass = $isRecommendedStage ? 'text-success' : 'text-warning';
                 <input type="hidden" name="_quick_action" value="">
                 <div class="btn-toolbar">
                     <button type="submit" class="btn btn-primary"
-                            <?= $buttonLocked ? 'disabled="disabled" title="Move this inquiry further through active handling before loyalty handoff."' : '' ?>
+                            <?= $buttonLocked ? 'disabled="disabled" title="Complete the readiness checklist before loyalty handoff."' : '' ?>
                             onclick="this.form._quick_action.value='send_to_loyalty';">
                         Move to Loyalty
                     </button>
 
                     <button type="submit" class="btn btn-default"
-                            <?= $buttonLocked ? 'disabled="disabled" title="Use once the inquiry has progressed beyond early handling."' : '' ?>
+                            <?= $buttonLocked ? 'disabled="disabled" title="Complete the readiness checklist before marking referral-ready."' : '' ?>
                             onclick="this.form._quick_action.value='mark_referral_ready';">
                         Mark Referral Ready
                     </button>
 
                     <button type="submit" class="btn btn-default"
-                            <?= $buttonLocked ? 'disabled="disabled" title="Use once the inquiry has progressed beyond early handling."' : '' ?>
+                            <?= $buttonLocked ? 'disabled="disabled" title="Complete the readiness checklist before marking return-value."' : '' ?>
                             onclick="this.form._quick_action.value='mark_return_value_candidate';">
                         Mark Return-Value Candidate
                     </button>
