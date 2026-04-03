@@ -12,7 +12,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
                     <h4 style="margin-top:0;">Create mode is intentionally locked</h4>
                     <p style="margin-bottom:0;">
                         Manual loyalty record creation stays disabled until the dedicated storage layer is installed. This protects production from
-                        partial retention workflows and preserves the Inquiry Queue as the live operational surface. Use the qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression controls, frequency-cap rules, dependency-map, launch-decision, intent-mapping, measurement, return-value, and treatment-lane panels below to define the first activation cohort instead.
+                        partial retention workflows and preserves the Inquiry Queue as the live operational surface. Use the qualification, segmentation, candidate-lane, journey-state, intervention-matrix, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression controls, frequency-cap rules, dependency-map, launch-decision, risk-register, mitigation-playbook, intent-mapping, measurement, return-value, and treatment-lane panels below to define the first activation cohort instead.
                     </p>
                 </div>
             </div>
@@ -47,6 +47,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <?= $this->makePartial('activation_cutover_sequence_panel') ?>
         <?= $this->makePartial('dependency_map_panel') ?>
         <?= $this->makePartial('launch_decision_register_panel') ?>
+        <?= $this->makePartial('risk_register_panel') ?>
+        <?= $this->makePartial('mitigation_playbook_panel') ?>
         <?= $this->makePartial('rollback_criteria_panel') ?>
         <?= $this->makePartial('post_launch_review_guardrails_panel') ?>
         <?= $this->makePartial('handoff_evidence_panel') ?>

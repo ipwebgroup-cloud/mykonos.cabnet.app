@@ -8,11 +8,11 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity renders safely even when the loyalty storage layer is not installed.
-- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, qualification, segmentation, treatment-lane, journey-state, intervention-matrix, timing-guidance, pilot-lane, intent-mapping, offer-architecture, cadence-planning, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, frequency-cap, consent-discipline, approval-checkpoint, pilot-experiment-ledger, rollback-criteria, cutover-sequence, dependency-map, launch-decision register, and post-launch review planning surface rather than a placeholder.
+- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, qualification, segmentation, treatment-lane, journey-state, intervention-matrix, timing-guidance, pilot-lane, intent-mapping, offer-architecture, cadence-planning, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, frequency-cap, consent-discipline, approval-checkpoint, pilot-experiment-ledger, rollback-criteria, cutover-sequence, dependency-map, launch-decision register, risk register, mitigation playbook, and post-launch review planning surface rather than a placeholder.
 
 ## This patch
-- Version: `v4.1.0`
-- Name: `loyalty dependency map and launch-decision register workspace`
+- Version: `v4.2.0`
+- Name: `loyalty risk register and mitigation playbook workspace`
 - Type: plugin-only major patch
 - No schema change
 - No theme change
@@ -24,15 +24,15 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_install_state_overview.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_dependency_map_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_launch_decision_register_panel.htm`
-- `docs/releases/MYKONOS_V410_LOYALTY_DEPENDENCY_MAP_AND_LAUNCH_DECISION_REGISTER_WORKSPACE_PATCH.md`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_risk_register_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_mitigation_playbook_panel.htm`
+- `docs/releases/MYKONOS_V420_LOYALTY_RISK_REGISTER_AND_MITIGATION_PLAYBOOK_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty workspace already described cutover order and review discipline, but it still needed a clearer dependency picture and a visible decision register before any future structural activation. This patch adds dependency-map and launch-decision panels so activation readiness becomes easier to audit and safer to communicate.
+The loyalty workspace already described cutover order, dependencies, and decision checkpoints, but it still needed a more explicit view of launch risks and the mitigation actions that should control them. This patch adds a risk register and mitigation playbook so pilot readiness becomes easier to pressure-test before any future structural activation.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
 - Continue with plugin-only operator-facing patches until the loyalty storage layer is ready.
-- Use the qualification, journey-state, intervention, segmentation, timing, pilot-lane, intent-mapping, offer, cadence, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, frequency-cap, consent-discipline, approval-checkpoint, pilot-experiment-ledger, rollback-criteria, cutover-sequence, dependency-map, launch-decision register, and post-launch review panels to define a very narrow first live pilot.
+- Use the qualification, journey-state, intervention, segmentation, timing, pilot-lane, intent-mapping, offer, cadence, measurement, return-value, message-framework, channel-priority, trigger-library, exception-routing, escalation-threshold, ownership-matrix, suppression-control, frequency-cap, consent-discipline, approval-checkpoint, pilot-experiment-ledger, rollback-criteria, cutover-sequence, dependency-map, launch-decision register, risk register, mitigation playbook, and post-launch review panels to define a very narrow first live pilot.
 - Add the loyalty tables only in a separate, explicitly installable structural release.
