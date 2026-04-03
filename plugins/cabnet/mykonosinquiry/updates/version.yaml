@@ -107,7 +107,5 @@
     - 'Introduce the Action Workspace tab with composite next-move execution and transition guardrail panels'
 
 1.5.0:
-    - 'Introduce the Queue-to-Record Bridge on the inquiry list page with first-tab routing guidance and priority opening routes'
+    - 'Introduce the Communication Workspace tab with reply strategy, blueprint, and communication guardrail panels'
 
-1.6.0:
-    - 'Introduce a responsive operator list UI foundation for queue and bridge panels'

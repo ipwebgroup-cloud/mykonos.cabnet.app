@@ -187,6 +187,27 @@ tabs:
             tab: Action
             comment: Read-only transition checks for clarification, proposal shaping, confirmation posture, and closure/reopen discipline before changing the record trajectory.
 
+        communication_workspace_panel:
+            label: Communication Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_communication_workspace_panel.htm
+            tab: Communication
+            comment: High-level communication control surface for route, tone, readiness, and safest next guest-facing move before drafting the next reply.
+
+        next_reply_blueprint_panel:
+            label: Next Reply Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_reply_blueprint_panel.htm
+            tab: Communication
+            comment: Read-only structure guidance for the next guest message so the response stays specific, continuity-led, and commercially disciplined.
+
+        reply_risk_guardrails_panel:
+            label: Reply Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_risk_guardrails_panel.htm
+            tab: Communication
+            comment: Read-only guardrails that surface the communication mistakes most likely to break trust, blur ownership, or over-promise too early.
+
         brief_readiness_panel:
             label: Brief Readiness
             type: partial

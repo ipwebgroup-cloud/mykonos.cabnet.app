@@ -1,0 +1,109 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$owner = trim((string) ($record->owner_name ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$summary = trim((string) ($record->guest_summary ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$contact = trim((string) ($record->contact_preference ?? ''));
+$occasion = trim((string) ($record->occasion_type ?? ''));
+$sourceTitle = trim((string) ($record->source_title ?? ''));
+
+$sections = [];
+$sections[] = 'Open with visible ownership and a concise acknowledgment of the guest request.';
+
+$anchorBits = [];
+if ($arrival !== '' || $departure !== '') {
+    $anchorBits[] = 'stay dates';
+}
+if ($guests !== '' && $guests !== '0') {
+    $anchorBits[] = 'guest count';
+}
+if ($services !== '') {
+    $anchorBits[] = 'service focus';
+}
+if ($occasion !== '') {
+    $anchorBits[] = 'occasion context';
+}
+
+if (!empty($anchorBits)) {
+    $sections[] = 'Mirror back the known anchors: ' . implode(', ', $anchorBits) . '.';
+}
+
+if ($summary !== '') {
+    $sections[] = 'Use the working summary as the backbone of the reply so the guest feels continuity instead of re-reading their own brief.';
+} elseif ($details !== '') {
+    $sections[] = 'Pull one or two concrete signals from the guest brief so the reply feels grounded rather than generic.';
+}
+
+$clarify = [];
+if ($arrival === '' || $departure === '') {
+    $clarify[] = 'exact stay window';
+}
+if ($guests === '' || $guests === '0') {
+    $clarify[] = 'guest count';
+}
+if ($budget === '') {
+    $clarify[] = 'budget comfort zone';
+}
+if ($services === '' && $details === '') {
+    $clarify[] = 'service priorities';
+}
+if ($contact === '') {
+    $clarify[] = 'preferred contact route';
+}
+
+if (!empty($clarify)) {
+    $sections[] = 'Ask only for the missing anchors that unlock the next move: ' . implode(', ', array_slice($clarify, 0, 3)) . '.';
+}
+
+if (in_array($status, ['proposal_sent', 'awaiting_guest'], true)) {
+    $sections[] = 'Re-state the current proposal posture in one line before asking for the smallest useful guest response.';
+} elseif ($status === 'confirmed') {
+    $sections[] = 'Shift the message from selling into execution clarity, next timing, and reassurance.';
+} else {
+    $sections[] = 'Close with one clear next step instead of multiple options or open-ended questions.';
+}
+
+$headline = 'Reply blueprint is continuity-ready';
+$palette = ['#0f766e', '#f0fdfa', '#99f6e4'];
+if (count($clarify) >= 3) {
+    $headline = 'Reply blueprint should stay clarification-led';
+    $palette = ['#b45309', '#fff7ed', '#fed7aa'];
+}
+if ($owner === '') {
+    $headline = 'Reply blueprint needs visible ownership first';
+    $palette = ['#b91c1c', '#fef2f2', '#fecaca'];
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Next Reply Blueprint</div>
+            <div style="font-size:20px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($headline) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Source cue: <strong><?= e($sourceTitle !== '' ? $sourceTitle : 'Direct inquiry context') ?></strong></div>
+    </div>
+
+    <ol style="margin:0 0 12px 18px; padding:0; color:#0f172a;">
+        <?php foreach ($sections as $section): ?>
+            <li style="margin:0 0 8px 0;"><?= e($section) ?></li>
+        <?php endforeach; ?>
+    </ol>
+
+    <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff; color:#0f172a;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">One-line close</div>
+        <div style="font-size:14px;">End with a single, low-friction next step that tells the guest exactly what happens after they reply.</div>
+    </div>
+</div>

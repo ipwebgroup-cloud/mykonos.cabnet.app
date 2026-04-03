@@ -1,0 +1,133 @@
+<?php
+$record = $record ?? ($formModel ?? ($model ?? null));
+if (!$record && isset($this) && method_exists($this, 'formGetModel')) {
+    $record = $this->formGetModel();
+}
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? 'new')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$contactPreference = trim((string) ($record->contact_preference ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$phone = trim((string) ($record->phone ?? ''));
+$owner = trim((string) ($record->owner_name ?? ''));
+$budget = trim((string) ($record->budget ?? ''));
+$services = trim((string) ($record->services_list ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$arrival = trim((string) ($record->arrival_date ?? ''));
+$departure = trim((string) ($record->departure_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$lastContacted = trim((string) ($record->last_contacted_at ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$privacy = strtolower(trim((string) ($record->privacy_level ?? '')));
+$occasion = trim((string) ($record->occasion_type ?? ''));
+
+$route = 'Email-first';
+if ($contactPreference !== '') {
+    $route = ucwords(str_replace(['_', '-'], ' ', $contactPreference));
+} elseif ($phone !== '' && $email === '') {
+    $route = 'Phone / WhatsApp-first';
+} elseif ($email !== '') {
+    $route = 'Email-first';
+}
+
+$readinessGaps = [];
+if ($arrival === '' || $departure === '') {
+    $readinessGaps[] = 'stay window';
+}
+if ($guests === '' || $guests === '0') {
+    $readinessGaps[] = 'guest count';
+}
+if ($services === '' && $details === '') {
+    $readinessGaps[] = 'service priorities';
+}
+if ($budget === '') {
+    $readinessGaps[] = 'budget posture';
+}
+
+$communicationState = 'Clarify before shaping';
+$palette = ['#b45309', '#fff7ed', '#fed7aa'];
+if (in_array($status, ['confirmed', 'closed_won'], true)) {
+    $communicationState = 'Confirmation / fulfillment tone';
+    $palette = ['#166534', '#f0fdf4', '#bbf7d0'];
+} elseif (in_array($status, ['awaiting_guest', 'proposal_sent'], true)) {
+    $communicationState = 'Gentle follow-up posture';
+    $palette = ['#1d4ed8', '#eff6ff', '#bfdbfe'];
+} elseif (empty($readinessGaps) && in_array($status, ['reviewed', 'contacted', 'new'], true)) {
+    $communicationState = 'Ready for shaped first reply';
+    $palette = ['#0f766e', '#f0fdfa', '#99f6e4'];
+}
+
+$tone = 'Calm, premium, continuity-led';
+if (in_array($priority, ['vip', 'urgent'], true)) {
+    $tone = 'Fast, reassuring, high-attention, still controlled';
+}
+if ($privacy !== '' && !in_array($privacy, ['open', 'relaxed', ''], true)) {
+    $tone .= '; keep privacy language discreet and specific';
+}
+if ($occasion !== '') {
+    $tone .= '; acknowledge the occasion without overselling before basics are confirmed';
+}
+
+$nextMove = 'Acknowledge the brief, confirm the missing anchors, and keep the guest confident that the inquiry is actively owned.';
+if (empty($readinessGaps) && in_array($status, ['new', 'reviewed', 'contacted'], true)) {
+    $nextMove = 'Send a shaped next reply with clear ownership, service framing, timing anchors, and one disciplined next step.';
+} elseif (in_array($status, ['awaiting_guest', 'proposal_sent'], true)) {
+    $nextMove = 'Re-open the thread with a concise continuity summary, one clear ask, and a low-friction next step rather than a full re-pitch.';
+} elseif (in_array($status, ['confirmed'], true)) {
+    $nextMove = 'Use confirmation language that shifts from selling into execution, timing, and reassurance.';
+}
+
+$confidenceLine = $owner !== ''
+    ? 'Owner is visible as ' . $owner . ', which supports trustworthy guest-facing continuity.'
+    : 'Owner is still not explicit, so the next guest message should avoid any ambiguity about who is handling the request.';
+
+$timingLine = $lastContacted !== ''
+    ? 'Last contacted is recorded, which helps pace the next touch.'
+    : 'No last-contacted timestamp is visible yet, so the next message should establish communication rhythm clearly.';
+
+if ($followUpDate !== '') {
+    $timingLine .= ' Follow-up is set for ' . $followUpDate . '.';
+}
+?>
+<div style="border:1px solid <?= e($palette[2]) ?>; background:<?= e($palette[1]) ?>; border-radius:14px; padding:16px; margin-bottom:16px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px;">
+        <div>
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:<?= e($palette[0]) ?>; font-weight:700;">Communication Workspace</div>
+            <div style="font-size:22px; font-weight:700; color:#0f172a; margin-top:4px;"><?= e($communicationState) ?></div>
+        </div>
+        <div style="font-size:12px; color:#475569;">Preferred route: <strong><?= e($route) ?></strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest tone</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($tone) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Continuity signal</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($confidenceLine) ?></div>
+        </div>
+        <div style="padding:12px; border:1px solid <?= e($palette[2]) ?>; border-radius:12px; background:#fff;">
+            <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Timing posture</div>
+            <div style="font-size:14px; color:#0f172a;"><?= e($timingLine) ?></div>
+        </div>
+    </div>
+
+    <div style="padding:12px; border:1px dashed <?= e($palette[2]) ?>; border-radius:12px; background:#fff; margin-bottom:12px;">
+        <div style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#64748b; font-weight:700; margin-bottom:6px;">Safest next communication move</div>
+        <div style="font-size:14px; color:#0f172a;"><?= e($nextMove) ?></div>
+    </div>
+
+    <?php if (!empty($readinessGaps)): ?>
+        <div style="font-size:13px; color:#334155;">
+            Reply shaping still depends on: <strong><?= e(implode(', ', $readinessGaps)) ?></strong>.
+        </div>
+    <?php else: ?>
+        <div style="font-size:13px; color:#14532d;">
+            The record already carries the core anchors needed for a confident next reply. Use summary and notes to keep the message disciplined.
+        </div>
+    <?php endif; ?>
+</div>

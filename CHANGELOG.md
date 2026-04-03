@@ -1,13 +1,9 @@
-## v2.11.0 — Operator List UI Foundation
-- stabilizes the backend inquiry list page after the new queue and bridge boards introduced text-overlap risk on real screens
-- adds a shared read-only list-page UI foundation so metric cards, triage lanes, and opening-route cards wrap and stack safely
-- improves queue-side readability without changing schema, filters, quick actions, or the public `/plan` flow
-
-## v2.10.0 — Queue-to-Record Bridge
-- upgrades the backend inquiry list page from queue scanning into record-opening guidance
-- adds a read-only **Queue-to-Record Bridge Board** that maps live queue conditions to the safest first workspace after opening a record
-- adds **Priority Opening Routes** so operators can jump into the right records with a clear Action-first, Command-first, or Source/Internal-first posture
-- adds a **Queue-to-Record Playbook** to keep list-to-detail workflow disciplined without changing schema, filters, quick actions, or the public `/plan` flow
+## v3.0.0 — Communication Workspace
+- adds a new **Communication** tab to the backend inquiry update screen
+- introduces a composite **Communication Workspace** panel for route, tone, readiness, and the safest next guest-facing move
+- adds **Next Reply Blueprint** guidance so operators can shape a continuity-led response without reopening every tab by habit
+- adds **Reply Risk Guardrails** to prevent premature promises, ownership blur, channel mismatch, and over-packaging before anchors are confirmed
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
 
 ## v2.9.0 — Action Workspace
 - adds a new **Action** tab to the backend inquiry update screen
