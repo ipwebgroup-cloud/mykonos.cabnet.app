@@ -69,3 +69,6 @@
 
 1.1.21:
     - 'Activate the remaining operator workspace scan panels on the stabilized inquiry form line'
+
+1.1.22:
+    - 'Restore the handoff focus panel to the stabilized operator workspace form line'

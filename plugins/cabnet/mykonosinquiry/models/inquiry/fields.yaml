@@ -277,6 +277,14 @@ tabs:
             tab: Internal
             comment: Consolidated read-only scan of workflow, brief quality, and preference depth before editing the detailed internal fields.
 
+
+        handoff_focus_panel:
+            label: Handoff Focus
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_focus_panel.htm
+            tab: Internal
+            comment: Read-only hand-off cues for the next operator before editing the detailed internal fields.
+
         contact_posture_panel:
             label: Contact Posture
             type: partial
