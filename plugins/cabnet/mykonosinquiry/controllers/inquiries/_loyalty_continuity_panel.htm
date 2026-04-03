@@ -138,6 +138,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->stewardship_finish_posture_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Closure readiness</h4>
+                    <p><?= e($record->closure_readiness_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Next finish move</h4>
+                    <p><?= e($record->next_finish_move_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Latest closure packet</h4>
                     <p><?= e($record->latest_closure_packet_label) ?></p>
                 </div>
@@ -151,6 +159,9 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Packet brief:</strong> <?= e($record->operator_action_brief) ?></li>
                     <li><strong>Execution frame:</strong> <?= e($record->packet_execution_summary) ?></li>
                     <li><strong>Trace digest:</strong> <?= e($record->execution_trace_digest) ?></li>
+                    <li><strong>Finish reason:</strong> <?= e($record->finish_recommendation_reason_summary) ?></li>
+                    <li><strong>Closure evidence:</strong> <?= e($record->closure_evidence_digest) ?></li>
+                    <li><strong>Outcome-driven finish frame:</strong> <?= e($record->outcome_driven_finish_frame) ?></li>
                     <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
                 </ul>
             </div>

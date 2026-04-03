@@ -965,17 +965,38 @@ class LoyaltyRecord extends Model
         $latestTouchpoint = $this->getLatestTouchpointRecord();
         $latestOutcome = $latestTouchpoint ? (string) $latestTouchpoint->touchpoint_outcome : '';
         $latestClosureMode = $this->latest_closure_packet_mode;
+        $executionStatus = $this->packet_execution_status_label;
 
-        if ($latestClosureMode === 'referral' || $this->continuity_status === 'referral_ready' || $this->referral_ready) {
+        if ($latestClosureMode === 'referral') {
             return 'Prepare referral closure packet';
         }
 
-        if ($latestClosureMode === 'return_value' || in_array((string) $this->return_value_tier, ['strong', 'flagship'], true)) {
+        if ($latestClosureMode === 'return_value') {
             return 'Prepare return-value closure packet';
         }
 
-        if ($latestClosureMode === 'reactivation' || in_array($latestOutcome, ['reactivated', 'response_received', 'retained'], true) || $this->loyalty_stage === 're-engaged' || $this->continuity_status === 'dormant') {
+        if ($latestClosureMode === 'reactivation') {
             return 'Prepare reactivation closure packet';
+        }
+
+        if (in_array($executionStatus, ['No packet execution started', 'Prepared / awaiting follow-through', 'Follow-through in progress'], true)) {
+            return 'Prepare review closure posture';
+        }
+
+        if ($this->continuity_status === 'referral_ready' || $this->referral_ready || in_array($latestOutcome, ['referral_ready'], true)) {
+            return 'Prepare referral closure packet';
+        }
+
+        if (in_array((string) $this->return_value_tier, ['strong', 'flagship'], true) || in_array($latestOutcome, ['return_value_promoted'], true)) {
+            return 'Prepare return-value closure packet';
+        }
+
+        if (in_array($latestOutcome, ['reactivated', 'response_received', 'retained', 'revisit_signal'], true) || $this->loyalty_stage === 're-engaged' || $this->continuity_status === 'dormant') {
+            return 'Prepare reactivation closure packet';
+        }
+
+        if ($executionStatus === 'Follow-through completed') {
+            return 'Prepare review closure posture';
         }
 
         return 'Prepare review closure posture';
@@ -992,6 +1013,115 @@ class LoyaltyRecord extends Model
         $payload = is_array($touchpoint->payload_json) ? $touchpoint->payload_json : [];
 
         return trim((string) ($payload['closure_packet_mode'] ?? ''));
+    }
+
+
+    public function getClosureReadinessLabelAttribute(): string
+    {
+        if ($this->latest_closure_packet_mode !== '') {
+            return 'Closure packet prepared';
+        }
+
+        switch ($this->packet_execution_status_label) {
+            case 'Follow-through completed':
+                return 'Ready for finish packet';
+
+            case 'Check-in scheduled':
+            case 'Deferred for later review':
+                return 'Timed for later finish';
+
+            case 'Follow-through in progress':
+                return 'Execution still open';
+
+            case 'Prepared / awaiting follow-through':
+                return 'Prepared but not yet executed';
+
+            default:
+                return 'Finish posture still emerging';
+        }
+    }
+
+    public function getNextFinishMoveLabelAttribute(): string
+    {
+        if ($this->latest_closure_packet_mode !== '') {
+            return 'Monitor closure window and keep the record narrow';
+        }
+
+        switch ($this->closure_packet_recommendation_label) {
+            case 'Prepare referral closure packet':
+                return 'Prepare referral closure when goodwill is confirmed';
+
+            case 'Prepare return-value closure packet':
+                return 'Prepare return-value closure and park the value lane';
+
+            case 'Prepare reactivation closure packet':
+                return 'Prepare reactivation closure and return to review';
+
+            case 'Prepare review closure posture':
+            default:
+                if ($this->packet_execution_status_label === 'Follow-through completed') {
+                    return 'Hold a review closure posture until the next clear signal';
+                }
+
+                if (in_array($this->packet_execution_status_label, ['No packet execution started', 'Prepared / awaiting follow-through', 'Follow-through in progress'], true)) {
+                    return 'Complete the current packet before choosing a finish lane';
+                }
+
+                return 'Keep the record in a narrow timed review posture';
+        }
+    }
+
+    public function getFinishRecommendationReasonSummaryAttribute(): string
+    {
+        $latestOutcome = $this->latest_touchpoint_outcome_label;
+        $latestTouchpoint = $this->getLatestTouchpointRecord();
+        $latestNarrative = $this->firstMeaningfulLine($this->latest_touchpoint_body_preview, 'No touchpoint narrative has been captured yet.');
+
+        return $this->formatSummary([
+            'Closure readiness' => $this->closure_readiness_label,
+            'Finish recommendation' => $this->closure_packet_recommendation_label,
+            'Reason' => $this->buildFinishReasonLine(),
+            'Execution status' => $this->packet_execution_status_label,
+            'Latest outcome' => $latestOutcome,
+            'Latest narrative' => $latestNarrative,
+            'Loop posture' => $this->continuity_loop_posture_label,
+            'Next move' => $this->next_finish_move_label,
+        ], 'Finish recommendation reasoning is still minimal.');
+    }
+
+    public function getClosureEvidenceDigestAttribute(): string
+    {
+        $closureTouchpoint = $this->getLatestClosurePacketTouchpoint();
+        $closureAt = $closureTouchpoint ? ($closureTouchpoint->touchpoint_at ?: $closureTouchpoint->created_at) : null;
+
+        return $this->formatSummary([
+            'Finish posture' => $this->stewardship_finish_posture_label,
+            'Closure recommendation' => $this->closure_packet_recommendation_label,
+            'Latest closure packet' => $this->latest_closure_packet_label,
+            'Closure packet logged at' => $closureAt,
+            'Closure window' => $this->closure_window_label,
+            'Evidence strength' => $this->continuity_evidence_strength_label,
+            'Latest prepared packet' => $this->latest_prepared_packet_label,
+            'Execution trace' => $this->firstMeaningfulLine($this->execution_trace_digest, 'Execution trace readability is still limited.'),
+        ], 'Closure evidence digest is still minimal.');
+    }
+
+    public function getOutcomeDrivenFinishFrameAttribute(): string
+    {
+        $lines = [];
+        $lines[] = 'Finish posture: ' . $this->stewardship_finish_posture_label . '.';
+        $lines[] = 'Closure readiness: ' . $this->closure_readiness_label . '.';
+        $lines[] = 'Recommendation: ' . $this->closure_packet_recommendation_label . '.';
+        $lines[] = 'Why: ' . $this->buildFinishReasonLine() . '.';
+        $lines[] = 'Next finish move: ' . $this->next_finish_move_label . '.';
+
+        if ($this->latest_closure_packet_mode !== '') {
+            $lines[] = 'Latest closure packet: ' . $this->latest_closure_packet_label . ' with a ' . $this->closure_window_label . '.';
+        } else {
+            $lines[] = 'No closure packet is prepared yet, so the record should stay narrow and readable until the finish lane is explicit.';
+        }
+
+        return implode(PHP_EOL, $lines);
     }
 
     public function getStewardshipFinishPostureLabelAttribute(): string
@@ -1274,6 +1404,39 @@ class LoyaltyRecord extends Model
         }
 
         return $record;
+    }
+
+    protected function buildFinishReasonLine(): string
+    {
+        $latestTouchpoint = $this->getLatestTouchpointRecord();
+        $latestOutcome = $latestTouchpoint ? (string) $latestTouchpoint->touchpoint_outcome : '';
+        $executionStatus = $this->packet_execution_status_label;
+
+        if ($this->latest_closure_packet_mode !== '') {
+            return 'A closure packet is already present, so the record now belongs in a monitored finish window rather than a new packet cycle';
+        }
+
+        if (in_array($executionStatus, ['No packet execution started', 'Prepared / awaiting follow-through', 'Follow-through in progress'], true)) {
+            return 'the current packet loop is not finished yet, so closure should wait until the execution story is clearer';
+        }
+
+        if ($this->closure_packet_recommendation_label === 'Prepare referral closure packet') {
+            return 'goodwill and referral posture are the strongest finish signals on the record';
+        }
+
+        if ($this->closure_packet_recommendation_label === 'Prepare return-value closure packet') {
+            return 'the record now reads as a stewardship lane with elevated return-value handling';
+        }
+
+        if ($this->closure_packet_recommendation_label === 'Prepare reactivation closure packet') {
+            return 'the latest outcome suggests re-engagement should be parked back into a review cadence';
+        }
+
+        if (in_array($latestOutcome, ['no_reply', 'dormant'], true)) {
+            return 'the latest outcome does not justify a finish lane yet, so the record should stay in review posture';
+        }
+
+        return 'the record should remain in a narrow review posture until the next explicit signal is captured';
     }
 
     protected function buildTraceLine(string $label, ?LoyaltyTouchpoint $touchpoint, array &$seen): ?string

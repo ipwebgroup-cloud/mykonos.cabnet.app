@@ -7,6 +7,9 @@ $closureWindow = $record ? $record->closure_window_label : '21-day review window
 $latestOutcome = $record ? $record->latest_touchpoint_outcome_label : 'No outcome recorded yet.';
 $loopPosture = $record ? $record->continuity_loop_posture_label : 'Loop posture unclear';
 $snapshot = $record ? $record->stewardship_snapshot_summary : 'Stewardship closure snapshot is still minimal.';
+$closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
+$nextFinishMove = $record ? $record->next_finish_move_label : 'Complete the current packet before choosing a finish lane';
+$finishReason = $record ? $record->finish_recommendation_reason_summary : 'Finish recommendation reasoning is still minimal.';
 ?>
 <div class="callout fade in no-subheader">
     <div class="header">
@@ -25,6 +28,14 @@ $snapshot = $record ? $record->stewardship_snapshot_summary : 'Stewardship closu
             <div class="scoreboard-item title-value">
                 <h4>Closure recommendation</h4>
                 <p><?= e($closureRecommendation) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($closureReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($nextFinishMove) ?></p>
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Latest closure packet</h4>
@@ -58,6 +69,7 @@ $snapshot = $record ? $record->stewardship_snapshot_summary : 'Stewardship closu
 
         <div class="control-list" style="margin-top:15px;">
             <ul>
+                <li><strong>Finish recommendation reason:</strong> <?= nl2br(e($finishReason)) ?></li>
                 <li><strong>Snapshot:</strong> <?= nl2br(e($snapshot)) ?></li>
                 <li>Use reactivation closure when the loop produced a genuine re-engagement signal and the record should return to a narrow review cadence.</li>
                 <li>Use referral closure when goodwill is strong and the record should be parked with a longer, safer referral window.</li>

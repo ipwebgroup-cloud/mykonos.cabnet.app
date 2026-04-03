@@ -1,0 +1,53 @@
+<?php
+$record = $formModel ?? $model ?? null;
+$closureReadiness = $record ? $record->closure_readiness_label : 'Finish posture still emerging';
+$nextFinishMove = $record ? $record->next_finish_move_label : 'Complete the current packet before choosing a finish lane';
+$finishReason = $record ? $record->finish_recommendation_reason_summary : 'Finish recommendation reasoning is still minimal.';
+$closureDigest = $record ? $record->closure_evidence_digest : 'Closure evidence digest is still minimal.';
+$outcomeFrame = $record ? $record->outcome_driven_finish_frame : 'Outcome-driven finish framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-compass"></i>
+        <h4 style="margin-top:0;">Outcome-driven finish frame</h4>
+        <p>
+            Read the finish lane from the latest outcome and execution story so stewardship closure stays deliberate, narrow, and operator-owned.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Closure readiness</h4>
+                <p><?= e($closureReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($nextFinishMove) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish posture</h4>
+                <p><?= e($record ? $record->stewardship_finish_posture_label : 'Review posture maintained') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Closure recommendation</h4>
+                <p><?= e($record ? $record->closure_packet_recommendation_label : 'Prepare review closure posture') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Execution status</h4>
+                <p><?= e($record ? $record->packet_execution_status_label : 'No packet execution started') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Latest outcome</h4>
+                <p><?= e($record ? $record->latest_touchpoint_outcome_label : 'No outcome recorded yet.') ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Finish recommendation reason:</strong> <?= nl2br(e($finishReason)) ?></li>
+                <li><strong>Closure evidence digest:</strong> <?= nl2br(e($closureDigest)) ?></li>
+                <li><strong>Outcome-driven frame:</strong> <?= nl2br(e($outcomeFrame)) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>

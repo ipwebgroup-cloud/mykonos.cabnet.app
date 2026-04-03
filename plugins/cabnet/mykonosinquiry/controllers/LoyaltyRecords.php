@@ -89,6 +89,14 @@ class LoyaltyRecords extends Controller
                 'span'    => 'full',
                 'comment' => 'Readable rationale showing why this record belongs in loyalty continuity and what evidence supports that posture.',
             ],
+            'outcome_driven_finish_frame_panel' => [
+                'label'   => 'Outcome-Driven Finish Frame',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_outcome_driven_finish_frame_panel.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Read-only finish framing that keeps closure recommendations grounded in the latest loop and outcome.',
+            ],
             'record_detail_structure_panel' => [
                 'label'   => 'Record Detail Structure',
                 'type'    => 'partial',

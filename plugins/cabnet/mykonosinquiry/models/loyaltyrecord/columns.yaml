@@ -48,6 +48,10 @@ columns:
         label: Finish Posture
         sortable: false
 
+    closure_readiness_label:
+        label: Closure Readiness
+        sortable: false
+
     next_execution_move_label:
         label: Next Move
         sortable: false

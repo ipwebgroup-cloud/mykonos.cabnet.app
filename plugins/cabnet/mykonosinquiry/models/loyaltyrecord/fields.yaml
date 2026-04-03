@@ -106,6 +106,47 @@ tabs:
             span: full
             comment: Record-level closure snapshot for referral, reactivation, or return-value stewardship.
 
+        closure_readiness_label:
+            label: Closure Readiness
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Fast reading of whether the record is ready for a finish packet or should remain in execution/review posture.
+
+        next_finish_move_label:
+            label: Next Finish Move
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: The narrowest safe next move for finish handling on this loyalty record.
+
+        finish_recommendation_reason_summary:
+            label: Finish Recommendation Reason
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Why the current finish recommendation is being suggested from the latest loop and outcome.
+
+        closure_evidence_digest:
+            label: Closure Evidence Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Closure-side digest showing finish posture, evidence, and the latest closure packet context.
+
+        outcome_driven_finish_frame:
+            label: Outcome-Driven Finish Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: full
+            comment: Read-only finish framing that keeps stewardship closure readable without widening into automation.
+
         continuity_status:
             label: Continuity Status
             type: dropdown
