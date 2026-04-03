@@ -1,5 +1,5 @@
-<?= makePartial('operator_list_ui_styles') ?>
-<?= makePartial('operator_list_workspace_styles') ?>
+<?= $this->makePartial('operator_list_ui_styles') ?>
+<?= $this->makePartial('operator_list_workspace_styles') ?>
 
 <div class="toolbar-item toolbar-primary">
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">
@@ -33,7 +33,7 @@
         <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
     </summary>
     <div class="operator-list-workspace-section__body">
-        <?= makePartial('queue_command_board') ?>
+        <?= $this->makePartial('queue_command_board') ?>
     </div>
 </details>
 
@@ -48,7 +48,7 @@
         <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
     </summary>
     <div class="operator-list-workspace-section__body">
-        <?= makePartial('queue_lane_board') ?>
+        <?= $this->makePartial('queue_lane_board') ?>
     </div>
 </details>
 
@@ -66,7 +66,7 @@
         <p class="operator-list-workspace-inline-note">
             Use this section when you need to reset queue handling order without adding more list filters.
         </p>
-        <?= makePartial('operator_triage_playbook') ?>
+        <?= $this->makePartial('operator_triage_playbook') ?>
     </div>
 </details>
 
@@ -82,13 +82,13 @@
     </summary>
     <div class="operator-list-workspace-section__body operator-list-workspace-stack">
         <div>
-            <?= makePartial('queue_to_record_bridge_board') ?>
+            <?= $this->makePartial('queue_to_record_bridge_board') ?>
         </div>
         <div>
-            <?= makePartial('record_opening_routes_board') ?>
+            <?= $this->makePartial('record_opening_routes_board') ?>
         </div>
         <div>
-            <?= makePartial('queue_to_record_playbook') ?>
+            <?= $this->makePartial('queue_to_record_playbook') ?>
         </div>
     </div>
 </details>
