@@ -719,26 +719,26 @@ tabs:
             tab: Service Review
             comment: Read-only operator guardrails for keeping retrospective review explicit, owned, and useful for future continuity rather than vague hindsight.
 
-repeat_guest_readiness_workspace_panel:
-    label: Repeat Guest Readiness Workspace
-    type: partial
-    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_readiness_workspace_panel.htm
-    tab: Repeat Guest
-    comment: Composite operator framing for turning completed or stabilized service records into future-ready repeat-guest continuity instead of leaving repeat-value signals buried in retrospective memory.
+        repeat_guest_readiness_workspace_panel:
+            label: Repeat Guest Readiness Workspace
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_readiness_workspace_panel.htm
+            tab: Repeat Guest
+            comment: Composite operator framing for turning completed or stabilized service records into future-ready repeat-guest continuity instead of leaving repeat-value signals buried in retrospective memory.
 
-repeat_guest_blueprint_panel:
-    label: Repeat Guest Blueprint
-    type: partial
-    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_blueprint_panel.htm
-    tab: Repeat Guest
-    comment: Read-only operator blueprint for separating repeatable profile and service pattern memory from one-time service facts before future outreach or planning begins.
+        repeat_guest_blueprint_panel:
+            label: Repeat Guest Blueprint
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_blueprint_panel.htm
+            tab: Repeat Guest
+            comment: Read-only operator blueprint for separating repeatable profile and service pattern memory from one-time service facts before future outreach or planning begins.
 
-repeat_guest_risk_guardrails_panel:
-    label: Repeat Guest Risk Guardrails
-    type: partial
-    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_risk_guardrails_panel.htm
-    tab: Repeat Guest
-    comment: Read-only operator guardrails for preventing generic repeat assumptions, buried preference memory, and future-service framing that outruns the visible record.
+        repeat_guest_risk_guardrails_panel:
+            label: Repeat Guest Risk Guardrails
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_risk_guardrails_panel.htm
+            tab: Repeat Guest
+            comment: Read-only operator guardrails for preventing generic repeat assumptions, buried preference memory, and future-service framing that outruns the visible record.
 
 
         brief_readiness_panel:

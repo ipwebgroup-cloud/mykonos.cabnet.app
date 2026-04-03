@@ -1,3 +1,10 @@
+## v5.5.1 — Repeat Guest Workspace YAML Hotfix
+- fixes malformed indentation in `plugins/cabnet/mykonosinquiry/models/inquiry/fields.yaml` introduced around the **Repeat Guest** workspace block
+- restores backend inquiry update screen rendering by keeping the Repeat Guest partial declarations inside the form `fields` tree
+- no schema change
+- no public `/plan` change
+- no backend list change
+
 ## v5.5.0 — Repeat Guest Readiness Workspace
 - adds a new **Repeat Guest** tab to the backend inquiry update screen
 - introduces a composite **Repeat Guest Readiness Workspace** panel for turning completed or stabilized records into future-ready continuity instead of leaving repeat-value signals buried in review notes
