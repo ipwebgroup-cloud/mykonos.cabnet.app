@@ -1,28 +1,57 @@
 <?php
 $inquiry = $formModel ?? $model ?? null;
 $record = null;
-$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 
-if (
-    $loyaltyTableReady
-    && $inquiry
-    && !empty($inquiry->id)
-    && class_exists('\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord')
-) {
+$hasInquiry = $inquiry && !empty($inquiry->id);
+$loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
+$loyaltyModelReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord');
+$loyaltyControllerReady = class_exists('\Cabnet\MykonosInquiry\Controllers\LoyaltyRecords');
+$loyaltyUiReady = $loyaltyTableReady && $loyaltyModelReady;
+
+if ($loyaltyUiReady && $hasInquiry) {
     $record = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $inquiry->id)->first();
 }
+
+$status = trim((string) ($inquiry->status ?? ''));
+$recommendedStatuses = ['reviewed', 'contacted', 'proposal_sent', 'confirmed', 'closed_won', 'closed_lost'];
+$isRecommendedStage = in_array($status, $recommendedStatuses, true);
+$hasOwner = trim((string) ($inquiry->owner_name ?? '')) !== '';
+$hasReference = trim((string) ($inquiry->request_reference ?? '')) !== '';
+$servicesInline = trim((string) ($inquiry->services_inline ?? ''));
 ?>
 <div class="callout fade in no-icon">
     <div class="header">
         <i class="icon-repeat"></i>
         <h3>Loyalty Continuity Workspace</h3>
-        <p>Use this only for long-cycle retention, referral-ready continuity, and return-value handling after active inquiry triage.</p>
+        <p>Retention-ready handoff for referral continuity and return-value tracking after the live inquiry queue has been handled.</p>
     </div>
 
     <div class="content">
-        <?php if (!$loyaltyTableReady): ?>
-            <p class="oc-text-muted">Loyalty Continuity is not active on this installation yet.</p>
+        <?php if (!$hasInquiry): ?>
+            <p class="oc-text-muted">Save the inquiry first before using Loyalty Continuity actions.</p>
+        <?php elseif (!$loyaltyUiReady): ?>
+            <p class="oc-text-muted">Loyalty Continuity is not fully active on this installation yet. The inquiry queue remains safe and unchanged.</p>
         <?php else: ?>
+            <div class="mb-3">
+                <p><strong>Readiness:</strong>
+                    <?php if ($isRecommendedStage): ?>
+                        <span class="text-success">Good candidate for loyalty handoff.</span>
+                    <?php else: ?>
+                        <span class="text-warning">Still early in active handling.</span>
+                    <?php endif; ?>
+                </p>
+                <ul class="list-unstyled oc-text-muted">
+                    <li><strong>Status:</strong> <?= e($status !== '' ? ucwords(str_replace(['_', '-'], ' ', $status)) : 'Not set') ?></li>
+                    <li><strong>Reference:</strong> <?= e($hasReference ? $inquiry->request_reference : 'Not yet assigned') ?></li>
+                    <li><strong>Owner:</strong> <?= e($hasOwner ? $inquiry->owner_name : 'Unassigned') ?></li>
+                    <li><strong>Focus:</strong> <?= e($servicesInline !== '' ? $servicesInline : 'General planning') ?></li>
+                </ul>
+            </div>
+
+            <?php if (!$isRecommendedStage && !$record): ?>
+                <p class="oc-text-muted">Best used after review, contact, proposal progression, or closure so long-cycle retention does not get mixed into active concierge handling.</p>
+            <?php endif; ?>
+
             <form method="post">
                 <?= Form::token() ?>
                 <input type="hidden" name="_quick_action" value="">
@@ -42,7 +71,7 @@ if (
                         Mark Return-Value Candidate
                     </button>
 
-                    <?php if ($record): ?>
+                    <?php if ($record && $loyaltyControllerReady): ?>
                         <a class="btn btn-secondary"
                            href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) ?>">
                             Open Loyalty Workspace
