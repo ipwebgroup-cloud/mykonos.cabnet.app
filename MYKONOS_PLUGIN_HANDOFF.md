@@ -1,22 +1,29 @@
 # MYKONOS PLUGIN HANDOFF
 
-Current live patch line: v2.3.9 loyalty toolbar restore.
+## Current live continuity checkpoint
+- Stable base remains the Mykonos inquiry operator workflow line.
+- Current emergency fix line is focused on Loyalty Continuity backend render safety.
+- Do not introduce schema changes unless explicitly requested and verified.
+- Keep the public `/plan` flow untouched.
 
-## Current objective
-Stabilize the Loyalty Continuity backend workspace as a separate retention layer without disturbing the stable inquiry queue and operator workflow.
+## Latest delivered patch
+- v2.3.10 loyalty double-toolbar render fix
 
-## Latest patch delivered
-- v2.3.9 loyalty toolbar restore
+## What this patch does
+- plugin-only
+- no schema change
+- no theme change
+- adds the missing double-underscore toolbar partial expected by the current Loyalty Continuity list configuration:
+  - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
 
-## What this patch fixes
-- restores the missing loyaltyrecords toolbar partial required by the backend list controller
-- resolves the partial-not-found crash on `/admin/cabnet/mykonosinquiry/loyaltyrecords`
-- keeps prior loyalty safety guards and render templates in place
+## Why this was needed
+- the loyalty list screen was throwing:
+  - `The partial '__toolbar.htm' is not found.`
+- the live archive state already contains:
+  - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
+- the current list configuration/runtime is attempting to resolve `__toolbar.htm`, so this patch satisfies the expected partial name without changing schema or workflow behavior.
 
-## Live safety notes
-- keep changes plugin-only unless a theme change is explicitly required
-- avoid destructive refresh/reset flows on the live project
-- prefer small backend rendering fixes over broad rewrites
-
-## Next likely step
-- improve the Loyalty Continuity list usefulness with safe operator-facing columns, empty-state guidance, and conservative filters only after the page is fully stable
+## Safest next direction
+- verify the Loyalty Continuity list renders
+- then continue with small operator-facing polish patches only
+- avoid plugin refresh / destructive schema operations during live recovery work
