@@ -8,11 +8,11 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity renders safely even when the loyalty storage layer is not installed.
-- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, first-wave qualification, timing-guidance, pilot-lane, and re-engagement intent surface rather than a placeholder.
+- The loyalty workspace is now operating as a guarded transition-planning, activation-blueprint, scorecard, handoff-evidence, first-wave qualification, timing-guidance, pilot-lane, re-engagement intent, offer-architecture, and cadence-planning surface rather than a placeholder.
 
 ## This patch
-- Version: `v2.9.0`
-- Name: `loyalty pilot-lane and intent mapping workspace`
+- Version: `v3.0.0`
+- Name: `loyalty offer architecture and cadence workspace`
 - Type: plugin-only major patch
 - No schema change
 - No theme change
@@ -24,15 +24,15 @@
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/__toolbar.htm`
 - `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_install_state_overview.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_pilot_candidate_lanes_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_reengagement_intent_map_panel.htm`
-- `docs/releases/MYKONOS_V290_LOYALTY_PILOT_LANE_AND_INTENT_MAPPING_WORKSPACE_PATCH.md`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_offer_architecture_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_reactivation_cadence_panel.htm`
+- `docs/releases/MYKONOS_V300_LOYALTY_OFFER_ARCHITECTURE_AND_CADENCE_WORKSPACE_PATCH.md`
 
 ## Why this patch exists
-The loyalty workspace had already clarified activation timing, evidence, and first-wave qualification, but it still needed a clearer way to define which candidate lanes should be used in the first live pilot and what kind of future re-engagement intent each candidate actually represents. This patch adds pilot-lane and intent-mapping guidance so activation planning becomes narrower, cleaner, and more operationally meaningful without enabling storage yet.
+The loyalty workspace had already clarified pilot lanes and re-engagement intent, but it still needed a more concrete way to map what kind of future continuity offer the team would actually steward and how aggressively that stewardship should be timed. This patch adds offer-architecture and cadence guidance so activation planning becomes more commercially useful without enabling storage yet.
 
 ## Safest next direction
 - Keep Inquiry Queue stable as the live workspace.
 - Continue with plugin-only operator-facing patches until the loyalty storage layer is ready.
-- Use the qualification, timing, pilot-lane, and intent-mapping panels to define a very narrow first live pilot.
+- Use the qualification, timing, pilot-lane, intent-mapping, offer-architecture, and cadence panels to define a very narrow first live pilot.
 - Add the loyalty tables only in a separate, explicitly installable structural release.
