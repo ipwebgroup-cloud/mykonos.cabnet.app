@@ -6146,6 +6146,171 @@ public function getHumanReviewTimingClarityFrameAttribute(): string
 }
 
 
+
+public function getOwnerReviewSlotSequenceLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return '01 · owner review now / reopened evidence lane';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return '01 · assign owner now / due review cannot sequence';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return '01 · overdue owner checkpoint / first review pass';
+
+            case 'Due today':
+                return '02 · same-day owner checkpoint / this-shift review';
+
+            case 'Due soon':
+                return '03 · upcoming owner checkpoint / pre-read queue';
+
+            case 'Near-term':
+                return '04 · near-term owner checkpoint / keep sequence visible';
+
+            case 'Future':
+                return '05 · future owner checkpoint / leave parked';
+
+            case 'Unscheduled':
+                return '02 · owner sequence blocked / set checkpoint date';
+        }
+
+        return '04 · owner review sequence / quiet lane still forming';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return '03 · drafting owner checkpoint / review soon';
+
+        case 'Closure packet prepared':
+            return '03 · finish-choice owner checkpoint / review soon';
+
+        case 'Execution still open':
+            return '02 · execution owner checkpoint / reopen early';
+
+        case 'Prepared but not yet executed':
+            return '03 · prepared owner checkpoint / resume deliberately';
+
+        case 'Timed for later finish':
+            return '05 · timed finish checkpoint / review on schedule';
+    }
+
+    return '06 · conservative owner sequence / background review';
+}
+
+public function getQueueBacklogVisibilityLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Top backlog / reopened evidence waiting';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Top backlog / due work still unowned';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Front backlog / overdue parked checkpoint';
+
+            case 'Due today':
+                return 'Front backlog / same-day parked checkpoint';
+
+            case 'Due soon':
+                return 'Visible backlog / next 3 days';
+
+            case 'Near-term':
+                return 'Visible backlog / next 14 days';
+
+            case 'Future':
+                return 'Deep backlog / future quiet slot';
+
+            case 'Unscheduled':
+                return 'Visible backlog / checkpoint timing missing';
+        }
+
+        return 'Standard backlog / quiet-lane backlog forming';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Visible backlog / finish drafting decision';
+
+        case 'Closure packet prepared':
+            return 'Visible backlog / prepared close decision';
+
+        case 'Execution still open':
+            return 'Front backlog / follow-through not closed';
+
+        case 'Prepared but not yet executed':
+            return 'Visible backlog / prepared work waiting';
+
+        case 'Timed for later finish':
+            return 'Deep backlog / intentionally scheduled finish';
+    }
+
+    return 'Standard backlog / conservative review watch';
+}
+
+public function getOwnerReviewSlotSequenceDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Owner review sequence' => $this->owner_review_slot_sequence_label,
+        'Queue backlog visibility' => $this->queue_backlog_visibility_label,
+        'Queue priority' => $this->queue_scan_prioritization_cue_label,
+        'Review timing' => $this->human_review_timing_clarity_label,
+        'Quiet-lane review slot' => $this->quiet_lane_review_slot_label,
+        'Re-entry order' => $this->quiet_lane_reentry_order_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Owner review-slot sequence digest is still minimal.');
+}
+
+public function getQueueBacklogVisibilityFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Owner review sequence: ' . $this->owner_review_slot_sequence_label . '.';
+    $lines[] = 'Queue backlog visibility: ' . $this->queue_backlog_visibility_label . '.';
+    $lines[] = 'Queue priority: ' . $this->queue_scan_prioritization_cue_label . '.';
+    $lines[] = 'Review timing: ' . $this->human_review_timing_clarity_label . '.';
+    $lines[] = 'Quiet-lane review slot: ' . $this->quiet_lane_review_slot_label . '.';
+    $lines[] = 'Re-entry order: ' . $this->quiet_lane_reentry_order_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, this record should lead the human backlog immediately. The sequence cue removes ambiguity about who should read it first, and the backlog cue makes sure the reopened evidence lane does not sink back into quiet parking.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the checkpoint is already due but no owner is named, backlog visibility must stay at the front until assignment happens. The first real move is to assign ownership so the sequence becomes truthful across the list, overview, and linked inquiry snapshot.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked quiet-lane checkpoint is overdue, this record belongs at the front of the backlog and at the first owner review slot. The goal is not automation; it is to make the overdue human read unmistakable.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked checkpoint lands today, this record should stay in the front backlog for the current shift. The sequence cue keeps the owner review order narrow and same-day readable without widening the workflow.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the quiet checkpoint is due soon, the record should remain visibly staged without crowding out immediate items. The backlog cue keeps it on board early so the owner can pre-read the next slot deliberately.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the checkpoint sits in a near-term window, the record can remain in the visible backlog instead of the front edge. The sequence cue simply keeps the next owner pass obvious during routine queue scans.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the checkpoint still belongs to a future quiet slot, the record can sit deeper in the backlog while staying explicitly parked. The sequence cue protects the later owner pass from vanishing into background ambiguity.';
+        } else {
+            $lines[] = 'Because the checkpoint timing is still unclear, backlog visibility should stay elevated until a real date is named. The sequence cue exists so the missing owner checkpoint is obvious during human review.';
+        }
+    } elseif (in_array($this->closure_readiness_label, ['Ready for finish packet', 'Closure packet prepared'], true)) {
+        $lines[] = 'Because the record is already close-ready, backlog visibility should stay deliberate rather than passive. The sequence cue keeps the next owner decision in sight so prepared finish work does not drift behind quieter records.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because execution is still open, this record belongs ahead of passive background review. The backlog cue tells the operator it is still waiting for follow-through, and the sequence cue keeps the next owner pass readable.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, the record can sit deeper in the backlog without disappearing. The sequence cue simply protects the scheduled owner pass without adding artificial urgency.';
+    } else {
+        $lines[] = 'Because the workspace remains quiet and conservative, owner sequence and backlog visibility stay narrow human scan aids only. They help the queue read in one pass without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

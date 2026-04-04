@@ -1155,6 +1155,46 @@ tabs:
             span: full
             comment: Conservative queue-priority and review-timing panel without widening the loyalty workspace into campaign behavior or automation.
 
+        owner_review_slot_sequence_label:
+            label: Owner Review-Slot Sequence
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-led sequence cue that tells operators which records should be read first without introducing automation.
+
+        queue_backlog_visibility_label:
+            label: Queue Backlog Visibility
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Clear backlog cue that shows whether this record should stay front-of-queue, visibly staged, or deeply parked.
+
+        owner_review_slot_sequence_digest:
+            label: Owner Review-Slot Sequence Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner review-slot sequencing, backlog visibility, queue priority, and the next review window into one read.
+
+        queue_backlog_visibility_frame:
+            label: Queue Backlog Visibility Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for why this record should stay at the front, remain visible, or sit deeper in the human backlog.
+
+        owner_review_slot_sequence_queue_backlog_visibility_panel:
+            label: Owner Review-Slot Sequence and Queue Backlog Visibility
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_review_slot_sequence_queue_backlog_visibility_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-sequencing and backlog-visibility panel without widening the loyalty workspace into campaign behavior or automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

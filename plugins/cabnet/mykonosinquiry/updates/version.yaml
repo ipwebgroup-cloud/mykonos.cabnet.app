@@ -237,3 +237,6 @@
 
 2.3.45:
   - 'Add queue-scan prioritization cues and human review timing clarity to the loyalty workspace line'
+
+2.3.46:
+  - 'Add owner review-slot sequencing and queue backlog visibility to the loyalty workspace line'

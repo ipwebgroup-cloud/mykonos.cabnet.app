@@ -254,6 +254,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->human_review_timing_clarity_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Review sequence</h4>
+                    <p><?= e($record->owner_review_slot_sequence_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Backlog visibility</h4>
+                    <p><?= e($record->queue_backlog_visibility_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>

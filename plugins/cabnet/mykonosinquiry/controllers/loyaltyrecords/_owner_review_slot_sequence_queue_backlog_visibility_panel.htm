@@ -1,0 +1,29 @@
+<?php
+    $ownerReviewSequence = $formModel->owner_review_slot_sequence_label ?? 'No owner review-slot sequence yet';
+    $queueBacklogVisibility = $formModel->queue_backlog_visibility_label ?? 'No queue backlog visibility yet';
+    $ownerReviewSequenceDigest = $formModel->owner_review_slot_sequence_digest ?? 'Owner review-slot sequence digest is not available yet.';
+    $queueBacklogVisibilityFrame = $formModel->queue_backlog_visibility_frame ?? 'Queue backlog visibility frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Review sequence</h4>
+            <p><?= e($ownerReviewSequence) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Backlog visibility</h4>
+            <p><?= e($queueBacklogVisibility) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Sequence digest</label>
+        <pre><?= e($ownerReviewSequenceDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Backlog frame</label>
+        <pre><?= e($queueBacklogVisibilityFrame) ?></pre>
+    </div>
+</div>

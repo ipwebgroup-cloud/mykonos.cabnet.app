@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.31.0 queue-scan prioritization cues and human review timing clarity workspace`
+- `v6.32.0 owner review-slot sequence and queue backlog visibility workspace`
 
 This is a continuity hint only.
 

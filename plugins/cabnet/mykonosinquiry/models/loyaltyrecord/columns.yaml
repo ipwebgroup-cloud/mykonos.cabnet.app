@@ -152,6 +152,13 @@ columns:
         label: Review Timing
         sortable: false
 
+    owner_review_slot_sequence_label:
+        label: Review Sequence
+        sortable: false
+
+    queue_backlog_visibility_label:
+        label: Backlog Visibility
+        sortable: false
 
     parked_lane_watch_label:
         label: Parked Watch
