@@ -249,3 +249,7 @@
 
 2.3.49:
   - 'Add reopen timing discipline and same-shift review checkpoint confirmation to the loyalty workspace line'
+
+2.3.50:
+  - 'Add parked-lane owner reassignment visibility and front-of-list quiet-return confirmation to the loyalty workspace line'
+

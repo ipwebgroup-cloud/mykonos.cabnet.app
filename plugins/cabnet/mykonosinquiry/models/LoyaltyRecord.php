@@ -2189,6 +2189,216 @@ public function getSameShiftReviewCheckpointConfirmationFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getParkedLaneOwnerReassignmentVisibilityLabelAttribute(): string
+{
+    $ownerMissing = trim((string) $this->owner_name) === '';
+    $reviewWindow = $this->next_review_window_label;
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return $ownerMissing
+            ? 'Owner reassignment urgent / reopened lane needs named operator'
+            : 'Owner reassignment settled / reopened lane stays with current owner';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if ($ownerMissing) {
+            switch ($reviewWindow) {
+                case 'Overdue':
+                    return 'Owner reassignment urgent / parked lane overdue and unowned';
+
+                case 'Due today':
+                    return 'Owner reassignment urgent / same-shift parked return unowned';
+
+                case 'Due soon':
+                    return 'Owner reassignment pending / next-slot parked owner missing';
+
+                case 'Near-term':
+                    return 'Owner reassignment visible / near-term parked owner still open';
+
+                case 'Future':
+                    return 'Owner reassignment queued / future parked owner still open';
+
+                case 'Unscheduled':
+                    return 'Owner reassignment blocked / parked lane missing owner and timing';
+            }
+
+            return 'Owner reassignment forming / parked lane ownership still open';
+        }
+
+        switch ($reviewWindow) {
+            case 'Overdue':
+                return 'Owner reassignment visible / overdue parked return stays named';
+
+            case 'Due today':
+                return 'Owner reassignment visible / same-shift parked return stays named';
+
+            case 'Due soon':
+                return 'Owner reassignment visible / next-slot parked owner named';
+
+            case 'Near-term':
+                return 'Owner reassignment visible / near-term parked owner preserved';
+
+            case 'Future':
+                return 'Owner reassignment visible / future parked owner preserved';
+
+            case 'Unscheduled':
+                return 'Owner reassignment partial / parked owner named but timing open';
+        }
+
+        return 'Owner reassignment visible / parked-lane ownership readable';
+    }
+
+    if ($ownerMissing && in_array($reviewWindow, ['Overdue', 'Due today'], true)) {
+        return 'Owner reassignment urgent / immediate review lane still unowned';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return $ownerMissing
+                ? 'Owner reassignment pending / execution lane needs lead'
+                : 'Owner reassignment minimal / execution lead already named';
+
+        case 'Ready for finish packet':
+            return $ownerMissing
+                ? 'Owner reassignment pending / finish drafting lead missing'
+                : 'Owner reassignment minimal / drafting lead already named';
+
+        case 'Closure packet prepared':
+            return $ownerMissing
+                ? 'Owner reassignment pending / finish-choice lead missing'
+                : 'Owner reassignment minimal / finish-choice lead already named';
+
+        case 'Prepared but not yet executed':
+            return $ownerMissing
+                ? 'Owner reassignment pending / prepared follow-through lead missing'
+                : 'Owner reassignment minimal / prepared lead already named';
+
+        case 'Timed for later finish':
+            return $ownerMissing
+                ? 'Owner reassignment queued / timed finish owner still open'
+                : 'Owner reassignment preserved / timed finish owner named';
+    }
+
+    return $ownerMissing
+        ? 'Owner reassignment open / quiet review owner still missing'
+        : 'Owner reassignment minimal / current owner already readable';
+}
+
+public function getFrontOfListQuietReturnConfirmationLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Front-of-list quiet return confirmed / reopened review now';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Front-of-list quiet return blocked / assign owner before confirm';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Front-of-list quiet return confirmed / parked lane due now';
+
+            case 'Due today':
+                return 'Front-of-list quiet return confirmed / same-shift quiet return';
+
+            case 'Due soon':
+                return 'Front-of-list quiet return staged / near-front quiet return next';
+
+            case 'Near-term':
+                return 'Front-of-list quiet return visible / later-shift quiet return held';
+
+            case 'Future':
+                return 'Front-of-list quiet return parked / future slot preserved';
+
+            case 'Unscheduled':
+                return 'Front-of-list quiet return open / timing missing before confirmation';
+        }
+
+        return 'Front-of-list quiet return forming / parked timing still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Front-of-list quiet return deferred / active execution still ahead';
+
+        case 'Ready for finish packet':
+            return 'Front-of-list quiet return deferred / finish drafting first';
+
+        case 'Closure packet prepared':
+            return 'Front-of-list quiet return deferred / finish-choice lane first';
+
+        case 'Prepared but not yet executed':
+            return 'Front-of-list quiet return deferred / prepared follow-through first';
+
+        case 'Timed for later finish':
+            return 'Front-of-list quiet return parked / timed finish window preserved';
+    }
+
+    return 'Front-of-list quiet return conservative / quiet review ordering still forming';
+}
+
+public function getParkedLaneOwnerReassignmentVisibilityDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Parked-lane owner reassignment visibility' => $this->parked_lane_owner_reassignment_visibility_label,
+        'Front-of-list quiet-return confirmation' => $this->front_of_list_quiet_return_confirmation_label,
+        'Owner-state handoff' => $this->owner_state_handoff_compression_label,
+        'Reopen timing discipline' => $this->reopen_timing_discipline_label,
+        'Same-shift checkpoint confirmation' => $this->same_shift_review_checkpoint_confirmation_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Queue separation' => $this->front_of_queue_parked_lane_separation_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Parked-lane owner reassignment visibility digest is still minimal.');
+}
+
+public function getFrontOfListQuietReturnConfirmationFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Parked-lane owner reassignment visibility: ' . $this->parked_lane_owner_reassignment_visibility_label . '.';
+    $lines[] = 'Front-of-list quiet-return confirmation: ' . $this->front_of_list_quiet_return_confirmation_label . '.';
+    $lines[] = 'Owner-state handoff: ' . $this->owner_state_handoff_compression_label . '.';
+    $lines[] = 'Reopen timing discipline: ' . $this->reopen_timing_discipline_label . '.';
+    $lines[] = 'Same-shift checkpoint confirmation: ' . $this->same_shift_review_checkpoint_confirmation_label . '.';
+    $lines[] = 'Quiet-lane return: ' . $this->quiet_lane_return_label . '.';
+    $lines[] = 'Queue separation: ' . $this->front_of_queue_parked_lane_separation_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, owner reassignment visibility should collapse to whether one named operator now owns the active return. Front-of-list quiet-return confirmation should then read as fully confirmed, because the record has already left passive parking and returned to deliberate human review.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record has already reached an immediate review window but still has no named owner, the workspace should not pretend the quiet return is fully confirmed. The first safe move is to assign the operator so owner reassignment visibility and front-of-list return confirmation become believable together across the list, overview workspace, and linked inquiry snapshot.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the record should stop reading as safely parked. Owner reassignment visibility exists so the overdue quiet return stays attached to one human lead, and front-of-list confirmation exists so the return is read as current front-of-queue work rather than deeper backlog.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked review window lands today, the quiet return should read as same-shift front-of-list work. Owner reassignment visibility keeps the current operator handoff explicit, while front-of-list confirmation compresses the return into one narrow, believable human review move.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked review window is approaching, the workspace can keep the record near the front without overstating it as immediate. Owner reassignment visibility keeps the likely next operator readable early, and front-of-list confirmation keeps the upcoming quiet return visible before it becomes urgent.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the quiet return is near-term rather than same-shift, the workspace should keep the record visible without flattening it into active urgency. Owner reassignment visibility preserves who should receive that later return, and front-of-list confirmation stays provisional instead of absolute.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return sits in a future quiet slot, the record can remain parked. The owner reassignment cue simply preserves who should receive that later handback, while front-of-list confirmation stays intentionally parked so future work does not displace current-shift review.';
+        } else {
+            $lines[] = 'Because the parked lane still lacks usable timing, neither owner reassignment visibility nor front-of-list confirmation can settle honestly yet. The next safe move is to name both the owner and the review slot so the quiet return becomes credible on every backend surface.';
+        }
+    } elseif ($this->closure_readiness_label === 'Execution still open') {
+        $lines[] = 'Because close-side execution is still active, the record should stay ahead of quiet-return parking for now. Owner reassignment visibility simply confirms whether that active work already has a named lead, and front-of-list confirmation stays deferred until the execution story settles.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for finish drafting, the workspace should keep the drafting move ahead of passive quiet-return parking. Owner reassignment visibility keeps the drafting lead explicit, and front-of-list quiet-return confirmation remains deferred until the drafting choice is complete.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a finish-choice packet is already prepared, the record belongs in a near-front decision lane rather than a quiet parked hold. Owner reassignment visibility keeps the decision lead readable, and front-of-list quiet-return confirmation waits until the operator deliberately chooses whether the lane stays parked or returns now.';
+    } elseif ($this->closure_readiness_label === 'Prepared but not yet executed') {
+        $lines[] = 'Because prepared work still needs a deliberate operator move, the record should stay ahead of passive parked backlog. The owner reassignment cue keeps that prepared resume move attached to one lead, while front-of-list quiet-return confirmation remains deferred until the prepared work is actually resumed or parked.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because finish timing is intentionally deferred, the record can remain parked without being mistaken for front-of-list work. Owner reassignment visibility simply preserves who should receive that later handback, and front-of-list quiet-return confirmation stays intentionally parked.';
+    } else {
+        $lines[] = 'Because the loyalty workspace stays conservative and human-led, parked-lane owner reassignment visibility and front-of-list quiet-return confirmation remain narrow scan aids only. They reduce translation between parking, ownership, and near-front review without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {

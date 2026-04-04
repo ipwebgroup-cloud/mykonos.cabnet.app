@@ -1315,6 +1315,46 @@ tabs:
             span: full
             comment: Conservative reopen-timing and same-shift checkpoint panel without widening the loyalty workspace into automation.
 
+        parked_lane_owner_reassignment_visibility_label:
+            label: Parked-Lane Owner Reassignment Visibility
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-read cue showing whether a parked or returning lane already has a credible named operator or still needs reassignment before review.
+
+        front_of_list_quiet_return_confirmation_label:
+            label: Front-of-List Quiet-Return Confirmation
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed return cue showing whether a quiet return already belongs at the front of human review, is only staged near the front, or should remain parked.
+
+        parked_lane_owner_reassignment_visibility_digest:
+            label: Parked-Lane Owner Reassignment Visibility Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining parked-lane owner reassignment, front-of-list return confirmation, ownership, and timing posture into one read.
+
+        front_of_list_quiet_return_confirmation_frame:
+            label: Front-of-List Quiet-Return Confirmation Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how a quiet return should move toward the front of review without losing believable ownership.
+
+        parked_lane_owner_reassignment_visibility_front_of_list_quiet_return_confirmation_panel:
+            label: Parked-Lane Owner Reassignment Visibility and Front-of-List Quiet-Return Confirmation
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_lane_owner_reassignment_visibility_front_of_list_quiet_return_confirmation_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative parked-owner reassignment and front-of-list quiet-return panel without widening the loyalty workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

@@ -1,0 +1,29 @@
+<?php
+    $ownerReassignment = $formModel->parked_lane_owner_reassignment_visibility_label ?? 'No parked-lane owner reassignment visibility cue yet';
+    $frontOfListReturn = $formModel->front_of_list_quiet_return_confirmation_label ?? 'No front-of-list quiet-return confirmation cue yet';
+    $ownerReassignmentDigest = $formModel->parked_lane_owner_reassignment_visibility_digest ?? 'Parked-lane owner reassignment visibility digest is not available yet.';
+    $frontOfListReturnFrame = $formModel->front_of_list_quiet_return_confirmation_frame ?? 'Front-of-list quiet-return confirmation frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Owner reassignment</h4>
+            <p><?= e($ownerReassignment) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Front-of-list return</h4>
+            <p><?= e($frontOfListReturn) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Owner reassignment digest</label>
+        <pre><?= e($ownerReassignmentDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Front-of-list return frame</label>
+        <pre><?= e($frontOfListReturnFrame) ?></pre>
+    </div>
+</div>

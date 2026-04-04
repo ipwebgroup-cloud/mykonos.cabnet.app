@@ -184,6 +184,14 @@ columns:
         label: Checkpoint Confirmation
         sortable: false
 
+    parked_lane_owner_reassignment_visibility_label:
+        label: Owner Reassignment
+        sortable: false
+
+    front_of_list_quiet_return_confirmation_label:
+        label: Front-of-List Return
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

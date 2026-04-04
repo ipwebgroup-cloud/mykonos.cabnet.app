@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.35.0 reopen timing discipline and same-shift review checkpoint confirmation workspace`
+- `v6.36.0 parked-lane owner reassignment visibility and front-of-list quiet-return confirmation workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -158,6 +158,8 @@ This means the current workspace already includes the earlier conservative loyal
 - owner-state handoff compression
 - reopen timing discipline
 - same-shift review checkpoint confirmation
+- parked-lane owner reassignment visibility
+- front-of-list quiet-return confirmation
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.

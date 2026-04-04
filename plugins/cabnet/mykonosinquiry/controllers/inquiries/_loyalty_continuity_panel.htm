@@ -286,6 +286,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->same_shift_review_checkpoint_confirmation_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Owner reassignment</h4>
+                    <p><?= e($record->parked_lane_owner_reassignment_visibility_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Front-of-list return</h4>
+                    <p><?= e($record->front_of_list_quiet_return_confirmation_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
@@ -372,6 +380,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Owner-state handoff frame:</strong> <?= e($record->owner_state_handoff_compression_frame) ?></li>
                     <li><strong>Reopen timing digest:</strong> <?= e($record->reopen_timing_discipline_digest) ?></li>
                     <li><strong>Checkpoint confirmation frame:</strong> <?= e($record->same_shift_review_checkpoint_confirmation_frame) ?></li>
+                    <li><strong>Owner reassignment digest:</strong> <?= e($record->parked_lane_owner_reassignment_visibility_digest) ?></li>
+                    <li><strong>Front-of-list return frame:</strong> <?= e($record->front_of_list_quiet_return_confirmation_frame) ?></li>
                 </ul>
             </div>
         <?php endif; ?>
