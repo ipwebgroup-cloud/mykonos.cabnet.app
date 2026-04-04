@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.5 saved-record source-context digest above loyalty overview patch`
+- `v6.41.6 workspace-tab source-context digest mirror patch`
 
 This is a continuity hint only.
 
@@ -82,6 +82,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep loyalty update-screen continuity partials render-safe when backend partial context arrives through different variable injection paths
 - keep the close-handoff / finish-review exit panels on saved loyalty records aligned to the normalized backend model context
 - expose one compact saved-record source-context digest above the loyalty overview so source inquiry posture and continuity posture can be compared before deeper review panels
+- keep the same source-context comparison visible at the top of the Workspace tab while operators edit live continuity fields
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 

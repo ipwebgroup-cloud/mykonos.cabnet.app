@@ -1594,6 +1594,15 @@ tabs:
             span: right
             comment: Read-only framing that turns finish posture into a single human-readable dashboard.
 
+        workspace_source_context_digest:
+            label: Workspace Source-Context Digest
+            type: partial
+            context: update
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_workspace_source_context_digest.htm
+            tab: Workspace
+            span: full
+            comment: Keep source inquiry posture visible while operators review and adjust live continuity fields.
+
         continuity_status:
             label: Continuity Status
             type: dropdown

@@ -315,3 +315,5 @@
   - 'Hotfix close-handoff loyalty update panel record context so saved records do not crash on render'
 2.3.72:
   - 'Add a saved-record source-context digest above the loyalty overview so source and continuity posture compare cleanly'
+2.3.73:
+  - 'Mirror the source-context digest into the loyalty Workspace tab so source posture stays visible during live continuity edits'

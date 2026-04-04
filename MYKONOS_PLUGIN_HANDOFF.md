@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.5 saved-record source-context digest above loyalty overview patch`
-- plugin tracking `2.3.72`
+- `v6.41.6 workspace-tab source-context digest mirror patch`
+- plugin tracking `2.3.73`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and adds a compact saved-record source-context digest above the loyalty overview, so operators can compare the original inquiry posture, the current continuity posture, value/referral framing, and the latest touchpoint signal before scrolling into the deeper review panels.
+It keeps the Inquiry Queue loyalty bridge intact and mirrors the compact saved-record source-context digest into the top of the Workspace tab, so source inquiry posture remains visible while operators adjust continuity status, stage, value signal, ownership, and next-step handling.
 
 ---
 
@@ -109,6 +109,7 @@ Then verify:
 - open existing loyalty records such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/4` and confirm the pages render instead of throwing `Undefined variable $record`
 - confirm hold / quiet-lane / resurfacing / checkpoint / close-handoff continuity panels load without PHP variable errors
 - open an existing loyalty record and confirm a compact `Source-context digest` appears above the source inquiry panel on the Overview tab
+- open the same loyalty record on the `Workspace` tab and confirm a matching `Workspace source-context digest` appears above the editable continuity fields
 - confirm the digest shows source anchor, source posture, continuity posture, value signal, latest touchpoint, and next-review framing without widening the workflow
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
