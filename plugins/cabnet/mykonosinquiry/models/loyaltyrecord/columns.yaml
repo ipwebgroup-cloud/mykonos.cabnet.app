@@ -120,6 +120,14 @@ columns:
         label: Return Timing
         sortable: false
 
+    hold_aging_compression_label:
+        label: Hold Compression
+        sortable: false
+
+    quiet_lane_reentry_readiness_label:
+        label: Re-Entry Ready
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

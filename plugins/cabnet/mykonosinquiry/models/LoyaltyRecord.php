@@ -2632,6 +2632,171 @@ public function getQuietReturnReviewTimingFrameAttribute(): string
 }
 
 
+
+public function getHoldAgingCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'No quiet compression / lane active now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+            case 'Due today':
+                return 'Quiet hold expired / re-entry now';
+
+            case 'Due soon':
+                return 'Quiet hold compressed / ready soon';
+
+            case 'Near-term':
+                return 'Quiet hold compressed / near-term ready';
+
+            case 'Future':
+                return 'Quiet hold compressed / later watch';
+
+            case 'Unscheduled':
+                return 'Quiet hold compressed / schedule missing';
+        }
+
+        return 'Quiet hold compressed / timing forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Compression unsafe / owner missing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Compressed hold / drafting handoff';
+
+        case 'Closure packet prepared':
+            return 'Compressed hold / lane choice pending';
+
+        case 'Execution still open':
+            return 'Compressed hold / follow-through pending';
+
+        case 'Prepared but not yet executed':
+            return 'Compressed hold / prepared work waiting';
+
+        case 'Timed for later finish':
+            return 'Compressed hold / timed finish watch';
+    }
+
+    return 'Compressed quiet hold / human review';
+}
+
+public function getQuietLaneReentryReadinessLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Re-entry active now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+            case 'Due today':
+                return 'Ready for quiet-lane re-entry now';
+
+            case 'Due soon':
+                return 'Prepare quiet-lane re-entry';
+
+            case 'Near-term':
+                return 'Quiet-lane re-entry nearly ready';
+
+            case 'Future':
+                return 'Quiet-lane re-entry deferred';
+
+            case 'Unscheduled':
+                return 'Quiet-lane re-entry not yet schedulable';
+        }
+
+        return 'Quiet-lane re-entry still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Assign owner before re-entry';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Re-entry ready when drafting begins';
+
+        case 'Closure packet prepared':
+            return 'Re-entry ready when lane is chosen';
+
+        case 'Execution still open':
+            return 'Re-entry ready when follow-through resumes';
+
+        case 'Prepared but not yet executed':
+            return 'Re-entry ready when prepared work starts';
+
+        case 'Timed for later finish':
+            return 'Re-entry ready at finish window';
+    }
+
+    return 'Re-entry readiness under quiet review';
+}
+
+public function getHoldAgingCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Hold-aging compression' => $this->hold_aging_compression_label,
+        'Quiet-lane re-entry readiness' => $this->quiet_lane_reentry_readiness_label,
+        'Hold aging' => $this->hold_aging_label,
+        'Quiet-return timing' => $this->quiet_return_review_timing_label,
+        'Hold release cue' => $this->hold_release_cue_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Post-close hold' => $this->post_close_hold_label,
+        'Owner timing' => $this->owner_timing_signal_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Hold-aging compression digest is still minimal.');
+}
+
+public function getQuietLaneReentryReadinessFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Hold-aging compression: ' . $this->hold_aging_compression_label . '.';
+    $lines[] = 'Quiet-lane re-entry readiness: ' . $this->quiet_lane_reentry_readiness_label . '.';
+    $lines[] = 'Hold aging: ' . $this->hold_aging_label . '.';
+    $lines[] = 'Quiet-return timing: ' . $this->quiet_return_review_timing_label . '.';
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+    $lines[] = 'Quiet-lane return: ' . $this->quiet_lane_return_label . '.';
+    $lines[] = 'Post-close hold: ' . $this->post_close_hold_label . '.';
+    $lines[] = 'Owner timing: ' . $this->owner_timing_signal_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, the quiet posture is no longer just aging in place. Re-entry readiness is immediate, and the lane belongs in explicit human review now.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            $lines[] = 'Because the parked watch is already due, the quiet hold has compressed as far as it can. The lane is ready to re-enter active human review now instead of remaining in a silent hold.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked watch is close, the quiet hold can stay narrow only briefly. Re-entry readiness should be treated as active preparation so the owner can review before urgency takes over.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the parked watch is near-term but not urgent, the hold can remain compressed and readable while the operator keeps re-entry readiness visible instead of letting the lane drift.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the parked watch sits further out, the quiet hold can stay compressed and stable. Re-entry readiness can remain deferred, provided ownership and the future review window stay explicit.';
+        } else {
+            $lines[] = 'Because the quiet hold has no clear schedule yet, the posture can only stay compressed safely if a human makes the re-entry path more explicit soon.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because review timing is already due and ownership is missing, the quiet hold cannot be treated as safely compressed. The lane needs an owner before any re-entry readiness is credible.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, the hold can stay compressed only as a short staging posture. Re-entry readiness becomes active when the drafter begins the finish packet.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet already exists, the hold can stay compressed only while the operator chooses the finish lane deliberately. Re-entry readiness becomes active at that lane-choice point.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs human action, the hold can stay compressed only while the operator keeps the next re-entry point visible and resumes the prepared work deliberately.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because the record is intentionally timed for later finish work, the quiet hold can remain compressed until the timed window becomes the next active human re-entry point.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, the quiet hold can remain compressed under human ownership while re-entry readiness stays visible as the next deliberate move.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

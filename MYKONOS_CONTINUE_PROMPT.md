@@ -50,7 +50,7 @@ Assume the live operational workspace remains:
 
 Assume the current development line has already advanced into the guarded **Loyalty Continuity Workspace** line and the latest applied patch is approximately:
 
-- `v6.9.0 hold-aging readability and quiet-return review timing workspace`
+- `v6.10.0 hold-aging compression and quiet-lane re-entry readiness workspace`
 
 Do **not** restart from older v2.x workflow patches unless the uploaded files clearly show otherwise.
 
@@ -112,12 +112,12 @@ Continue in this style:
 - **plugin-only**
 - **render-safe**
 - **schema-safe when possible**
-- improve readability, prioritization, close-side framing, reopen visibility, handback clarity, hold-release timing, quiet-lane return visibility, hold-aging readability, quiet-return timing, and queue-scan clarity
+- improve readability, prioritization, close-side framing, reopen visibility, handback clarity, hold-release timing, quiet-lane return visibility, hold-aging compression, quiet-lane re-entry readiness, and queue-scan clarity
 - avoid turning the loyalty line into campaign automation
 
 The current safest likely next direction is to continue with conservative:
-- hold-aging compression
-- quiet-lane re-entry readiness
+- quiet-lane re-entry ordering
+- hold-expiry grouping
 - queue-scan aids
 - reopen / finish posture compression
 

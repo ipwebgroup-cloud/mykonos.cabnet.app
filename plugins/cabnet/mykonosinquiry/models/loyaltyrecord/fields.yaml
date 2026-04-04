@@ -434,6 +434,46 @@ tabs:
             span: full
             comment: Conservative hold-aging and quiet-return timing panel without widening the workspace into automation.
 
+        hold_aging_compression_label:
+            label: Hold-Aging Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow compression cue showing whether a quiet hold is still safely compact, already expiring, or needs active re-entry now.
+
+        quiet_lane_reentry_readiness_label:
+            label: Quiet-Lane Re-Entry Readiness
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Conservative readiness cue showing whether the quiet lane can stay deferred or should return to active human review.
+
+        hold_aging_compression_digest:
+            label: Hold-Aging Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining hold-aging compression, quiet-lane re-entry readiness, and the active return timing cues.
+
+        quiet_lane_reentry_readiness_frame:
+            label: Quiet-Lane Re-Entry Readiness Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for when a quiet hold can stay compressed and when the lane should re-enter active human review.
+
+        hold_aging_compression_quiet_reentry_panel:
+            label: Hold-Aging Compression and Quiet-Lane Re-Entry
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_aging_compression_quiet_reentry_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative hold-compression and quiet re-entry panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

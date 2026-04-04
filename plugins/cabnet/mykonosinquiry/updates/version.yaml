@@ -173,3 +173,6 @@
 
 2.3.23:
   - 'Introduce hold-aging readability and quiet-return review timing for live loyalty records'
+
+2.3.24:
+  - 'Introduce hold-aging compression and quiet-lane re-entry readiness for live loyalty records'

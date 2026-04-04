@@ -1,0 +1,81 @@
+<?php
+$holdAgingCompression = $record ? $record->hold_aging_compression_label : 'Compressed quiet hold / human review';
+$quietLaneReentryReadiness = $record ? $record->quiet_lane_reentry_readiness_label : 'Re-entry readiness under quiet review';
+$holdAgingCompressionDigest = $record ? $record->hold_aging_compression_digest : 'Hold-aging compression digest is still minimal.';
+$quietLaneReentryReadinessFrame = $record ? $record->quiet_lane_reentry_readiness_frame : 'Quiet-lane re-entry readiness framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-compress"></i>
+        <h4 style="margin-top:0;">Hold-Aging Compression and Quiet-Lane Re-Entry</h4>
+        <p>
+            This panel keeps quiet close holds compact and readable by showing whether the hold can stay compressed or whether the lane is ready to re-enter active human review.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-aging compression</h4>
+                <p><?= e($holdAgingCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane re-entry readiness</h4>
+                <p><?= e($quietLaneReentryReadiness) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold aging</h4>
+                <p><?= e($record ? $record->hold_aging_label : 'Conservative hold / quiet review aging') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Return timing</h4>
+                <p><?= e($record ? $record->quiet_return_review_timing_label : 'Return timing under quiet review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold release cue</h4>
+                <p><?= e($record ? $record->hold_release_cue_label : 'Keep hold under quiet human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane return</h4>
+                <p><?= e($record ? $record->quiet_lane_return_label : 'Return to quiet review lane') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Post-close hold</h4>
+                <p><?= e($record ? $record->post_close_hold_label : 'Conservative post-close hold') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Handback</h4>
+                <p><?= e($record ? $record->finish_lane_handback_label : 'Hand back to quiet review owner') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Owner and timing still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Unscheduled') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($record ? $record->next_finish_move_label : 'Keep the record in a narrow timed review posture') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Close handoff</h4>
+                <p><?= e($record ? $record->close_handoff_group_label : 'Review handoff / quiet hold') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-aging compression digest</h4>
+                <p><?= nl2br(e($holdAgingCompressionDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane re-entry readiness frame</h4>
+                <p><?= nl2br(e($quietLaneReentryReadinessFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>

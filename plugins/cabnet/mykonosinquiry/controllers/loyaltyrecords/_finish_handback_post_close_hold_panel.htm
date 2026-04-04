@@ -1,15 +1,15 @@
 <?php
 $finishLaneHandback = $record ? $record->finish_lane_handback_label : 'Hand back to quiet review owner';
 $postCloseHold = $record ? $record->post_close_hold_label : 'Conservative post-close hold';
-$handbackDigest = $record ? $record->finish_handback_digest : 'Finish handback digest is still minimal.';
+$finishHandbackDigest = $record ? $record->finish_handback_digest : 'Finish handback digest is still minimal.';
 $postCloseHoldFrame = $record ? $record->post_close_hold_frame : 'Post-close hold framing is still minimal.';
 ?>
 <div class="callout fade in no-subheader">
     <div class="header">
-        <i class="icon-exchange"></i>
+        <i class="icon-random"></i>
         <h4 style="margin-top:0;">Finish-Lane Handback and Post-Close Hold</h4>
         <p>
-            This panel keeps the close-side lane easy to hand back to the right human owner and makes the quiet post-close hold explicit without widening the workspace into automation.
+            This panel keeps finish-side handback readable by showing who should take the lane next and whether a quiet post-close hold is still safe without widening the workspace into automation.
         </p>
     </div>
     <div class="content">
@@ -32,7 +32,7 @@ $postCloseHoldFrame = $record ? $record->post_close_hold_frame : 'Post-close hol
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Finish-close</h4>
-                <p><?= e($record ? $record->finish_close_compression_label : 'Close posture still forming') ?></p>
+                <p><?= e($record ? $record->finish_close_compression_label : 'Hold close until the next explicit finish move') ?></p>
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Reopen order</h4>
@@ -50,19 +50,27 @@ $postCloseHoldFrame = $record ? $record->post_close_hold_frame : 'Post-close hol
                 <p><?= e($record ? $record->next_finish_move_label : 'Keep the record in a narrow timed review posture') ?></p>
             </div>
             <div class="scoreboard-item title-value">
+                <h4>Finish watch</h4>
+                <p><?= e($record ? $record->finish_watch_signal_label : 'Hold low in the queue / quiet close watch') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen cue</h4>
+                <p><?= e($record ? $record->reopen_queue_cue_label : 'Keep low unless the parked watch changes') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
                 <h4>Closure readiness</h4>
                 <p><?= e($record ? $record->closure_readiness_label : 'Finish posture still emerging') ?></p>
             </div>
             <div class="scoreboard-item title-value">
-                <h4>Finish watch</h4>
-                <p><?= e($record ? $record->finish_watch_signal_label : 'Quiet continuity review') ?></p>
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Unscheduled') ?></p>
             </div>
         </div>
 
         <div class="scoreboard" style="margin-top:15px;">
             <div class="scoreboard-item title-value">
                 <h4>Finish handback digest</h4>
-                <p><?= nl2br(e($handbackDigest)) ?></p>
+                <p><?= nl2br(e($finishHandbackDigest)) ?></p>
             </div>
             <div class="scoreboard-item title-value">
                 <h4>Post-close hold frame</h4>
