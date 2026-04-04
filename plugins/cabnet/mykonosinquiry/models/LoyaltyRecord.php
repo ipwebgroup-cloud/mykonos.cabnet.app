@@ -5656,6 +5656,171 @@ public function getQuietLaneReturnHandoffConfirmationFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getAcceptanceConfirmationCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Acceptance confirmation active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Acceptance confirmation blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Acceptance confirmation framed / overdue same-day owner move';
+
+            case 'Due today':
+                return 'Acceptance confirmation framed / same-day owner checkpoint';
+
+            case 'Due soon':
+                return 'Acceptance confirmation staged / next-slot same-day checkpoint';
+
+            case 'Near-term':
+                return 'Acceptance confirmation staged / near-term same-day checkpoint';
+
+            case 'Future':
+                return 'Acceptance confirmation parked / future same-day checkpoint';
+
+            case 'Unscheduled':
+                return 'Acceptance confirmation open / set quiet checkpoint first';
+        }
+
+        return 'Acceptance confirmation forming / same-day owner checkpoint readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Acceptance confirmation narrow / drafting move same-day framed';
+
+        case 'Closure packet prepared':
+            return 'Acceptance confirmation narrow / finish choice same-day framed';
+
+        case 'Execution still open':
+            return 'Acceptance confirmation narrow / execution resume same-day framed';
+
+        case 'Prepared but not yet executed':
+            return 'Acceptance confirmation narrow / prepared resume same-day framed';
+
+        case 'Timed for later finish':
+            return 'Acceptance confirmation narrow / later finish same-day framed';
+    }
+
+    return 'Acceptance confirmation narrow / conservative same-day read';
+}
+
+public function getQuietLaneReturnCheckpointConfirmationLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return checkpoint confirmation active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return checkpoint confirmation blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Return checkpoint confirmation framed / overdue quiet checkpoint due';
+
+            case 'Due today':
+                return 'Return checkpoint confirmation framed / same-day quiet checkpoint due';
+
+            case 'Due soon':
+                return 'Return checkpoint confirmation staged / near-slot quiet checkpoint';
+
+            case 'Near-term':
+                return 'Return checkpoint confirmation staged / near-term quiet checkpoint';
+
+            case 'Future':
+                return 'Return checkpoint confirmation parked / future quiet checkpoint';
+
+            case 'Unscheduled':
+                return 'Return checkpoint confirmation open / set quiet checkpoint first';
+        }
+
+        return 'Return checkpoint confirmation forming / quiet checkpoint readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return checkpoint confirmation narrow / drafting return owner-visible';
+
+        case 'Closure packet prepared':
+            return 'Return checkpoint confirmation narrow / finish choice owner-visible';
+
+        case 'Execution still open':
+            return 'Return checkpoint confirmation narrow / execution resume owner-visible';
+
+        case 'Prepared but not yet executed':
+            return 'Return checkpoint confirmation narrow / prepared resume owner-visible';
+
+        case 'Timed for later finish':
+            return 'Return checkpoint confirmation narrow / later finish owner-visible';
+    }
+
+    return 'Return checkpoint confirmation narrow / conservative quiet return read';
+}
+
+public function getAcceptanceConfirmationCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Acceptance confirmation compression' => $this->acceptance_confirmation_compression_label,
+        'Quiet-lane return checkpoint confirmation' => $this->quiet_lane_return_checkpoint_confirmation_label,
+        'Acceptance alignment compression' => $this->acceptance_alignment_compression_label,
+        'Quiet-lane return handoff confirmation' => $this->quiet_lane_return_handoff_confirmation_label,
+        'Next review window' => $this->next_review_window_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+    ], 'Acceptance confirmation compression digest is still minimal.');
+}
+
+public function getQuietLaneReturnCheckpointConfirmationFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Acceptance confirmation compression: ' . $this->acceptance_confirmation_compression_label . '.';
+    $lines[] = 'Quiet-lane return checkpoint confirmation: ' . $this->quiet_lane_return_checkpoint_confirmation_label . '.';
+    $lines[] = 'Acceptance alignment compression: ' . $this->acceptance_alignment_compression_label . '.';
+    $lines[] = 'Quiet-lane return handoff confirmation: ' . $this->quiet_lane_return_handoff_confirmation_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, acceptance confirmation compression should collapse into active handling instead of quiet framing. The quiet-lane return checkpoint confirmation simply keeps the reopened owner move readable across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already in an immediate review window but still has no named owner, acceptance confirmation compression cannot become truthful yet. The first real move is to assign the operator so the quiet-lane return checkpoint confirmation can be framed credibly across every surface.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane return is overdue, the workspace should compress into one acceptance confirmation compression cue and one quiet-lane return checkpoint confirmation cue. That keeps the overdue move readable now without widening the workflow or inventing automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, the workspace should read as one acceptance confirmation compression cue and one quiet-lane return checkpoint confirmation cue. That gives the list, overview, and linked inquiry snapshot the same narrow operator signal.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is due soon, acceptance confirmation compression can stay calm and readable before urgency rises. The quiet-lane return checkpoint confirmation keeps the next slot visible early without overstating pressure.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the workspace can stay conservative and owner-led. The acceptance confirmation compression keeps the likely same-day move named, while the quiet-lane return checkpoint confirmation keeps that quiet return readable across every surface.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return still belongs to a future quiet window, acceptance confirmation compression can stay parked and owner-visible. The quiet-lane return checkpoint confirmation exists so the later move remains understandable without pretending it belongs in an active lane.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, acceptance confirmation compression cannot finish yet. The next human move is to set a real checkpoint so the quiet-lane return can compress into one believable confirmation and one readable same-day checkpoint cue.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, acceptance confirmation compression should keep the drafting move visibly attached to one owner-visible control point. The quiet-lane return checkpoint confirmation keeps that likely return move explicit without reopening a wider queue story.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, acceptance confirmation compression should stay tied to the finish-choice control point. The quiet-lane return checkpoint confirmation keeps that prepared move narrow, readable, and easy to confirm across list, overview, and inquiry surfaces.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate operator move, acceptance confirmation compression should keep the next resume signal owner-visible. The quiet-lane return checkpoint confirmation makes that resume posture easier to scan without changing the underlying workflow.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, acceptance confirmation compression stays conservative and scheduled. The quiet-lane return checkpoint confirmation simply keeps the eventual owner move visible without overstating urgency.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, acceptance confirmation compression and quiet-lane return checkpoint confirmation remain narrow human scan aids only. They reduce translation between list, overview, and inquiry surfaces without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

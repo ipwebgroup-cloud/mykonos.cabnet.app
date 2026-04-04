@@ -1,0 +1,29 @@
+<?php
+    $acceptanceConfirmationCompression = $formModel->acceptance_confirmation_compression_label ?? 'No acceptance confirmation compression yet';
+    $quietLaneReturnCheckpointConfirmation = $formModel->quiet_lane_return_checkpoint_confirmation_label ?? 'No quiet-lane return checkpoint confirmation yet';
+    $acceptanceConfirmationCompressionDigest = $formModel->acceptance_confirmation_compression_digest ?? 'Acceptance confirmation compression digest is not available yet.';
+    $quietLaneReturnCheckpointConfirmationFrame = $formModel->quiet_lane_return_checkpoint_confirmation_frame ?? 'Quiet-lane return checkpoint confirmation framing is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Accept confirm</h4>
+            <p><?= e($acceptanceConfirmationCompression) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Checkpoint confirm</h4>
+            <p><?= e($quietLaneReturnCheckpointConfirmation) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Compression digest</label>
+        <pre><?= e($acceptanceConfirmationCompressionDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Confirmation frame</label>
+        <pre><?= e($quietLaneReturnCheckpointConfirmationFrame) ?></pre>
+    </div>
+</div>

@@ -228,3 +228,6 @@
 
 2.3.42:
   - 'Add acceptance alignment compression and quiet-lane return handoff confirmation to the loyalty workspace line'
+
+2.3.43:
+  - 'Add acceptance confirmation compression and quiet-lane return checkpoint confirmation to the loyalty workspace line'

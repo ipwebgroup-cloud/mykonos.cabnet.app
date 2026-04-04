@@ -1035,45 +1035,45 @@ tabs:
             span: full
             comment: Conservative return checkpoint handoff compression and owner-visible same-day acceptance alignment panel without widening the workspace into automation.
 
-        acceptance_alignment_compression_label:
-            label: Acceptance Alignment Compression
+        acceptance_confirmation_compression_label:
+            label: Acceptance Confirmation Compression
             tab: Overview
             readOnly: true
             span: left
-            comment: Narrow acceptance compression cue that keeps the same-day owner move readable across the list, overview, and linked inquiry snapshot.
+            comment: Narrow acceptance confirmation cue that keeps the same-day owner checkpoint readable across the list, overview, and linked inquiry snapshot.
 
-        quiet_lane_return_handoff_confirmation_label:
-            label: Quiet-Lane Return Handoff Confirmation
+        quiet_lane_return_checkpoint_confirmation_label:
+            label: Quiet-Lane Return Checkpoint Confirmation
             tab: Overview
             readOnly: true
             span: right
-            comment: Quiet return confirmation cue that keeps the handoff signal readable across the list, overview, and linked inquiry snapshot.
+            comment: Quiet return checkpoint confirmation cue that keeps the checkpoint signal readable across the list, overview, and linked inquiry snapshot.
 
-        acceptance_alignment_compression_digest:
-            label: Acceptance Alignment Compression Digest
+        acceptance_confirmation_compression_digest:
+            label: Acceptance Confirmation Compression Digest
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: left
-            comment: Ordered digest joining the acceptance alignment compression, quiet-lane return handoff confirmation, and the related timing cues into one read.
+            comment: Ordered digest joining the acceptance confirmation compression, quiet-lane return checkpoint confirmation, and the related timing cues into one read.
 
-        quiet_lane_return_handoff_confirmation_frame:
-            label: Quiet-Lane Return Handoff Confirmation Frame
+        quiet_lane_return_checkpoint_confirmation_frame:
+            label: Quiet-Lane Return Checkpoint Confirmation Frame
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: right
-            comment: Read-only framing for how the same-day acceptance move should stay compressed while the quiet-lane return handoff remains easy to confirm across every surface.
+            comment: Read-only framing for how the same-day acceptance move should stay compressed while the quiet-lane return checkpoint remains easy to confirm across every surface.
 
-        acceptance_alignment_compression_quiet_lane_return_handoff_confirmation_panel:
-            label: Acceptance Alignment Compression and Quiet-Lane Return Handoff Confirmation
+        acceptance_confirmation_compression_quiet_lane_return_checkpoint_confirmation_panel:
+            label: Acceptance Confirmation Compression and Quiet-Lane Return Checkpoint Confirmation
             type: partial
-            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_acceptance_alignment_compression_quiet_lane_return_handoff_confirmation_panel.htm
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_acceptance_confirmation_compression_quiet_lane_return_checkpoint_confirmation_panel.htm
             tab: Overview
             span: full
-            comment: Conservative acceptance alignment compression and quiet-lane return handoff confirmation panel without widening the workspace into automation.
+            comment: Conservative acceptance confirmation compression and quiet-lane return checkpoint confirmation panel without widening the workspace into automation.
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness
