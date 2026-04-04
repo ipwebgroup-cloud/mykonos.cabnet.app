@@ -1,7 +1,39 @@
 <?php
-$loyaltyStorageReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord')
-    ? \Cabnet\MykonosInquiry\Models\LoyaltyRecord::workspaceStorageReady()
+$loyaltyModelClass = '\Cabnet\MykonosInquiry\Models\LoyaltyRecord';
+$inquiryModelClass = '\Cabnet\MykonosInquiry\Models\Inquiry';
+$loyaltyStorageReady = class_exists($loyaltyModelClass)
+    ? $loyaltyModelClass::workspaceStorageReady()
     : false;
+$loyaltyRecordCount = $loyaltyStorageReady && class_exists($loyaltyModelClass)
+    ? $loyaltyModelClass::workspaceRecordCount()
+    : 0;
+$emptyStateGuidance = null;
+
+if ($loyaltyStorageReady && $loyaltyRecordCount === 0 && class_exists($inquiryModelClass)) {
+    $postureCounts = $inquiryModelClass::getLoyaltyQueuePostureCounts();
+    $transferReady = (int) ($postureCounts['transfer_ready']['value'] ?? 0);
+    $draftReady = (int) ($postureCounts['draft_ready']['value'] ?? 0);
+    $queueOnly = (int) ($postureCounts['queue_only']['value'] ?? 0);
+
+    $headline = 'No loyalty records have been saved yet.';
+    $body = 'Use Inquiry Queue to transfer the first finished inquiry into continuity with real inquiry context already carried over.';
+
+    if ($transferReady > 0) {
+        $headline = 'The loyalty workspace is empty, but continuity-ready inquiries already exist.';
+        $body = $transferReady . ' queue item(s) are already transfer-ready. Start from Inquiry Queue so the first loyalty record opens with real source context instead of a blank manual draft.';
+    } elseif ($draftReady > 0) {
+        $headline = 'The loyalty workspace is empty, but seeded draft candidates already exist.';
+        $body = $draftReady . ' queue item(s) can already open a prefilled loyalty draft. Start from Inquiry Queue to avoid duplicate entry and preserve the inquiry-to-loyalty bridge.';
+    } elseif ($queueOnly > 0) {
+        $body = 'The workspace is ready, but current inquiries still belong in live queue handling. Move the first record into loyalty only when retention, referral, or return-value continuity becomes explicit.';
+    }
+
+    $emptyStateGuidance = [
+        'headline' => $headline,
+        'body' => $body,
+        'counts' => $postureCounts,
+    ];
+}
 
 $guardedPartials = [
     'install_state_overview',
@@ -94,6 +126,11 @@ foreach ($guardedPartials as $partialName) {
             </div>
         </div>
     <?php else: ?>
+        <?php if (!empty($emptyStateGuidance)): ?>
+            <div class="layout-row">
+                <?= $this->makePartial('workspace_empty_state_guidance_panel', ['guidance' => $emptyStateGuidance]) ?>
+            </div>
+        <?php endif; ?>
         <div class="layout-row">
             <?= $this->listRender() ?>
         </div>

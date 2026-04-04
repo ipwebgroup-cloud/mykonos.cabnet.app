@@ -1,0 +1,86 @@
+<?php
+$guidance = $guidance ?? [];
+$counts = (array) ($guidance['counts'] ?? []);
+$cards = [
+    [
+        'label' => 'Transfer-ready inquiries',
+        'value' => (int) ($counts['transfer_ready']['value'] ?? 0),
+        'hint'  => 'Closed or continuity-ready inquiries that can move into a real loyalty record now.',
+        'tone'  => 'warning',
+    ],
+    [
+        'label' => 'Draft-ready inquiries',
+        'value' => (int) ($counts['draft_ready']['value'] ?? 0),
+        'hint'  => 'Use a seeded loyalty draft when the continuity signal is clear but the final transfer is not yet complete.',
+        'tone'  => 'primary',
+    ],
+    [
+        'label' => 'Queue-only inquiries',
+        'value' => (int) ($counts['queue_only']['value'] ?? 0),
+        'hint'  => 'These should stay in live inquiry handling until the continuity reason becomes explicit.',
+        'tone'  => 'neutral',
+    ],
+];
+
+$paletteFor = function ($tone) {
+    switch ($tone) {
+        case 'warning':
+            return ['border' => '#fd7e14', 'bg' => '#fff8f0', 'text' => '#9a4d00'];
+        case 'primary':
+            return ['border' => '#0d6efd', 'bg' => '#eef5ff', 'text' => '#084298'];
+        default:
+            return ['border' => '#6c757d', 'bg' => '#f7f8f9', 'text' => '#495057'];
+    }
+};
+
+$headline = (string) ($guidance['headline'] ?? 'Loyalty Continuity is live but still empty.');
+$body = (string) ($guidance['body'] ?? 'Start from Inquiry Queue when a finished inquiry needs retention, referral, or return-value continuity, then open a seeded draft or create the loyalty record directly from the queue row.');
+$inquiryQueueUrl = Backend::url('cabnet/mykonosinquiry/inquiries');
+$createUrl = Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create');
+?>
+<div class="callout fade in no-subheader" style="border-radius:14px;border:1px solid #cfe2ff;background:#f8fbff;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:16px;">
+    <div class="header">
+        <i class="icon-random" style="color:#084298"></i>
+        <h4 style="margin-top:0;color:#084298;">Loyalty Continuity is live and ready for the first real record</h4>
+        <p style="color:#084298;opacity:.92;">
+            <?= e($headline) ?>
+        </p>
+    </div>
+    <div class="content">
+        <p style="margin-bottom:12px;color:#084298;opacity:.9;">
+            <?= e($body) ?>
+        </p>
+
+        <div class="row">
+            <?php foreach ($cards as $card): ?>
+                <?php $palette = $paletteFor($card['tone']); ?>
+                <div class="col-md-4 col-sm-6" style="margin-bottom:12px;">
+                    <div style="border:1px solid <?= e($palette['border']) ?>; background:<?= e($palette['bg']) ?>; border-radius:12px; padding:14px 16px; min-height:100%;">
+                        <div style="font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:<?= e($palette['text']) ?>; opacity:.8; margin-bottom:8px;">
+                            <?= e($card['label']) ?>
+                        </div>
+                        <div style="font-size:28px; line-height:1; font-weight:700; color:<?= e($palette['text']) ?>; margin-bottom:8px;">
+                            <?= e((string) $card['value']) ?>
+                        </div>
+                        <div style="font-size:13px; color:<?= e($palette['text']) ?>; opacity:.9;">
+                            <?= e($card['hint']) ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="control-list" style="margin-top:8px;">
+            <ul>
+                <li><strong>Best first path:</strong> open <strong>Inquiry Queue</strong>, use the queue-side <strong>Loyalty Actions</strong> lane, and start from <strong>Create + open loyalty</strong> or <strong>Open draft</strong> so the record is seeded from real inquiry context.</li>
+                <li><strong>Manual create</strong> is now safe, but it should be used mainly when there is no source inquiry to transfer from.</li>
+                <li><strong>Empty list is normal right now:</strong> the workspace is fixed and live; it simply has no saved continuity records yet.</li>
+            </ul>
+        </div>
+
+        <div class="btn-group" style="margin-top:10px;">
+            <a href="<?= e($inquiryQueueUrl) ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
+            <a href="<?= e($createUrl) ?>" class="btn btn-default oc-icon-plus">Open manual loyalty draft</a>
+        </div>
+    </div>
+</div>

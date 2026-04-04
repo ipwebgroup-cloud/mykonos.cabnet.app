@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.40.7 inquiry queue loyalty posture badge strip and filter-mirror guidance patch`
+- `v6.40.8 loyalty continuity empty-state guidance patch`
 
 This is a continuity hint only.
 
@@ -143,7 +143,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, and compact continuity-count framing. A real runtime edge was found in the `Loyalty Posture` filter popup, so keep queue-side loyalty filters render-safe first and avoid option-resolution patterns that depend on a null model context. Prefer keeping loyalty-routing improvements queue-native before adding broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, and a filter-mirror badge strip. The loyalty workspace is live but can still look confusing when it is empty, so prefer first-record guidance and queue-native transfer clarity before broader workflow expansion.
 
 ---
 

@@ -296,3 +296,6 @@
 
 2.3.64:
   - "Add Inquiry Queue loyalty-posture badge strip and filter-mirror guidance to the queue overview"
+
+2.3.65:
+  - "Add Loyalty Continuity empty-state guidance so the first records are seeded from Inquiry Queue instead of a blank list"

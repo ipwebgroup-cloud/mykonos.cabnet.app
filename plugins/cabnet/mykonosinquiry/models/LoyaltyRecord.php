@@ -132,6 +132,15 @@ class LoyaltyRecord extends Model
         return (bool) static::getWorkspaceInstallState()['touchpoint_schema_ready'];
     }
 
+    public static function workspaceRecordCount(): int
+    {
+        if (!static::workspaceStorageReady()) {
+            return 0;
+        }
+
+        return (int) static::query()->count();
+    }
+
     public function getContinuityStatusOptions(): array
     {
         return [

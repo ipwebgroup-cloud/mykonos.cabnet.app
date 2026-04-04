@@ -79,18 +79,18 @@ The current long-running line remains the guarded:
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, and compact transfer-count framing
-- a real runtime edge remained in the `Loyalty Posture` filter popup, so the current production-safe move is a conservative queue-overview polish that mirrors the live `Loyalty Posture` filter buckets directly in the command board with compact badge guidance
+- a real runtime edge remained in the `Loyalty Posture` filter popup, so the current production-safe move is a conservative loyalty-list empty-state guidance step so the first real continuity records are seeded from Inquiry Queue instead of a confusing blank live list
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.7 inquiry queue loyalty posture badge strip and filter-mirror guidance patch`
-- plugin tracking `2.3.64`
+- `v6.40.8 loyalty continuity empty-state guidance patch`
+- plugin tracking `2.3.65`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the `Loyalty Posture` filter active on the Inquiry Queue but inlines its option set directly in YAML so the popup renders without the null-model method resolution error.
+It keeps the Inquiry Queue loyalty bridge intact and adds a first-record guidance panel on the Loyalty Continuity list so operators know when to start from Inquiry Queue instead of a blank manual list.
 
 ---
 
@@ -114,6 +114,8 @@ Then verify:
 - confirm the Queue overview now shows a compact loyalty-routing summary block with counts for linked, transfer-ready, draft-ready, queue-only, and workspace-staged workload
 - confirm opening the `Loyalty Posture` filter popup no longer throws an error
 - confirm the queue overview shows a compact loyalty-posture badge strip that mirrors the live filter buckets
+- confirm Loyalty Continuity shows a first-record guidance panel when the live loyalty list is empty
+- confirm the guidance panel points operators back to Inquiry Queue or manual draft creation as appropriate
 - confirm the list workspace overview still shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save
