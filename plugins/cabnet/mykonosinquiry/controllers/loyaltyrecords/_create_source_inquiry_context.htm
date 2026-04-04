@@ -1,0 +1,53 @@
+<?php
+$seedInquiryId = (int) input('source_inquiry_id', 0);
+$seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find($seedInquiryId) : null;
+
+if (!$seedInquiry && $seedInquiryId <= 0) {
+    return;
+}
+
+if ($seedInquiry) {
+    $reference = trim((string) $seedInquiry->request_reference);
+    $guest = trim((string) $seedInquiry->full_name);
+    $headline = $reference !== '' && $guest !== '' ? $reference . ' · ' . $guest : ($reference !== '' ? $reference : ($guest !== '' ? $guest : 'Linked inquiry'));
+    $status = trim((string) $seedInquiry->status_label);
+    $priority = trim((string) $seedInquiry->priority_label);
+    $posture = $status !== '' && $priority !== '' ? $status . ' · ' . $priority : ($status !== '' ? $status : ($priority !== '' ? $priority : 'Source inquiry linked'));
+    $parts = [];
+    $owner = trim((string) ($seedInquiry->owner_display ?? ''));
+    $queue = trim((string) ($seedInquiry->follow_up_queue_summary ?? ''));
+    if ($owner !== '') {
+        $parts[] = 'Owner: ' . $owner;
+    }
+    if ($queue !== '') {
+        $parts[] = 'Queue: ' . $queue;
+    }
+    $hint = !empty($parts) ? implode(' · ', $parts) : 'Open the source inquiry to review its original queue posture and guest workflow context.';
+    $primaryUrl = Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $seedInquiry->id);
+    $secondaryUrl = Backend::url('cabnet/mykonosinquiry/inquiries') . '?' . http_build_query(['search' => trim((string) $seedInquiry->request_reference)]);
+}
+?>
+<div class="form-group span-full">
+    <?php if ($seedInquiry): ?>
+        <div style="line-height:1.35; border:1px solid #cfe2ff; background:#f7fbff; border-radius:10px; padding:12px 14px;">
+            <div style="font-weight:700; color:#084298; margin-bottom:4px;">Seeded from source inquiry</div>
+            <div style="font-weight:600; color:#17324d; margin-bottom:4px;"><?= e($headline) ?></div>
+            <div style="font-size:12px; color:#33577a; margin-bottom:6px;"><?= e($posture) ?></div>
+            <div style="font-size:11px; color:#33577a; opacity:0.95; margin-bottom:10px; white-space:normal;"><?= e($hint) ?></div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <a href="<?= e($primaryUrl) ?>" class="btn btn-default btn-sm">Open inquiry</a>
+                <a href="<?= e($secondaryUrl) ?>" class="btn btn-default btn-sm">Back to queue search</a>
+            </div>
+        </div>
+    <?php else: ?>
+        <div style="line-height:1.35; border:1px solid #ffe69c; background:#fff8e1; border-radius:10px; padding:12px 14px;">
+            <div style="font-weight:700; color:#8a5800; margin-bottom:4px;">Source inquiry lookup not found</div>
+            <div style="font-size:12px; color:#6b4a00; margin-bottom:8px; white-space:normal;">
+                The URL supplied <code>?source_inquiry_id=<?= e((string) $seedInquiryId) ?></code>, but no live inquiry record matched that id, so nothing was seeded into this draft.
+            </div>
+            <div>
+                <a href="<?= e(Backend::url('cabnet/mykonosinquiry/inquiries')) ?>" class="btn btn-default btn-sm">Open Inquiry Queue</a>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>

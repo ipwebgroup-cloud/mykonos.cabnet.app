@@ -21,6 +21,19 @@ $seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find(
             </p>
             <p>
                 <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $seedInquiry->id) ?>">Return to source inquiry</a>
+                &nbsp;·&nbsp;
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') . '?' . http_build_query(['search' => trim((string) $seedInquiry->request_reference)]) ?>">Back to queue search</a>
+            </p>
+        <?php elseif ($seedInquiryId > 0): ?>
+            <p>
+                <strong>Seed lookup not found for inquiry #<?= e((string) $seedInquiryId) ?>.</strong>
+                The create screen is still safe, but no inquiry context was loaded, so this draft is currently manual rather than inquiry-backed.
+            </p>
+            <p>
+                Confirm the inquiry still exists, then reopen the create URL from a real queue or inquiry-detail loyalty action instead of using the example placeholder id.
+            </p>
+            <p>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Open Inquiry Queue</a>
             </p>
         <?php else: ?>
             <p>

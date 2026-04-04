@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to keep loyalty routing context persistent across the loyalty update screen and then consider equally narrow queue-return context on seeded create-mode entry without widening the workflow
+- the next production-safe move is to keep create-mode render-safe while making inquiry-backed loyalty drafts explicitly show whether source context was found, missing, and how to return to the queue without widening the workflow
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.1 loyalty update-screen source inquiry backlink summary and queue-return cues patch`
+- `v6.41.1 loyalty create-mode source inquiry validation and backlink summary patch`
 - plugin tracking `2.3.68`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and carries the same source-inquiry backlink context onto the Loyalty Continuity update screen so operators can jump back to the originating inquiry or return to a queue search even after the initial bridge confirmation flash state is gone.
+It keeps the Inquiry Queue loyalty bridge intact and adds explicit create-mode source inquiry validation so seeded drafts show a real backlink summary when a valid inquiry is supplied, and a safe warning when an example or missing inquiry id is used instead.
 
 ---
 
@@ -104,6 +104,8 @@ Then verify:
 
 - Backend -> Mykonos Inquiries -> Loyalty Continuity
 - click `New Loyalty Record` and confirm create opens cleanly
+- open `/admin/cabnet/mykonosinquiry/loyaltyrecords/create?source_inquiry_id=REAL_ID` and confirm the create screen shows a source inquiry summary with `Open inquiry` and `Back to queue search`
+- open `/admin/cabnet/mykonosinquiry/loyaltyrecords/create?source_inquiry_id=123` with a non-existing id and confirm the create screen shows a safe lookup warning instead of pretending prefill is active
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
@@ -127,9 +129,6 @@ Then verify:
 - confirm the loyalty list now shows a `Source Inquiry` backlink strip on each row
 - confirm linked loyalty rows can use `Open inquiry` directly from the list
 - confirm linked loyalty rows can use `Back to queue search` directly from the list
-- open a linked loyalty record from the list and confirm the update screen now shows the same source inquiry backlink summary block
-- confirm the update screen can use both `Open inquiry` and `Back to queue search` without depending on the initial bridge banner
-- confirm the queue transfer confirmation banner now also exposes a direct `Back to queue search` action
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.

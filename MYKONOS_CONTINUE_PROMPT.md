@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.1 loyalty update-screen source inquiry backlink summary and queue-return cues patch`
+- `v6.41.1 loyalty create-mode source inquiry validation and backlink summary patch`
 
 This is a continuity hint only.
 
@@ -78,7 +78,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, and filter-mirror guidance directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
-- keep source-inquiry backlink context and queue-return routing persistent on the loyalty update screen after the initial bridge flash state
+- make create-mode clearly distinguish valid inquiry-backed drafts from manual drafts or missing-id seed attempts
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 

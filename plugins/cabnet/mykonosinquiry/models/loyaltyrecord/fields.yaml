@@ -18,6 +18,14 @@ fields:
         span: right
         comment: Read-only originating inquiry link reference. Append ?source_inquiry_id=INQUIRY_ID to the create URL to prefill from an inquiry.
 
+    create_source_inquiry_context:
+        label: Source Inquiry Context
+        type: partial
+        context: create
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_create_source_inquiry_context.htm
+        span: full
+        comment: Create-mode backlink summary and seed validation for inquiry-backed loyalty drafts.
+
 tabs:
     fields:
         source_inquiry_link:
@@ -27,7 +35,7 @@ tabs:
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_source_inquiry_link.htm
             tab: Overview
             span: full
-            comment: Persistent source inquiry backlink summary with direct return cues back into the filtered Inquiry Queue.
+            comment: Direct jump back to the originating inquiry record.
 
         guest_snapshot:
             label: Guest Snapshot
