@@ -302,3 +302,6 @@
 
 2.3.66:
   - "Add a loyalty first-record confirmation banner after queue transfer and linked-record reopen"
+
+2.3.67:
+  - "Add Loyalty Continuity list-row source inquiry backlink strip and queue-return cues"

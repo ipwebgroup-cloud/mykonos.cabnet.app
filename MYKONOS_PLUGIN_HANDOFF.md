@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.9 loyalty first-record confirmation banner after queue transfer patch`
-- plugin tracking `2.3.66`
+- `v6.41.0 loyalty list-row source inquiry backlink strip and queue-return cues patch`
+- plugin tracking `2.3.67`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and adds a queue-transfer confirmation banner on the loyalty update screen so operators can see when the bridge created the first live continuity record or reopened an existing linked one.
+It keeps the Inquiry Queue loyalty bridge intact and adds a visible source-inquiry backlink strip directly on each Loyalty Continuity list row so operators can jump back to the originating inquiry or return to a queue search without opening the loyalty record first.
 
 ---
 
@@ -124,6 +124,9 @@ Then verify:
 - confirm the loyalty update screen shows a bridge confirmation banner
 - confirm the banner distinguishes `record created` versus `existing record reopened`
 - confirm the banner explicitly says when the transfer created the first live loyalty record
+- confirm the loyalty list now shows a `Source Inquiry` backlink strip on each row
+- confirm linked loyalty rows can use `Open inquiry` directly from the list
+- confirm linked loyalty rows can use `Back to queue search` directly from the list
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.

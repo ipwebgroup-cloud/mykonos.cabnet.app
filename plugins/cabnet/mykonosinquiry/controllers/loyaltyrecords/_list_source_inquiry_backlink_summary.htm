@@ -1,0 +1,41 @@
+<?php
+$loyalty = $record ?? $model ?? null;
+
+if (!$loyalty) {
+    return;
+}
+
+$reference = $loyalty->source_inquiry_backlink_reference_label;
+$posture = $loyalty->source_inquiry_backlink_posture_label;
+$hint = $loyalty->source_inquiry_backlink_hint;
+$primaryUrl = $loyalty->source_inquiry_backlink_url;
+$primaryLabel = $loyalty->source_inquiry_backlink_action_label;
+$secondaryUrl = $loyalty->source_inquiry_queue_return_url;
+$secondaryLabel = $loyalty->source_inquiry_queue_return_label;
+$linked = $primaryUrl !== null;
+$border = $linked ? '#cfe2ff' : '#e5e7eb';
+$bg = $linked ? '#f7fbff' : '#f8f9fa';
+$title = $linked ? '#084298' : '#495057';
+$text = $linked ? '#33577a' : '#6c757d';
+?>
+<div style="min-width:255px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
+    <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
+        <?= e($reference) ?>
+    </div>
+    <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:6px;">
+        <?= e($posture) ?>
+    </div>
+    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; margin-bottom:8px; white-space:normal;">
+        <?= e($hint) ?>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:6px;">
+        <?php if ($primaryUrl): ?>
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary"><?= e($primaryLabel) ?></a>
+        <?php else: ?>
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;"><?= e($primaryLabel) ?></span>
+        <?php endif; ?>
+        <?php if ($secondaryUrl): ?>
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default"><?= e($secondaryLabel) ?></a>
+        <?php endif; ?>
+    </div>
+</div>

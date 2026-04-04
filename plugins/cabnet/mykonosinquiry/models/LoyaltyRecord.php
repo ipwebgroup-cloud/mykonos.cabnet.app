@@ -303,6 +303,110 @@ class LoyaltyRecord extends Model
         return $reference !== '' ? $reference : ($guest !== '' ? $guest : 'Linked inquiry');
     }
 
+    public function getSourceInquiryBacklinkReferenceLabelAttribute(): string
+    {
+        if (!$this->source_inquiry) {
+            return 'No source inquiry linked';
+        }
+
+        $reference = trim((string) $this->source_inquiry->request_reference);
+        $guest = trim((string) $this->source_inquiry->full_name);
+
+        if ($reference !== '' && $guest !== '') {
+            return $reference . ' · ' . $guest;
+        }
+
+        if ($reference !== '') {
+            return $reference;
+        }
+
+        if ($guest !== '') {
+            return $guest;
+        }
+
+        return 'Linked inquiry';
+    }
+
+    public function getSourceInquiryBacklinkPostureLabelAttribute(): string
+    {
+        if (!$this->source_inquiry) {
+            return 'Manual loyalty record';
+        }
+
+        $status = trim((string) $this->source_inquiry->status_label);
+        $priority = trim((string) $this->source_inquiry->priority_label);
+
+        if ($status !== '' && $priority !== '') {
+            return $status . ' · ' . $priority;
+        }
+
+        if ($status !== '') {
+            return $status;
+        }
+
+        if ($priority !== '') {
+            return $priority;
+        }
+
+        return 'Source inquiry linked';
+    }
+
+    public function getSourceInquiryBacklinkHintAttribute(): string
+    {
+        if (!$this->source_inquiry) {
+            return 'This record was created directly in Loyalty Continuity and does not point back to an originating inquiry.';
+        }
+
+        $parts = [];
+
+        $owner = trim((string) ($this->source_inquiry->owner_display ?? ''));
+        $queue = trim((string) ($this->source_inquiry->follow_up_queue_summary ?? ''));
+
+        if ($owner !== '') {
+            $parts[] = 'Owner: ' . $owner;
+        }
+
+        if ($queue !== '') {
+            $parts[] = 'Queue: ' . $queue;
+        }
+
+        if (empty($parts)) {
+            return 'Open the source inquiry to review its original queue posture and guest workflow context.';
+        }
+
+        return implode(' · ', $parts);
+    }
+
+    public function getSourceInquiryBacklinkUrlAttribute(): ?string
+    {
+        if (!$this->source_inquiry) {
+            return null;
+        }
+
+        return \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $this->source_inquiry->id);
+    }
+
+    public function getSourceInquiryBacklinkActionLabelAttribute(): string
+    {
+        return $this->source_inquiry ? 'Open inquiry' : 'No source inquiry';
+    }
+
+    public function getSourceInquiryQueueReturnUrlAttribute(): string
+    {
+        if (!$this->source_inquiry) {
+            return \Backend::url('cabnet/mykonosinquiry/inquiries');
+        }
+
+        return \Backend::url('cabnet/mykonosinquiry/inquiries') . '?' . http_build_query([
+            'search' => trim((string) $this->source_inquiry->request_reference),
+        ]);
+    }
+
+    public function getSourceInquiryQueueReturnLabelAttribute(): string
+    {
+        return $this->source_inquiry ? 'Back to queue search' : 'Open Inquiry Queue';
+    }
+
     public function getGuestSnapshotAttribute(): string
     {
         return $this->formatSummary([

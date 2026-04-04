@@ -144,7 +144,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, and a filter-mirror badge strip. The loyalty workspace is live but can still look confusing when it is empty, so prefer first-record guidance and queue-native transfer clarity before broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, and a filter-mirror badge strip. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, and direct source-inquiry backlink visibility from the loyalty list. Prefer direct queue-to-loyalty clarity before broader workflow expansion.
 
 ---
 
