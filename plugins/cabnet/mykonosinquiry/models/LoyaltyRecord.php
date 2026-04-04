@@ -5986,6 +5986,166 @@ public function getQuietLaneReturnCheckpointFrameCueFrameAttribute(): string
 }
 
 
+public function getQueueScanPrioritizationCueLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'P1 / reopened proof review now';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'P1 / assign owner and review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'P1 / quiet checkpoint overdue';
+
+            case 'Due today':
+                return 'P1 / quiet checkpoint today';
+
+            case 'Due soon':
+                return 'P2 / quiet checkpoint due soon';
+
+            case 'Near-term':
+                return 'P3 / quiet checkpoint near-term';
+
+            case 'Future':
+                return 'P4 / future quiet checkpoint';
+
+            case 'Unscheduled':
+                return 'P2 / quiet checkpoint missing';
+        }
+
+        return 'P3 / quiet checkpoint forming';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'P2 / finish packet decision';
+
+        case 'Closure packet prepared':
+            return 'P2 / finish choice checkpoint';
+
+        case 'Execution still open':
+            return 'P2 / execution follow-through';
+
+        case 'Prepared but not yet executed':
+            return 'P2 / prepared follow-through';
+
+        case 'Timed for later finish':
+            return 'P4 / timed finish watch';
+    }
+
+    if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'P1 / review window due';
+    }
+
+    if ($this->next_review_window_label === 'Due soon') {
+        return 'P2 / review window due soon';
+    }
+
+    if ($this->next_review_at) {
+        return 'P3 / review slot scheduled';
+    }
+
+    return 'P4 / quiet human watch';
+}
+
+public function getHumanReviewTimingClarityLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return trim((string) $this->owner_name) === ''
+            ? 'Review now / assign owner immediately'
+            : 'Review now / reopened lane is live';
+    }
+
+    if (!$this->next_review_at) {
+        return trim((string) $this->owner_name) === ''
+            ? 'Timing open / assign owner and set checkpoint'
+            : 'Timing open / set next human checkpoint';
+    }
+
+    switch ($this->next_review_window_label) {
+        case 'Overdue':
+            return trim((string) $this->owner_name) === ''
+                ? 'Review now / overdue and owner missing'
+                : 'Review now / overdue checkpoint';
+
+        case 'Due today':
+            return trim((string) $this->owner_name) === ''
+                ? 'Review this shift / assign owner first'
+                : 'Review this shift / same-day checkpoint';
+
+        case 'Due soon':
+            return 'Review soon / next 3 days';
+
+        case 'Near-term':
+            return 'Review queued / next 14 days';
+
+        case 'Future':
+            return 'Review later / future quiet slot';
+
+        default:
+            return 'Review timing forming / checkpoint still settling';
+    }
+}
+
+public function getQueueScanPrioritizationCueDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Queue priority' => $this->queue_scan_prioritization_cue_label,
+        'Review timing' => $this->human_review_timing_clarity_label,
+        'Handoff compression' => $this->acceptance_confirmation_handoff_compression_label,
+        'Checkpoint frame' => $this->quiet_lane_return_checkpoint_frame_cue_label,
+        'Queue watch' => $this->queue_watch_readiness_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Queue-scan prioritization digest is still minimal.');
+}
+
+public function getHumanReviewTimingClarityFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Queue priority: ' . $this->queue_scan_prioritization_cue_label . '.';
+    $lines[] = 'Review timing: ' . $this->human_review_timing_clarity_label . '.';
+    $lines[] = 'Handoff compression: ' . $this->acceptance_confirmation_handoff_compression_label . '.';
+    $lines[] = 'Checkpoint frame: ' . $this->quiet_lane_return_checkpoint_frame_cue_label . '.';
+    $lines[] = 'Queue watch: ' . $this->queue_watch_readiness_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, this record should rise to the top of the human queue immediately. The timing cue exists to remove hesitation: review the reopened lane now, and assign a named owner first if one is still missing.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the checkpoint is already due but no owner is named yet, the queue priority must stay high. The first real move is not another compression pass; it is to assign ownership so the review timing can remain credible across the list, overview, and linked inquiry snapshot.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane checkpoint is overdue, this record should surface as a P1 review now item. The timing cue keeps the return checkpoint human and immediate without widening the workflow into automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the quiet-lane checkpoint lands today, this record should stay near the top of the queue for the current shift. The timing cue keeps the same-day review explicit so the operator does not have to re-translate the quieter loyalty signals.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the quiet-lane checkpoint is due soon, the record should remain visible but not noisy. The timing cue keeps the next three-day window readable early without pretending that the record already belongs in an immediate lane.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the review window is near-term, the workspace can stay conservative and scheduled. The queue priority remains moderate while the timing cue keeps the upcoming checkpoint easy to spot during routine human scans.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the review window still belongs to a future quiet slot, this record can stay lower in the queue without disappearing. The timing cue protects that later checkpoint from being forgotten while keeping the current lane calm.';
+        } else {
+            $lines[] = 'Because a parked quiet-lane checkpoint still has no usable date, the queue priority must stay moderately elevated until a real human checkpoint is set. The timing cue exists so the missing slot is visible immediately.';
+        }
+    } elseif (in_array($this->closure_readiness_label, ['Ready for finish packet', 'Closure packet prepared'], true)) {
+        $lines[] = 'Because the finish posture is already commercially mature, this record belongs in a deliberate decision queue rather than a vague background watch. The timing cue keeps the next human checkpoint explicit so prepared work does not drift.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because follow-through execution is still open, this record should remain above passive watch items until the loop closes or timing is deliberately deferred. The timing cue tells the operator whether that move is now, soon, or already scheduled.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, the queue priority can stay low and the human checkpoint can remain scheduled. The timing cue exists to protect that deliberate later move without adding pressure or automation.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, queue priority and review timing should stay narrow human scan aids only. They compress the final translation from loyalty posture into operator action without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

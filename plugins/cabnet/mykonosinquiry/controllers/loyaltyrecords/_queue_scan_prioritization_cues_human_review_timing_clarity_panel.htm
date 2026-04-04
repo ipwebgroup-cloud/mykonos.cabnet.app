@@ -1,0 +1,29 @@
+<?php
+    $queueScanPriority = $formModel->queue_scan_prioritization_cue_label ?? 'No queue-scan prioritization cue yet';
+    $humanReviewTiming = $formModel->human_review_timing_clarity_label ?? 'No human review timing clarity yet';
+    $queueScanPriorityDigest = $formModel->queue_scan_prioritization_cue_digest ?? 'Queue-scan prioritization digest is not available yet.';
+    $humanReviewTimingFrame = $formModel->human_review_timing_clarity_frame ?? 'Human review timing clarity frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Queue priority</h4>
+            <p><?= e($queueScanPriority) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Review timing</h4>
+            <p><?= e($humanReviewTiming) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Priority digest</label>
+        <pre><?= e($queueScanPriorityDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Timing frame</label>
+        <pre><?= e($humanReviewTimingFrame) ?></pre>
+    </div>
+</div>

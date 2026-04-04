@@ -234,3 +234,6 @@
 
 2.3.44:
   - 'Add acceptance confirmation handoff compression and quiet-lane return checkpoint framing to the loyalty workspace line'
+
+2.3.45:
+  - 'Add queue-scan prioritization cues and human review timing clarity to the loyalty workspace line'

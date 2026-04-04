@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.30.0 acceptance confirmation handoff compression and quiet-lane return checkpoint framing workspace`
+- `v6.31.0 queue-scan prioritization cues and human review timing clarity workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -148,6 +148,8 @@ This means the current workspace already includes the earlier conservative loyal
 - quiet-lane return checkpoint confirmation
 - acceptance confirmation handoff compression
 - quiet-lane return checkpoint framing
+- queue-scan prioritization cues
+- human review timing clarity
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.

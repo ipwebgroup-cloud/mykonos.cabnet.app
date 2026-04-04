@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.30.0 acceptance confirmation handoff compression and quiet-lane return checkpoint framing workspace`
+- `v6.31.0 queue-scan prioritization cues and human review timing clarity workspace`
 
 This is a continuity hint only.
 
@@ -146,10 +146,10 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- acceptance checkpoint handoff compression
-- quiet-lane return confirmation framing
-- queue-scan prioritization cues
-- human review timing clarity
+- owner review-slot sequencing cues
+- queue backlog ordering visibility
+- same-day review checkpoint confirmation
+- reopen timing discipline
 
 But you must confirm this against the real uploaded files before deciding the next patch.
 

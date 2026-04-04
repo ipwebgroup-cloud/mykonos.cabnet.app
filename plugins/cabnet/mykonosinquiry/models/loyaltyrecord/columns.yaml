@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    acceptance_confirmation_handoff_compression_label:
-        label: Handoff Compress
+    queue_scan_prioritization_cue_label:
+        label: Queue Priority
         sortable: false
 
-    quiet_lane_return_checkpoint_frame_cue_label:
-        label: Checkpoint Frame
+    human_review_timing_clarity_label:
+        label: Review Timing
         sortable: false
 
 

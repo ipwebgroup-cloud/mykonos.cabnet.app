@@ -1115,6 +1115,46 @@ tabs:
             span: full
             comment: Conservative acceptance confirmation handoff compression and quiet-lane return checkpoint framing panel without widening the workspace into automation.
 
+        queue_scan_prioritization_cue_label:
+            label: Queue-Scan Prioritization Cue
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow priority cue that tells operators how aggressively this record should surface in the queue without widening the workspace into automation.
+
+        human_review_timing_clarity_label:
+            label: Human Review Timing Clarity
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Clear timing cue that keeps the next human review window readable across the list, overview, and linked inquiry snapshot.
+
+        queue_scan_prioritization_cue_digest:
+            label: Queue-Scan Prioritization Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining queue priority, human review timing clarity, and the related owner/checkpoint cues into one read.
+
+        human_review_timing_clarity_frame:
+            label: Human Review Timing Clarity Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for why this record should rise now, hold quietly, or wait for a scheduled human checkpoint.
+
+        queue_scan_prioritization_cues_human_review_timing_clarity_panel:
+            label: Queue-Scan Prioritization Cues and Human Review Timing Clarity
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_queue_scan_prioritization_cues_human_review_timing_clarity_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative queue-priority and review-timing panel without widening the loyalty workspace into campaign behavior or automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview
