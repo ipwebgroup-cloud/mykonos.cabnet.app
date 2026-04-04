@@ -1,0 +1,42 @@
+<?php
+$inquiry = $record ?? $model ?? null;
+
+if (!$inquiry) {
+    return;
+}
+
+$primaryUrl = $inquiry->loyalty_queue_primary_action_url;
+$secondaryUrl = $inquiry->loyalty_queue_secondary_action_url;
+$primaryLabel = $inquiry->loyalty_queue_primary_action_label;
+$secondaryLabel = $inquiry->loyalty_queue_secondary_action_label;
+$hint = $inquiry->loyalty_queue_action_hint;
+$primaryTone = 'default';
+
+if (strpos((string) $primaryLabel, 'Open loyalty') === 0 || strpos((string) $primaryLabel, 'Create + open loyalty') === 0) {
+    $primaryTone = 'primary';
+} elseif (strpos((string) $primaryLabel, 'Open draft') === 0) {
+    $primaryTone = 'default';
+}
+?>
+<div style="min-width:220px; line-height:1.35;">
+    <div style="margin-bottom:6px; display:flex; flex-wrap:wrap; gap:6px;">
+        <?php if ($primaryUrl): ?>
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
+                <?= e($primaryLabel) ?>
+            </a>
+        <?php else: ?>
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;">
+                <?= e($primaryLabel) ?>
+            </span>
+        <?php endif; ?>
+
+        <?php if ($secondaryUrl): ?>
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default">
+                <?= e($secondaryLabel) ?>
+            </a>
+        <?php endif; ?>
+    </div>
+    <div style="font-size:11px; color:#6c757d; white-space:normal; max-width:260px;">
+        <?= e($hint) ?>
+    </div>
+</div>

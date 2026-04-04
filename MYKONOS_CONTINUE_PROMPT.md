@@ -136,12 +136,14 @@ Continue in this style:
 - plugin-only
 - render-safe
 - schema-safe when possible
-- focused first on real activation state, then on readability
+- focused first on real activation state, then on readability and direct operator routing
 - avoid campaign behavior
 - avoid automation
 - avoid speculative expansion
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
+
+Inquiry Queue now includes loyalty visibility cues and direct queue-level continuity actions. Prefer keeping loyalty-routing improvements queue-native before adding broader workflow expansion.
 
 ---
 

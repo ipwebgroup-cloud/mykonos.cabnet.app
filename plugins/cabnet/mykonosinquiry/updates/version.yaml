@@ -278,3 +278,7 @@
 
 2.3.58:
   - "Surface loyalty-link visibility and transfer cues in the Inquiry Queue list"
+
+2.3.59:
+  - "Add direct loyalty-open and seeded-draft actions to the Inquiry Queue list"
+

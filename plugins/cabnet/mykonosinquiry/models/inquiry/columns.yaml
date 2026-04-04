@@ -29,6 +29,12 @@ columns:
         label: Loyalty Link
     loyalty_transfer_cue_label:
         label: Loyalty Cue
+    loyalty_queue_actions:
+        label: Loyalty Actions
+        type: partial
+        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
+        sortable: false
+        searchable: false
     last_contacted_at:
         label: Last Contacted
         type: datetime

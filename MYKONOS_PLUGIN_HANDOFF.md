@@ -79,18 +79,18 @@ The current long-running line remains the guarded:
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the immediate value move shifted from render safety to queue-level loyalty visibility and safer transfer guidance
-- the next real production-safe move is **Inquiry Queue loyalty-link visibility and transfer cues** so operators can see linked continuity posture and transfer readiness without opening each inquiry one by one
+- the current real production-safe move is **Inquiry Queue direct loyalty-open and seeded-draft actions** so operators can jump straight into the linked continuity record or a seeded draft without opening inquiry detail first
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.1 inquiry queue loyalty-link visibility and transfer cues patch`
-- plugin tracking `2.3.58`
+- `v6.40.2 inquiry queue direct loyalty-open and seeded-draft actions patch`
+- plugin tracking `2.3.59`
 
 This patch does not change schema and does not touch `/plan`.
-It surfaces `Loyalty Link` and `Loyalty Cue` directly on the Inquiry Queue list, adds queue-level `Linked to loyalty` and `Ready for loyalty` metrics, and keeps transfer decisions visible without opening each inquiry detail screen first.
+It adds a direct `Loyalty Actions` lane on the Inquiry Queue list so linked inquiries can open their loyalty record immediately, transfer-ready inquiries can create and open a live loyalty record directly from the queue, and prefill-ready inquiries can open a seeded draft without opening inquiry detail first.
 
 ---
 
@@ -104,7 +104,10 @@ Then verify:
 - Backend -> Mykonos Inquiries -> Loyalty Continuity
 - click `New Loyalty Record` and confirm create opens cleanly
 - open backend → `Mykonos Inquiries`
-- confirm the list shows `Loyalty Link` and `Loyalty Cue`
+- confirm the list shows `Loyalty Link`, `Loyalty Cue`, and `Loyalty Actions`
+- confirm linked inquiries can use `Open loyalty` directly from the queue
+- confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue
+- confirm prefill-ready inquiries can use `Open draft` directly from the queue
 - confirm the list workspace overview shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save

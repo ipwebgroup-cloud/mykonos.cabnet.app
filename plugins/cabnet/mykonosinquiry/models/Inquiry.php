@@ -323,6 +323,108 @@ class Inquiry extends Model
     }
 
 
+    public function getLoyaltyQueuePrimaryActionLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Workspace staged';
+        }
+
+        if ($this->getLinkedLoyaltyRecord()) {
+            return 'Open loyalty';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Create + open loyalty';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Open draft';
+        }
+
+        return 'Keep in queue';
+    }
+
+    public function getLoyaltyQueuePrimaryActionUrlAttribute(): ?string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {
+            return null;
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            return \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id);
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return \Backend::url('cabnet/mykonosinquiry/inquiries/openloyaltytransfer/' . $this->id);
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') . '?source_inquiry_id=' . $this->id;
+        }
+
+        return null;
+    }
+
+    public function getLoyaltyQueueSecondaryActionLabelAttribute(): string
+    {
+        if ($this->getLinkedLoyaltyRecord()) {
+            return 'Open inquiry';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Open draft';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Open inquiry';
+        }
+
+        return 'Review inquiry';
+    }
+
+    public function getLoyaltyQueueSecondaryActionUrlAttribute(): ?string
+    {
+        if (!$this->id) {
+            return null;
+        }
+
+        if (class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady()) {
+            if ($this->getLinkedLoyaltyRecord()) {
+                return \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $this->id);
+            }
+
+            if ($this->loyaltyTransferReady()) {
+                return \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') . '?source_inquiry_id=' . $this->id;
+            }
+        }
+
+        return \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $this->id);
+    }
+
+    public function getLoyaltyQueueActionHintAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Activate the loyalty workspace before using queue transfer actions.';
+        }
+
+        if ($this->getLinkedLoyaltyRecord()) {
+            return 'This inquiry already has continuity ownership; jump straight to the linked loyalty record or reopen the inquiry context.';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'This inquiry is transfer-ready and can open a live loyalty record directly from the queue.';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'This inquiry is not fully transfer-ready, but a seeded loyalty draft can be opened without leaving the queue.';
+        }
+
+        return 'Keep this record in the inquiry queue until ownership and next-step posture are clearer.';
+    }
+
+
     public function getFollowUpQueueStateAttribute(): string
     {
         if ($this->isClosedStatus($this->status)) {
