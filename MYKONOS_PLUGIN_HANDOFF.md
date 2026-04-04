@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.18.0 same-day checkpoint compression and owner-visible quiet-lane return handback framing workspace`
+- `v6.19.0 owner-confirmed same-day handback cueing and quiet-lane return checkpoint polish workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -124,6 +124,8 @@ This means the current workspace already includes the earlier conservative loyal
 - quiet-lane return scan compression
 - same-day checkpoint compression
 - owner-visible quiet-lane return handback framing
+- owner-confirmed same-day handback cueing
+- quiet-lane return checkpoint polish
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -225,16 +227,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve owner-confirmed same-day handback cueing after the new same-day checkpoint compression
-- improve quiet-lane return checkpoint polish after the new owner-visible handback framing
+- improve owner-held return checkpoint compression after the new owner-confirmed same-day handback cueing
+- improve same-day quiet-lane acknowledgement polish after the new return checkpoint framing
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.18.0` is:
+A likely next safe patch direction after `v6.19.0` is:
 
-- **owner-confirmed same-day handback cueing and quiet-lane return checkpoint polish**
+- **owner-held return checkpoint compression and same-day quiet-lane acknowledgement polish**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -272,7 +274,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.18.0 same-day checkpoint compression and owner-visible quiet-lane return handback framing workspace`
+- `v6.19.0 owner-confirmed same-day handback cueing and quiet-lane return checkpoint polish workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

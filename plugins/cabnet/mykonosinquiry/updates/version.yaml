@@ -199,3 +199,6 @@
 
 2.3.32:
   - 'Add same-day checkpoint compression and owner-visible quiet-lane return handback framing to the guarded loyalty workspace line'
+
+2.3.33:
+  - 'Add owner-confirmed same-day handback cueing and quiet-lane return checkpoint polish to the guarded loyalty workspace line'

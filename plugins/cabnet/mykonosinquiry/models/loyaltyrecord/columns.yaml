@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    same_day_checkpoint_compression_label:
-        label: Same-Day Checkpoint
+    owner_confirmed_same_day_handback_cue_label:
+        label: Handback Cue
         sortable: false
 
-    owner_visible_quiet_lane_return_handback_label:
-        label: Return Handback
+    quiet_lane_return_checkpoint_polish_label:
+        label: Return Checkpoint
         sortable: false
 
 

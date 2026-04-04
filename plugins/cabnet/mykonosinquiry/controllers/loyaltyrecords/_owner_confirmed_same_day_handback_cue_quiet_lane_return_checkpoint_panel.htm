@@ -1,0 +1,33 @@
+<?php
+$ownerConfirmedSameDayHandbackCue = $record ? $record->owner_confirmed_same_day_handback_cue_label : 'Owner-confirmed same-day handback cue is still forming';
+$quietLaneReturnCheckpointPolish = $record ? $record->quiet_lane_return_checkpoint_polish_label : 'Quiet-lane return checkpoint polish is still forming';
+$ownerConfirmedSameDayHandbackCueDigest = $record ? $record->owner_confirmed_same_day_handback_cue_digest : 'Owner-confirmed same-day handback cue digest is still minimal.';
+$quietLaneReturnCheckpointPolishFrame = $record ? $record->quiet_lane_return_checkpoint_polish_frame : 'Quiet-lane return checkpoint polish frame is still minimal.';
+?>
+<div class="callout callout-info no-subheader">
+    <div class="header">
+        <i class="icon-check-square-o"></i>
+        <h3>Owner-Confirmed Same-Day Handback Cueing and Quiet-Lane Return Checkpoint Polish</h3>
+    </div>
+    <div class="content">
+        <p>
+            Confirm the same-day handback once the next quiet-lane move is real, then polish the return checkpoint so the loyalty list, overview workspace, and linked inquiry snapshot all point to the same owner-held next control point.
+        </p>
+        <div class="scoreboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;">
+            <div class="scoreboard-item title-value">
+                <h4>Owner-confirmed same-day handback cue</h4>
+                <p><?= e($ownerConfirmedSameDayHandbackCue) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane return checkpoint polish</h4>
+                <p><?= e($quietLaneReturnCheckpointPolish) ?></p>
+            </div>
+        </div>
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Digest:</strong> <?= e($ownerConfirmedSameDayHandbackCueDigest) ?></li>
+                <li><strong>Frame:</strong> <?= e($quietLaneReturnCheckpointPolishFrame) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>

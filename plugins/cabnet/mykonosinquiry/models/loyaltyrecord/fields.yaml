@@ -714,6 +714,46 @@ tabs:
             span: full
             comment: Conservative same-day checkpoint compression and owner-visible quiet-lane return handback panel without widening the workspace into automation.
 
+        owner_confirmed_same_day_handback_cue_label:
+            label: Owner-Confirmed Same-Day Handback Cue
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-confirmed cue that keeps the same-day handback explicit once the next quiet-lane move is real and visibly owned.
+
+        quiet_lane_return_checkpoint_polish_label:
+            label: Quiet-Lane Return Checkpoint Polish
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Polished quiet-lane return checkpoint cue that keeps the next readable control point aligned across the list, overview, and linked inquiry snapshot.
+
+        owner_confirmed_same_day_handback_cue_digest:
+            label: Owner-Confirmed Same-Day Handback Cue Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-confirmed same-day handback cueing, quiet-lane return checkpoint polish, and the related timing cues into one read.
+
+        quiet_lane_return_checkpoint_polish_frame:
+            label: Quiet-Lane Return Checkpoint Polish Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet-lane return checkpoint should stay same-day aware, owner-confirmed, and tightly readable across every surface.
+
+        owner_confirmed_same_day_handback_cue_quiet_lane_return_checkpoint_panel:
+            label: Owner-Confirmed Same-Day Handback Cueing and Quiet-Lane Return Checkpoint Polish
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_confirmed_same_day_handback_cue_quiet_lane_return_checkpoint_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-confirmed same-day handback cueing and quiet-lane return checkpoint panel without widening the workspace into automation.
+
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness
