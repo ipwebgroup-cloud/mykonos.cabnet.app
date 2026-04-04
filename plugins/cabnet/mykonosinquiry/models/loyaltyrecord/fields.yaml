@@ -474,6 +474,46 @@ tabs:
             span: full
             comment: Conservative hold-compression and quiet re-entry panel without widening the workspace into automation.
 
+        hold_expiry_group_label:
+            label: Hold-Expiry Group
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Conservative group showing whether the quiet hold is already expired, due now, approaching expiry, stable for later, or missing a clear schedule.
+
+        quiet_lane_reentry_order_label:
+            label: Quiet-Lane Re-Entry Order
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Human-scan ordering cue showing where the quiet lane belongs in re-entry review without introducing automation.
+
+        hold_expiry_grouping_digest:
+            label: Hold-Expiry Grouping Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Read-only digest tying hold-expiry grouping to quiet-lane re-entry ordering and the active review window cues.
+
+        quiet_lane_reentry_order_frame:
+            label: Quiet-Lane Re-Entry Order Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet hold should be grouped and ordered in human review.
+
+        hold_expiry_grouping_quiet_reentry_order_panel:
+            label: Hold-Expiry Grouping and Quiet-Lane Re-Entry Ordering
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_expiry_grouping_quiet_reentry_order_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative hold-expiry grouping and quiet re-entry ordering panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

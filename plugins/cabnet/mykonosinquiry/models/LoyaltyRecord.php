@@ -2797,6 +2797,182 @@ public function getQuietLaneReentryReadinessFrameAttribute(): string
 }
 
 
+public function getHoldExpiryGroupLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Expired hold / active review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Expiry breached / reopen now';
+
+            case 'Due today':
+                return 'Expiry due now / same-day review';
+
+            case 'Due soon':
+                return 'Expiry approaching / prepare re-entry';
+
+            case 'Near-term':
+                return 'Mid-window expiry / quiet watch';
+
+            case 'Future':
+                return 'Far-window expiry / hold stable';
+
+            case 'Unscheduled':
+                return 'Expiry unclear / schedule the hold';
+        }
+
+        return 'Hold-expiry grouping still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Expiry due / owner missing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Draft-stage expiry / handoff soon';
+
+        case 'Closure packet prepared':
+            return 'Lane-choice expiry / decide the hold';
+
+        case 'Execution still open':
+            return 'Execution-bound expiry / follow-through first';
+
+        case 'Prepared but not yet executed':
+            return 'Prepared-work expiry / execution still pending';
+
+        case 'Timed for later finish':
+            return 'Timed expiry / later finish window';
+    }
+
+    return 'Conservative expiry / human watch';
+}
+
+public function getQuietLaneReentryOrderLabelAttribute(): string
+{
+    $ownerMissing = trim((string) $this->owner_name) === '';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return '01 · active re-entry now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return $ownerMissing
+                    ? '02 · overdue / assign owner and review'
+                    : '01 · overdue / reopen first';
+
+            case 'Due today':
+                return $ownerMissing
+                    ? '03 · due today / assign owner'
+                    : '02 · due today / same-day review';
+
+            case 'Due soon':
+                return '04 · due soon / prepare review';
+
+            case 'Near-term':
+                return '05 · near-term / quiet watch';
+
+            case 'Future':
+                return '06 · future / keep compressed';
+
+            case 'Unscheduled':
+                return $ownerMissing
+                    ? '07 · unscheduled / assign owner and date'
+                    : '07 · unscheduled / set review date';
+        }
+
+        return '06 · re-entry order still forming';
+    }
+
+    if ($ownerMissing && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return '03 · due / assign owner first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return '04 · drafting / handback next';
+
+        case 'Closure packet prepared':
+            return '04 · packet ready / choose lane';
+
+        case 'Execution still open':
+            return '05 · execution open / re-entry after follow-through';
+
+        case 'Prepared but not yet executed':
+            return '05 · prepared work / start before re-entry';
+
+        case 'Timed for later finish':
+            return '06 · timed finish / wait for window';
+    }
+
+    return '06 · quiet review / keep in sequence';
+}
+
+public function getHoldExpiryGroupingDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Hold-expiry group' => $this->hold_expiry_group_label,
+        'Quiet-lane re-entry order' => $this->quiet_lane_reentry_order_label,
+        'Hold-aging compression' => $this->hold_aging_compression_label,
+        'Quiet-lane re-entry readiness' => $this->quiet_lane_reentry_readiness_label,
+        'Hold aging' => $this->hold_aging_label,
+        'Quiet-return timing' => $this->quiet_return_review_timing_label,
+        'Hold release cue' => $this->hold_release_cue_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Hold-expiry grouping digest is still minimal.');
+}
+
+public function getQuietLaneReentryOrderFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Hold-expiry group: ' . $this->hold_expiry_group_label . '.';
+    $lines[] = 'Quiet-lane re-entry order: ' . $this->quiet_lane_reentry_order_label . '.';
+    $lines[] = 'Hold-aging compression: ' . $this->hold_aging_compression_label . '.';
+    $lines[] = 'Quiet-lane re-entry readiness: ' . $this->quiet_lane_reentry_readiness_label . '.';
+    $lines[] = 'Hold aging: ' . $this->hold_aging_label . '.';
+    $lines[] = 'Quiet-return timing: ' . $this->quiet_return_review_timing_label . '.';
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the lane is already reopened, the quiet hold is no longer just expiring in place. Re-entry order collapses to the first scan position so the record stays in active human review.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet hold is overdue, expiry has already been breached. This lane belongs at the top of the human scan order and should not remain hidden in a parked posture.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the quiet hold is due today, expiry is effectively same-day. The lane should stay near the top of the re-entry order so review happens before drift turns into avoidable delay.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the quiet hold is approaching expiry, the lane should move into visible preparation order now. The operator still controls the return, but the sequence should already be explicit.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the quiet hold is near-term but not urgent, expiry grouping can remain compact. Re-entry order should stay visible without forcing the lane out of deliberate quiet review too early.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet hold still sits in a future review window, expiry grouping stays stable and the lane can sit lower in re-entry order while ownership and timing remain explicit.';
+        } else {
+            $lines[] = 'Because the quiet hold has no clear review date, expiry grouping is weak. The lane should stay in the human scan order until an operator assigns timing clearly.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already due and no owner is named, the first real ordering move is assignment. Until ownership exists, quiet re-entry order cannot stay credible.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, expiry grouping should be read as a short staging posture. Re-entry order belongs just behind active due-now lanes so drafting can turn into deliberate handback.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because the close packet already exists, the hold should not age ambiguously. Re-entry order now exists to help the operator choose the finish lane before the quiet posture turns stale.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side work is still open, expiry grouping should stay tied to visible execution timing. Re-entry order should keep the lane behind urgent reopen items but ahead of passive future holds.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because the record is intentionally timed for later finish work, expiry grouping can remain conservative. Re-entry order should stay lower until that timed window becomes the next active human checkpoint.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, expiry grouping and re-entry ordering remain human-owned scan tools. They clarify where a quiet lane sits without turning the workspace into automation.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

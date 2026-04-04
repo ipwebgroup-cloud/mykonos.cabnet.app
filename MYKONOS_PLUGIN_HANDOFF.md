@@ -10,39 +10,36 @@
 ## Current stability state
 - Inquiry Queue remains the live operational workspace.
 - Loyalty Continuity is active as a guarded plugin-only workspace and can operate live when storage is aligned.
-- Loyalty records now support transfer bridging, live touchpoint capture, continuity decision framing, retention packet preparation, packet follow-through execution framing, closing-loop readability, explicit stewardship closure packets, outcome-driven finish recommendations, explicit finish-lane parking/reopening, parked-state digest framing, finish dashboards, finish triage compression, conservative queue-scan aids, queue-watch / deliberate reopen-priority framing, compressed finish-watch queue cues, conservative finish-close / reopen scan-order cues, explicit close-handoff grouping with finish-review exit readability, explicit finish-lane handback with post-close hold framing, explicit hold-release framing with quiet-lane return visibility, conservative hold-aging readability with quiet-return review timing, and compressed hold-aging with quiet-lane re-entry readiness.
+- Loyalty records now support transfer bridging, live touchpoint capture, continuity decision framing, retention packet preparation, packet follow-through execution framing, closing-loop readability, explicit stewardship closure packets, outcome-driven finish recommendations, explicit finish-lane parking/reopening, parked-state digest framing, finish dashboards, finish triage compression, conservative queue-scan aids, queue-watch / deliberate reopen-priority framing, compressed finish-watch queue cues, conservative finish-close / reopen scan-order cues, explicit close-handoff grouping with finish-review exit readability, explicit finish-lane handback with post-close hold framing, explicit hold-release framing with quiet-lane return visibility, conservative hold-aging readability with quiet-return review timing, and compressed hold-aging with quiet-lane re-entry readiness, plus conservative hold-expiry grouping with explicit quiet-lane re-entry ordering.
 - The guarded non-ready loyalty index, create, and update views tolerate missing staged partials instead of assuming every historical staging partial is present.
 
 ## This patch
-- Version: `v6.10.0`
-- Name: `hold-aging compression and quiet-lane re-entry readiness workspace`
+- Version: `v6.11.0`
+- Name: `hold-expiry grouping and quiet-lane re-entry ordering workspace`
 - Type: plugin-only major patch
-- Adds one narrow hold-aging compression cue and one explicit quiet-lane re-entry readiness cue so operators can see whether a quiet close hold can stay compact or should return to active human review
+- Adds one conservative hold-expiry grouping cue and one explicit quiet-lane re-entry ordering cue so operators can see how a quiet close hold should be grouped and where it belongs in human review order
 - No theme change
 - No schema change
 
 ## Files included in this patch
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_handback_post_close_hold_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_aging_quiet_return_timing_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_aging_compression_quiet_reentry_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_expiry_grouping_quiet_reentry_order_panel.htm`
 - `plugins/cabnet/mykonosinquiry/models/LoyaltyRecord.php`
 - `plugins/cabnet/mykonosinquiry/models/loyaltyrecord/fields.yaml`
 - `plugins/cabnet/mykonosinquiry/models/loyaltyrecord/columns.yaml`
 - `plugins/cabnet/mykonosinquiry/updates/version.yaml`
-- `docs/releases/MYKONOS_V6100_HOLD_AGING_COMPRESSION_AND_QUIET_LANE_REENTRY_READINESS_WORKSPACE_PATCH.md`
+- `docs/releases/MYKONOS_V6110_HOLD_EXPIRY_GROUPING_AND_QUIET_LANE_REENTRY_ORDERING_WORKSPACE_PATCH.md`
 - `MYKONOS_PLUGIN_HANDOFF.md`
 - `MYKONOS_CONTINUE_PROMPT.md`
 
 ## Why this patch exists
-The loyalty line could already show hold aging, hold release, quiet-return timing, finish handback, and post-close hold posture.
+The loyalty line could already show hold-aging compression and quiet-lane re-entry readiness.
 
-The remaining friction was compression and re-entry readability: operators could read the quiet hold in detail, but still had to mentally compress that posture into a faster scan cue and infer whether the lane was truly ready to re-enter active human review.
+The remaining friction was grouping and ordering readability: operators could tell whether a quiet hold was compressible and re-entry-ready, but still had to mentally sort how that hold should be grouped and where it belonged in human re-entry order.
 
 This patch makes that easier by:
-- introducing one compressed hold-aging cue and one explicit quiet-lane re-entry readiness cue
-- restoring the missing finish-handback Overview partial so the backend form does not depend on a file that is absent in the current tree
-- adding a dedicated Overview panel for the new hold/re-entry readout
+- introducing one conservative hold-expiry grouping cue and one explicit quiet-lane re-entry ordering cue
+- adding a dedicated Overview panel for the new expiry/order readout
 - surfacing the same framing on the loyalty list and linked inquiry snapshot
 - keeping the workspace narrow, operator-owned, plugin-only, and non-automated
 
@@ -50,4 +47,4 @@ This patch makes that easier by:
 - Keep Inquiry Queue stable as the live operational workspace.
 - Keep loyalty continuity narrow, operator-owned, and readable.
 - Keep close, hold, and reopen framing deliberate and non-automated.
-- Next major patches should focus on conservative quiet-lane re-entry ordering and hold-expiry grouping without drifting into campaign logic, theme work, or automation.
+- Next major patches should focus on conservative hold-expiry compression and quiet-lane cadence framing without drifting into campaign logic, theme work, or automation.

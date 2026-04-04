@@ -1,0 +1,81 @@
+<?php
+$holdExpiryGroup = $record ? $record->hold_expiry_group_label : 'Conservative expiry / human watch';
+$quietLaneReentryOrder = $record ? $record->quiet_lane_reentry_order_label : '06 · quiet review / keep in sequence';
+$holdExpiryGroupingDigest = $record ? $record->hold_expiry_grouping_digest : 'Hold-expiry grouping digest is still minimal.';
+$quietLaneReentryOrderFrame = $record ? $record->quiet_lane_reentry_order_frame : 'Quiet-lane re-entry order framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-sort-numeric-asc"></i>
+        <h4 style="margin-top:0;">Hold-Expiry Grouping and Quiet-Lane Re-Entry Ordering</h4>
+        <p>
+            This panel keeps quiet close holds readable by grouping their expiry posture and by making the human re-entry order explicit, without widening the workspace into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-expiry group</h4>
+                <p><?= e($holdExpiryGroup) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane re-entry order</h4>
+                <p><?= e($quietLaneReentryOrder) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold-aging compression</h4>
+                <p><?= e($record ? $record->hold_aging_compression_label : 'Compressed quiet hold / human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Re-entry readiness</h4>
+                <p><?= e($record ? $record->quiet_lane_reentry_readiness_label : 'Re-entry readiness under quiet review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold aging</h4>
+                <p><?= e($record ? $record->hold_aging_label : 'Conservative hold / quiet review aging') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Return timing</h4>
+                <p><?= e($record ? $record->quiet_return_review_timing_label : 'Return timing under quiet review') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Hold release cue</h4>
+                <p><?= e($record ? $record->hold_release_cue_label : 'Keep hold under quiet human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Post-close hold</h4>
+                <p><?= e($record ? $record->post_close_hold_label : 'Conservative post-close hold') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Handback</h4>
+                <p><?= e($record ? $record->finish_lane_handback_label : 'Hand back to quiet review owner') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Owner and timing still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Unscheduled') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen order</h4>
+                <p><?= e($record ? $record->reopen_scan_order_label : '11 · quiet review hold') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-expiry grouping digest</h4>
+                <p><?= nl2br(e($holdExpiryGroupingDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane re-entry order frame</h4>
+                <p><?= nl2br(e($quietLaneReentryOrderFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -176,3 +176,7 @@
 
 2.3.24:
   - 'Introduce hold-aging compression and quiet-lane re-entry readiness for live loyalty records'
+
+2.3.25:
+  - 'Introduce hold-expiry grouping and quiet-lane re-entry ordering for live loyalty records'
+

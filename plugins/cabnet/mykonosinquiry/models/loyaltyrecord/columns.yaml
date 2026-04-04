@@ -128,6 +128,14 @@ columns:
         label: Re-Entry Ready
         sortable: false
 
+    hold_expiry_group_label:
+        label: Hold Expiry
+        sortable: false
+
+    quiet_lane_reentry_order_label:
+        label: Re-Entry Order
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false
