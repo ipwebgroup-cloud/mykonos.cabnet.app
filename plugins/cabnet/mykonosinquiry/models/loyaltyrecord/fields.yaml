@@ -874,6 +874,45 @@ tabs:
             span: full
             comment: Conservative owner-tagged return confirmation compression and same-day quiet-lane acceptance panel without widening the workspace into automation.
 
+        owner_held_quiet_lane_acceptance_compression_label:
+            label: Owner-Held Quiet-Lane Acceptance Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-held acceptance cue that compresses the same-day quiet-lane move into one readable signal across the list, overview, and linked inquiry snapshot.
+
+        tagged_return_checkpoint_framing_label:
+            label: Tagged Return Checkpoint Framing
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Framed tagged return checkpoint cue that keeps the next readable control point aligned across the list, overview, and linked inquiry snapshot.
+
+        owner_held_quiet_lane_acceptance_compression_digest:
+            label: Owner-Held Quiet-Lane Acceptance Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-held quiet-lane acceptance compression, tagged return checkpoint framing, and the related timing cues into one read.
+
+        tagged_return_checkpoint_framing_frame:
+            label: Tagged Return Checkpoint Framing Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet-lane return should stay owner-held, tagged, and tightly aligned across every surface.
+
+        owner_held_quiet_lane_acceptance_compression_tagged_return_checkpoint_panel:
+            label: Owner-Held Quiet-Lane Acceptance Compression and Tagged Return Checkpoint Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_held_quiet_lane_acceptance_compression_tagged_return_checkpoint_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-held quiet-lane acceptance compression and tagged return checkpoint panel without widening the workspace into automation.
 
 
         queue_watch_readiness_label:

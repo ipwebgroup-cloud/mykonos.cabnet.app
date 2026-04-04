@@ -1,0 +1,33 @@
+<?php
+$ownerHeldQuietLaneAcceptanceCompression = $record ? $record->owner_held_quiet_lane_acceptance_compression_label : 'Owner-held quiet-lane acceptance compression is still forming';
+$taggedReturnCheckpointFraming = $record ? $record->tagged_return_checkpoint_framing_label : 'Tagged return checkpoint framing is still forming';
+$ownerHeldQuietLaneAcceptanceCompressionDigest = $record ? $record->owner_held_quiet_lane_acceptance_compression_digest : 'Owner-held quiet-lane acceptance compression digest is still minimal.';
+$taggedReturnCheckpointFramingFrame = $record ? $record->tagged_return_checkpoint_framing_frame : 'Tagged return checkpoint framing frame is still minimal.';
+?>
+<div class="callout callout-info no-icon">
+    <div class="panel-heading">
+        <h3>Owner-Held Quiet-Lane Acceptance Compression and Tagged Return Checkpoint Framing</h3>
+        <p class="help-block">Keeps the quiet-lane return compressed into one owner-held acceptance cue and one tagged checkpoint cue without widening the loyalty workspace into automation.</p>
+    </div>
+
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Held acceptance</h4>
+            <p><?= e($ownerHeldQuietLaneAcceptanceCompression) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Tagged checkpoint</h4>
+            <p><?= e($taggedReturnCheckpointFraming) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Compression digest</label>
+        <pre><?= e($ownerHeldQuietLaneAcceptanceCompressionDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Checkpoint frame</label>
+        <pre><?= e($taggedReturnCheckpointFramingFrame) ?></pre>
+    </div>
+</div>

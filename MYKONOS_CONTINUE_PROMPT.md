@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.22.0 owner-tagged return confirmation compression and same-day quiet-lane acceptance framing workspace`
+- `v6.23.0 owner-held quiet-lane acceptance compression and tagged return checkpoint framing workspace`
 
 This is a continuity hint only.
 
@@ -146,8 +146,8 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- owner-held quiet-lane acceptance compression
-- tagged return checkpoint framing
+- owner-tagged acceptance checkpoint compression
+- quiet-lane return handoff framing
 - queue-scan prioritization cues
 - human review timing clarity
 

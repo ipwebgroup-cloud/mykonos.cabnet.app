@@ -4830,6 +4830,171 @@ public function getSameDayQuietLaneAcceptanceFramingFrameAttribute(): string
 
     return implode(PHP_EOL, $lines);
 }
+
+
+public function getOwnerHeldQuietLaneAcceptanceCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Held acceptance bypassed / lane already reopened';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Held acceptance blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Held acceptance compressed / overdue owner-held quiet lane';
+
+            case 'Due today':
+                return 'Held acceptance compressed / same-day owner-held quiet lane';
+
+            case 'Due soon':
+                return 'Held acceptance staged / next-slot owner-held quiet lane';
+
+            case 'Near-term':
+                return 'Held acceptance staged / near-term owner-held quiet lane';
+
+            case 'Future':
+                return 'Held acceptance parked / future owner-held quiet lane';
+
+            case 'Unscheduled':
+                return 'Held acceptance open / set quiet checkpoint first';
+        }
+
+        return 'Held acceptance forming / owner-held quiet lane readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Held acceptance narrow / drafting move owner-held';
+
+        case 'Closure packet prepared':
+            return 'Held acceptance narrow / finish choice owner-held';
+
+        case 'Execution still open':
+            return 'Held acceptance narrow / execution resume owner-held';
+
+        case 'Prepared but not yet executed':
+            return 'Held acceptance narrow / prepared resume owner-held';
+
+        case 'Timed for later finish':
+            return 'Held acceptance narrow / later finish owner-held';
+    }
+
+    return 'Held acceptance narrow / conservative owner-held read';
+}
+
+public function getTaggedReturnCheckpointFramingLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Tagged checkpoint active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Tagged checkpoint blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Tagged checkpoint framed / overdue quiet return now';
+
+            case 'Due today':
+                return 'Tagged checkpoint framed / same-day quiet return tagged';
+
+            case 'Due soon':
+                return 'Tagged checkpoint staged / next-slot quiet return';
+
+            case 'Near-term':
+                return 'Tagged checkpoint staged / near-term quiet return';
+
+            case 'Future':
+                return 'Tagged checkpoint parked / future quiet hold';
+
+            case 'Unscheduled':
+                return 'Tagged checkpoint open / set review timing first';
+        }
+
+        return 'Tagged checkpoint forming / quiet lane kept readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Tagged checkpoint narrow / drafting return tagged';
+
+        case 'Closure packet prepared':
+            return 'Tagged checkpoint narrow / finish choice tagged';
+
+        case 'Execution still open':
+            return 'Tagged checkpoint narrow / execution resume tagged';
+
+        case 'Prepared but not yet executed':
+            return 'Tagged checkpoint narrow / prepared resume tagged';
+
+        case 'Timed for later finish':
+            return 'Tagged checkpoint narrow / timed quiet hold';
+    }
+
+    return 'Tagged checkpoint narrow / conservative quiet return read';
+}
+
+public function getOwnerHeldQuietLaneAcceptanceCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Owner-held quiet-lane acceptance compression' => $this->owner_held_quiet_lane_acceptance_compression_label,
+        'Tagged return checkpoint framing' => $this->tagged_return_checkpoint_framing_label,
+        'Owner-tagged return confirmation compression' => $this->owner_tagged_return_confirmation_compression_label,
+        'Same-day quiet-lane acceptance framing' => $this->same_day_quiet_lane_acceptance_framing_label,
+        'Next review window' => $this->next_review_window_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+    ], 'Owner-held quiet-lane acceptance compression digest is still minimal.');
+}
+
+public function getTaggedReturnCheckpointFramingFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Owner-held quiet-lane acceptance compression: ' . $this->owner_held_quiet_lane_acceptance_compression_label . '.';
+    $lines[] = 'Tagged return checkpoint framing: ' . $this->tagged_return_checkpoint_framing_label . '.';
+    $lines[] = 'Owner-tagged return confirmation compression: ' . $this->owner_tagged_return_confirmation_compression_label . '.';
+    $lines[] = 'Same-day quiet-lane acceptance framing: ' . $this->same_day_quiet_lane_acceptance_framing_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, held acceptance compression should collapse into active handling instead of quiet framing. The tagged return checkpoint frame simply keeps the reopened control point readable across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already in an immediate review window but still has no named owner, held acceptance compression cannot become truthful yet. The first real move is to assign the operator so the tagged return checkpoint can stay credible across every surface.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane return is overdue, the workspace should compress into one owner-held acceptance cue and one tagged return checkpoint. That keeps the overdue move readable now without widening the workflow or inventing automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, the workspace should read as one owner-held quiet acceptance and one tagged return checkpoint. That gives the list, overview, and linked inquiry snapshot the same narrow operator signal.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is due soon, held acceptance compression can stay calm and owner-held before urgency rises. The tagged checkpoint frame keeps the next slot readable early without overstating pressure.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the workspace can stay conservative and owner-led. The held acceptance compression keeps the likely same-day move named, while the tagged checkpoint frame keeps the next quiet-lane control point aligned across every surface.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return still belongs to a future quiet window, the held acceptance can stay compressed and parked. The tagged checkpoint frame exists so the later move remains understandable without pretending it belongs in an active lane.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, held acceptance compression cannot finish yet. The next human move is to set a real checkpoint so the quiet-lane return can compress into one owner-held acceptance and one believable tagged checkpoint.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, held acceptance compression should keep the drafting move visibly attached to one owner. The tagged return checkpoint frame keeps that likely move explicit without reopening a wider queue story.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, held acceptance compression should stay tied to the finish-choice control point. The tagged return checkpoint frame keeps that prepared move narrow, readable, and easy to confirm across list, overview, and inquiry surfaces.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate operator move, held acceptance compression should keep the next resume signal owner-held. The tagged return checkpoint frame makes that resume posture easier to scan without changing the underlying workflow.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, held acceptance compression stays conservative and scheduled. The tagged return checkpoint frame simply keeps the eventual return control point visible without overstating urgency.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, owner-held quiet-lane acceptance compression and tagged return checkpoint framing remain narrow human scan aids only. They reduce translation between list, overview, and inquiry surfaces without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

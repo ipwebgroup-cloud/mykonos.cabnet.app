@@ -211,3 +211,6 @@
 
 2.3.36:
   - 'Add owner-tagged return confirmation compression and same-day quiet-lane acceptance framing to the guarded loyalty workspace line'
+
+2.3.37:
+  - 'Add owner-held quiet-lane acceptance compression and tagged return checkpoint framing to the guarded loyalty workspace line'

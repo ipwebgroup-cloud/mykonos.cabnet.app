@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.22.0 owner-tagged return confirmation compression and same-day quiet-lane acceptance framing workspace`
+- `v6.23.0 owner-held quiet-lane acceptance compression and tagged return checkpoint framing workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -132,6 +132,8 @@ This means the current workspace already includes the earlier conservative loyal
 - quiet-lane return confirmation framing
 - owner-tagged return confirmation compression
 - same-day quiet-lane acceptance framing
+- owner-held quiet-lane acceptance compression
+- tagged return checkpoint framing
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -233,16 +235,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve owner-tagged return confirmation compression
-- improve same-day quiet-lane acceptance framing
+- improve owner-tagged acceptance checkpoint compression
+- improve quiet-lane return handoff framing
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.22.0` is:
+A likely next safe patch direction after `v6.23.0` is:
 
-- **owner-held quiet-lane acceptance compression and tagged return checkpoint framing**
+- **owner-tagged acceptance checkpoint compression and quiet-lane return handoff framing**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -280,7 +282,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.22.0 owner-tagged return confirmation compression and same-day quiet-lane acceptance framing workspace`
+- `v6.23.0 owner-held quiet-lane acceptance compression and tagged return checkpoint framing workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

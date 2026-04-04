@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    owner_tagged_return_confirmation_compression_label:
-        label: Tagged Return
+    owner_held_quiet_lane_acceptance_compression_label:
+        label: Held Acceptance
         sortable: false
 
-    same_day_quiet_lane_acceptance_framing_label:
-        label: Quiet Accept
+    tagged_return_checkpoint_framing_label:
+        label: Tagged Checkpoint
         sortable: false
 
 
