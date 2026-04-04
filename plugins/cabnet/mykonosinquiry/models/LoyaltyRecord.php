@@ -2330,6 +2330,146 @@ public function getPostCloseHoldFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getHoldReleaseCueLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Release quiet hold / active proof review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Release quiet hold for parked review now';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Release quiet hold before parked review is due';
+        }
+
+        return 'Keep quiet hold until the watch changes';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Release hold for assignment first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Release hold when packet drafting starts';
+
+        case 'Closure packet prepared':
+            return 'Release hold when the finish lane is chosen';
+
+        case 'Execution still open':
+            return 'Release hold when follow-through resumes';
+
+        case 'Prepared but not yet executed':
+            return 'Release hold when prepared work begins';
+
+        case 'Timed for later finish':
+            return 'Release hold at the timed finish window';
+    }
+
+    return 'Keep hold under quiet human review';
+}
+
+public function getQuietLaneReturnLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return to active review lane';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            return 'Return to parked review owner now';
+        }
+
+        if ($this->next_review_window_label === 'Due soon') {
+            return 'Return to parked review owner before due';
+        }
+
+        return 'Return to timed quiet lane';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return to assignment lane first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return to close drafting lane';
+
+        case 'Closure packet prepared':
+            return 'Return to finish-lane choice';
+
+        case 'Execution still open':
+            return 'Return to follow-through lane';
+
+        case 'Prepared but not yet executed':
+            return 'Return to prepared execution lane';
+
+        case 'Timed for later finish':
+            return 'Return to timed finish lane';
+    }
+
+    return 'Return to quiet review lane';
+}
+
+public function getHoldReleaseDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Hold release cue' => $this->hold_release_cue_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Finish-lane handback' => $this->finish_lane_handback_label,
+        'Post-close hold' => $this->post_close_hold_label,
+        'Close handoff group' => $this->close_handoff_group_label,
+        'Finish review exit' => $this->finish_review_exit_label,
+        'Reopen scan order' => $this->reopen_scan_order_label,
+        'Owner timing' => $this->owner_timing_signal_label,
+        'Next finish move' => $this->next_finish_move_label,
+    ], 'Hold-release digest is still minimal.');
+}
+
+public function getQuietLaneReturnFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+    $lines[] = 'Quiet-lane return: ' . $this->quiet_lane_return_label . '.';
+    $lines[] = 'Finish-lane handback: ' . $this->finish_lane_handback_label . '.';
+    $lines[] = 'Post-close hold: ' . $this->post_close_hold_label . '.';
+    $lines[] = 'Close handoff group: ' . $this->close_handoff_group_label . '.';
+    $lines[] = 'Finish review exit: ' . $this->finish_review_exit_label . '.';
+    $lines[] = 'Reopen scan order: ' . $this->reopen_scan_order_label . '.';
+    $lines[] = 'Owner timing: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, the quiet close hold should be released now and the lane should return to active human review instead of resting in a silent close posture.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            $lines[] = 'Because the parked watch is due now, any quiet hold should end immediately and the lane should return to the parked review owner for deliberate review.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked watch is approaching, the quiet hold can remain temporary only until the owner confirms the next review before the due window arrives.';
+        } else {
+            $lines[] = 'Because the parked lane is still stable, the quiet hold can remain human-owned and the lane can return to the timed watch posture until proof or timing changes.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because review timing is already due and ownership is missing, the hold should be released for assignment first so the lane has an explicit human return path.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the close posture is ready but not yet packeted, the quiet hold should end when drafting begins and the lane should return to the close drafter.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet already exists, the quiet hold should end when the finish lane is chosen and the lane should return to that explicit close decision.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close follow-through still needs human action, the quiet hold should only remain temporary and the lane should return to the operator completing that work.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because the finish lane is intentionally timed for later, the quiet hold can stay in place until the timing window arrives and the lane returns to the timed finish review.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, the quiet hold can remain in place under human ownership until clearer proof, ownership, or timing creates a stronger return path.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

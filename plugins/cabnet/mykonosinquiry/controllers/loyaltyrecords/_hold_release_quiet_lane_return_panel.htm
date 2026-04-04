@@ -1,0 +1,73 @@
+<?php
+$holdReleaseCue = $record ? $record->hold_release_cue_label : 'Keep hold under quiet human review';
+$quietLaneReturn = $record ? $record->quiet_lane_return_label : 'Return to quiet review lane';
+$holdReleaseDigest = $record ? $record->hold_release_digest : 'Hold-release digest is still minimal.';
+$quietLaneReturnFrame = $record ? $record->quiet_lane_return_frame : 'Quiet-lane return framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-pause-circle"></i>
+        <h4 style="margin-top:0;">Hold-Release Framing and Quiet-Lane Return</h4>
+        <p>
+            This panel keeps quiet close holds deliberate by showing when they should end and where the lane should return next, without widening the loyalty workspace into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Hold release cue</h4>
+                <p><?= e($holdReleaseCue) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane return</h4>
+                <p><?= e($quietLaneReturn) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Finish-lane handback</h4>
+                <p><?= e($record ? $record->finish_lane_handback_label : 'Hand back to quiet review owner') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Post-close hold</h4>
+                <p><?= e($record ? $record->post_close_hold_label : 'Conservative post-close hold') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Close handoff</h4>
+                <p><?= e($record ? $record->close_handoff_group_label : 'Review handoff / quiet hold') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Review exit</h4>
+                <p><?= e($record ? $record->finish_review_exit_label : 'Keep the record in conservative finish review') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Finish-close</h4>
+                <p><?= e($record ? $record->finish_close_compression_label : 'Close posture still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Reopen order</h4>
+                <p><?= e($record ? $record->reopen_scan_order_label : '11 · quiet review hold') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Owner and timing still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($record ? $record->next_finish_move_label : 'Keep the record in a narrow timed review posture') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-release digest</h4>
+                <p><?= nl2br(e($holdReleaseDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane return frame</h4>
+                <p><?= nl2br(e($quietLaneReturnFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>

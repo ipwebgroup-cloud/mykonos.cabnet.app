@@ -354,6 +354,46 @@ tabs:
             span: full
             comment: Conservative handback and hold panel for the finish lane without introducing automation.
 
+        hold_release_cue_label:
+            label: Hold Release Cue
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Read-only cue showing when a quiet post-close hold should end and return to a more active human lane.
+
+        quiet_lane_return_label:
+            label: Quiet-Lane Return
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Conservative return cue showing where the lane should go next once a quiet hold stops being the safest posture.
+
+        hold_release_digest:
+            label: Hold-Release Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining hold-release timing, quiet-lane return, handback, and close-side review posture.
+
+        quiet_lane_return_frame:
+            label: Quiet-Lane Return Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for when a quiet close hold can remain in place and when the lane should return to active human work.
+
+        hold_release_quiet_lane_return_panel:
+            label: Hold-Release Framing and Quiet-Lane Return
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_release_quiet_lane_return_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative hold-release and quiet-lane return panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

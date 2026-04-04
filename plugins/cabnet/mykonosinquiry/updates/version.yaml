@@ -168,3 +168,5 @@
 2.3.21:
   - 'Introduce finish-lane handback readability and explicit post-close hold framing for live loyalty records'
 
+2.3.22:
+  - 'Introduce hold-release framing and quiet-lane return visibility for live loyalty records'

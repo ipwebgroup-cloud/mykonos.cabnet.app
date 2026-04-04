@@ -104,6 +104,14 @@ columns:
         label: Post-Close Hold
         sortable: false
 
+    hold_release_cue_label:
+        label: Hold Release
+        sortable: false
+
+    quiet_lane_return_label:
+        label: Quiet Return
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

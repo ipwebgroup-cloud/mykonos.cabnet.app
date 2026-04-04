@@ -190,6 +190,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->post_close_hold_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Hold release</h4>
+                    <p><?= e($record->hold_release_cue_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Quiet return</h4>
+                    <p><?= e($record->quiet_lane_return_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
@@ -257,6 +265,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Finish lane frame:</strong> <?= e($record->finish_lane_follow_through_frame) ?></li>
                     <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
                     <li><strong>Queue compression:</strong> <?= e($record->stewardship_queue_compression_digest) ?></li>
+                    <li><strong>Hold-release digest:</strong> <?= e($record->hold_release_digest) ?></li>
+                    <li><strong>Quiet-lane return frame:</strong> <?= e($record->quiet_lane_return_frame) ?></li>
                     <li><strong>Queue scan frame:</strong> <?= e($record->stewardship_queue_scan_frame) ?></li>
                     <li><strong>Finish-watch dashboard digest:</strong> <?= e($record->finish_watch_dashboard_digest) ?></li>
                     <li><strong>Reopen queue cue frame:</strong> <?= e($record->reopen_queue_cue_frame) ?></li>
