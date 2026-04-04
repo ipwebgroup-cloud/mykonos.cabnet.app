@@ -674,45 +674,45 @@ tabs:
             span: full
             comment: Conservative review-slot compression and grouped quiet-lane resurfacing panel without widening the workspace into automation.
 
-        owner_first_checkpoint_pairing_label:
-            label: Owner-First Checkpoint Pairing
+        same_day_checkpoint_compression_label:
+            label: Same-Day Checkpoint Compression
             tab: Overview
             readOnly: true
             span: left
-            comment: Owner-first checkpoint cue that keeps assignment and the next quiet-lane checkpoint readable as one operator-owned pair.
+            comment: Compressed same-day checkpoint cue that narrows the next quiet-lane move into one concrete owner-aware read.
 
-        quiet_lane_return_scan_compression_label:
-            label: Quiet-Lane Return Scan Compression
+        owner_visible_quiet_lane_return_handback_label:
+            label: Owner-Visible Quiet-Lane Return Handback
             tab: Overview
             readOnly: true
             span: right
-            comment: Compressed return scan that keeps the loyalty list cue and linked inquiry snapshot aligned around the same quiet-lane handback.
+            comment: Narrow owner-visible handback cue that keeps the loyalty list and linked inquiry snapshot aligned around the same quiet return story.
 
-        owner_first_checkpoint_pairing_digest:
-            label: Owner-First Checkpoint Pairing Digest
+        same_day_checkpoint_compression_digest:
+            label: Same-Day Checkpoint Compression Digest
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: left
-            comment: Ordered digest joining owner-first checkpoint pairing, quiet-lane return scan compression, checkpoint ordering, and return timing into one read.
+            comment: Ordered digest joining same-day checkpoint compression, owner-visible quiet-lane return handback framing, and the related timing cues into one read.
 
-        quiet_lane_return_scan_compression_frame:
-            label: Quiet-Lane Return Scan Compression Frame
+        owner_visible_quiet_lane_return_handback_frame:
+            label: Owner-Visible Quiet-Lane Return Handback Frame
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: right
-            comment: Read-only framing for how the quiet-lane return cue should stay compressed and owner-visible across the loyalty list and linked inquiry snapshot.
+            comment: Read-only framing for how the quiet-lane return handback should stay compressed, same-day aware, and visibly operator-owned across every surface.
 
-        owner_first_checkpoint_pairing_quiet_lane_return_scan_panel:
-            label: Owner-First Checkpoint Pairing and Quiet-Lane Return Scan Compression
+        same_day_checkpoint_compression_owner_visible_return_handback_panel:
+            label: Same-Day Checkpoint Compression and Owner-Visible Quiet-Lane Return Handback Framing
             type: partial
-            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_first_checkpoint_pairing_quiet_lane_return_scan_panel.htm
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_same_day_checkpoint_compression_owner_visible_return_handback_panel.htm
             tab: Overview
             span: full
-            comment: Conservative owner-first checkpoint pairing and quiet-lane return scan panel without widening the workspace into automation.
+            comment: Conservative same-day checkpoint compression and owner-visible quiet-lane return handback panel without widening the workspace into automation.
 
 
         queue_watch_readiness_label:

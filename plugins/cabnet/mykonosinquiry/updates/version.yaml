@@ -196,3 +196,6 @@
 
 2.3.31:
   - 'Add owner-first checkpoint pairing and quiet-lane return scan compression to the guarded loyalty workspace line'
+
+2.3.32:
+  - 'Add same-day checkpoint compression and owner-visible quiet-lane return handback framing to the guarded loyalty workspace line'

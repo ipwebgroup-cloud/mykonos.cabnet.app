@@ -4005,6 +4005,172 @@ public function getQuietLaneReturnScanCompressionFrameAttribute(): string
 
 
 
+
+public function getSameDayCheckpointCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Same-day checkpoint collapsed / reopened lane active';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Same-day checkpoint blocked / owner still missing';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Same-day checkpoint active / owner return now';
+
+            case 'Due today':
+                return 'Same-day checkpoint active / due today';
+
+            case 'Due soon':
+                return 'Same-day checkpoint staged / same-day prep next';
+
+            case 'Near-term':
+                return 'Same-day checkpoint staged / near-term prep';
+
+            case 'Future':
+                return 'Same-day checkpoint parked / future owner hold';
+
+            case 'Unscheduled':
+                return 'Same-day checkpoint open / timing still missing';
+        }
+
+        return 'Same-day checkpoint forming / quiet lane compressed';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Same-day checkpoint narrow / drafting handback next';
+
+        case 'Closure packet prepared':
+            return 'Same-day checkpoint narrow / finish choice next';
+
+        case 'Execution still open':
+            return 'Same-day checkpoint narrow / execution resume next';
+
+        case 'Prepared but not yet executed':
+            return 'Same-day checkpoint narrow / prepared resume next';
+
+        case 'Timed for later finish':
+            return 'Same-day checkpoint narrow / later finish hold';
+    }
+
+    return 'Same-day checkpoint narrow / conservative owner read';
+}
+
+public function getOwnerVisibleQuietLaneReturnHandbackLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return handback explicit / active lane reopened';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return handback blocked / name owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Return handback explicit / owner pull-back now';
+
+            case 'Due today':
+                return 'Return handback explicit / same-day owner handback';
+
+            case 'Due soon':
+                return 'Return handback visible / next-slot owner handback';
+
+            case 'Near-term':
+                return 'Return handback visible / near-term owner handback';
+
+            case 'Future':
+                return 'Return handback visible / future quiet owner hold';
+
+            case 'Unscheduled':
+                return 'Return handback open / set owner checkpoint first';
+        }
+
+        return 'Return handback forming / keep owner visible';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return handback narrow / drafting owner visible';
+
+        case 'Closure packet prepared':
+            return 'Return handback narrow / finish choice visible';
+
+        case 'Execution still open':
+            return 'Return handback narrow / execution resume visible';
+
+        case 'Prepared but not yet executed':
+            return 'Return handback narrow / prepared resume visible';
+
+        case 'Timed for later finish':
+            return 'Return handback narrow / timed owner hold';
+    }
+
+    return 'Return handback narrow / conservative owner-visible read';
+}
+
+public function getSameDayCheckpointCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Same-day checkpoint compression' => $this->same_day_checkpoint_compression_label,
+        'Owner-visible quiet-lane return handback' => $this->owner_visible_quiet_lane_return_handback_label,
+        'Owner-first checkpoint pairing' => $this->owner_first_checkpoint_pairing_label,
+        'Quiet-lane return scan compression' => $this->quiet_lane_return_scan_compression_label,
+        'Next review window' => $this->next_review_window_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+    ], 'Same-day checkpoint compression digest is still minimal.');
+}
+
+public function getOwnerVisibleQuietLaneReturnHandbackFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Same-day checkpoint compression: ' . $this->same_day_checkpoint_compression_label . '.';
+    $lines[] = 'Owner-visible quiet-lane return handback: ' . $this->owner_visible_quiet_lane_return_handback_label . '.';
+    $lines[] = 'Owner-first checkpoint pairing: ' . $this->owner_first_checkpoint_pairing_label . '.';
+    $lines[] = 'Quiet-lane return scan compression: ' . $this->quiet_lane_return_scan_compression_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, same-day compression should collapse into active human handling. The owner-visible handback frame exists only so the list cue, overview cue, and linked inquiry snapshot keep the named lead and return posture aligned.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already in an immediate review window but still has no owner, same-day compression should not pretend the checkpoint is stable. The first real move is to name the operator so the quiet-lane handback can become truthful across every surface.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane return is overdue, same-day compression should pull the record back into deliberate view now. The owner-visible handback keeps that pull-back tied to one named operator instead of scattering the story across multiple quiet-lane cues.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, the workspace should compress to one concrete same-day checkpoint. The owner-visible handback makes the same-day move explicit in the loyalty list, overview workspace, and linked inquiry snapshot without widening the workflow.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is due soon, same-day compression should stay preparatory and narrow. The owner-visible handback keeps the next quiet checkpoint attached to a named lead before urgency increases.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the workspace can stay calm and operator-owned. Same-day compression simply preserves the next checkpoint shape early, while the owner-visible handback keeps the quiet return readable across both list and detail surfaces.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return still belongs to a future quiet window, same-day compression remains conservative and parked. The owner-visible handback exists so the future hold still names the responsible lead without turning the workspace into automation.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, same-day compression cannot honestly form yet. The next human move is to set a real checkpoint so the handback can stay narrow, owner-visible, and believable.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, same-day compression should keep the drafting checkpoint visible. The owner-visible handback keeps the responsible lead attached to that close-side move without reopening a wider queue story.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, same-day compression should stay tied to the finish choice checkpoint. The owner-visible handback keeps that prepared move readable as a named handback rather than a generic quiet return.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate operator move, same-day compression should keep the next resume checkpoint visible. The owner-visible handback ensures the handoff remains attached to a real lead across the loyalty list and linked inquiry snapshot.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, same-day compression stays conservative and scheduled. The owner-visible handback keeps the eventual return checkpoint named and quiet without overstating urgency.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, same-day checkpoint compression and owner-visible quiet-lane return handback framing remain narrow human scan aids only. They reduce translation between list, overview, and inquiry surfaces without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
