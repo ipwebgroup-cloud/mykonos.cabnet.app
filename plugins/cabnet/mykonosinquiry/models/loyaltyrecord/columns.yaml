@@ -192,6 +192,14 @@ columns:
         label: Front-of-List Return
         sortable: false
 
+    owner_visible_deferred_review_slot_alignment_label:
+        label: Deferred Slot Alignment
+        sortable: false
+
+    current_shift_next_shift_quiet_return_separation_label:
+        label: Quiet-Return Shift Split
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

@@ -1,0 +1,29 @@
+<?php
+    $deferredSlotAlignment = $formModel->owner_visible_deferred_review_slot_alignment_label ?? 'No owner-visible deferred review-slot alignment cue yet';
+    $quietReturnShiftSplit = $formModel->current_shift_next_shift_quiet_return_separation_label ?? 'No current-shift versus next-shift quiet-return separation cue yet';
+    $deferredSlotDigest = $formModel->owner_visible_deferred_review_slot_alignment_digest ?? 'Owner-visible deferred review-slot alignment digest is not available yet.';
+    $quietReturnShiftFrame = $formModel->current_shift_next_shift_quiet_return_separation_frame ?? 'Current-shift versus next-shift quiet-return separation frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Deferred slot alignment</h4>
+            <p><?= e($deferredSlotAlignment) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Quiet-return shift split</h4>
+            <p><?= e($quietReturnShiftSplit) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Deferred slot alignment digest</label>
+        <pre><?= e($deferredSlotDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Quiet-return shift separation frame</label>
+        <pre><?= e($quietReturnShiftFrame) ?></pre>
+    </div>
+</div>

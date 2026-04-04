@@ -294,6 +294,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->front_of_list_quiet_return_confirmation_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Deferred slot alignment</h4>
+                    <p><?= e($record->owner_visible_deferred_review_slot_alignment_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Quiet-return shift split</h4>
+                    <p><?= e($record->current_shift_next_shift_quiet_return_separation_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
@@ -382,6 +390,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Checkpoint confirmation frame:</strong> <?= e($record->same_shift_review_checkpoint_confirmation_frame) ?></li>
                     <li><strong>Owner reassignment digest:</strong> <?= e($record->parked_lane_owner_reassignment_visibility_digest) ?></li>
                     <li><strong>Front-of-list return frame:</strong> <?= e($record->front_of_list_quiet_return_confirmation_frame) ?></li>
+                    <li><strong>Deferred slot alignment digest:</strong> <?= e($record->owner_visible_deferred_review_slot_alignment_digest) ?></li>
+                    <li><strong>Quiet-return shift separation frame:</strong> <?= e($record->current_shift_next_shift_quiet_return_separation_frame) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

@@ -2399,6 +2399,230 @@ public function getFrontOfListQuietReturnConfirmationFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getOwnerVisibleDeferredReviewSlotAlignmentLabelAttribute(): string
+{
+    $ownerMissing = trim((string) $this->owner_name) === '';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        if ($ownerMissing) {
+            return 'Deferred review-slot alignment blocked / reopened lane still needs owner';
+        }
+
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+            case 'Due today':
+                return 'Deferred review-slot alignment resolved / reopened owner aligned now';
+
+            case 'Due soon':
+                return 'Deferred review-slot alignment visible / reopened owner aligned for next slot';
+
+            case 'Near-term':
+                return 'Deferred review-slot alignment visible / owner named for later slot';
+
+            case 'Future':
+                return 'Deferred review-slot alignment preserved / future owner slot named';
+
+            case 'Unscheduled':
+                return 'Deferred review-slot alignment partial / owner named but slot missing';
+        }
+
+        return 'Deferred review-slot alignment resolved / reopened owner readable';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if ($ownerMissing) {
+            switch ($this->next_review_window_label) {
+                case 'Overdue':
+                    return 'Deferred review-slot alignment blocked / overdue parked return still unowned';
+
+                case 'Due today':
+                    return 'Deferred review-slot alignment blocked / same-shift parked return still unowned';
+
+                case 'Due soon':
+                    return 'Deferred review-slot alignment pending / next quiet slot still needs owner';
+
+                case 'Near-term':
+                    return 'Deferred review-slot alignment pending / later quiet slot still needs owner';
+
+                case 'Future':
+                    return 'Deferred review-slot alignment pending / future parked slot owner missing';
+
+                case 'Unscheduled':
+                    return 'Deferred review-slot alignment open / owner and slot both need alignment';
+            }
+
+            return 'Deferred review-slot alignment pending / owner still missing for parked return';
+        }
+
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Deferred review-slot alignment resolved / owner-visible overdue slot';
+
+            case 'Due today':
+                return 'Deferred review-slot alignment resolved / owner-visible same-shift slot';
+
+            case 'Due soon':
+                return 'Deferred review-slot alignment aligned / owner-visible next-slot return';
+
+            case 'Near-term':
+                return 'Deferred review-slot alignment aligned / owner-visible deferred slot';
+
+            case 'Future':
+                return 'Deferred review-slot alignment preserved / owner-visible future slot';
+
+            case 'Unscheduled':
+                return 'Deferred review-slot alignment partial / owner visible but slot missing';
+        }
+
+        return 'Deferred review-slot alignment aligned / owner and deferred slot readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return $ownerMissing
+                ? 'Deferred review-slot alignment deferred / active execution still unowned'
+                : 'Deferred review-slot alignment deferred / active execution lead already named';
+
+        case 'Ready for finish packet':
+            return $ownerMissing
+                ? 'Deferred review-slot alignment deferred / finish drafting owner missing'
+                : 'Deferred review-slot alignment deferred / finish drafting lead already named';
+
+        case 'Closure packet prepared':
+            return $ownerMissing
+                ? 'Deferred review-slot alignment deferred / finish-choice owner missing'
+                : 'Deferred review-slot alignment deferred / finish-choice lead already named';
+
+        case 'Prepared but not yet executed':
+            return $ownerMissing
+                ? 'Deferred review-slot alignment deferred / prepared follow-through owner missing'
+                : 'Deferred review-slot alignment deferred / prepared lead already named';
+
+        case 'Timed for later finish':
+            return $ownerMissing
+                ? 'Deferred review-slot alignment queued / timed finish owner still open'
+                : 'Deferred review-slot alignment preserved / timed finish owner and slot readable';
+    }
+
+    return $ownerMissing
+        ? 'Deferred review-slot alignment open / owner and timing still forming'
+        : 'Deferred review-slot alignment conservative / owner visible but deferred slot still light';
+}
+
+public function getCurrentShiftNextShiftQuietReturnSeparationLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Current-shift versus next-shift quiet-return separation resolved / reopened now';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Current-shift versus next-shift quiet-return separation blocked / assign owner before same-shift return';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Current-shift versus next-shift quiet-return separation resolved / overdue return belongs current shift';
+
+            case 'Due today':
+                return 'Current-shift versus next-shift quiet-return separation resolved / same-shift quiet return';
+
+            case 'Due soon':
+                return 'Current-shift versus next-shift quiet-return separation staged / next-shift quiet return visible';
+
+            case 'Near-term':
+                return 'Current-shift versus next-shift quiet-return separation staged / later-shift quiet return preserved';
+
+            case 'Future':
+                return 'Current-shift versus next-shift quiet-return separation parked / future-shift quiet return held';
+
+            case 'Unscheduled':
+                return 'Current-shift versus next-shift quiet-return separation open / shift split unclear until timing is set';
+        }
+
+        return 'Current-shift versus next-shift quiet-return separation forming / parked timing still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Current-shift versus next-shift quiet-return separation deferred / active execution still ahead';
+
+        case 'Ready for finish packet':
+            return 'Current-shift versus next-shift quiet-return separation deferred / finish drafting first';
+
+        case 'Closure packet prepared':
+            return 'Current-shift versus next-shift quiet-return separation deferred / finish-choice lane first';
+
+        case 'Prepared but not yet executed':
+            return 'Current-shift versus next-shift quiet-return separation deferred / prepared follow-through first';
+
+        case 'Timed for later finish':
+            return 'Current-shift versus next-shift quiet-return separation parked / timed finish window preserved';
+    }
+
+    return 'Current-shift versus next-shift quiet-return separation conservative / shift split still forming';
+}
+
+public function getOwnerVisibleDeferredReviewSlotAlignmentDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Owner-visible deferred review-slot alignment' => $this->owner_visible_deferred_review_slot_alignment_label,
+        'Current-shift versus next-shift quiet-return separation' => $this->current_shift_next_shift_quiet_return_separation_label,
+        'Owner reassignment' => $this->parked_lane_owner_reassignment_visibility_label,
+        'Front-of-list quiet return' => $this->front_of_list_quiet_return_confirmation_label,
+        'Review sequence' => $this->owner_review_slot_sequence_label,
+        'Checkpoint confirmation' => $this->same_shift_review_checkpoint_confirmation_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Owner-visible deferred review-slot alignment digest is still minimal.');
+}
+
+public function getCurrentShiftNextShiftQuietReturnSeparationFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Owner-visible deferred review-slot alignment: ' . $this->owner_visible_deferred_review_slot_alignment_label . '.';
+    $lines[] = 'Current-shift versus next-shift quiet-return separation: ' . $this->current_shift_next_shift_quiet_return_separation_label . '.';
+    $lines[] = 'Owner reassignment: ' . $this->parked_lane_owner_reassignment_visibility_label . '.';
+    $lines[] = 'Front-of-list quiet return: ' . $this->front_of_list_quiet_return_confirmation_label . '.';
+    $lines[] = 'Review sequence: ' . $this->owner_review_slot_sequence_label . '.';
+    $lines[] = 'Checkpoint confirmation: ' . $this->same_shift_review_checkpoint_confirmation_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, deferred-slot alignment should collapse into one immediate owner-visible return. The shift-separation cue should therefore read as resolved now instead of pretending there is still a quiet next-shift handback to interpret.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record has already entered a same-shift review window but still has no named owner, the workspace should not pretend the quiet return is cleanly aligned. The first safe move is to assign the operator so deferred-slot alignment and shift separation become believable together across the list, overview workspace, and linked inquiry snapshot.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the record no longer belongs in a deferred next-shift reading. Owner-visible deferred-slot alignment exists so the overdue return stays attached to one human lead, and shift separation exists so the queue clearly reads this as current-shift work now.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked review window lands today, the record belongs in a same-shift quiet-return lane rather than a later handback. Deferred-slot alignment keeps the named operator and the review slot compressed into one believable read, while shift separation makes it obvious that the return should not be pushed into the next shift.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked review window is close but not yet same-shift urgent, the workspace can keep the quiet return visible as next-shift work. Deferred-slot alignment keeps the likely owner readable early, while shift separation prevents the record from being mistaken for immediate current-shift review.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term rather than immediate, the workspace should preserve a deferred owner-visible slot without flattening it into current-shift urgency. Shift separation keeps that later quiet return distinct from both same-shift work and deep future parking.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet return is still future-facing, the record can remain parked. Deferred-slot alignment simply preserves which owner should receive the later handback, while shift separation keeps future quiet work from displacing current-shift or next-shift review.';
+        } else {
+            $lines[] = 'Because the parked lane still lacks usable timing, neither deferred-slot alignment nor shift separation can settle honestly yet. The next safe move is to name the owner and assign a credible review slot so the workspace can distinguish current-shift, next-shift, and later quiet returns without guesswork.';
+        }
+    } elseif ($this->closure_readiness_label === 'Execution still open') {
+        $lines[] = 'Because close-side execution is still active, the record should stay ahead of quiet-return slotting for now. Deferred-slot alignment simply confirms whether the current execution lead is already visible, and shift separation stays deferred until the execution story closes or parks.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for finish drafting, the workspace should keep the drafting move ahead of deferred quiet-return alignment. The shift-separation cue therefore stays conservative until the drafting decision resolves into either current-shift work or a later parked return.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a finish-choice packet is already prepared, the record belongs in a near-front decision lane rather than a settled deferred slot. Owner-visible alignment keeps the next human lead explicit, and shift separation waits until the operator deliberately decides whether the quiet return belongs this shift or later.';
+    } elseif ($this->closure_readiness_label === 'Prepared but not yet executed') {
+        $lines[] = 'Because prepared work still needs a deliberate operator move, the record should stay ahead of passive quiet-return slotting. Deferred-slot alignment and shift separation remain narrow reading aids only until the prepared work is either resumed now or consciously parked into a later slot.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because finish timing is intentionally deferred, the record can remain parked without pretending it belongs to the current shift. Deferred-slot alignment simply preserves who should receive that later return, and shift separation keeps the later quiet move distinct from same-shift or next-shift review.';
+    } else {
+        $lines[] = 'Because the loyalty workspace stays conservative and human-led, owner-visible deferred-slot alignment and current-shift versus next-shift quiet-return separation remain narrow scan aids only. They reduce translation between ownership, timing, and quiet-return placement without widening the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {

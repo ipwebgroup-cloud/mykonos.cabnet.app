@@ -1355,6 +1355,46 @@ tabs:
             span: full
             comment: Conservative parked-owner reassignment and front-of-list quiet-return panel without widening the loyalty workspace into automation.
 
+        owner_visible_deferred_review_slot_alignment_label:
+            label: Owner-Visible Deferred Review-Slot Alignment
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-slot cue showing whether a deferred quiet-return slot is already aligned to a named operator or still blocked by missing ownership or timing.
+
+        current_shift_next_shift_quiet_return_separation_label:
+            label: Current-Shift versus Next-Shift Quiet-Return Separation
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed shift-split cue showing whether a quiet return belongs now, next shift, later, or is still too under-defined to separate safely.
+
+        owner_visible_deferred_review_slot_alignment_digest:
+            label: Owner-Visible Deferred Review-Slot Alignment Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-visible deferred-slot alignment, quiet-return shift separation, review sequencing, and checkpoint posture into one read.
+
+        current_shift_next_shift_quiet_return_separation_frame:
+            label: Current-Shift versus Next-Shift Quiet-Return Separation Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how a quiet return should stay distinct across current-shift, next-shift, and later parked review without widening the workflow.
+
+        owner_visible_deferred_review_slot_alignment_current_shift_next_shift_quiet_return_separation_panel:
+            label: Owner-Visible Deferred Review-Slot Alignment and Current-Shift versus Next-Shift Quiet-Return Separation
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_visible_deferred_review_slot_alignment_current_shift_next_shift_quiet_return_separation_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-slot and quiet-return shift-separation panel without widening the loyalty workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

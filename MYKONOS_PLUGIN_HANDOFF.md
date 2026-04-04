@@ -93,7 +93,8 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.36.0 parked-lane owner reassignment visibility and front-of-list quiet-return confirmation workspace`
+- `v6.37.0 owner-visible deferred review-slot alignment and current-shift versus next-shift quiet-return separation workspace`
+- plugin tracking `2.3.51`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
