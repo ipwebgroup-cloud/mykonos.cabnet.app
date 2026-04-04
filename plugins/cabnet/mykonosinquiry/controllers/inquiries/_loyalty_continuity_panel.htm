@@ -222,6 +222,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->quiet_lane_reentry_order_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Expiry compression</h4>
+                    <p><?= e($record->hold_expiry_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Quiet cadence</h4>
+                    <p><?= e($record->quiet_lane_cadence_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>

@@ -136,6 +136,14 @@ columns:
         label: Re-Entry Order
         sortable: false
 
+    hold_expiry_compression_label:
+        label: Expiry Compression
+        sortable: false
+
+    quiet_lane_cadence_label:
+        label: Quiet Cadence
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

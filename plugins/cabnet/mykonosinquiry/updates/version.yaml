@@ -180,3 +180,5 @@
 2.3.25:
   - 'Introduce hold-expiry grouping and quiet-lane re-entry ordering for live loyalty records'
 
+2.3.26:
+  - 'Introduce hold-expiry compression and quiet-lane cadence framing for live loyalty records'

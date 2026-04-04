@@ -2973,6 +2973,174 @@ public function getQuietLaneReentryOrderFrameAttribute(): string
 }
 
 
+public function getHoldExpiryCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Expiry collapsed / active review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Expiry compressed / reopen immediately';
+
+            case 'Due today':
+                return 'Expiry compressed / same-day review';
+
+            case 'Due soon':
+                return 'Expiry compressed / short runway';
+
+            case 'Near-term':
+                return 'Expiry compressed / near-term watch';
+
+            case 'Future':
+                return 'Expiry compressed / long quiet watch';
+
+            case 'Unscheduled':
+                return 'Expiry compressed / review date missing';
+        }
+
+        return 'Expiry compression still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Expiry compressed / assign owner first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Expiry compressed / drafting handoff';
+
+        case 'Closure packet prepared':
+            return 'Expiry compressed / lane decision pending';
+
+        case 'Execution still open':
+            return 'Expiry compressed / follow-through still open';
+
+        case 'Prepared but not yet executed':
+            return 'Expiry compressed / prepared work waiting';
+
+        case 'Timed for later finish':
+            return 'Expiry compressed / timed finish cadence';
+    }
+
+    return 'Expiry compressed / quiet human hold';
+}
+
+public function getQuietLaneCadenceLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Cadence active now / immediate review';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Cadence broken / return now';
+
+            case 'Due today':
+                return 'Cadence due today / same-day review';
+
+            case 'Due soon':
+                return 'Short cadence / prepare return';
+
+            case 'Near-term':
+                return 'Near-term cadence / keep visible';
+
+            case 'Future':
+                return 'Long cadence / hold quietly';
+
+            case 'Unscheduled':
+                return 'Cadence missing / set review date';
+        }
+
+        return 'Cadence still forming / quiet review';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Cadence blocked / assign owner first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Draft cadence / handback soon';
+
+        case 'Closure packet prepared':
+            return 'Decision cadence / choose lane';
+
+        case 'Execution still open':
+            return 'Execution cadence / resume follow-through';
+
+        case 'Prepared but not yet executed':
+            return 'Prepared cadence / start work first';
+
+        case 'Timed for later finish':
+            return 'Timed cadence / wait for finish window';
+    }
+
+    return 'Quiet cadence / human review';
+}
+
+public function getHoldExpiryCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Hold-expiry compression' => $this->hold_expiry_compression_label,
+        'Quiet-lane cadence' => $this->quiet_lane_cadence_label,
+        'Hold-expiry group' => $this->hold_expiry_group_label,
+        'Quiet-lane re-entry order' => $this->quiet_lane_reentry_order_label,
+        'Hold-aging compression' => $this->hold_aging_compression_label,
+        'Quiet-lane re-entry readiness' => $this->quiet_lane_reentry_readiness_label,
+        'Next review window' => $this->next_review_window_label,
+        'Hold release cue' => $this->hold_release_cue_label,
+    ], 'Hold-expiry compression digest is still minimal.');
+}
+
+public function getQuietLaneCadenceFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Hold-expiry compression: ' . $this->hold_expiry_compression_label . '.';
+    $lines[] = 'Quiet-lane cadence: ' . $this->quiet_lane_cadence_label . '.';
+    $lines[] = 'Hold-expiry group: ' . $this->hold_expiry_group_label . '.';
+    $lines[] = 'Quiet-lane re-entry order: ' . $this->quiet_lane_reentry_order_label . '.';
+    $lines[] = 'Hold-aging compression: ' . $this->hold_aging_compression_label . '.';
+    $lines[] = 'Quiet-lane re-entry readiness: ' . $this->quiet_lane_reentry_readiness_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the lane is already reopened, any quiet cadence has already collapsed into active review. The compressed expiry signal exists only to confirm that the record no longer belongs in silent hold posture.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the quiet cadence has already broken. Expiry compression should read as immediate human return rather than a stable hold.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the quiet hold is due today, cadence becomes same-day. The record can stay narrow, but the timing should now be read as active review work for the current day.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the quiet hold is approaching expiry, cadence should shorten visibly. The lane still belongs in deliberate quiet review, but the operator should prepare the return before the window slips.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the hold sits in a near-term window, cadence can remain compact and visible without forcing immediate re-entry. The point is human timing clarity, not automation.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet hold is still tied to a future review window, cadence can remain long and stable. Expiry compression stays readable so the lane does not need to be mentally rebuilt later.';
+        } else {
+            $lines[] = 'Because the quiet hold has no clear schedule, cadence is not yet credible. The next human move is to assign a review date so compression and return order mean something concrete.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already due and no owner is assigned, cadence should not pretend to be stable. Assignment is the first real move before any quiet hold can stay compressed.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, cadence should stay short and explicit. Expiry compression exists to keep the drafting handoff readable before the lane drifts back into passive review.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already present, cadence should stay tied to deliberate lane choice. The quiet hold can remain narrow only while the operator keeps the finish decision visible.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side work is still open, cadence should stay connected to visible follow-through timing. Compression helps the operator scan the lane quickly without hiding the unfinished work.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, cadence can remain conservative and human-owned. The compressed expiry cue simply keeps that future checkpoint visible without widening the workspace.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, cadence framing remains a narrow scan aid. It clarifies how often the quiet lane should surface without turning the loyalty workspace into automation.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

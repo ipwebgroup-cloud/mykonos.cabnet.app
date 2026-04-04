@@ -1,0 +1,81 @@
+<?php
+$holdExpiryCompression = $record ? $record->hold_expiry_compression_label : 'Expiry compressed / quiet human hold';
+$quietLaneCadence = $record ? $record->quiet_lane_cadence_label : 'Quiet cadence / human review';
+$holdExpiryCompressionDigest = $record ? $record->hold_expiry_compression_digest : 'Hold-expiry compression digest is still minimal.';
+$quietLaneCadenceFrame = $record ? $record->quiet_lane_cadence_frame : 'Quiet-lane cadence framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-clock-o"></i>
+        <h4 style="margin-top:0;">Hold-Expiry Compression and Quiet-Lane Cadence</h4>
+        <p>
+            This panel keeps quiet close holds readable by compressing their expiry posture into one scan cue and by making the ongoing human review cadence explicit.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-expiry compression</h4>
+                <p><?= e($holdExpiryCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane cadence</h4>
+                <p><?= e($quietLaneCadence) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold-expiry group</h4>
+                <p><?= e($record ? $record->hold_expiry_group_label : 'Conservative expiry / human watch') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Re-entry order</h4>
+                <p><?= e($record ? $record->quiet_lane_reentry_order_label : '06 · quiet review / keep in sequence') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold compression</h4>
+                <p><?= e($record ? $record->hold_aging_compression_label : 'Compressed quiet hold / human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Re-entry readiness</h4>
+                <p><?= e($record ? $record->quiet_lane_reentry_readiness_label : 'Re-entry readiness under quiet review') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Unscheduled') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold release cue</h4>
+                <p><?= e($record ? $record->hold_release_cue_label : 'Keep hold under quiet human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet return</h4>
+                <p><?= e($record ? $record->quiet_lane_return_label : 'Return to quiet review lane') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Return timing</h4>
+                <p><?= e($record ? $record->quiet_return_review_timing_label : 'Return timing under quiet review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Owner and timing still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($record ? $record->next_finish_move_label : 'Keep the record in a narrow timed review posture') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Hold-expiry compression digest</h4>
+                <p><?= nl2br(e($holdExpiryCompressionDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane cadence frame</h4>
+                <p><?= nl2br(e($quietLaneCadenceFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>

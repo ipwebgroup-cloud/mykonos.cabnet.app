@@ -514,6 +514,46 @@ tabs:
             span: full
             comment: Conservative hold-expiry grouping and quiet re-entry ordering panel without widening the workspace into automation.
 
+        hold_expiry_compression_label:
+            label: Hold-Expiry Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed expiry cue showing whether the quiet hold is already collapsing into active review or can still sit in a readable human cadence.
+
+        quiet_lane_cadence_label:
+            label: Quiet-Lane Cadence
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Conservative cadence cue showing how frequently the quiet lane should surface in human review without widening into automation.
+
+        hold_expiry_compression_digest:
+            label: Hold-Expiry Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining hold-expiry compression, quiet-lane cadence, and the related re-entry timing cues.
+
+        quiet_lane_cadence_frame:
+            label: Quiet-Lane Cadence Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet lane cadence should be read from the current expiry and return timing posture.
+
+        hold_expiry_compression_quiet_cadence_panel:
+            label: Hold-Expiry Compression and Quiet-Lane Cadence
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_expiry_compression_quiet_cadence_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative hold-expiry compression and quiet cadence panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview
