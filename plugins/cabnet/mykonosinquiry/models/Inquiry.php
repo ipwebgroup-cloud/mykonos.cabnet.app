@@ -552,6 +552,57 @@ class Inquiry extends Model
         return $counts;
     }
 
+    public static function getLoyaltyQueuePostureBadgeStrip(): array
+    {
+        $counts = static::getLoyaltyQueuePostureCounts();
+        $workspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+        $badges = [];
+
+        foreach ($counts as $key => $bucket) {
+            $tone = 'neutral';
+            $hint = 'This continuity posture is available in the live queue filter.';
+
+            switch ($key) {
+                case 'linked':
+                    $tone = 'positive';
+                    $hint = 'Continuity already owns these inquiries through a linked loyalty record.';
+                    break;
+
+                case 'transfer_ready':
+                    $tone = 'warning';
+                    $hint = 'Closed inquiries still waiting for a continuity record.';
+                    break;
+
+                case 'draft_ready':
+                    $tone = 'primary';
+                    $hint = 'Operators can open a seeded loyalty draft straight from the queue.';
+                    break;
+
+                case 'queue_only':
+                    $tone = 'neutral';
+                    $hint = 'These inquiries should stay in the live queue until continuity is explicitly needed.';
+                    break;
+
+                case 'workspace_staged':
+                    $tone = $workspaceReady ? 'neutral' : 'critical';
+                    $hint = $workspaceReady
+                        ? 'Continuity storage is active, but this bucket should stay quiet in normal operation.'
+                        : 'Continuity storage is not active yet, so the filter stays conservative.';
+                    break;
+            }
+
+            $badges[] = [
+                'key' => $key,
+                'label' => $bucket['label'],
+                'value' => $bucket['value'],
+                'tone' => $tone,
+                'hint' => $hint,
+            ];
+        }
+
+        return $badges;
+    }
+
     public static function getLoyaltyQueueTransferSummary(): array
     {
         $counts = static::getLoyaltyQueuePostureCounts();

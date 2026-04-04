@@ -130,6 +130,7 @@ if ($overdueCount > 0 || $unassignedCount > 0) {
 
 $headlinePalette = $paletteFor($headlineTone);
 $loyaltyPostureCounts = Inquiry::getLoyaltyQueuePostureCounts();
+$loyaltyPostureBadges = Inquiry::getLoyaltyQueuePostureBadgeStrip();
 $loyaltyTransferSummary = Inquiry::getLoyaltyQueueTransferSummary();
 $loyaltyTransferPalette = $paletteFor($loyaltyTransferSummary['tone'] ?? 'neutral');
 ?>
@@ -150,6 +151,29 @@ $loyaltyTransferPalette = $paletteFor($loyaltyTransferSummary['tone'] ?? 'neutra
         </div>
         <div class="mk-copy" style="font-size:13px; color:<?= e($loyaltyTransferPalette['text']) ?>; opacity:0.92; margin-bottom:10px;">
             <?= e($loyaltyTransferSummary['body']) ?>
+        </div>
+
+        <div class="mk-copy" style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($loyaltyTransferPalette['text']) ?>; opacity:0.75; margin-bottom:10px;">
+            Filter mirror for Loyalty Posture
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <?php foreach ($loyaltyPostureBadges as $badge): ?>
+                <?php $badgePalette = $paletteFor($badge['tone']); ?>
+                <div style="display:flex; align-items:flex-start; gap:10px; border:1px solid <?= e($badgePalette['border']) ?>; background:rgba(255,255,255,0.48); border-radius:999px; padding:9px 12px; min-width:220px; max-width:100%;">
+                    <div style="display:flex; align-items:center; justify-content:center; min-width:34px; height:34px; border-radius:999px; background:<?= e($badgePalette['bg']) ?>; border:1px solid <?= e($badgePalette['border']) ?>; color:<?= e($badgePalette['text']) ?>; font-weight:700; font-size:14px;">
+                        <?= e((string) $badge['value']) ?>
+                    </div>
+                    <div>
+                        <div class="mk-copy" style="font-size:12px; font-weight:700; color:<?= e($badgePalette['text']) ?>; margin-bottom:2px;">
+                            <?= e($badge['label']) ?>
+                        </div>
+                        <div class="mk-copy" style="font-size:12px; color:<?= e($badgePalette['text']) ?>; opacity:0.86; line-height:1.35;">
+                            <?= e($badge['hint']) ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
 
         <div class="row">

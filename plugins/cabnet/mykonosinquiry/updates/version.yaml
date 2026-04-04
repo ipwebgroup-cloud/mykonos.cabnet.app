@@ -290,3 +290,9 @@
 
 2.3.62:
   - "Add Inquiry Queue loyalty transfer-count and result framing to the queue overview"
+
+2.3.63:
+  - "Hotfix the Inquiry Queue Loyalty Posture filter options popup to render without model-method resolution errors"
+
+2.3.64:
+  - "Add Inquiry Queue loyalty-posture badge strip and filter-mirror guidance to the queue overview"

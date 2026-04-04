@@ -71,4 +71,9 @@ filter:
             label: Loyalty Posture
             type: group
             modelScope: applyLoyaltyQueuePosture
-            options: getLoyaltyQueuePostureFilterOptions
+            options:
+                linked: Linked to loyalty
+                transfer_ready: Transfer-ready
+                draft_ready: Draft-ready
+                queue_only: Queue-only
+                workspace_staged: Workspace staged

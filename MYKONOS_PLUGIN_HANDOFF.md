@@ -78,19 +78,19 @@ The current long-running line remains the guarded:
 
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
-- the immediate value move shifted from render safety to queue-level loyalty visibility and safer transfer guidance
-- the current real production-safe move is **Inquiry Queue loyalty transfer-count and result framing** so operators can see linked, transfer-ready, and draft-ready continuity workload before applying filters or opening individual rows
+- the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, and compact transfer-count framing
+- a real runtime edge remained in the `Loyalty Posture` filter popup, so the current production-safe move is a conservative queue-overview polish that mirrors the live `Loyalty Posture` filter buckets directly in the command board with compact badge guidance
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.5 inquiry queue loyalty transfer-count and result framing patch`
-- plugin tracking `2.3.62`
+- `v6.40.7 inquiry queue loyalty posture badge strip and filter-mirror guidance patch`
+- plugin tracking `2.3.64`
 
 This patch does not change schema and does not touch `/plan`.
-It adds a compact loyalty-routing summary block to the Inquiry Queue overview so operators can see linked, transfer-ready, draft-ready, and queue-only workload counts before applying the `Loyalty Posture` filter or opening individual rows.
+It keeps the `Loyalty Posture` filter active on the Inquiry Queue but inlines its option set directly in YAML so the popup renders without the null-model method resolution error.
 
 ---
 
@@ -112,6 +112,8 @@ Then verify:
 - confirm the new `Loyalty Posture` filter appears on the Inquiry Queue list
 - confirm the queue can isolate linked, transfer-ready, draft-ready, and queue-only inquiries using that filter
 - confirm the Queue overview now shows a compact loyalty-routing summary block with counts for linked, transfer-ready, draft-ready, queue-only, and workspace-staged workload
+- confirm opening the `Loyalty Posture` filter popup no longer throws an error
+- confirm the queue overview shows a compact loyalty-posture badge strip that mirrors the live filter buckets
 - confirm the list workspace overview still shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save

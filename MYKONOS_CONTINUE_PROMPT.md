@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.40.5 inquiry queue loyalty transfer-count and result framing patch`
+- `v6.40.7 inquiry queue loyalty posture badge strip and filter-mirror guidance patch`
 
 This is a continuity hint only.
 
@@ -75,7 +75,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
-- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, and compact transfer-count framing directly in the Inquiry Queue list
+- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, and a filter-mirror badge strip directly in the Inquiry Queue overview
 - improve operator scan clarity before broader workflow expansion
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
@@ -143,7 +143,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, and compact continuity-count framing. Prefer keeping loyalty-routing improvements queue-native before adding broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, and compact continuity-count framing. A real runtime edge was found in the `Loyalty Posture` filter popup, so keep queue-side loyalty filters render-safe first and avoid option-resolution patterns that depend on a null model context. Prefer keeping loyalty-routing improvements queue-native before adding broader workflow expansion.
 
 ---
 
