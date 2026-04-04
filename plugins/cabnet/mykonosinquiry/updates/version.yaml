@@ -209,3 +209,5 @@
 2.3.35:
   - 'Add owner-visible same-day acknowledgement compression and quiet-lane return confirmation framing to the guarded loyalty workspace line'
 
+2.3.36:
+  - 'Add owner-tagged return confirmation compression and same-day quiet-lane acceptance framing to the guarded loyalty workspace line'

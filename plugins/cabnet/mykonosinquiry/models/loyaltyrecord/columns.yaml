@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    owner_visible_same_day_acknowledgement_compression_label:
-        label: Ack Compression
+    owner_tagged_return_confirmation_compression_label:
+        label: Tagged Return
         sortable: false
 
-    quiet_lane_return_confirmation_framing_label:
-        label: Return Confirm
+    same_day_quiet_lane_acceptance_framing_label:
+        label: Quiet Accept
         sortable: false
 
 

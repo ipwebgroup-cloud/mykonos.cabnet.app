@@ -834,6 +834,47 @@ tabs:
             span: full
             comment: Conservative owner-visible same-day acknowledgement compression and quiet-lane return confirmation panel without widening the workspace into automation.
 
+        owner_tagged_return_confirmation_compression_label:
+            label: Owner-Tagged Return Confirmation Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-tagged confirmation cue that compresses the quiet-lane return into one readable signal across the list, overview, and linked inquiry snapshot.
+
+        same_day_quiet_lane_acceptance_framing_label:
+            label: Same-Day Quiet-Lane Acceptance Framing
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Framed same-day quiet-lane acceptance cue that keeps the next readable control point aligned across the list, overview, and linked inquiry snapshot.
+
+        owner_tagged_return_confirmation_compression_digest:
+            label: Owner-Tagged Return Confirmation Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-tagged return confirmation compression, same-day quiet-lane acceptance framing, and the related timing cues into one read.
+
+        same_day_quiet_lane_acceptance_framing_frame:
+            label: Same-Day Quiet-Lane Acceptance Framing Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet-lane return should stay owner-tagged, same-day legible, and tightly aligned across every surface.
+
+        owner_tagged_return_confirmation_compression_same_day_quiet_lane_acceptance_panel:
+            label: Owner-Tagged Return Confirmation Compression and Same-Day Quiet-Lane Acceptance Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_tagged_return_confirmation_compression_same_day_quiet_lane_acceptance_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-tagged return confirmation compression and same-day quiet-lane acceptance panel without widening the workspace into automation.
+
+
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness
