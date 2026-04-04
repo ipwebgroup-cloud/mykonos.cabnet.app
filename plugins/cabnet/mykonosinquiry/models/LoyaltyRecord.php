@@ -1832,6 +1832,197 @@ public function getSameDayQuietLaneAcknowledgementPolishFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getFrontOfQueueParkedLaneSeparationLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Front of queue / reopened lane already active';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Front of queue / owner missing on immediate review';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Front of queue / parked lane expired into review';
+
+            case 'Due today':
+                return 'Front of queue / same-shift parked review';
+
+            case 'Due soon':
+                return 'Near front / next-slot parked review';
+
+            case 'Near-term':
+                return 'Mid queue / visible parked lane';
+
+            case 'Future':
+                return 'Parked lane / future hold stays separated';
+
+            case 'Unscheduled':
+                return 'Unsorted / parked lane needs timing';
+        }
+
+        return 'Queue separation forming / parked lane still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Front of queue / close-side execution still open';
+
+        case 'Ready for finish packet':
+            return 'Near front / finish drafting belongs ahead of parking';
+
+        case 'Closure packet prepared':
+            return 'Near front / finish choice belongs ahead of parking';
+
+        case 'Prepared but not yet executed':
+            return 'Near front / prepared work belongs ahead of parking';
+
+        case 'Timed for later finish':
+            return 'Parked lane / timed finish hold stays separated';
+    }
+
+    return 'Queue separation conservative / front and parked lanes readable';
+}
+
+public function getOwnerStateHandoffCompressionLabelAttribute(): string
+{
+    if (trim((string) $this->owner_name) === '') {
+        if ($this->latest_finish_lane_state === 'reopened') {
+            return 'Owner handoff open / reopened lane needs named lead';
+        }
+
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Owner handoff open / overdue lane needs assignment';
+
+            case 'Due today':
+                return 'Owner handoff open / same-shift lane needs assignment';
+
+            case 'Due soon':
+                return 'Owner handoff open / due-soon lane can wait briefly';
+
+            case 'Near-term':
+                return 'Owner handoff open / near-term parked lane';
+
+            case 'Future':
+                return 'Owner handoff open / future parked hold';
+
+            case 'Unscheduled':
+                return 'Owner handoff open / assign owner and timing';
+        }
+
+        return 'Owner handoff open / lane ownership still forming';
+    }
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Owner handoff compressed / active owner resumes now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Owner handoff compressed / current owner returns now';
+
+            case 'Due today':
+                return 'Owner handoff compressed / same-shift owner return';
+
+            case 'Due soon':
+                return 'Owner handoff compressed / next owner slot visible';
+
+            case 'Near-term':
+                return 'Owner handoff compressed / queued owner slot';
+
+            case 'Future':
+                return 'Owner handoff compressed / future parked owner hold';
+
+            case 'Unscheduled':
+                return 'Owner handoff incomplete / owner set but slot missing';
+        }
+
+        return 'Owner handoff compressed / parked lane ownership readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Owner handoff compressed / execution owner moves next';
+
+        case 'Ready for finish packet':
+            return 'Owner handoff compressed / drafting owner moves next';
+
+        case 'Closure packet prepared':
+            return 'Owner handoff compressed / finish-choice owner moves next';
+
+        case 'Prepared but not yet executed':
+            return 'Owner handoff compressed / prepared owner resumes next';
+
+        case 'Timed for later finish':
+            return 'Owner handoff compressed / timed owner hold';
+    }
+
+    return 'Owner handoff compressed / conservative owner-state read';
+}
+
+public function getFrontOfQueueParkedLaneSeparationDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Front-of-queue versus parked-lane separation' => $this->front_of_queue_parked_lane_separation_label,
+        'Owner-state handoff compression' => $this->owner_state_handoff_compression_label,
+        'Same-shift handoff sequence' => $this->same_shift_handoff_sequence_label,
+        'Queue backlog compression' => $this->queue_backlog_compression_label,
+        'Queue backlog visibility' => $this->queue_backlog_visibility_label,
+        'Deliberate reopen priority' => $this->deliberate_reopen_priority_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Front-of-queue versus parked-lane separation digest is still minimal.');
+}
+
+public function getOwnerStateHandoffCompressionFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Front-of-queue versus parked-lane separation: ' . $this->front_of_queue_parked_lane_separation_label . '.';
+    $lines[] = 'Owner-state handoff compression: ' . $this->owner_state_handoff_compression_label . '.';
+    $lines[] = 'Same-shift handoff sequence: ' . $this->same_shift_handoff_sequence_label . '.';
+    $lines[] = 'Queue backlog compression: ' . $this->queue_backlog_compression_label . '.';
+    $lines[] = 'Queue backlog visibility: ' . $this->queue_backlog_visibility_label . '.';
+    $lines[] = 'Deliberate reopen priority: ' . $this->deliberate_reopen_priority_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, the record no longer belongs in a parked-lane reading. The separation cue should collapse to the front of the queue, and owner-state handoff compression should simply confirm which named operator now owns the active return.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record has already entered an immediate review window but still has no named owner, queue separation should not pretend the lane is safely parked. The next human move is to assign ownership first so the front-of-queue read and the owner handoff read can become believable together.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the record should separate clearly out of the parked lane and into the front of the queue. Owner-state handoff compression exists to keep that overdue return attached to one current operator without widening the workflow into automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked review window is due today, the record should read as same-shift front-of-queue work rather than a quiet parked hold. The owner-state handoff cue keeps that same-shift return narrow, named, and easy to confirm across the loyalty list, overview workspace, and linked inquiry snapshot.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked review window is approaching, the record should stay near the front without pretending it is already urgent now. The owner-state handoff cue keeps the next human lead visible early so the parked lane can compress honestly before the window tightens.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the review window is near-term, the workspace can keep the record visibly separated from deeper parked backlog while still remaining calm. Owner-state handoff compression keeps the likely next lead readable without overstating urgency.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the review window is still future-facing, the record can remain parked as a quiet hold. The separation cue exists so future parked work does not get confused with front-of-queue items, and the owner-state handoff cue simply preserves who should receive that later return.';
+        } else {
+            $lines[] = 'Because the parked lane still lacks usable timing, queue separation cannot fully settle. The next human move is to assign a real review slot so the front-versus-parked distinction and the owner handoff can both compress into one credible reading.';
+        }
+    } elseif ($this->closure_readiness_label === 'Execution still open') {
+        $lines[] = 'Because close-side execution is still open, the record belongs ahead of quiet parked backlog until that follow-through is resolved. Owner-state handoff compression keeps the execution lead explicit so the queue stays readable without turning into automation.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for finish drafting, it belongs ahead of passive parked items even if the lane is otherwise quiet. The owner-state handoff cue keeps that drafting move attached to one lead so the next operator decision remains easy to scan.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, the record belongs in a near-front decision lane rather than a deep parked hold. Owner-state handoff compression keeps the finish-choice owner explicit across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif ($this->closure_readiness_label === 'Prepared but not yet executed') {
+        $lines[] = 'Because prepared work still needs a deliberate operator move, the record should stay ahead of passive parked backlog. The owner-state handoff cue keeps that prepared resume move narrow and named without changing the underlying workflow.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, the record can remain credibly parked. The separation cue keeps that hold distinct from front-of-queue work, and the owner-state handoff cue simply preserves who should receive the future handback.';
+    } else {
+        $lines[] = 'Because the workspace is still conservative and human-led, front-of-queue versus parked-lane separation and owner-state handoff compression remain narrow scan aids only. They reduce translation between urgency, parking, and ownership without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {

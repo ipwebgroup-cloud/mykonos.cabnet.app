@@ -168,6 +168,14 @@ columns:
         label: Backlog Compression
         sortable: false
 
+    front_of_queue_parked_lane_separation_label:
+        label: Queue Separation
+        sortable: false
+
+    owner_state_handoff_compression_label:
+        label: Owner-State Handoff
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

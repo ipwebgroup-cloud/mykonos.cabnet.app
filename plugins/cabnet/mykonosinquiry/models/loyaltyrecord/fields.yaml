@@ -1235,6 +1235,46 @@ tabs:
             span: full
             comment: Conservative same-shift handoff and backlog-compression panel without widening the loyalty workspace into campaign behavior or automation.
 
+        front_of_queue_parked_lane_separation_label:
+            label: Front-of-Queue versus Parked-Lane Separation
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow separation cue showing whether this record belongs at the front of human review, near-front staging, or a truly parked lane.
+
+        owner_state_handoff_compression_label:
+            label: Owner-State Handoff Compression
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed ownership cue showing whether a named operator handoff is already readable or still blocked by missing ownership or timing.
+
+        front_of_queue_parked_lane_separation_digest:
+            label: Front-of-Queue versus Parked-Lane Separation Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining queue separation, owner-state handoff, same-shift sequencing, and backlog posture into one scan.
+
+        owner_state_handoff_compression_frame:
+            label: Owner-State Handoff Compression Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how ownership should stay attached when a record moves from parked posture toward front-of-queue review.
+
+        front_of_queue_parked_lane_separation_owner_state_handoff_compression_panel:
+            label: Front-of-Queue versus Parked-Lane Separation and Owner-State Handoff Compression
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_front_of_queue_parked_lane_separation_owner_state_handoff_compression_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative queue-separation and owner-handoff panel without widening the loyalty workspace into campaign behavior or automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

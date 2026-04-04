@@ -243,3 +243,6 @@
 
 2.3.47:
   - 'Add same-shift handoff sequencing and queue backlog compression to the loyalty workspace line'
+
+2.3.48:
+  - 'Add front-of-queue versus parked-lane separation and owner-state handoff compression to the loyalty workspace line'

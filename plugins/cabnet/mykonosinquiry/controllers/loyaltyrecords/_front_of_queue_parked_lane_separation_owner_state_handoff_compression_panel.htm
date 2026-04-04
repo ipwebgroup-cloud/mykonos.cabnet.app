@@ -1,0 +1,29 @@
+<?php
+    $queueSeparation = $formModel->front_of_queue_parked_lane_separation_label ?? 'No front-of-queue versus parked-lane separation cue yet';
+    $ownerStateHandoff = $formModel->owner_state_handoff_compression_label ?? 'No owner-state handoff compression cue yet';
+    $queueSeparationDigest = $formModel->front_of_queue_parked_lane_separation_digest ?? 'Front-of-queue versus parked-lane separation digest is not available yet.';
+    $ownerStateFrame = $formModel->owner_state_handoff_compression_frame ?? 'Owner-state handoff compression frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Queue separation</h4>
+            <p><?= e($queueSeparation) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Owner-state handoff</h4>
+            <p><?= e($ownerStateHandoff) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Queue separation digest</label>
+        <pre><?= e($queueSeparationDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Owner-state handoff frame</label>
+        <pre><?= e($ownerStateFrame) ?></pre>
+    </div>
+</div>

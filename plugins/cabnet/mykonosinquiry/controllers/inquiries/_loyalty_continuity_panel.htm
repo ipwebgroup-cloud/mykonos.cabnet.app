@@ -270,6 +270,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->queue_backlog_compression_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Queue separation</h4>
+                    <p><?= e($record->front_of_queue_parked_lane_separation_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Owner-state handoff</h4>
+                    <p><?= e($record->owner_state_handoff_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
@@ -352,6 +360,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Post-close hold frame:</strong> <?= e($record->post_close_hold_frame) ?></li>
                     <li><strong>Queue watch digest:</strong> <?= e($record->queue_watch_digest) ?></li>
                     <li><strong>Reopen priority frame:</strong> <?= e($record->reopen_priority_frame) ?></li>
+                    <li><strong>Queue separation digest:</strong> <?= e($record->front_of_queue_parked_lane_separation_digest) ?></li>
+                    <li><strong>Owner-state handoff frame:</strong> <?= e($record->owner_state_handoff_compression_frame) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

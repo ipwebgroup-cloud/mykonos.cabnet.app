@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.33.0 same-shift handoff sequence and queue backlog compression workspace`
+- `v6.34.0 front-of-queue versus parked-lane separation and owner-state handoff compression workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -154,6 +154,8 @@ This means the current workspace already includes the earlier conservative loyal
 - queue backlog visibility
 - same-shift handoff sequence
 - queue backlog compression
+- front-of-queue versus parked-lane separation
+- owner-state handoff compression
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
