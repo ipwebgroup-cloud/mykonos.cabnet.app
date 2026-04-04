@@ -93,8 +93,8 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.37.0 owner-visible deferred review-slot alignment and current-shift versus next-shift quiet-return separation workspace`
-- plugin tracking `2.3.51`
+- `v6.38.0 parked-lane handback sequencing visibility and near-front quiet-return review-slot compression workspace`
+- plugin tracking `2.3.52`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -161,6 +161,10 @@ This means the current workspace already includes the earlier conservative loyal
 - same-shift review checkpoint confirmation
 - parked-lane owner reassignment visibility
 - front-of-list quiet-return confirmation
+- owner-visible deferred review-slot alignment
+- current-shift versus next-shift quiet-return separation
+- parked-lane handback sequencing visibility
+- near-front quiet-return review-slot compression
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.

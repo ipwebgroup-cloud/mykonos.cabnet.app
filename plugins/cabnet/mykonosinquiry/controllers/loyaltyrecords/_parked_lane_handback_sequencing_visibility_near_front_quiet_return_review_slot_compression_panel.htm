@@ -1,0 +1,29 @@
+<?php
+    $handbackSequence = $formModel->parked_lane_handback_sequencing_visibility_label ?? 'No parked-lane handback sequencing visibility cue yet';
+    $nearFrontSlot = $formModel->near_front_quiet_return_review_slot_compression_label ?? 'No near-front quiet-return review-slot compression cue yet';
+    $handbackDigest = $formModel->parked_lane_handback_sequencing_visibility_digest ?? 'Parked-lane handback sequencing visibility digest is not available yet.';
+    $nearFrontFrame = $formModel->near_front_quiet_return_review_slot_compression_frame ?? 'Near-front quiet-return review-slot compression frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Handback sequence</h4>
+            <p><?= e($handbackSequence) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Near-front slot</h4>
+            <p><?= e($nearFrontSlot) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Handback sequencing digest</label>
+        <pre><?= e($handbackDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Near-front slot compression frame</label>
+        <pre><?= e($nearFrontFrame) ?></pre>
+    </div>
+</div>

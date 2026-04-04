@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.37.0 owner-visible deferred review-slot alignment and current-shift versus next-shift quiet-return separation workspace`
+- `v6.38.0 parked-lane handback sequencing visibility and near-front quiet-return review-slot compression workspace`
 
 This is a continuity hint only.
 
@@ -146,10 +146,10 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- parked-lane handback sequencing visibility
-- near-front quiet-return review-slot compression
 - owner-held next-shift handback confirmation
 - current-lane versus deferred-lane return compression
+- front-of-review parked-return cue alignment
+- parked-review re-entry queue compression
 
 But you must confirm this against the real uploaded files before deciding the next patch.
 

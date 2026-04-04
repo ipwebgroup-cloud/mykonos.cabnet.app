@@ -302,6 +302,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->current_shift_next_shift_quiet_return_separation_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Handback sequence</h4>
+                    <p><?= e($record->parked_lane_handback_sequencing_visibility_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Near-front slot</h4>
+                    <p><?= e($record->near_front_quiet_return_review_slot_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
@@ -392,6 +400,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Front-of-list return frame:</strong> <?= e($record->front_of_list_quiet_return_confirmation_frame) ?></li>
                     <li><strong>Deferred slot alignment digest:</strong> <?= e($record->owner_visible_deferred_review_slot_alignment_digest) ?></li>
                     <li><strong>Quiet-return shift separation frame:</strong> <?= e($record->current_shift_next_shift_quiet_return_separation_frame) ?></li>
+                    <li><strong>Handback sequencing digest:</strong> <?= e($record->parked_lane_handback_sequencing_visibility_digest) ?></li>
+                    <li><strong>Near-front slot compression frame:</strong> <?= e($record->near_front_quiet_return_review_slot_compression_frame) ?></li>
                 </ul>
             </div>
         <?php endif; ?>

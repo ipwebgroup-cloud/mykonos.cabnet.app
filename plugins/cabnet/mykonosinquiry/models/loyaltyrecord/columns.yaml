@@ -200,6 +200,14 @@ columns:
         label: Quiet-Return Shift Split
         sortable: false
 
+    parked_lane_handback_sequencing_visibility_label:
+        label: Handback Sequence
+        sortable: false
+
+    near_front_quiet_return_review_slot_compression_label:
+        label: Near-Front Slot
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

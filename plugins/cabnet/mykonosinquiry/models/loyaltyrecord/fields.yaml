@@ -1395,6 +1395,46 @@ tabs:
             span: full
             comment: Conservative owner-slot and quiet-return shift-separation panel without widening the loyalty workspace into automation.
 
+        parked_lane_handback_sequencing_visibility_label:
+            label: Parked-Lane Handback Sequencing Visibility
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow handback-order cue showing whether a parked return already has a believable sequence, owner lead, and timing posture or still needs those pieces aligned.
+
+        near_front_quiet_return_review_slot_compression_label:
+            label: Near-Front Quiet-Return Review-Slot Compression
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed near-front cue showing whether a quiet return already belongs in a visible near-front review slot, should stay staged for later, or still lacks enough timing to compress safely.
+
+        parked_lane_handback_sequencing_visibility_digest:
+            label: Parked-Lane Handback Sequencing Visibility Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining parked-lane handback sequencing, near-front quiet-return compression, ownership, and review-slot posture into one read.
+
+        near_front_quiet_return_review_slot_compression_frame:
+            label: Near-Front Quiet-Return Review-Slot Compression Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how a parked quiet return should move toward a believable near-front review slot without losing handback order or ownership clarity.
+
+        parked_lane_handback_sequencing_visibility_near_front_quiet_return_review_slot_compression_panel:
+            label: Parked-Lane Handback Sequencing Visibility and Near-Front Quiet-Return Review-Slot Compression
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_lane_handback_sequencing_visibility_near_front_quiet_return_review_slot_compression_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative parked-handback sequencing and near-front quiet-return review-slot panel without widening the loyalty workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

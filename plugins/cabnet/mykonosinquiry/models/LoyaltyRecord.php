@@ -2623,6 +2623,201 @@ public function getCurrentShiftNextShiftQuietReturnSeparationFrameAttribute(): s
     return implode(PHP_EOL, $lines);
 }
 
+public function getParkedLaneHandbackSequencingVisibilityLabelAttribute(): string
+{
+    $ownerMissing = trim((string) $this->owner_name) === '';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Parked-lane handback sequencing visibility collapsed / reopened now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if ($ownerMissing) {
+            switch ($this->next_review_window_label) {
+                case 'Overdue':
+                    return 'Parked-lane handback sequencing visibility blocked / overdue handback still unowned';
+
+                case 'Due today':
+                    return 'Parked-lane handback sequencing visibility blocked / same-shift handback still unowned';
+
+                case 'Due soon':
+                    return 'Parked-lane handback sequencing visibility pending / next-shift handback still needs owner';
+
+                case 'Near-term':
+                    return 'Parked-lane handback sequencing visibility pending / deferred handback still needs owner';
+
+                case 'Future':
+                    return 'Parked-lane handback sequencing visibility parked / future handback owner still open';
+
+                case 'Unscheduled':
+                    return 'Parked-lane handback sequencing visibility open / owner and handback slot both still unset';
+            }
+
+            return 'Parked-lane handback sequencing visibility pending / handback owner still missing';
+        }
+
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Parked-lane handback sequencing visibility resolved / overdue handback leads now';
+
+            case 'Due today':
+                return 'Parked-lane handback sequencing visibility resolved / same-shift handback already sequenced';
+
+            case 'Due soon':
+                return 'Parked-lane handback sequencing visibility aligned / next-shift handback sequence visible';
+
+            case 'Near-term':
+                return 'Parked-lane handback sequencing visibility aligned / deferred handback sequence preserved';
+
+            case 'Future':
+                return 'Parked-lane handback sequencing visibility parked / future handback sequence held';
+
+            case 'Unscheduled':
+                return 'Parked-lane handback sequencing visibility partial / owner visible but handback slot still open';
+        }
+
+        return 'Parked-lane handback sequencing visibility aligned / handback order readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Parked-lane handback sequencing visibility deferred / active execution still ahead';
+
+        case 'Ready for finish packet':
+            return 'Parked-lane handback sequencing visibility deferred / finish drafting still ahead';
+
+        case 'Closure packet prepared':
+            return $ownerMissing
+                ? 'Parked-lane handback sequencing visibility deferred / decision handback owner missing'
+                : 'Parked-lane handback sequencing visibility deferred / decision handback lead visible';
+
+        case 'Prepared but not yet executed':
+            return $ownerMissing
+                ? 'Parked-lane handback sequencing visibility deferred / prepared follow-through owner missing'
+                : 'Parked-lane handback sequencing visibility deferred / prepared handback lead readable';
+
+        case 'Timed for later finish':
+            return $ownerMissing
+                ? 'Parked-lane handback sequencing visibility queued / timed handback owner still open'
+                : 'Parked-lane handback sequencing visibility preserved / timed handback sequence readable';
+    }
+
+    return $ownerMissing
+        ? 'Parked-lane handback sequencing visibility open / owner and sequence still forming'
+        : 'Parked-lane handback sequencing visibility conservative / owner visible while sequence stays light';
+}
+
+public function getNearFrontQuietReturnReviewSlotCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Near-front quiet-return review-slot compression collapsed / reopened now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Near-front quiet-return review-slot compression resolved / overdue return already compresses near front';
+
+            case 'Due today':
+                return 'Near-front quiet-return review-slot compression resolved / same-shift quiet return already near front';
+
+            case 'Due soon':
+                return 'Near-front quiet-return review-slot compression staged / next-shift quiet return compresses into a visible slot';
+
+            case 'Near-term':
+                return 'Near-front quiet-return review-slot compression staged / deferred slot preserved without front-loading';
+
+            case 'Future':
+                return 'Near-front quiet-return review-slot compression parked / future quiet return stays outside near-front review';
+
+            case 'Unscheduled':
+                return 'Near-front quiet-return review-slot compression open / review slot still too light to compress';
+        }
+
+        return 'Near-front quiet-return review-slot compression forming / front-slot timing still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Near-front quiet-return review-slot compression deferred / active execution still ahead';
+
+        case 'Ready for finish packet':
+            return 'Near-front quiet-return review-slot compression deferred / finish drafting still ahead';
+
+        case 'Closure packet prepared':
+            return 'Near-front quiet-return review-slot compression deferred / decision lane still ahead of quiet return';
+
+        case 'Prepared but not yet executed':
+            return 'Near-front quiet-return review-slot compression deferred / prepared work not yet parked into review';
+
+        case 'Timed for later finish':
+            return 'Near-front quiet-return review-slot compression parked / timed finish stays in a later slot';
+    }
+
+    return 'Near-front quiet-return review-slot compression conservative / review-slot posture still forming';
+}
+
+public function getParkedLaneHandbackSequencingVisibilityDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Parked-lane handback sequencing visibility' => $this->parked_lane_handback_sequencing_visibility_label,
+        'Near-front quiet-return review-slot compression' => $this->near_front_quiet_return_review_slot_compression_label,
+        'Handback' => $this->finish_lane_handback_label,
+        'Shift handoff' => $this->same_shift_handoff_sequence_label,
+        'Owner reassignment' => $this->parked_lane_owner_reassignment_visibility_label,
+        'Deferred slot alignment' => $this->owner_visible_deferred_review_slot_alignment_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Parked-lane handback sequencing visibility digest is still minimal.');
+}
+
+public function getNearFrontQuietReturnReviewSlotCompressionFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Parked-lane handback sequencing visibility: ' . $this->parked_lane_handback_sequencing_visibility_label . '.';
+    $lines[] = 'Near-front quiet-return review-slot compression: ' . $this->near_front_quiet_return_review_slot_compression_label . '.';
+    $lines[] = 'Handback: ' . $this->finish_lane_handback_label . '.';
+    $lines[] = 'Shift handoff: ' . $this->same_shift_handoff_sequence_label . '.';
+    $lines[] = 'Owner reassignment: ' . $this->parked_lane_owner_reassignment_visibility_label . '.';
+    $lines[] = 'Front-of-list quiet return: ' . $this->front_of_list_quiet_return_confirmation_label . '.';
+    $lines[] = 'Deferred slot alignment: ' . $this->owner_visible_deferred_review_slot_alignment_label . '.';
+    $lines[] = 'Quiet-return shift split: ' . $this->current_shift_next_shift_quiet_return_separation_label . '.';
+    $lines[] = 'Review slot: ' . $this->quiet_lane_review_slot_label . '.';
+    $lines[] = 'Review-slot compression: ' . $this->review_slot_compression_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, parked-lane handback sequencing should collapse into one immediate human review path. Near-front quiet-return compression therefore reads as resolved now rather than pretending the record still belongs in a deferred parked handback.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the record no longer belongs in a soft parked sequence. Handback sequencing visibility keeps the overdue return attached to one readable owner and handback order, while near-front review-slot compression makes it explicit that the quiet return now belongs near the front of human review.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked review window lands today, the handback should stay same-shift and easy to follow. The handback-sequencing cue keeps owner order and transfer posture readable, while near-front review-slot compression shows that the quiet return should occupy a believable near-front slot instead of drifting back into generic parking.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked review window is close but not yet same-shift urgent, the workspace can keep the handback sequence visible without overstating immediacy. Near-front review-slot compression keeps the next-slot quiet return readable early, while preserving enough distance so current-shift work still stays ahead.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is deferred rather than immediate, the workspace should preserve the handback order without flattening it into front-of-queue urgency. Near-front review-slot compression therefore stays staged, showing a believable upcoming slot without pretending the record already belongs at the top of the queue.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet return is still future-facing, the record can remain parked. Handback sequencing visibility simply preserves who should receive that later handback and in what order, while near-front review-slot compression stays intentionally off so future work does not displace current or next-shift review.';
+        } else {
+            $lines[] = 'Because the parked lane still lacks usable timing, neither handback sequencing visibility nor near-front review-slot compression can settle honestly yet. The next safe move is to name the owner and assign a credible review slot so the quiet return can move from vague parking into a believable handback sequence.';
+        }
+    } elseif ($this->closure_readiness_label === 'Execution still open') {
+        $lines[] = 'Because close-side execution is still active, the record should stay ahead of parked-lane handback sequencing for now. Near-front quiet-return compression remains deferred until the active work either closes cleanly or is deliberately parked into a review slot.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for finish drafting, the workspace should keep drafting ahead of any parked-lane handback story. The near-front slot should only compress after the operator deliberately decides whether the record returns to review now or later.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a finish-choice packet is already prepared, the record belongs in a near-front decision lane rather than a settled parked return. Handback sequencing visibility simply keeps the eventual lead readable, and near-front review-slot compression waits until the operator decides whether that quiet return truly belongs near the front.';
+    } elseif ($this->closure_readiness_label === 'Prepared but not yet executed') {
+        $lines[] = 'Because prepared work still needs a deliberate operator move, the workspace should keep the prepared action ahead of passive parked review. Handback sequencing and near-front review-slot compression remain narrow reading aids only until the prepared work is either resumed now or consciously parked.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because finish timing is intentionally deferred, the record can remain parked without pretending it belongs near the front. Handback sequencing visibility simply preserves the later return order, while near-front review-slot compression stays intentionally light.';
+    } else {
+        $lines[] = 'Because the loyalty workspace stays conservative and human-led, parked-lane handback sequencing visibility and near-front quiet-return review-slot compression remain narrow scan aids only. They reduce translation between handback order, owner visibility, and near-front review-slot placement without widening the workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {
