@@ -170,3 +170,6 @@
 
 2.3.22:
   - 'Introduce hold-release framing and quiet-lane return visibility for live loyalty records'
+
+2.3.23:
+  - 'Introduce hold-aging readability and quiet-return review timing for live loyalty records'

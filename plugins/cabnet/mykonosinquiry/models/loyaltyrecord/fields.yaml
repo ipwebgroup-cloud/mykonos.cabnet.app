@@ -394,6 +394,46 @@ tabs:
             span: full
             comment: Conservative hold-release and quiet-lane return panel without widening the workspace into automation.
 
+        hold_aging_label:
+            label: Hold Aging
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Fast read of whether a quiet close hold is still fresh, maturing, stable, or has already aged out into active human review.
+
+        quiet_return_review_timing_label:
+            label: Quiet-Return Review Timing
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Narrow timing cue showing when the quiet lane should return to human review without widening into automation.
+
+        hold_aging_digest:
+            label: Hold-Aging Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Compressed digest joining hold aging, quiet-return timing, hold release, and the next finish move.
+
+        quiet_return_review_timing_frame:
+            label: Quiet-Return Review Timing Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how a quiet hold is aging and when the lane should return to active human review.
+
+        hold_aging_quiet_return_timing_panel:
+            label: Hold Aging and Quiet-Return Review Timing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_aging_quiet_return_timing_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative hold-aging and quiet-return timing panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

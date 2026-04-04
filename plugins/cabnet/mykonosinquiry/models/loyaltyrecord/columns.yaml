@@ -112,6 +112,14 @@ columns:
         label: Quiet Return
         sortable: false
 
+    hold_aging_label:
+        label: Hold Aging
+        sortable: false
+
+    quiet_return_review_timing_label:
+        label: Return Timing
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

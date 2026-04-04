@@ -2469,6 +2469,168 @@ public function getQuietLaneReturnFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getHoldAgingLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Quiet hold inactive / reopened now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+            case 'Due today':
+                return 'Quiet hold aged out / review now';
+
+            case 'Due soon':
+                return 'Quiet hold maturing / review soon';
+
+            case 'Near-term':
+                return 'Quiet hold stable / near-term watch';
+
+            case 'Future':
+                return 'Fresh quiet hold / future watch';
+
+            case 'Unscheduled':
+                return 'Quiet hold parked / schedule missing';
+        }
+
+        return 'Quiet hold parked / timing still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Hold aging unsafe / owner missing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Temporary hold / packet drafting window';
+
+        case 'Closure packet prepared':
+            return 'Temporary hold / lane choice pending';
+
+        case 'Execution still open':
+            return 'Temporary hold / follow-through aging';
+
+        case 'Prepared but not yet executed':
+            return 'Temporary hold / prepared work waiting';
+
+        case 'Timed for later finish':
+            return 'Timed hold / future finish window';
+    }
+
+    return 'Conservative hold / quiet review aging';
+}
+
+public function getQuietReturnReviewTimingLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Review timing now / active lane';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+            case 'Due today':
+                return 'Quiet return timing due now';
+
+            case 'Due soon':
+                return 'Quiet return timing due soon';
+
+            case 'Near-term':
+                return 'Quiet return timing near-term';
+
+            case 'Future':
+                return 'Quiet return timing later';
+
+            case 'Unscheduled':
+                return 'Quiet return timing unscheduled';
+        }
+
+        return 'Quiet return timing still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Assign timing owner now';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return timing when drafting starts';
+
+        case 'Closure packet prepared':
+            return 'Return timing when lane is chosen';
+
+        case 'Execution still open':
+            return 'Return timing when follow-through resumes';
+
+        case 'Prepared but not yet executed':
+            return 'Return timing when prepared work begins';
+
+        case 'Timed for later finish':
+            return 'Return timing at finish window';
+    }
+
+    return 'Return timing under quiet review';
+}
+
+public function getHoldAgingDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Hold aging' => $this->hold_aging_label,
+        'Quiet-return timing' => $this->quiet_return_review_timing_label,
+        'Hold release cue' => $this->hold_release_cue_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Finish-lane handback' => $this->finish_lane_handback_label,
+        'Post-close hold' => $this->post_close_hold_label,
+        'Owner timing' => $this->owner_timing_signal_label,
+        'Next review window' => $this->next_review_window_label,
+        'Next finish move' => $this->next_finish_move_label,
+    ], 'Hold-aging digest is still minimal.');
+}
+
+public function getQuietReturnReviewTimingFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Hold aging: ' . $this->hold_aging_label . '.';
+    $lines[] = 'Quiet-return timing: ' . $this->quiet_return_review_timing_label . '.';
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+    $lines[] = 'Quiet-lane return: ' . $this->quiet_lane_return_label . '.';
+    $lines[] = 'Finish-lane handback: ' . $this->finish_lane_handback_label . '.';
+    $lines[] = 'Post-close hold: ' . $this->post_close_hold_label . '.';
+    $lines[] = 'Owner timing: ' . $this->owner_timing_signal_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, quiet hold aging is no longer the controlling read. The return timing is now immediate human review so the lane can be deliberately stabilized again.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if (in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+            $lines[] = 'Because the parked watch is due now, the quiet hold has effectively aged out. The return timing belongs in immediate human review instead of a silent hold.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked watch is due soon, the quiet hold is entering its mature stage and the return timing should be prepared now so the lane does not drift into urgency.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the parked watch is near-term but not urgent, the quiet hold can remain readable and stable while the operator keeps the next review window visible.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the parked watch sits further out, the quiet hold is still fresh and the return timing can remain later, provided the lane stays human-owned and visible.';
+        } else {
+            $lines[] = 'Because the quiet hold has no clear review schedule yet, the timing should stay conservative until the next return window is made explicit.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because review timing is already due and ownership is missing, the hold is aging unsafely. The next timing move is to assign a human owner before leaving the record in any quiet posture.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for packet drafting, the quiet hold should stay temporary. The return timing becomes active when the close drafter starts the packet work.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet already exists, the quiet hold should not age indefinitely. The return timing becomes active when the finish lane choice is made explicitly.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs human action, the hold can remain temporary only while the operator keeps the return timing visible and resumes the prepared work deliberately.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because the record is intentionally timed for later finish work, the quiet hold can age conservatively until the scheduled finish window becomes the next active review point.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, the quiet hold can remain readable under human ownership while the return timing stays visible as the next decision anchor.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 
 public function getClosureReadinessLabelAttribute(): string
     {
