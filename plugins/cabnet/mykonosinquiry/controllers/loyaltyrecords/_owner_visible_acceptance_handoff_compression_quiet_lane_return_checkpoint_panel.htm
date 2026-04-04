@@ -1,0 +1,33 @@
+<?php
+$ownerVisibleAcceptanceHandoffCompression = $record ? $record->owner_visible_acceptance_handoff_compression_label : 'Owner-visible acceptance handoff compression is still forming';
+$quietLaneReturnCheckpointAlignment = $record ? $record->quiet_lane_return_checkpoint_alignment_label : 'Quiet-lane return checkpoint alignment is still forming';
+$ownerVisibleAcceptanceHandoffCompressionDigest = $record ? $record->owner_visible_acceptance_handoff_compression_digest : 'Owner-visible acceptance handoff compression digest is still minimal.';
+$quietLaneReturnCheckpointAlignmentFrame = $record ? $record->quiet_lane_return_checkpoint_alignment_frame : 'Quiet-lane return checkpoint alignment frame is still minimal.';
+?>
+<div class="callout callout-info no-icon">
+    <div class="panel-heading">
+        <h3>Owner-Visible Acceptance Handoff Compression and Quiet-Lane Return Checkpoint Alignment</h3>
+        <p class="help-block">Keeps the quiet-lane return compressed into one owner-visible acceptance handoff cue and one return checkpoint cue without widening the loyalty workspace into automation.</p>
+    </div>
+
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Acceptance handoff</h4>
+            <p><?= e($ownerVisibleAcceptanceHandoffCompression) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Return checkpoint</h4>
+            <p><?= e($quietLaneReturnCheckpointAlignment) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Compression digest</label>
+        <pre><?= e($ownerVisibleAcceptanceHandoffCompressionDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Checkpoint frame</label>
+        <pre><?= e($quietLaneReturnCheckpointAlignmentFrame) ?></pre>
+    </div>
+</div>

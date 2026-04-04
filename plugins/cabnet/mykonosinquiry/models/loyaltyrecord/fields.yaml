@@ -914,45 +914,45 @@ tabs:
             span: full
             comment: Conservative owner-held quiet-lane acceptance compression and tagged return checkpoint panel without widening the workspace into automation.
 
-        owner_tagged_acceptance_checkpoint_compression_label:
-            label: Owner-Tagged Acceptance Checkpoint Compression
+        owner_visible_acceptance_handoff_compression_label:
+            label: Owner-Visible Acceptance Handoff Compression
             tab: Overview
             readOnly: true
             span: left
-            comment: Narrow owner-tagged acceptance checkpoint cue that compresses the quiet-lane acceptance step into one readable signal across the list, overview, and linked inquiry snapshot.
+            comment: Narrow owner-visible acceptance handoff cue that compresses the quiet-lane acceptance step into one readable signal across the list, overview, and linked inquiry snapshot.
 
-        quiet_lane_return_handoff_framing_label:
-            label: Quiet-Lane Return Handoff Framing
+        quiet_lane_return_checkpoint_alignment_label:
+            label: Quiet-Lane Return Checkpoint Alignment
             tab: Overview
             readOnly: true
             span: right
-            comment: Framed quiet-lane return handoff cue that keeps the next readable owner-led control point aligned across the list, overview, and linked inquiry snapshot.
+            comment: Framed quiet-lane return checkpoint cue that keeps the next readable owner-led control point aligned across the list, overview, and linked inquiry snapshot.
 
-        owner_tagged_acceptance_checkpoint_compression_digest:
-            label: Owner-Tagged Acceptance Checkpoint Compression Digest
+        owner_visible_acceptance_handoff_compression_digest:
+            label: Owner-Visible Acceptance Handoff Compression Digest
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: left
-            comment: Ordered digest joining owner-tagged acceptance checkpoint compression, quiet-lane return handoff framing, and the related timing cues into one read.
+            comment: Ordered digest joining owner-visible acceptance handoff compression, quiet-lane return checkpoint alignment, and the related timing cues into one read.
 
-        quiet_lane_return_handoff_framing_frame:
-            label: Quiet-Lane Return Handoff Framing Frame
+        quiet_lane_return_checkpoint_alignment_frame:
+            label: Quiet-Lane Return Checkpoint Alignment Frame
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: right
-            comment: Read-only framing for how the quiet-lane return should stay owner-tagged, handoff-ready, and tightly aligned across every surface.
+            comment: Read-only framing for how the quiet-lane return should stay owner-visible, checkpoint-aligned, and tightly aligned across every surface.
 
-        owner_tagged_acceptance_checkpoint_compression_quiet_lane_return_handoff_panel:
-            label: Owner-Tagged Acceptance Checkpoint Compression and Quiet-Lane Return Handoff Framing
+        owner_visible_acceptance_handoff_compression_quiet_lane_return_checkpoint_panel:
+            label: Owner-Visible Acceptance Handoff Compression and Quiet-Lane Return Checkpoint Alignment
             type: partial
-            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_tagged_acceptance_checkpoint_compression_quiet_lane_return_handoff_panel.htm
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_visible_acceptance_handoff_compression_quiet_lane_return_checkpoint_panel.htm
             tab: Overview
             span: full
-            comment: Conservative owner-tagged acceptance checkpoint compression and quiet-lane return handoff panel without widening the workspace into automation.
+            comment: Conservative owner-visible acceptance handoff compression and quiet-lane return checkpoint panel without widening the workspace into automation.
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness
