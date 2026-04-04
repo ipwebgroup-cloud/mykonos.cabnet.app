@@ -311,3 +311,5 @@
   - 'Align loyalty source-context panels and queue-return actions across create and update screens'
 2.3.70:
   - 'Stabilize loyalty update partial rendering by normalizing record context across continuity panels'
+2.3.71:
+  - 'Hotfix close-handoff loyalty update panel record context so saved records do not crash on render'

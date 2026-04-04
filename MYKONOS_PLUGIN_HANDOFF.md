@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.3 loyalty update-partial record-context render safety hotfix patch`
-- plugin tracking `2.3.70`
+- `v6.41.4 close-handoff review exit panel record-context render safety hotfix patch`
+- plugin tracking `2.3.71`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and hotfixes a live loyalty update-screen regression where several continuity partials assumed `$record` was always injected by the backend renderer. The patch normalizes record context inside the affected loyalty partials so update screens stay render-safe before broader continuity polish continues.
+It keeps the Inquiry Queue loyalty bridge intact and hotfixes a remaining loyalty update-screen regression where the close-handoff review-exit panel still referenced `$record` directly after the record-context normalization pass. The patch rebinds that panel to the normalized backend model context so saved loyalty records continue to render safely.
 
 ---
 
@@ -106,8 +106,8 @@ Then verify:
 - click `New Loyalty Record` and confirm create opens cleanly
 - open `/admin/cabnet/mykonosinquiry/loyaltyrecords/create?source_inquiry_id=REAL_ID` and confirm the create screen shows a source inquiry summary with `Open inquiry` and `Back to queue search`
 - open `/admin/cabnet/mykonosinquiry/loyaltyrecords/create?source_inquiry_id=123` with a non-existing id and confirm the create screen shows a safe lookup warning instead of pretending prefill is active
-- open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the page renders instead of throwing `Undefined variable $record`
-- confirm hold / quiet-lane / resurfacing / checkpoint continuity panels load without PHP variable errors
+- open existing loyalty records such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/4` and confirm the pages render instead of throwing `Undefined variable $record`
+- confirm hold / quiet-lane / resurfacing / checkpoint / close-handoff continuity panels load without PHP variable errors
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row

@@ -1,5 +1,6 @@
 <?php
-$recordModel = $record ?? $formModel ?? $model ?? null;
+$recordModel = $formModel ?? $model ?? $record ?? null;
+$record = $recordModel;
 $closeHandoffGroup = $recordModel ? ($recordModel->close_handoff_group_label ?: 'Review handoff / quiet hold') : 'Review handoff / quiet hold';
 $finishReviewExit = $recordModel ? ($recordModel->finish_review_exit_label ?: 'Keep the record in conservative finish review') : 'Keep the record in conservative finish review';
 $handoffDigest = $recordModel ? ($recordModel->close_handoff_digest ?: 'Close handoff digest is still minimal.') : 'Close handoff digest is still minimal.';
