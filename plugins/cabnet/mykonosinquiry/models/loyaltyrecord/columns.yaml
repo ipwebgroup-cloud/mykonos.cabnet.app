@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    owner_aligned_return_checkpoint_compression_label:
-        label: Return Compression
+    return_checkpoint_handoff_compression_label:
+        label: Return Handoff
         sortable: false
 
-    same_day_acceptance_handoff_framing_label:
-        label: Same-Day Handoff
+    owner_visible_same_day_acceptance_alignment_label:
+        label: Acceptance Align
         sortable: false
 
 

@@ -5325,6 +5325,171 @@ public function getSameDayAcceptanceHandoffFramingFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getReturnCheckpointHandoffCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return handoff active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return handoff blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Return handoff aligned / overdue owner-visible quiet return';
+
+            case 'Due today':
+                return 'Return handoff aligned / same-day owner-visible quiet return';
+
+            case 'Due soon':
+                return 'Return handoff staged / next-slot owner-visible quiet return';
+
+            case 'Near-term':
+                return 'Return handoff staged / near-term owner-visible quiet return';
+
+            case 'Future':
+                return 'Return handoff parked / future owner-visible quiet return';
+
+            case 'Unscheduled':
+                return 'Return handoff open / set quiet checkpoint first';
+        }
+
+        return 'Return handoff forming / owner-visible quiet return readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return handoff narrow / drafting return owner-visible';
+
+        case 'Closure packet prepared':
+            return 'Return handoff narrow / finish choice owner-visible';
+
+        case 'Execution still open':
+            return 'Return handoff narrow / execution resume owner-visible';
+
+        case 'Prepared but not yet executed':
+            return 'Return handoff narrow / prepared resume owner-visible';
+
+        case 'Timed for later finish':
+            return 'Return handoff narrow / later finish owner-visible';
+    }
+
+    return 'Return handoff narrow / conservative owner-visible read';
+}
+
+public function getOwnerVisibleSameDayAcceptanceAlignmentLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Acceptance alignment active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Acceptance alignment blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Acceptance alignment framed / overdue same-day owner move';
+
+            case 'Due today':
+                return 'Acceptance alignment framed / same-day owner-visible handoff';
+
+            case 'Due soon':
+                return 'Acceptance alignment staged / next-slot same-day handoff';
+
+            case 'Near-term':
+                return 'Acceptance alignment staged / near-term same-day handoff';
+
+            case 'Future':
+                return 'Acceptance alignment parked / future same-day handoff';
+
+            case 'Unscheduled':
+                return 'Acceptance alignment open / set quiet checkpoint first';
+        }
+
+        return 'Acceptance alignment forming / same-day owner-visible move readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Acceptance alignment narrow / drafting move same-day framed';
+
+        case 'Closure packet prepared':
+            return 'Acceptance alignment narrow / finish choice same-day framed';
+
+        case 'Execution still open':
+            return 'Acceptance alignment narrow / execution resume same-day framed';
+
+        case 'Prepared but not yet executed':
+            return 'Acceptance alignment narrow / prepared resume same-day framed';
+
+        case 'Timed for later finish':
+            return 'Acceptance alignment narrow / later finish same-day framed';
+    }
+
+    return 'Acceptance alignment narrow / conservative same-day read';
+}
+
+public function getReturnCheckpointHandoffCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Return checkpoint handoff compression' => $this->return_checkpoint_handoff_compression_label,
+        'Owner-visible same-day acceptance alignment' => $this->owner_visible_same_day_acceptance_alignment_label,
+        'Owner-aligned return checkpoint compression' => $this->owner_aligned_return_checkpoint_compression_label,
+        'Same-day acceptance handoff framing' => $this->same_day_acceptance_handoff_framing_label,
+        'Next review window' => $this->next_review_window_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+    ], 'Return checkpoint handoff compression digest is still minimal.');
+}
+
+public function getOwnerVisibleSameDayAcceptanceAlignmentFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Return checkpoint handoff compression: ' . $this->return_checkpoint_handoff_compression_label . '.';
+    $lines[] = 'Owner-visible same-day acceptance alignment: ' . $this->owner_visible_same_day_acceptance_alignment_label . '.';
+    $lines[] = 'Owner-aligned return checkpoint compression: ' . $this->owner_aligned_return_checkpoint_compression_label . '.';
+    $lines[] = 'Same-day acceptance handoff framing: ' . $this->same_day_acceptance_handoff_framing_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, return checkpoint handoff compression should collapse into active handling instead of quiet framing. The owner-visible same-day acceptance alignment simply keeps the reopened owner move readable across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already in an immediate review window but still has no named owner, return checkpoint handoff compression cannot become truthful yet. The first real move is to assign the operator so the owner-visible same-day acceptance alignment can be framed credibly across every surface.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane return is overdue, the workspace should compress into one return checkpoint handoff and one owner-visible same-day acceptance alignment. That keeps the overdue move readable now without widening the workflow or inventing automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, the workspace should read as one return checkpoint handoff and one owner-visible same-day acceptance alignment. That gives the list, overview, and linked inquiry snapshot the same narrow operator signal.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is due soon, return checkpoint handoff compression can stay calm and readable before urgency rises. The owner-visible same-day acceptance alignment keeps the next slot visible early without overstating pressure.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the workspace can stay conservative and owner-led. The return checkpoint handoff keeps the likely next quiet return move named, while the owner-visible same-day acceptance alignment keeps that owner move readable across every surface.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return still belongs to a future quiet window, the return checkpoint handoff can stay parked and owner-visible. The same-day acceptance alignment exists so the later move remains understandable without pretending it belongs in an active lane.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, return checkpoint handoff compression cannot finish yet. The next human move is to set a real checkpoint so the quiet-lane return can compress into one believable handoff and one readable same-day acceptance alignment.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, return checkpoint handoff compression should keep the drafting return visibly attached to one owner-visible control point. The owner-visible same-day acceptance alignment keeps that likely move explicit without reopening a wider queue story.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, return checkpoint handoff compression should stay tied to the finish-choice control point. The owner-visible same-day acceptance alignment keeps that prepared move narrow, readable, and easy to confirm across list, overview, and inquiry surfaces.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate operator move, return checkpoint handoff compression should keep the next resume signal owner-visible. The same-day acceptance alignment makes that resume posture easier to scan without changing the underlying workflow.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, return checkpoint handoff compression stays conservative and scheduled. The owner-visible same-day acceptance alignment simply keeps the eventual owner move visible without overstating urgency.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, return checkpoint handoff compression and owner-visible same-day acceptance alignment remain narrow human scan aids only. They reduce translation between list, overview, and inquiry surfaces without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
