@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.23.0 owner-held quiet-lane acceptance compression and tagged return checkpoint framing workspace`
+- `v6.24.0 owner-tagged acceptance checkpoint compression and quiet-lane return handoff framing workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -235,16 +235,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve owner-tagged acceptance checkpoint compression
-- improve quiet-lane return handoff framing
+- improve owner-visible acceptance handoff compression
+- improve quiet-lane return checkpoint alignment
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.23.0` is:
+A likely next safe patch direction after `v6.24.0` is:
 
-- **owner-tagged acceptance checkpoint compression and quiet-lane return handoff framing**
+- **owner-visible acceptance handoff compression and quiet-lane return checkpoint alignment**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -282,7 +282,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.23.0 owner-held quiet-lane acceptance compression and tagged return checkpoint framing workspace`
+- `v6.24.0 owner-tagged acceptance checkpoint compression and quiet-lane return handoff framing workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

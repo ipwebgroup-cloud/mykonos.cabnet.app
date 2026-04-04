@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    owner_held_quiet_lane_acceptance_compression_label:
-        label: Held Acceptance
+    owner_tagged_acceptance_checkpoint_compression_label:
+        label: Acceptance Checkpoint
         sortable: false
 
-    tagged_return_checkpoint_framing_label:
-        label: Tagged Checkpoint
+    quiet_lane_return_handoff_framing_label:
+        label: Return Handoff
         sortable: false
 
 

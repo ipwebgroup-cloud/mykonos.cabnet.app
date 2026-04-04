@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.23.0 owner-held quiet-lane acceptance compression and tagged return checkpoint framing workspace`
+- `v6.24.0 owner-tagged acceptance checkpoint compression and quiet-lane return handoff framing workspace`
 
 This is a continuity hint only.
 
