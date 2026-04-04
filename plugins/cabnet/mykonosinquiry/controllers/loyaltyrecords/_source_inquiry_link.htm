@@ -16,6 +16,7 @@ $text = $linked ? '#33577a' : '#6c757d';
 ?>
 <div class="form-group span-full">
     <div style="border:1px solid <?= e($border) ?>; background:<?= e($background) ?>; border-radius:12px; padding:14px 16px; line-height:1.45;">
+        <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;">Source inquiry context</div>
         <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between;">
             <div style="min-width:240px; flex:1 1 320px;">
                 <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
@@ -31,19 +32,19 @@ $text = $linked ? '#33577a' : '#6c757d';
 
             <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
                 <?php if ($primaryUrl): ?>
-                    <a href="<?= e($primaryUrl) ?>" class="btn btn-default"><?= e($primaryLabel) ?></a>
+                    <a href="<?= e($primaryUrl) ?>" class="btn btn-primary"><?= e($primaryLabel) ?></a>
                 <?php else: ?>
                     <span class="btn btn-default disabled" style="pointer-events:none; opacity:0.75;"><?= e($primaryLabel) ?></span>
                 <?php endif; ?>
 
                 <?php if ($secondaryUrl): ?>
-                    <a href="<?= e($secondaryUrl) ?>" class="btn btn-primary"><?= e($secondaryLabel) ?></a>
+                    <a href="<?= e($secondaryUrl) ?>" class="btn btn-default"><?= e($secondaryLabel) ?></a>
                 <?php endif; ?>
             </div>
         </div>
 
         <p class="help-block" style="margin:10px 0 0;">
-            This backlink summary stays visible on the loyalty update screen so operators can return to the source inquiry or jump back to the filtered queue without depending on one-time bridge flash state.
+            This source-context panel now matches seeded create mode, so operators keep the same backlink reading and return actions before and after the first loyalty save.
         </p>
     </div>
 </div>

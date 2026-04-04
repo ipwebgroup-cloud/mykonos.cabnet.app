@@ -307,3 +307,5 @@
   - "Add Loyalty Continuity list-row source inquiry backlink strip and queue-return cues"
 2.3.68:
   - 'Add create-mode source inquiry validation, backlink summary, and queue-return cues to the live loyalty workspace line'
+2.3.69:
+  - 'Align loyalty source-context panels and queue-return actions across create and update screens'

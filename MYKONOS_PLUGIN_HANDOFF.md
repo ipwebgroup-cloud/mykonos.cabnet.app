@@ -87,8 +87,8 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.1 loyalty create-mode source inquiry validation and backlink summary patch`
-- plugin tracking `2.3.68`
+- `v6.41.2 loyalty source-context panel parity across create and update screens patch`
+- plugin tracking `2.3.69`
 
 This patch does not change schema and does not touch `/plan`.
 It keeps the Inquiry Queue loyalty bridge intact and adds explicit create-mode source inquiry validation so seeded drafts show a real backlink summary when a valid inquiry is supplied, and a safe warning when an example or missing inquiry id is used instead.

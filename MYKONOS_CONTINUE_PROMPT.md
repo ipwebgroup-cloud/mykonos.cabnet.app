@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.1 loyalty create-mode source inquiry validation and backlink summary patch`
+- `v6.41.2 loyalty source-context panel parity across create and update screens patch`
 
 This is a continuity hint only.
 
