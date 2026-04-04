@@ -93,8 +93,8 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.38.0 parked-lane handback sequencing visibility and near-front quiet-return review-slot compression workspace`
-- plugin tracking `2.3.52`
+- `v6.39.0 owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression workspace`
+- plugin tracking `2.3.53`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -165,6 +165,8 @@ This means the current workspace already includes the earlier conservative loyal
 - current-shift versus next-shift quiet-return separation
 - parked-lane handback sequencing visibility
 - near-front quiet-return review-slot compression
+- owner-held next-shift handback confirmation
+- current-lane versus deferred-lane return compression
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -266,16 +268,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve acceptance checkpoint handoff compression
-- improve quiet-lane return confirmation framing
-- improve human prioritization cues
+- tighten front-of-review parked-return cue alignment
+- tighten parked-review re-entry queue compression
+- keep human prioritization readable
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.29.0` is:
+A likely next safe patch direction after `v6.39.0` is:
 
-- **acceptance checkpoint handoff compression and quiet-lane return confirmation framing**
+- **front-of-review parked-return cue alignment and parked-review re-entry queue compression**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -313,7 +315,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.27.0 return checkpoint handoff compression and owner-visible same-day acceptance alignment workspace`
+- `v6.39.0 owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

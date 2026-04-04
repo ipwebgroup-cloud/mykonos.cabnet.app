@@ -208,6 +208,14 @@ columns:
         label: Near-Front Slot
         sortable: false
 
+    owner_held_next_shift_handback_confirmation_label:
+        label: Next-Shift Handback
+        sortable: false
+
+    current_lane_deferred_lane_return_compression_label:
+        label: Lane Return Compression
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

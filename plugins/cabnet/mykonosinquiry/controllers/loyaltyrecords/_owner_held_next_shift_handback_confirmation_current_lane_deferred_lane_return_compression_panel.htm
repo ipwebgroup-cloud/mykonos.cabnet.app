@@ -1,0 +1,29 @@
+<?php
+    $nextShiftHandback = $formModel->owner_held_next_shift_handback_confirmation_label ?? 'No owner-held next-shift handback confirmation cue yet';
+    $laneReturnCompression = $formModel->current_lane_deferred_lane_return_compression_label ?? 'No current-lane versus deferred-lane return compression cue yet';
+    $handbackDigest = $formModel->owner_held_next_shift_handback_confirmation_digest ?? 'Owner-held next-shift handback confirmation digest is not available yet.';
+    $laneCompressionFrame = $formModel->current_lane_deferred_lane_return_compression_frame ?? 'Current-lane versus deferred-lane return compression frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Next-shift handback</h4>
+            <p><?= e($nextShiftHandback) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Lane return compression</h4>
+            <p><?= e($laneReturnCompression) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Next-shift handback digest</label>
+        <pre><?= e($handbackDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Lane return compression frame</label>
+        <pre><?= e($laneCompressionFrame) ?></pre>
+    </div>
+</div>

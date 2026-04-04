@@ -2818,6 +2818,211 @@ public function getNearFrontQuietReturnReviewSlotCompressionFrameAttribute(): st
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getOwnerHeldNextShiftHandbackConfirmationLabelAttribute(): string
+{
+    $ownerMissing = trim((string) $this->owner_name) === '';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Owner-held next-shift handback confirmation collapsed / reopened now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        if ($ownerMissing) {
+            switch ($this->next_review_window_label) {
+                case 'Overdue':
+                    return 'Owner-held next-shift handback confirmation blocked / overdue return still unowned';
+
+                case 'Due today':
+                    return 'Owner-held next-shift handback confirmation blocked / same-shift handback still unowned';
+
+                case 'Due soon':
+                    return 'Owner-held next-shift handback confirmation pending / next-shift handback owner still missing';
+
+                case 'Near-term':
+                    return 'Owner-held next-shift handback confirmation pending / deferred-lane handback owner still missing';
+
+                case 'Future':
+                    return 'Owner-held next-shift handback confirmation parked / future handback owner still open';
+
+                case 'Unscheduled':
+                    return 'Owner-held next-shift handback confirmation open / owner and next-shift handback still unset';
+            }
+
+            return 'Owner-held next-shift handback confirmation pending / handback owner still missing';
+        }
+
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Owner-held next-shift handback confirmation resolved / overdue handback no longer belongs next shift';
+
+            case 'Due today':
+                return 'Owner-held next-shift handback confirmation resolved / same-shift handback already confirmed';
+
+            case 'Due soon':
+                return 'Owner-held next-shift handback confirmation aligned / next-shift handback owner confirmed';
+
+            case 'Near-term':
+                return 'Owner-held next-shift handback confirmation staged / deferred-lane handback owner confirmed';
+
+            case 'Future':
+                return 'Owner-held next-shift handback confirmation parked / future handback owner confirmed early';
+
+            case 'Unscheduled':
+                return 'Owner-held next-shift handback confirmation open / owner visible but next-shift timing still unclear';
+        }
+
+        return 'Owner-held next-shift handback confirmation forming / owner-led handback timing still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return $ownerMissing
+                ? 'Owner-held next-shift handback confirmation deferred / active execution still unowned'
+                : 'Owner-held next-shift handback confirmation deferred / active execution lead already named';
+
+        case 'Ready for finish packet':
+            return $ownerMissing
+                ? 'Owner-held next-shift handback confirmation deferred / finish drafting owner missing'
+                : 'Owner-held next-shift handback confirmation deferred / finish drafting lead already named';
+
+        case 'Closure packet prepared':
+            return $ownerMissing
+                ? 'Owner-held next-shift handback confirmation deferred / finish-choice owner missing'
+                : 'Owner-held next-shift handback confirmation deferred / finish-choice lead already named';
+
+        case 'Prepared but not yet executed':
+            return $ownerMissing
+                ? 'Owner-held next-shift handback confirmation deferred / prepared follow-through owner missing'
+                : 'Owner-held next-shift handback confirmation deferred / prepared lead already named';
+
+        case 'Timed for later finish':
+            return $ownerMissing
+                ? 'Owner-held next-shift handback confirmation parked / timed finish owner still open'
+                : 'Owner-held next-shift handback confirmation preserved / timed finish handback owner readable';
+    }
+
+    return $ownerMissing
+        ? 'Owner-held next-shift handback confirmation open / owner and timing still forming'
+        : 'Owner-held next-shift handback confirmation conservative / owner visible while next-shift confirmation stays light';
+}
+
+public function getCurrentLaneDeferredLaneReturnCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Current-lane versus deferred-lane return compression resolved / reopened now';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today', 'Due soon'], true)) {
+        return 'Current-lane versus deferred-lane return compression blocked / assign owner before lane compression';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Current-lane versus deferred-lane return compression resolved / overdue return belongs in the current lane now';
+
+            case 'Due today':
+                return 'Current-lane versus deferred-lane return compression resolved / same-shift return stays in the current lane';
+
+            case 'Due soon':
+                return 'Current-lane versus deferred-lane return compression staged / next-shift return compressed without entering the current lane';
+
+            case 'Near-term':
+                return 'Current-lane versus deferred-lane return compression staged / deferred lane preserved outside the current lane';
+
+            case 'Future':
+                return 'Current-lane versus deferred-lane return compression parked / future return stays in the deferred lane';
+
+            case 'Unscheduled':
+                return 'Current-lane versus deferred-lane return compression open / lane split unclear until timing is set';
+        }
+
+        return 'Current-lane versus deferred-lane return compression forming / parked timing still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Current-lane versus deferred-lane return compression deferred / active execution still ahead';
+
+        case 'Ready for finish packet':
+            return 'Current-lane versus deferred-lane return compression deferred / finish drafting first';
+
+        case 'Closure packet prepared':
+            return 'Current-lane versus deferred-lane return compression deferred / finish-choice lane first';
+
+        case 'Prepared but not yet executed':
+            return 'Current-lane versus deferred-lane return compression deferred / prepared follow-through first';
+
+        case 'Timed for later finish':
+            return 'Current-lane versus deferred-lane return compression parked / later finish window preserved';
+    }
+
+    return 'Current-lane versus deferred-lane return compression conservative / lane split still forming';
+}
+
+public function getOwnerHeldNextShiftHandbackConfirmationDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Owner-held next-shift handback confirmation' => $this->owner_held_next_shift_handback_confirmation_label,
+        'Current-lane versus deferred-lane return compression' => $this->current_lane_deferred_lane_return_compression_label,
+        'Handback sequence' => $this->parked_lane_handback_sequencing_visibility_label,
+        'Near-front slot' => $this->near_front_quiet_return_review_slot_compression_label,
+        'Deferred slot alignment' => $this->owner_visible_deferred_review_slot_alignment_label,
+        'Quiet-return shift split' => $this->current_shift_next_shift_quiet_return_separation_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Owner-held next-shift handback confirmation digest is still minimal.');
+}
+
+public function getCurrentLaneDeferredLaneReturnCompressionFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Owner-held next-shift handback confirmation: ' . $this->owner_held_next_shift_handback_confirmation_label . '.';
+    $lines[] = 'Current-lane versus deferred-lane return compression: ' . $this->current_lane_deferred_lane_return_compression_label . '.';
+    $lines[] = 'Handback sequence: ' . $this->parked_lane_handback_sequencing_visibility_label . '.';
+    $lines[] = 'Near-front slot: ' . $this->near_front_quiet_return_review_slot_compression_label . '.';
+    $lines[] = 'Deferred slot alignment: ' . $this->owner_visible_deferred_review_slot_alignment_label . '.';
+    $lines[] = 'Quiet-return shift split: ' . $this->current_shift_next_shift_quiet_return_separation_label . '.';
+    $lines[] = 'Queue separation: ' . $this->front_of_queue_parked_lane_separation_label . '.';
+    $lines[] = 'Front-of-list quiet return: ' . $this->front_of_list_quiet_return_confirmation_label . '.';
+    $lines[] = 'Owner-state handoff: ' . $this->owner_state_handoff_compression_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, any next-shift handback story should collapse into one current human review path. Owner-held next-shift handback confirmation therefore reads as resolved now, and current-lane versus deferred-lane return compression should stop pretending the record still belongs in a quiet parked lane.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today', 'Due soon'], true)) {
+        $lines[] = 'Because the record has already entered an urgent or near-urgent review window but still has no named owner, the workspace should not compress it cleanly into either a current lane or a next-shift deferred lane. The first safe move is to assign the operator so handback confirmation and lane compression become believable together across the list, overview workspace, and linked inquiry snapshot.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the record no longer belongs in a deferred-lane story. Owner-held next-shift handback confirmation simply shows that any prior handback assumption has collapsed, while current-lane versus deferred-lane compression makes it explicit that the return belongs in the current human review lane now.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked review window lands today, the record belongs in a same-shift current lane rather than a next-shift handback. The owner-held handback cue confirms who should carry the return now, and lane compression makes it obvious that this quiet return should not drift back into a deferred parked lane.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the parked review window is close but not yet same-shift urgent, the workspace can keep the handback owner visible while still treating the return as next-shift work. Current-lane versus deferred-lane compression keeps that return compressed into a believable next slot without overstating it as immediate current-lane work.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is deferred rather than next-shift imminent, the workspace should preserve the owner-held handback without flattening it into current-lane urgency. Lane compression therefore stays staged, showing that the return belongs in a deferred lane but still remains readable as an approaching human review handback.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet return is still future-facing, the record can remain parked. Owner-held next-shift handback confirmation simply preserves who should receive the later handback, while current-lane versus deferred-lane compression keeps future work from displacing current-lane or next-shift review.';
+        } else {
+            $lines[] = 'Because the parked lane still lacks usable timing, neither owner-held next-shift handback confirmation nor current-lane versus deferred-lane compression can settle honestly yet. The next safe move is to name the owner and assign a credible review slot so the workspace can compress the return without guesswork.';
+        }
+    } elseif ($this->closure_readiness_label === 'Execution still open') {
+        $lines[] = 'Because close-side execution is still active, the record should stay ahead of parked return compression for now. The owner-held next-shift handback cue simply confirms whether a lead is already visible, and the lane-compression cue stays deferred until the execution story closes or parks.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for finish drafting, the workspace should keep drafting ahead of any next-shift handback story. Lane compression therefore stays conservative until the drafting decision resolves into either current-lane work or a genuinely deferred parked return.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a finish-choice packet is already prepared, the record belongs in a near-front decision lane rather than a settled next-shift handback. Owner-held confirmation keeps the likely lead explicit, and current-lane versus deferred-lane compression waits until the operator deliberately decides where the return truly belongs.';
+    } elseif ($this->closure_readiness_label === 'Prepared but not yet executed') {
+        $lines[] = 'Because prepared work still needs a deliberate operator move, the record should stay ahead of passive lane compression. Owner-held handback confirmation and current-versus-deferred lane compression remain narrow reading aids only until the prepared work is either resumed now or consciously parked.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because finish timing is intentionally deferred, the record can remain parked without pretending it belongs in the current lane. Owner-held next-shift handback confirmation simply preserves who should receive the later return, and lane compression keeps that later quiet move distinct from active current-lane work.';
+    } else {
+        $lines[] = 'Because the loyalty workspace stays conservative and human-led, owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression remain narrow scan aids only. They reduce translation between ownership, lane placement, and quiet-return timing without widening the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {

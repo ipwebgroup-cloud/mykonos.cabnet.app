@@ -1435,6 +1435,46 @@ tabs:
             span: full
             comment: Conservative parked-handback sequencing and near-front quiet-return review-slot panel without widening the loyalty workspace into automation.
 
+        owner_held_next_shift_handback_confirmation_label:
+            label: Owner-Held Next-Shift Handback Confirmation
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-held cue showing whether a parked quiet return already has a believable next-shift handback owner or still needs that ownership confirmed.
+
+        current_lane_deferred_lane_return_compression_label:
+            label: Current-Lane versus Deferred-Lane Return Compression
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed lane cue showing whether a quiet return belongs in the current review lane now, in a next-shift/deferred lane, or is still too under-defined to compress safely.
+
+        owner_held_next_shift_handback_confirmation_digest:
+            label: Owner-Held Next-Shift Handback Confirmation Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-held next-shift handback confirmation, lane return compression, sequencing, and quiet-return placement into one read.
+
+        current_lane_deferred_lane_return_compression_frame:
+            label: Current-Lane versus Deferred-Lane Return Compression Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how a quiet return should stay compressed into either the current lane or a deferred lane without losing owner-led handback clarity.
+
+        owner_held_next_shift_handback_confirmation_current_lane_deferred_lane_return_compression_panel:
+            label: Owner-Held Next-Shift Handback Confirmation and Current-Lane versus Deferred-Lane Return Compression
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_held_next_shift_handback_confirmation_current_lane_deferred_lane_return_compression_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-held next-shift handback and lane-return compression panel without widening the loyalty workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview
