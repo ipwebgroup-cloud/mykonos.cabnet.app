@@ -176,6 +176,14 @@ columns:
         label: Owner-State Handoff
         sortable: false
 
+    reopen_timing_discipline_label:
+        label: Reopen Timing
+        sortable: false
+
+    same_shift_review_checkpoint_confirmation_label:
+        label: Checkpoint Confirmation
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

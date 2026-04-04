@@ -1275,6 +1275,46 @@ tabs:
             span: full
             comment: Conservative queue-separation and owner-handoff panel without widening the loyalty workspace into campaign behavior or automation.
 
+        reopen_timing_discipline_label:
+            label: Reopen Timing Discipline
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow timing cue showing whether a parked or reopened lane should be read as immediate, staged, parked, or still blocked by missing ownership.
+
+        same_shift_review_checkpoint_confirmation_label:
+            label: Same-Shift Review Checkpoint Confirmation
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed checkpoint cue showing whether the current-shift review move is already explicit, only pre-confirmed, or still blocked by missing ownership or timing.
+
+        reopen_timing_discipline_digest:
+            label: Reopen Timing Discipline Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining reopen timing, same-shift checkpoint confirmation, queue separation, and current review pressure into one read.
+
+        same_shift_review_checkpoint_confirmation_frame:
+            label: Same-Shift Review Checkpoint Confirmation Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how a current-shift checkpoint should stay explicit when a record is parked, reopening, or still awaiting ownership.
+
+        reopen_timing_discipline_same_shift_review_checkpoint_confirmation_panel:
+            label: Reopen Timing Discipline and Same-Shift Review Checkpoint Confirmation
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_reopen_timing_discipline_same_shift_review_checkpoint_confirmation_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative reopen-timing and same-shift checkpoint panel without widening the loyalty workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

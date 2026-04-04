@@ -1,0 +1,29 @@
+<?php
+    $reopenTiming = $formModel->reopen_timing_discipline_label ?? 'No reopen timing discipline cue yet';
+    $checkpointConfirmation = $formModel->same_shift_review_checkpoint_confirmation_label ?? 'No same-shift review checkpoint confirmation cue yet';
+    $reopenTimingDigest = $formModel->reopen_timing_discipline_digest ?? 'Reopen timing discipline digest is not available yet.';
+    $checkpointFrame = $formModel->same_shift_review_checkpoint_confirmation_frame ?? 'Same-shift review checkpoint confirmation frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Reopen timing</h4>
+            <p><?= e($reopenTiming) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Checkpoint confirmation</h4>
+            <p><?= e($checkpointConfirmation) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Reopen timing digest</label>
+        <pre><?= e($reopenTimingDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Checkpoint confirmation frame</label>
+        <pre><?= e($checkpointFrame) ?></pre>
+    </div>
+</div>

@@ -2023,6 +2023,172 @@ public function getOwnerStateHandoffCompressionFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
+public function getReopenTimingDisciplineLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Reopen timing active / immediate proof review window';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Reopen timing blocked / assign owner before due review';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Reopen timing escalated / parked review overdue now';
+
+            case 'Due today':
+                return 'Reopen timing active / same-shift checkpoint due';
+
+            case 'Due soon':
+                return 'Reopen timing staged / next-slot checkpoint approaching';
+
+            case 'Near-term':
+                return 'Reopen timing staged / near-term parked checkpoint';
+
+            case 'Future':
+                return 'Reopen timing parked / future checkpoint preserved';
+
+            case 'Unscheduled':
+                return 'Reopen timing open / set checkpoint before reopen read';
+        }
+
+        return 'Reopen timing forming / parked-lane timing still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+            return 'Reopen timing deferred / close-side execution still active';
+
+        case 'Ready for finish packet':
+            return 'Reopen timing pending / finish drafting before parking';
+
+        case 'Closure packet prepared':
+            return 'Reopen timing pending / deliberate lane parking next';
+
+        case 'Prepared but not yet executed':
+            return 'Reopen timing pending / prepared follow-through first';
+
+        case 'Timed for later finish':
+            return 'Reopen timing scheduled / later finish window preserved';
+    }
+
+    return 'Reopen timing conservative / quiet review timing still forming';
+}
+
+public function getSameShiftReviewCheckpointConfirmationLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Checkpoint confirmed / same-shift reopened review';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Checkpoint unconfirmed / same-shift owner still missing';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Checkpoint confirmed / overdue parked review pulled into shift';
+
+            case 'Due today':
+                return 'Checkpoint confirmed / same-shift quiet return due';
+
+            case 'Due soon':
+                return 'Checkpoint pre-confirmed / next-slot review prepared';
+
+            case 'Near-term':
+                return 'Checkpoint staged / later-shift review named';
+
+            case 'Future':
+                return 'Checkpoint parked / future review held';
+
+            case 'Unscheduled':
+                return 'Checkpoint open / set review timing first';
+        }
+
+        return 'Checkpoint forming / same-shift read still stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Execution still open':
+        case 'Prepared but not yet executed':
+            return 'Checkpoint confirmed / current-shift follow-through';
+
+        case 'Ready for finish packet':
+            return 'Checkpoint confirmed / drafting review this shift';
+
+        case 'Closure packet prepared':
+            return 'Checkpoint confirmed / finish-choice review this shift';
+
+        case 'Timed for later finish':
+            return 'Checkpoint staged / later-finish review preserved';
+    }
+
+    return 'Checkpoint conservative / same-shift read still forming';
+}
+
+public function getReopenTimingDisciplineDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Reopen timing discipline' => $this->reopen_timing_discipline_label,
+        'Same-shift checkpoint confirmation' => $this->same_shift_review_checkpoint_confirmation_label,
+        'Queue separation' => $this->front_of_queue_parked_lane_separation_label,
+        'Owner-state handoff' => $this->owner_state_handoff_compression_label,
+        'Same-shift handoff' => $this->same_shift_handoff_sequence_label,
+        'Reopen priority' => $this->deliberate_reopen_priority_label,
+        'Queue watch' => $this->queue_watch_readiness_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Reopen timing discipline digest is still minimal.');
+}
+
+public function getSameShiftReviewCheckpointConfirmationFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Reopen timing discipline: ' . $this->reopen_timing_discipline_label . '.';
+    $lines[] = 'Same-shift review checkpoint confirmation: ' . $this->same_shift_review_checkpoint_confirmation_label . '.';
+    $lines[] = 'Queue separation: ' . $this->front_of_queue_parked_lane_separation_label . '.';
+    $lines[] = 'Owner-state handoff: ' . $this->owner_state_handoff_compression_label . '.';
+    $lines[] = 'Same-shift handoff: ' . $this->same_shift_handoff_sequence_label . '.';
+    $lines[] = 'Reopen priority: ' . $this->deliberate_reopen_priority_label . '.';
+    $lines[] = 'Queue watch: ' . $this->queue_watch_readiness_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, reopen timing discipline should collapse into immediate proof review and the same-shift checkpoint should read as already active. The purpose is to keep the reopened record clearly human-owned and easy to scan across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record has already entered an immediate review window but still has no named owner, timing discipline cannot honestly compress yet. The first real move is to assign the operator so the same-shift checkpoint becomes believable instead of leaving due review work parked in ambiguity.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked checkpoint is overdue, reopen timing discipline should escalate the record into deliberate human review now. The same-shift checkpoint confirmation exists so that overdue pull-back reads as current-shift work rather than deeper parked backlog.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the parked checkpoint lands today, reopen timing discipline should stay active and the same-shift checkpoint should read as confirmed. That keeps the quiet return explicit without widening the workflow into automation.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the checkpoint is approaching but not yet immediate, timing discipline can stay staged while the next-slot review remains pre-confirmed. The goal is to preserve a clean early read without falsely promoting it above the current-day work.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the checkpoint is near-term rather than same-shift, timing discipline should remain calm and the checkpoint should stay staged for a later operator pass. This keeps the record visible without flattening every parked lane into urgency.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the checkpoint belongs to a future quiet slot, timing discipline should remain parked and the same-shift checkpoint should not overstate immediacy. The framing simply preserves when and how the later review should surface.';
+        } else {
+            $lines[] = 'Because the parked lane still lacks usable timing, reopen timing discipline cannot settle fully yet. The next safe move is to name a real checkpoint so the same-shift read becomes credible across every surface.';
+        }
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs follow-through, reopen timing discipline should stay secondary and the same-shift checkpoint should point to the current operator pass. The record belongs in active human handling until the open loop narrows or the timing is deliberately parked.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for finish drafting, the same-shift checkpoint can stay confirmed around the drafting pass while reopen timing remains pending. This keeps finish-ready work readable without pretending the lane is already parked.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a closure packet already exists, the checkpoint can stay confirmed for the finish-choice pass while reopen timing remains a secondary parked-lane concern. The narrow read is to resolve the deliberate lane decision before adding more timing complexity.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, reopen timing discipline should stay scheduled and the same-shift checkpoint should remain staged rather than active. The cue exists to keep later work understandable without crowding the current shift.';
+    } else {
+        $lines[] = 'Because the workspace is still conservative and human-led, reopen timing discipline and same-shift review checkpoint confirmation remain narrow scan aids only. They tighten queue reading without changing the underlying inquiry workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {

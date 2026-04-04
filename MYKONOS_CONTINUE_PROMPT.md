@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.34.0 front-of-queue versus parked-lane separation and owner-state handoff compression workspace`
+- `v6.35.0 reopen timing discipline and same-shift review checkpoint confirmation workspace`
 
 This is a continuity hint only.
 
@@ -146,10 +146,10 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- reopen timing discipline
-- same-shift review checkpoint confirmation
 - parked-lane owner reassignment visibility
 - front-of-list quiet-return confirmation
+- owner-visible deferred review-slot alignment
+- current-shift versus next-shift quiet-return separation
 
 But you must confirm this against the real uploaded files before deciding the next patch.
 
