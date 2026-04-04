@@ -15,6 +15,7 @@ tabs:
         source_inquiry_link:
             label: Source Inquiry
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_source_inquiry_link.htm
             tab: Overview
             span: full
@@ -349,6 +350,7 @@ tabs:
         finish_handback_post_close_hold_panel:
             label: Finish-Lane Handback and Post-Close Hold
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_finish_handback_post_close_hold_panel.htm
             tab: Overview
             span: full
@@ -389,6 +391,7 @@ tabs:
         hold_release_quiet_lane_return_panel:
             label: Hold-Release Framing and Quiet-Lane Return
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_release_quiet_lane_return_panel.htm
             tab: Overview
             span: full
@@ -429,6 +432,7 @@ tabs:
         hold_aging_quiet_return_timing_panel:
             label: Hold Aging and Quiet-Return Review Timing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_aging_quiet_return_timing_panel.htm
             tab: Overview
             span: full
@@ -469,6 +473,7 @@ tabs:
         hold_aging_compression_quiet_reentry_panel:
             label: Hold-Aging Compression and Quiet-Lane Re-Entry
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_aging_compression_quiet_reentry_panel.htm
             tab: Overview
             span: full
@@ -509,6 +514,7 @@ tabs:
         hold_expiry_grouping_quiet_reentry_order_panel:
             label: Hold-Expiry Grouping and Quiet-Lane Re-Entry Ordering
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_expiry_grouping_quiet_reentry_order_panel.htm
             tab: Overview
             span: full
@@ -549,6 +555,7 @@ tabs:
         hold_expiry_compression_quiet_cadence_panel:
             label: Hold-Expiry Compression and Quiet-Lane Cadence
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_expiry_compression_quiet_cadence_panel.htm
             tab: Overview
             span: full
@@ -589,6 +596,7 @@ tabs:
         cadence_compression_quiet_resurfacing_priority_panel:
             label: Cadence Compression and Quiet-Lane Resurfacing Priority
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_cadence_compression_quiet_resurfacing_priority_panel.htm
             tab: Overview
             span: full
@@ -629,6 +637,7 @@ tabs:
         resurfacing_compression_quiet_review_slot_panel:
             label: Resurfacing Compression and Quiet-Lane Review Slot
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_resurfacing_compression_quiet_review_slot_panel.htm
             tab: Overview
             span: full
@@ -669,6 +678,7 @@ tabs:
         review_slot_compression_quiet_resurfacing_cadence_group_panel:
             label: Review-Slot Compression and Quiet-Lane Resurfacing Cadence Grouping
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_review_slot_compression_quiet_resurfacing_cadence_group_panel.htm
             tab: Overview
             span: full
@@ -709,6 +719,7 @@ tabs:
         same_day_checkpoint_compression_owner_visible_return_handback_panel:
             label: Same-Day Checkpoint Compression and Owner-Visible Quiet-Lane Return Handback Framing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_same_day_checkpoint_compression_owner_visible_return_handback_panel.htm
             tab: Overview
             span: full
@@ -749,6 +760,7 @@ tabs:
         owner_confirmed_same_day_handback_cue_quiet_lane_return_checkpoint_panel:
             label: Owner-Confirmed Same-Day Handback Cueing and Quiet-Lane Return Checkpoint Polish
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_confirmed_same_day_handback_cue_quiet_lane_return_checkpoint_panel.htm
             tab: Overview
             span: full
@@ -789,6 +801,7 @@ tabs:
         owner_held_return_checkpoint_compression_same_day_quiet_lane_acknowledgement_panel:
             label: Owner-Held Return Checkpoint Compression and Same-Day Quiet-Lane Acknowledgement Polish
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_held_return_checkpoint_compression_same_day_quiet_lane_acknowledgement_panel.htm
             tab: Overview
             span: full
@@ -829,6 +842,7 @@ tabs:
         owner_visible_same_day_acknowledgement_compression_quiet_lane_return_confirmation_panel:
             label: Owner-Visible Same-Day Acknowledgement Compression and Quiet-Lane Return Confirmation Framing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_visible_same_day_acknowledgement_compression_quiet_lane_return_confirmation_panel.htm
             tab: Overview
             span: full
@@ -869,6 +883,7 @@ tabs:
         owner_tagged_return_confirmation_compression_same_day_quiet_lane_acceptance_panel:
             label: Owner-Tagged Return Confirmation Compression and Same-Day Quiet-Lane Acceptance Framing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_tagged_return_confirmation_compression_same_day_quiet_lane_acceptance_panel.htm
             tab: Overview
             span: full
@@ -909,6 +924,7 @@ tabs:
         owner_held_quiet_lane_acceptance_compression_tagged_return_checkpoint_panel:
             label: Owner-Held Quiet-Lane Acceptance Compression and Tagged Return Checkpoint Framing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_held_quiet_lane_acceptance_compression_tagged_return_checkpoint_panel.htm
             tab: Overview
             span: full
@@ -949,6 +965,7 @@ tabs:
         owner_visible_acceptance_handoff_compression_quiet_lane_return_checkpoint_panel:
             label: Owner-Visible Acceptance Handoff Compression and Quiet-Lane Return Checkpoint Alignment
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_visible_acceptance_handoff_compression_quiet_lane_return_checkpoint_panel.htm
             tab: Overview
             span: full
@@ -990,6 +1007,7 @@ tabs:
         owner_aligned_return_checkpoint_compression_same_day_acceptance_handoff_panel:
             label: Owner-Aligned Return Checkpoint Compression and Same-Day Acceptance Handoff Framing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_aligned_return_checkpoint_compression_same_day_acceptance_handoff_panel.htm
             tab: Overview
             span: full
@@ -1030,6 +1048,7 @@ tabs:
         return_checkpoint_handoff_compression_owner_visible_same_day_acceptance_alignment_panel:
             label: Return Checkpoint Handoff Compression and Owner-Visible Same-Day Acceptance Alignment
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_return_checkpoint_handoff_compression_owner_visible_same_day_acceptance_alignment_panel.htm
             tab: Overview
             span: full
@@ -1070,6 +1089,7 @@ tabs:
         acceptance_confirmation_compression_quiet_lane_return_checkpoint_confirmation_panel:
             label: Acceptance Confirmation Compression and Quiet-Lane Return Checkpoint Confirmation
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_acceptance_confirmation_compression_quiet_lane_return_checkpoint_confirmation_panel.htm
             tab: Overview
             span: full
@@ -1110,6 +1130,7 @@ tabs:
         acceptance_confirmation_handoff_compression_quiet_lane_return_checkpoint_frame_cue_panel:
             label: Acceptance Confirmation Handoff Compression and Quiet-Lane Return Checkpoint Framing
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_acceptance_confirmation_handoff_compression_quiet_lane_return_checkpoint_frame_cue_panel.htm
             tab: Overview
             span: full
@@ -1150,6 +1171,7 @@ tabs:
         queue_scan_prioritization_cues_human_review_timing_clarity_panel:
             label: Queue-Scan Prioritization Cues and Human Review Timing Clarity
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_queue_scan_prioritization_cues_human_review_timing_clarity_panel.htm
             tab: Overview
             span: full
@@ -1190,6 +1212,7 @@ tabs:
         owner_review_slot_sequence_queue_backlog_visibility_panel:
             label: Owner Review-Slot Sequence and Queue Backlog Visibility
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_review_slot_sequence_queue_backlog_visibility_panel.htm
             tab: Overview
             span: full
@@ -1230,6 +1253,7 @@ tabs:
         same_shift_handoff_sequence_queue_backlog_compression_panel:
             label: Same-Shift Handoff Sequence and Queue Backlog Compression
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_same_shift_handoff_sequence_queue_backlog_compression_panel.htm
             tab: Overview
             span: full
@@ -1270,6 +1294,7 @@ tabs:
         front_of_queue_parked_lane_separation_owner_state_handoff_compression_panel:
             label: Front-of-Queue versus Parked-Lane Separation and Owner-State Handoff Compression
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_front_of_queue_parked_lane_separation_owner_state_handoff_compression_panel.htm
             tab: Overview
             span: full
@@ -1310,6 +1335,7 @@ tabs:
         reopen_timing_discipline_same_shift_review_checkpoint_confirmation_panel:
             label: Reopen Timing Discipline and Same-Shift Review Checkpoint Confirmation
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_reopen_timing_discipline_same_shift_review_checkpoint_confirmation_panel.htm
             tab: Overview
             span: full
@@ -1350,6 +1376,7 @@ tabs:
         parked_lane_owner_reassignment_visibility_front_of_list_quiet_return_confirmation_panel:
             label: Parked-Lane Owner Reassignment Visibility and Front-of-List Quiet-Return Confirmation
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_lane_owner_reassignment_visibility_front_of_list_quiet_return_confirmation_panel.htm
             tab: Overview
             span: full
@@ -1390,6 +1417,7 @@ tabs:
         owner_visible_deferred_review_slot_alignment_current_shift_next_shift_quiet_return_separation_panel:
             label: Owner-Visible Deferred Review-Slot Alignment and Current-Shift versus Next-Shift Quiet-Return Separation
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_visible_deferred_review_slot_alignment_current_shift_next_shift_quiet_return_separation_panel.htm
             tab: Overview
             span: full
@@ -1430,6 +1458,7 @@ tabs:
         parked_lane_handback_sequencing_visibility_near_front_quiet_return_review_slot_compression_panel:
             label: Parked-Lane Handback Sequencing Visibility and Near-Front Quiet-Return Review-Slot Compression
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_parked_lane_handback_sequencing_visibility_near_front_quiet_return_review_slot_compression_panel.htm
             tab: Overview
             span: full
@@ -1470,6 +1499,7 @@ tabs:
         owner_held_next_shift_handback_confirmation_current_lane_deferred_lane_return_compression_panel:
             label: Owner-Held Next-Shift Handback Confirmation and Current-Lane versus Deferred-Lane Return Compression
             type: partial
+            context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_held_next_shift_handback_confirmation_current_lane_deferred_lane_return_compression_panel.htm
             tab: Overview
             span: full

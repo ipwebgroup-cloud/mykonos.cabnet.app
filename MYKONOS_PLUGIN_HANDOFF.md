@@ -77,47 +77,33 @@ The current long-running line remains the guarded:
 - **Loyalty Continuity Workspace**
 
 But the immediate operational priority is now explicit:
-- the loyalty workspace code line has advanced to `v6.39.0 / 2.3.53`
-- the live server can still remain stuck on the activation-safe shell if the loyalty tables were never actually installed
-- the next real production-safe move is **schema activation sync**, not another readability-only loyalty panel
+- the loyalty workspace is now schema-ready and rendering its live list view
+- the immediate issue shifted from storage activation to create-form render safety
+- the next real production-safe move is a **render-safe create hotfix**, not more loyalty readability expansion
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.39.2 loyalty workspace activation verification helper patch`
-- plugin tracking `2.3.54`
+- `v6.39.3 loyalty create-form render-safe partial hotfix patch`
+- plugin tracking `2.3.55`
 
-This helper patch does not advance the schema history beyond `2.3.54`.
-It adds a direct CLI verification script so the real activation state can be checked on-server without relying only on the guarded backend shell.
-
-This patch restores the historically referenced migration files:
-- `create_loyalty_records_table.php`
-- `create_loyalty_touchpoints_table.php`
-- `upgrade_loyalty_records_table_for_workspace_activation.php`
-- `upgrade_loyalty_touchpoints_table_for_workspace_activation.php`
-
-It also adds the forward-only recovery migration:
-- `ensure_loyalty_workspace_activation_schema.php`
-
-That extra recovery migration exists because a live installation can already be marked past `2.3.0` to `2.3.3` in version history while still missing the real loyalty tables/columns.
+This patch does not change schema and does not touch `/plan`.
+It makes the loyalty create form render-safe by limiting overview partial callouts to update context and by hardening the known failing finish-handback partial to tolerate the create form context.
 
 ---
 
 ## Deployment note
-For this patch, the first intended verification step is:
-
-- `php scripts/qa-loyalty-workspace-activation.php`
-
-If storage is still not ready, then run:
-
-- `php artisan october:up`
-- or `php artisan october:migrate` if that is what the install exposes
-
-Then run:
+For this patch, upload the rooted files and then run:
 
 - `php artisan cache:clear`
+
+Then verify:
+
+- Backend -> Mykonos Inquiries -> Loyalty Continuity
+- click `New Loyalty Record`
+- confirm the create form opens instead of crashing
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.

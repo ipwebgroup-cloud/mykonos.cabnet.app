@@ -266,3 +266,6 @@
 2.3.54:
   - 'Ensure loyalty workspace activation tables and columns exist on advanced installations'
   - ensure_loyalty_workspace_activation_schema.php
+
+2.3.55:
+  - 'Make loyalty create-form overview partials render-safe and update-only'
