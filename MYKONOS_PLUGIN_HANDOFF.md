@@ -79,18 +79,18 @@ The current long-running line remains the guarded:
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the immediate value move shifted from render safety to queue-level loyalty visibility and safer transfer guidance
-- the current real production-safe move is **Inquiry Queue loyalty-posture filtering** so operators can isolate linked, transfer-ready, and draft-ready continuity work without leaving the live queue
+- the current real production-safe move is **Inquiry Queue loyalty transfer-count and result framing** so operators can see linked, transfer-ready, and draft-ready continuity workload before applying filters or opening individual rows
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.4 inquiry queue loyalty-posture filters patch`
-- plugin tracking `2.3.61`
+- `v6.40.5 inquiry queue loyalty transfer-count and result framing patch`
+- plugin tracking `2.3.62`
 
 This patch does not change schema and does not touch `/plan`.
-It adds a dedicated `Loyalty Posture` filter on the Inquiry Queue list so operators can isolate linked, transfer-ready, draft-ready, and queue-only inquiries without widening the live workflow.
+It adds a compact loyalty-routing summary block to the Inquiry Queue overview so operators can see linked, transfer-ready, draft-ready, and queue-only workload counts before applying the `Loyalty Posture` filter or opening individual rows.
 
 ---
 
@@ -111,7 +111,8 @@ Then verify:
 - confirm prefill-ready inquiries can use `Open draft` directly from the queue
 - confirm the new `Loyalty Posture` filter appears on the Inquiry Queue list
 - confirm the queue can isolate linked, transfer-ready, draft-ready, and queue-only inquiries using that filter
-- confirm the list workspace overview shows `Linked to loyalty` and `Ready for loyalty`
+- confirm the Queue overview now shows a compact loyalty-routing summary block with counts for linked, transfer-ready, draft-ready, queue-only, and workspace-staged workload
+- confirm the list workspace overview still shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save
 - `php scripts/qa-loyalty-workspace-activation.php`

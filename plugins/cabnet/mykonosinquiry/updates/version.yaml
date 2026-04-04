@@ -288,3 +288,5 @@
 2.3.61:
   - "Add Inquiry Queue loyalty-posture filters for linked, transfer-ready, and draft-ready work"
 
+2.3.62:
+  - "Add Inquiry Queue loyalty transfer-count and result framing to the queue overview"

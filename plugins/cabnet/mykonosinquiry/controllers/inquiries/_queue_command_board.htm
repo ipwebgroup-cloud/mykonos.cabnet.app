@@ -129,6 +129,9 @@ if ($overdueCount > 0 || $unassignedCount > 0) {
 }
 
 $headlinePalette = $paletteFor($headlineTone);
+$loyaltyPostureCounts = Inquiry::getLoyaltyQueuePostureCounts();
+$loyaltyTransferSummary = Inquiry::getLoyaltyQueueTransferSummary();
+$loyaltyTransferPalette = $paletteFor($loyaltyTransferSummary['tone'] ?? 'neutral');
 ?>
 
 <div class="myk-operator-list-ui">
@@ -138,6 +141,41 @@ $headlinePalette = $paletteFor($headlineTone);
         </div>
         <div class="mk-copy" style="font-size:13px; color:<?= e($headlinePalette['text']) ?>; opacity:0.92;">
             Prioritize owner clarity, overdue follow-ups, first-touch discipline, and visible loyalty handoff gaps before deep proposal shaping. Use the new Loyalty Backlink and Loyalty Actions lanes on each inquiry row to see whether continuity is already carrying the inquiry, then jump straight into the linked record or a seeded draft without opening inquiry detail first. When the queue gets crowded, isolate continuity-transfer work with the Loyalty Posture filter so linked, transfer-ready, and draft-ready items can be reviewed without widening the live inquiry workflow.
+        </div>
+    </div>
+
+    <div style="border:1px solid <?= e($loyaltyTransferPalette['border']) ?>; background:<?= e($loyaltyTransferPalette['bg']) ?>; border-radius:12px; padding:14px 16px; margin-bottom:14px;">
+        <div class="mk-copy" style="font-size:16px; font-weight:700; color:<?= e($loyaltyTransferPalette['text']) ?>; margin-bottom:4px;">
+            <?= e($loyaltyTransferSummary['headline']) ?>
+        </div>
+        <div class="mk-copy" style="font-size:13px; color:<?= e($loyaltyTransferPalette['text']) ?>; opacity:0.92; margin-bottom:10px;">
+            <?= e($loyaltyTransferSummary['body']) ?>
+        </div>
+
+        <div class="row">
+            <?php foreach ($loyaltyPostureCounts as $bucketKey => $bucket): ?>
+                <?php
+                    $bucketTone = 'neutral';
+                    if ($bucketKey === 'linked') {
+                        $bucketTone = 'positive';
+                    } elseif ($bucketKey === 'transfer_ready') {
+                        $bucketTone = 'warning';
+                    } elseif ($bucketKey === 'draft_ready') {
+                        $bucketTone = 'primary';
+                    }
+                    $bucketPalette = $paletteFor($bucketTone);
+                ?>
+                <div class="col-md-2 col-sm-4" style="margin-bottom: 10px;">
+                    <div style="border:1px solid <?= e($bucketPalette['border']) ?>; background:rgba(255,255,255,0.45); border-radius:10px; padding:10px 12px; min-height:100%;">
+                        <div class="mk-copy" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:<?= e($bucketPalette['text']) ?>; opacity:0.8; margin-bottom:6px;">
+                            <?= e($bucket['label']) ?>
+                        </div>
+                        <div class="mk-stat-value" style="font-size:24px; line-height:1; font-weight:700; color:<?= e($bucketPalette['text']) ?>;">
+                            <?= e((string) $bucket['value']) ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 

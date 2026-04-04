@@ -520,6 +520,11 @@ class Inquiry extends Model
 
     public function getLoyaltyQueuePostureFilterOptions($scope = null): array
     {
+        return static::getLoyaltyQueuePostureOptionMap();
+    }
+
+    public static function getLoyaltyQueuePostureOptionMap(): array
+    {
         return [
             'linked' => 'Linked to loyalty',
             'transfer_ready' => 'Transfer-ready',
@@ -527,6 +532,81 @@ class Inquiry extends Model
             'queue_only' => 'Queue-only',
             'workspace_staged' => 'Workspace staged',
         ];
+    }
+
+    public static function getLoyaltyQueuePostureCounts(): array
+    {
+        $options = static::getLoyaltyQueuePostureOptionMap();
+        $counts = [];
+
+        foreach ($options as $key => $label) {
+            $query = static::query();
+            $scope = (object) ['value' => [$key]];
+            (new static())->scopeApplyLoyaltyQueuePosture($query, $scope);
+            $counts[$key] = [
+                'label' => $label,
+                'value' => $query->count(),
+            ];
+        }
+
+        return $counts;
+    }
+
+    public static function getLoyaltyQueueTransferSummary(): array
+    {
+        $counts = static::getLoyaltyQueuePostureCounts();
+        $workspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+        $largestBucketKey = 'queue_only';
+        $largestBucketValue = $counts[$largestBucketKey]['value'] ?? 0;
+
+        foreach ($counts as $key => $data) {
+            if (($data['value'] ?? 0) > $largestBucketValue) {
+                $largestBucketKey = $key;
+                $largestBucketValue = $data['value'];
+            }
+        }
+
+        $summary = [
+            'headline' => 'Queue posture counts are ready for loyalty routing.',
+            'body' => 'Use the compact continuity counts below as a quick scan anchor, then apply the Loyalty Posture filter to isolate the same bucket in the live queue list.',
+            'tone' => 'primary',
+            'largest_bucket_key' => $largestBucketKey,
+            'largest_bucket_label' => $counts[$largestBucketKey]['label'] ?? 'Queue-only',
+        ];
+
+        if (!$workspaceReady) {
+            $summary['headline'] = 'Loyalty routing is still staged.';
+            $summary['body'] = 'The continuity workspace is not fully active yet, so queue-side transfer counts stay conservative until the loyalty storage layer is ready.';
+            $summary['tone'] = 'neutral';
+            return $summary;
+        }
+
+        $transferReady = $counts['transfer_ready']['value'] ?? 0;
+        $draftReady = $counts['draft_ready']['value'] ?? 0;
+        $linked = $counts['linked']['value'] ?? 0;
+
+        if ($transferReady > 0) {
+            $summary['headline'] = 'Closed inquiries are waiting for continuity transfer.';
+            $summary['body'] = 'There are ' . $transferReady . ' transfer-ready inquiries without a linked loyalty record. Use the Loyalty Posture filter to isolate them, then create or open continuity directly from the queue row.';
+            $summary['tone'] = 'warning';
+            return $summary;
+        }
+
+        if ($draftReady > 0) {
+            $summary['headline'] = 'Seeded continuity drafts are available from the queue.';
+            $summary['body'] = 'No closed transfer backlog is visible, but ' . $draftReady . ' inquiries are draft-ready. Use the filter to isolate them and open seeded continuity drafts without leaving the queue.';
+            $summary['tone'] = 'primary';
+            return $summary;
+        }
+
+        if ($linked > 0) {
+            $summary['headline'] = 'Continuity ownership is already visible from the queue.';
+            $summary['body'] = 'Linked loyalty records are carrying the continuity side of the workflow. Use the filter when you want to review only already-linked inquiries and jump straight into the loyalty workspace.';
+            $summary['tone'] = 'positive';
+            return $summary;
+        }
+
+        return $summary;
     }
 
     public function scopeApplyLoyaltyQueuePosture($query, $scope): void
