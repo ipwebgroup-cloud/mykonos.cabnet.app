@@ -1,10 +1,9 @@
 <?php
-    $record = $record ?? $formModel ?? $model ?? null;
-
-    $finishLaneHandback = $record ? $record->finish_lane_handback_label : 'Hand back to quiet review owner';
-    $postCloseHold = $record ? $record->post_close_hold_label : 'Conservative post-close hold';
-    $finishHandbackDigest = $record ? $record->finish_handback_digest : 'Finish handback digest is still minimal.';
-    $postCloseHoldFrame = $record ? $record->post_close_hold_frame : 'Post-close hold framing is still minimal.';
+$recordModel = $record ?? $formModel ?? $model ?? null;
+$finishLaneHandback = $recordModel ? ($recordModel->finish_lane_handback_label ?: 'Hand back to quiet review owner') : 'Hand back to quiet review owner';
+$postCloseHold = $recordModel ? ($recordModel->post_close_hold_label ?: 'Conservative post-close hold') : 'Conservative post-close hold';
+$finishHandbackDigest = $recordModel ? ($recordModel->finish_handback_digest ?: 'Finish handback digest is still minimal.') : 'Finish handback digest is still minimal.';
+$postCloseHoldFrame = $recordModel ? ($recordModel->post_close_hold_frame ?: 'Post-close hold framing is still minimal.') : 'Post-close hold framing is still minimal.';
 ?>
 <div class="callout callout-info no-subheader">
     <div class="scoreboard">

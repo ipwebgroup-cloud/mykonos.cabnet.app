@@ -269,3 +269,6 @@
 
 2.3.55:
   - 'Make loyalty create-form overview partials render-safe and update-only'
+
+2.3.56:
+  - 'Make loyalty create-form controller partials update-only and render-safe'

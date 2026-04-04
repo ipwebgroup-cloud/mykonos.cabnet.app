@@ -78,19 +78,19 @@ The current long-running line remains the guarded:
 
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready and rendering its live list view
-- the immediate issue shifted from storage activation to create-form render safety
-- the next real production-safe move is a **render-safe create hotfix**, not more loyalty readability expansion
+- the immediate issue shifted from storage activation to controller-added create-form partial safety
+- the next real production-safe move is a **controller-added create-form partial hotfix**, not more loyalty readability expansion
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.39.3 loyalty create-form render-safe partial hotfix patch`
-- plugin tracking `2.3.55`
+- `v6.39.4 loyalty create-form controller partial render-safe hotfix patch`
+- plugin tracking `2.3.56`
 
 This patch does not change schema and does not touch `/plan`.
-It makes the loyalty create form render-safe by limiting overview partial callouts to update context and by hardening the known failing finish-handback partial to tolerate the create form context.
+It makes the loyalty create form render-safe by preventing controller-added overview/workspace/history partials from being injected during create context and by hardening the known failing close-handoff and finish-handback partials to tolerate create-form context if they are ever rendered again.
 
 ---
 
@@ -104,6 +104,7 @@ Then verify:
 - Backend -> Mykonos Inquiries -> Loyalty Continuity
 - click `New Loyalty Record`
 - confirm the create form opens instead of crashing
+- confirm the close-handoff / finish-handback overview callouts no longer break create mode
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.

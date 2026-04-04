@@ -59,8 +59,13 @@ class LoyaltyRecords extends Controller
     public function formExtendFields($form): void
     {
         $model = $form->model;
+        $context = $form->context ?? null;
 
         if (!$model instanceof LoyaltyRecord) {
+            return;
+        }
+
+        if ($context !== 'update') {
             return;
         }
 
