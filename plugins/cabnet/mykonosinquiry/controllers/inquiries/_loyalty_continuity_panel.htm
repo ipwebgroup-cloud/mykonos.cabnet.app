@@ -218,6 +218,22 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->hold_expiry_group_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Cadence compression</h4>
+                    <p><?= e($record->cadence_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Resurface priority</h4>
+                    <p><?= e($record->quiet_lane_resurfacing_priority_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Resurface compression</h4>
+                    <p><?= e($record->resurfacing_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Review slot</h4>
+                    <p><?= e($record->quiet_lane_review_slot_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Re-entry order</h4>
                     <p><?= e($record->quiet_lane_reentry_order_label) ?></p>
                 </div>
@@ -228,6 +244,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                 <div class="scoreboard-item title-value">
                     <h4>Quiet cadence</h4>
                     <p><?= e($record->quiet_lane_cadence_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Cadence compression</h4>
+                    <p><?= e($record->cadence_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Resurface priority</h4>
+                    <p><?= e($record->quiet_lane_resurfacing_priority_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>

@@ -50,7 +50,7 @@ Assume the live operational workspace remains:
 
 Assume the current development line has already advanced into the guarded **Loyalty Continuity Workspace** line and the latest applied patch is approximately:
 
-- `v6.12.0 hold-expiry compression and quiet-lane cadence framing workspace`
+- `v6.14.0 resurfacing compression and quiet-lane review-slot framing workspace`
 
 Do **not** restart from older v2.x workflow patches unless the uploaded files clearly show otherwise.
 
@@ -112,12 +112,12 @@ Continue in this style:
 - **plugin-only**
 - **render-safe**
 - **schema-safe when possible**
-- improve readability, prioritization, close-side framing, reopen visibility, handback clarity, hold-release timing, quiet-lane return visibility, hold-aging compression, quiet-lane re-entry readiness, hold-expiry grouping, quiet-lane re-entry ordering, hold-expiry compression, quiet-lane cadence framing, and queue-scan clarity
+- improve readability, prioritization, close-side framing, reopen visibility, handback clarity, hold-release timing, quiet-lane return visibility, hold-aging compression, quiet-lane re-entry readiness, hold-expiry grouping, quiet-lane re-entry ordering, hold-expiry compression, quiet-lane cadence framing, cadence compression, quiet-lane resurfacing priority, resurfacing compression, quiet-lane review-slot framing, and queue-scan clarity
 - avoid turning the loyalty line into campaign automation
 
 The current safest likely next direction is to continue with conservative:
-- cadence compression
-- quiet-lane resurfacing priority
+- review-slot compression
+- quiet-lane resurfacing cadence grouping
 - queue-scan aids
 - reopen / finish posture compression
 

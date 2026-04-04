@@ -3141,6 +3141,343 @@ public function getQuietLaneCadenceFrameAttribute(): string
 }
 
 
+public function getCadenceCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Cadence collapsed / active review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Cadence compressed / no silent runway left';
+
+            case 'Due today':
+                return 'Cadence compressed / same-day resurfacing';
+
+            case 'Due soon':
+                return 'Cadence compressed / short resurfacing runway';
+
+            case 'Near-term':
+                return 'Cadence compressed / near-term visible hold';
+
+            case 'Future':
+                return 'Cadence compressed / long quiet runway';
+
+            case 'Unscheduled':
+                return 'Cadence untrusted / review date missing';
+        }
+
+        return 'Cadence compression still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Cadence blocked / assign owner first';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Cadence compressed / drafting should surface soon';
+
+        case 'Closure packet prepared':
+            return 'Cadence compressed / finish choice should surface';
+
+        case 'Execution still open':
+            return 'Cadence compressed / follow-through should resurface';
+
+        case 'Prepared but not yet executed':
+            return 'Cadence compressed / prepared work should surface';
+
+        case 'Timed for later finish':
+            return 'Cadence compressed / timed resurfacing later';
+    }
+
+    return 'Cadence compressed / quiet human surfacing';
+}
+
+public function getQuietLaneResurfacingPriorityLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return '01 · resurfacing now / active lane';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return '01 · overdue quiet lane / resurface now';
+
+            case 'Due today':
+                return '02 · same-day quiet lane / review today';
+
+            case 'Due soon':
+                return '03 · due-soon quiet lane / prepare next';
+
+            case 'Near-term':
+                return '04 · near-term quiet lane / keep visible';
+
+            case 'Future':
+                return '05 · future quiet lane / low resurfacing priority';
+
+            case 'Unscheduled':
+                return '03 · unscheduled quiet lane / assign timing';
+        }
+
+        return '04 · quiet lane / resurfacing order forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return '02 · owner missing / assign before quiet hold';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return '03 · drafting lane / surface soon';
+
+        case 'Closure packet prepared':
+            return '03 · finish choice pending / surface soon';
+
+        case 'Execution still open':
+            return '02 · execution open / resurface early';
+
+        case 'Prepared but not yet executed':
+            return '03 · prepared work / resume deliberately';
+
+        case 'Timed for later finish':
+            return '05 · timed finish / resurface on schedule';
+    }
+
+    return '06 · quiet review / conservative resurfacing';
+}
+
+public function getCadenceCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Cadence compression' => $this->cadence_compression_label,
+        'Quiet-lane resurfacing priority' => $this->quiet_lane_resurfacing_priority_label,
+        'Quiet-lane cadence' => $this->quiet_lane_cadence_label,
+        'Hold-expiry compression' => $this->hold_expiry_compression_label,
+        'Quiet-lane re-entry order' => $this->quiet_lane_reentry_order_label,
+        'Quiet-lane re-entry readiness' => $this->quiet_lane_reentry_readiness_label,
+        'Next review window' => $this->next_review_window_label,
+        'Hold release cue' => $this->hold_release_cue_label,
+    ], 'Cadence compression digest is still minimal.');
+}
+
+public function getQuietLaneResurfacingPriorityFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Cadence compression: ' . $this->cadence_compression_label . '.';
+    $lines[] = 'Quiet-lane resurfacing priority: ' . $this->quiet_lane_resurfacing_priority_label . '.';
+    $lines[] = 'Quiet-lane cadence: ' . $this->quiet_lane_cadence_label . '.';
+    $lines[] = 'Hold-expiry compression: ' . $this->hold_expiry_compression_label . '.';
+    $lines[] = 'Quiet-lane re-entry order: ' . $this->quiet_lane_reentry_order_label . '.';
+    $lines[] = 'Quiet-lane re-entry readiness: ' . $this->quiet_lane_reentry_readiness_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the lane is already reopened, any quiet cadence has already surfaced. Resurfacing priority collapses to active human review now, and the compressed cadence cue simply confirms that the record no longer belongs in silent hold posture.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked review window is overdue, the quiet cadence has no safe silent runway left. Resurfacing priority belongs at the top of the human scan so the lane is reviewed deliberately now.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the quiet hold is due today, cadence compresses into same-day work. Resurfacing priority should stay near the top of the scan order so the hold does not drift past its intended window.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the quiet hold is approaching expiry, cadence should stay short and visible. Resurfacing priority should already be explicit so the operator prepares the return before urgency takes over.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the hold sits in a near-term window, cadence can remain compact without forcing immediate review. Resurfacing priority exists to keep the lane visible in human timing without widening into automation.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet hold still belongs to a future window, cadence can remain long and stable. Resurfacing priority should stay lower, but explicit, so the lane does not disappear from deliberate ownership.';
+        } else {
+            $lines[] = 'Because the quiet hold has no clear schedule, cadence cannot be trusted yet. The next human move is to assign timing so resurfacing priority means something concrete.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already due and no owner is assigned, resurfacing priority should not pretend to be stable. Assignment is the first real move before any quiet cadence can stay compressed credibly.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, cadence compression should keep the lane narrow but not hidden. Resurfacing priority exists to bring the drafting handoff back up before the finish path drifts into passive review.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already present, resurfacing priority should stay tied to finish-lane choice. The quiet posture can remain compressed only while the operator keeps that decision visible.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side work is still open, cadence compression should keep the lane readable without hiding unfinished work. Resurfacing priority should lift the record ahead of passive future holds so follow-through resumes deliberately.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, cadence can remain compressed and human-owned. Resurfacing priority should stay conservative and scheduled rather than becoming automated pressure.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, cadence compression and resurfacing priority remain narrow scan aids. They clarify which quiet lane should surface first without turning the workspace into automation.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
+public function getResurfacingCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Resurfacing collapsed / active review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Resurfacing compressed / expired quiet slot';
+
+            case 'Due today':
+                return 'Resurfacing compressed / same-day review slot';
+
+            case 'Due soon':
+                return 'Resurfacing compressed / next-slot preparation';
+
+            case 'Near-term':
+                return 'Resurfacing compressed / upcoming quiet slot';
+
+            case 'Future':
+                return 'Resurfacing compressed / deferred quiet slot';
+
+            case 'Unscheduled':
+                return 'Resurfacing untrusted / review slot missing';
+        }
+
+        return 'Resurfacing compression still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Resurfacing blocked / assign owner before slotting';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Resurfacing compressed / drafting slot should open';
+
+        case 'Closure packet prepared':
+            return 'Resurfacing compressed / finish choice slot pending';
+
+        case 'Execution still open':
+            return 'Resurfacing compressed / execution slot should reopen';
+
+        case 'Prepared but not yet executed':
+            return 'Resurfacing compressed / prepared slot should resume';
+
+        case 'Timed for later finish':
+            return 'Resurfacing compressed / future slot already chosen';
+    }
+
+    return 'Resurfacing compressed / quiet human slotting';
+}
+
+public function getQuietLaneReviewSlotLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return '01 · active slot now / leave quiet lane';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return '01 · expired quiet slot / review now';
+
+            case 'Due today':
+                return '02 · today quiet slot / review this shift';
+
+            case 'Due soon':
+                return '03 · next quiet slot / prepare review';
+
+            case 'Near-term':
+                return '04 · near-term quiet slot / keep on board';
+
+            case 'Future':
+                return '05 · future quiet slot / keep parked';
+
+            case 'Unscheduled':
+                return '03 · slot missing / assign review timing';
+        }
+
+        return '04 · quiet slot / review order forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return '02 · owner missing / assign before slotting';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return '03 · drafting slot / review soon';
+
+        case 'Closure packet prepared':
+            return '03 · finish choice slot / review soon';
+
+        case 'Execution still open':
+            return '02 · execution slot / reopen early';
+
+        case 'Prepared but not yet executed':
+            return '03 · prepared slot / resume deliberately';
+
+        case 'Timed for later finish':
+            return '05 · timed finish slot / review on schedule';
+    }
+
+    return '06 · quiet review slot / conservative cadence';
+}
+
+public function getResurfacingCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Resurfacing compression' => $this->resurfacing_compression_label,
+        'Quiet-lane review slot' => $this->quiet_lane_review_slot_label,
+        'Quiet-lane resurfacing priority' => $this->quiet_lane_resurfacing_priority_label,
+        'Cadence compression' => $this->cadence_compression_label,
+        'Quiet-lane cadence' => $this->quiet_lane_cadence_label,
+        'Hold-expiry compression' => $this->hold_expiry_compression_label,
+        'Next review window' => $this->next_review_window_label,
+        'Hold release cue' => $this->hold_release_cue_label,
+    ], 'Resurfacing compression digest is still minimal.');
+}
+
+public function getQuietLaneReviewSlotFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Resurfacing compression: ' . $this->resurfacing_compression_label . '.';
+    $lines[] = 'Quiet-lane review slot: ' . $this->quiet_lane_review_slot_label . '.';
+    $lines[] = 'Quiet-lane resurfacing priority: ' . $this->quiet_lane_resurfacing_priority_label . '.';
+    $lines[] = 'Cadence compression: ' . $this->cadence_compression_label . '.';
+    $lines[] = 'Quiet-lane cadence: ' . $this->quiet_lane_cadence_label . '.';
+    $lines[] = 'Hold-expiry compression: ' . $this->hold_expiry_compression_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Hold release cue: ' . $this->hold_release_cue_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, quiet slotting has ended. Resurfacing compression collapses into active review now, and the review-slot cue simply confirms that the record no longer belongs in a silent hold posture.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the parked quiet window is overdue, the silent slot has already expired. Resurfacing compression exists to make that collapse obvious, and the review-slot cue should place the record at the front of deliberate human review.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the quiet hold is due today, resurfacing compression should stay short and concrete. The review-slot cue keeps the record in a same-day human slot so it does not drift past its intended quiet window.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the quiet hold is approaching expiry, resurfacing compression should keep the lane compact and visible. The review-slot cue tells the operator that preparation should begin before urgency takes over.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the hold belongs to a near-term window, resurfacing compression can stay narrow without forcing immediate work. The review-slot cue exists to reserve human attention ahead of time without widening into automation.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the quiet hold still belongs to a future window, resurfacing compression can remain stable and conservative. The review-slot cue simply keeps a later human checkpoint visible so the lane does not disappear from ownership.';
+        } else {
+            $lines[] = 'Because the quiet hold has no review window yet, resurfacing compression cannot be trusted. The next human move is to assign a real review slot so timing and priority become concrete.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already due and still has no owner, review-slot framing should not pretend to be stable. Assignment is the first real move before any quiet resurfacing can stay compressed credibly.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, resurfacing compression should keep the lane visible and narrow. The review-slot cue exists to bring the drafting handoff back into a deliberate human slot before the finish path drifts into passive review.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, resurfacing compression should stay tied to finish choice rather than passive waiting. The review-slot cue keeps that decision anchored to a deliberate human checkpoint.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side work is still open, resurfacing compression should keep the lane readable without hiding unfinished follow-through. The review-slot cue should surface the record ahead of passive future holds so execution resumes deliberately.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is already intentional, resurfacing compression can stay conservative and human-owned. The review-slot cue should remain explicitly scheduled rather than turning into automated pressure.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, resurfacing compression and review-slot framing remain narrow scan aids. They clarify how the quiet lane should reappear in human timing without turning the loyalty workspace into automation.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();

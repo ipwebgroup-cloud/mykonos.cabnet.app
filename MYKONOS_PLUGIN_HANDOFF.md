@@ -12,35 +12,35 @@
 - Loyalty Continuity is active as a guarded plugin-only workspace and can operate live when storage is aligned.
 - Loyalty records now support transfer bridging, live touchpoint capture, continuity decision framing, retention packet preparation, packet follow-through execution framing, closing-loop readability, explicit stewardship closure packets, outcome-driven finish recommendations, explicit finish-lane parking/reopening, parked-state digest framing, finish dashboards, finish triage compression, conservative queue-scan aids, queue-watch / deliberate reopen-priority framing, compressed finish-watch queue cues, conservative finish-close / reopen scan-order cues, explicit close-handoff grouping with finish-review exit readability, explicit finish-lane handback with post-close hold framing, explicit hold-release framing with quiet-lane return visibility, conservative hold-aging readability with quiet-return review timing, and compressed hold-aging with quiet-lane re-entry readiness, plus conservative hold-expiry grouping with explicit quiet-lane re-entry ordering.
 - The guarded non-ready loyalty index, create, and update views tolerate missing staged partials instead of assuming every historical staging partial is present.
-- The loyalty workspace now includes explicit hold-expiry compression and quiet-lane cadence framing so quiet close holds can be scanned without reconstructing timing manually.
+- The loyalty workspace now includes explicit hold-expiry compression and quiet-lane cadence framing so quiet close holds can be scanned without reconstructing timing manually, plus cadence compression with explicit quiet-lane resurfacing priority and resurfacing compression with an explicit quiet-lane review slot.
 
 ## This patch
-- Version: `v6.12.0`
-- Name: `hold-expiry compression and quiet-lane cadence framing workspace`
+- Version: `v6.14.0`
+- Name: `resurfacing compression and quiet-lane review-slot framing workspace`
 - Type: plugin-only major patch
-- Adds one conservative hold-expiry compression cue and one explicit quiet-lane cadence cue so operators can scan quiet close holds faster without rebuilding timing manually
+- Adds one stronger resurfacing-compression cue and one explicit quiet-lane review-slot cue so operators can see where a quiet hold should surface in human timing without rebuilding the slot by hand
 - No theme change
 - No schema change
 
 ## Files included in this patch
 - `plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
-- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_hold_expiry_compression_quiet_cadence_panel.htm`
+- `plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_resurfacing_compression_quiet_review_slot_panel.htm`
 - `plugins/cabnet/mykonosinquiry/models/LoyaltyRecord.php`
 - `plugins/cabnet/mykonosinquiry/models/loyaltyrecord/fields.yaml`
 - `plugins/cabnet/mykonosinquiry/models/loyaltyrecord/columns.yaml`
 - `plugins/cabnet/mykonosinquiry/updates/version.yaml`
-- `docs/releases/MYKONOS_V6120_HOLD_EXPIRY_COMPRESSION_AND_QUIET_LANE_CADENCE_FRAMING_WORKSPACE_PATCH.md`
+- `docs/releases/MYKONOS_V6140_RESURFACING_COMPRESSION_AND_QUIET_LANE_REVIEW_SLOT_FRAMING_WORKSPACE_PATCH.md`
 - `MYKONOS_PLUGIN_HANDOFF.md`
 - `MYKONOS_CONTINUE_PROMPT.md`
 
 ## Why this patch exists
-The loyalty line could already show hold-expiry grouping and quiet-lane re-entry ordering.
+The loyalty line could already show cadence compression and quiet-lane resurfacing priority.
 
-The remaining friction was compression and cadence readability: operators could see where a quiet hold belonged, but still had to mentally rebuild whether the hold was collapsing into action now or how often it should surface in human review.
+The remaining friction was review-slot clarity: operators could see that a quiet lane should surface, but still had to mentally rebuild which actual human review slot it belonged to.
 
 This patch makes that easier by:
-- introducing one conservative hold-expiry compression cue and one explicit quiet-lane cadence cue
-- adding a dedicated Overview panel for the new compression/cadence readout
+- introducing one stronger resurfacing-compression cue and one explicit quiet-lane review-slot cue
+- adding a dedicated Overview panel for the new compression/slot readout
 - surfacing the same framing on the loyalty list and linked inquiry snapshot
 - keeping the workspace narrow, operator-owned, plugin-only, and non-automated
 
@@ -48,4 +48,4 @@ This patch makes that easier by:
 - Keep Inquiry Queue stable as the live operational workspace.
 - Keep loyalty continuity narrow, operator-owned, and readable.
 - Keep close, hold, and reopen framing deliberate and non-automated.
-- Next major patches should focus on conservative cadence compression and quiet-lane resurfacing priority without drifting into campaign logic, theme work, or automation.
+- Next major patches should focus on conservative review-slot compression and quiet-lane resurfacing cadence grouping without drifting into campaign logic, theme work, or automation.

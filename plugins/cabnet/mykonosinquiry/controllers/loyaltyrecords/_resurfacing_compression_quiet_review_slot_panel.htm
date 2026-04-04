@@ -1,0 +1,81 @@
+<?php
+$resurfacingCompression = $record ? $record->resurfacing_compression_label : 'Resurfacing compressed / quiet human slotting';
+$quietLaneReviewSlot = $record ? $record->quiet_lane_review_slot_label : '06 · quiet review slot / conservative cadence';
+$resurfacingCompressionDigest = $record ? $record->resurfacing_compression_digest : 'Resurfacing compression digest is still minimal.';
+$quietLaneReviewSlotFrame = $record ? $record->quiet_lane_review_slot_frame : 'Quiet-lane review-slot framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-calendar-check-o"></i>
+        <h4 style="margin-top:0;">Resurfacing Compression and Quiet-Lane Review Slot</h4>
+        <p>
+            This panel keeps quiet close holds readable by compressing resurfacing posture into one scan cue and by assigning an explicit human review slot without widening the workspace into automation.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing compression</h4>
+                <p><?= e($resurfacingCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane review slot</h4>
+                <p><?= e($quietLaneReviewSlot) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing priority</h4>
+                <p><?= e($record ? $record->quiet_lane_resurfacing_priority_label : '06 · quiet review / conservative resurfacing') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Cadence compression</h4>
+                <p><?= e($record ? $record->cadence_compression_label : 'Cadence compressed / quiet human surfacing') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet cadence</h4>
+                <p><?= e($record ? $record->quiet_lane_cadence_label : 'Quiet cadence / human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Expiry compression</h4>
+                <p><?= e($record ? $record->hold_expiry_compression_label : 'Expiry compressed / quiet human hold') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Unscheduled') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold release cue</h4>
+                <p><?= e($record ? $record->hold_release_cue_label : 'Keep hold under quiet human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Re-entry order</h4>
+                <p><?= e($record ? $record->quiet_lane_reentry_order_label : '06 · quiet review / keep in sequence') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Re-entry readiness</h4>
+                <p><?= e($record ? $record->quiet_lane_reentry_readiness_label : 'Re-entry readiness under quiet review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Owner and timing still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($record ? $record->next_finish_move_label : 'Keep the record in a narrow timed review posture') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing compression digest</h4>
+                <p><?= nl2br(e($resurfacingCompressionDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane review-slot frame</h4>
+                <p><?= nl2br(e($quietLaneReviewSlotFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>
