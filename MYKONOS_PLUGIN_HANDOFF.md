@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.16.0 checkpoint ordering and quiet-lane scan-pair compression workspace`
+- `v6.17.0 owner-first checkpoint pairing and quiet-lane return scan compression workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -120,6 +120,8 @@ This means the current workspace already includes the earlier conservative loyal
 - quiet-lane resurfacing cadence grouping
 - checkpoint ordering
 - quiet-lane scan-pair compression
+- owner-first checkpoint pairing
+- quiet-lane return scan compression
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -221,16 +223,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve owner-first checkpoint pairing after the new ordered scan cues
-- improve quiet-lane return scan compression after the new list/detail pairing
+- improve same-day checkpoint compression after the new owner-first pairing cues
+- improve owner-visible quiet-lane return handback framing after the new scan compression
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.16.0` is:
+A likely next safe patch direction after `v6.17.0` is:
 
-- **owner-first checkpoint pairing and quiet-lane return scan compression**
+- **same-day checkpoint compression and owner-visible quiet-lane return handback framing**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -268,7 +270,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.16.0 checkpoint ordering and quiet-lane scan-pair compression workspace`
+- `v6.17.0 owner-first checkpoint pairing and quiet-lane return scan compression workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

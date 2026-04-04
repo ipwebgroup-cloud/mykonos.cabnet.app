@@ -3812,6 +3812,197 @@ public function getQuietLaneScanPairCompressionFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+public function getOwnerFirstCheckpointPairingLabelAttribute(): string
+{
+    if (trim((string) $this->owner_name) === '') {
+        if ($this->latest_finish_lane_state === 'reopened') {
+            return 'Owner missing / reopened lane needs named lead';
+        }
+
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Owner missing / overdue checkpoint blocked';
+
+            case 'Due today':
+                return 'Owner missing / same-day checkpoint blocked';
+
+            case 'Due soon':
+                return 'Owner first / due-soon checkpoint next';
+
+            case 'Near-term':
+                return 'Owner first / near-term checkpoint queued';
+
+            case 'Future':
+                return 'Owner first / future checkpoint parked';
+
+            case 'Unscheduled':
+                return 'Owner first / checkpoint timing still open';
+        }
+
+        return 'Owner first / checkpoint pairing still forming';
+    }
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Owner set / reopened checkpoint first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Owner set / overdue checkpoint first';
+
+            case 'Due today':
+                return 'Owner set / same-day checkpoint';
+
+            case 'Due soon':
+                return 'Owner set / next quiet checkpoint';
+
+            case 'Near-term':
+                return 'Owner set / near-term checkpoint';
+
+            case 'Future':
+                return 'Owner set / future checkpoint hold';
+
+            case 'Unscheduled':
+                return 'Owner set / assign checkpoint timing';
+        }
+
+        return 'Owner set / checkpoint pairing stabilizing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Owner set / drafting checkpoint next';
+
+        case 'Closure packet prepared':
+            return 'Owner set / finish choice checkpoint';
+
+        case 'Execution still open':
+            return 'Owner set / execution checkpoint first';
+
+        case 'Prepared but not yet executed':
+            return 'Owner set / prepared checkpoint next';
+
+        case 'Timed for later finish':
+            return 'Owner set / timed checkpoint hold';
+    }
+
+    return 'Owner set / conservative checkpoint pairing';
+}
+
+public function getQuietLaneReturnScanCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return scan collapsed / active lane reopened';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return scan visible / owner before same-day read';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Return scan visible / pull back now';
+
+            case 'Due today':
+                return 'Return scan visible / same-day read';
+
+            case 'Due soon':
+                return 'Return scan visible / next-slot read';
+
+            case 'Near-term':
+                return 'Return scan visible / near-term read';
+
+            case 'Future':
+                return 'Return scan visible / future quiet hold';
+
+            case 'Unscheduled':
+                return 'Return scan open / assign slot first';
+        }
+
+        return 'Return scan forming / keep quiet lane narrow';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return scan narrow / drafting handback visible';
+
+        case 'Closure packet prepared':
+            return 'Return scan narrow / finish choice visible';
+
+        case 'Execution still open':
+            return 'Return scan narrow / execution resume visible';
+
+        case 'Prepared but not yet executed':
+            return 'Return scan narrow / prepared resume visible';
+
+        case 'Timed for later finish':
+            return 'Return scan narrow / timed hold visible';
+    }
+
+    return 'Return scan narrow / conservative quiet read';
+}
+
+public function getOwnerFirstCheckpointPairingDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Owner-first checkpoint pairing' => $this->owner_first_checkpoint_pairing_label,
+        'Quiet-lane return scan compression' => $this->quiet_lane_return_scan_compression_label,
+        'Checkpoint ordering' => $this->checkpoint_ordering_label,
+        'Quiet-lane scan-pair compression' => $this->quiet_lane_scan_pair_compression_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Return timing' => $this->quiet_return_review_timing_label,
+        'Hold release' => $this->hold_release_cue_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Owner-first checkpoint pairing digest is still minimal.');
+}
+
+public function getQuietLaneReturnScanCompressionFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Owner-first checkpoint pairing: ' . $this->owner_first_checkpoint_pairing_label . '.';
+    $lines[] = 'Quiet-lane return scan compression: ' . $this->quiet_lane_return_scan_compression_label . '.';
+    $lines[] = 'Checkpoint ordering: ' . $this->checkpoint_ordering_label . '.';
+    $lines[] = 'Quiet-lane scan-pair compression: ' . $this->quiet_lane_scan_pair_compression_label . '.';
+    $lines[] = 'Quiet-lane return: ' . $this->quiet_lane_return_label . '.';
+    $lines[] = 'Return timing: ' . $this->quiet_return_review_timing_label . '.';
+    $lines[] = 'Hold release: ' . $this->hold_release_cue_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the record is already reopened, the quiet-lane return scan should collapse into active handling. Owner-first pairing matters here because a named operator should read and carry the reopened checkpoint before any quiet return language stays on screen.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is due and still has no owner, quiet-lane return compression cannot pretend the scan is stable. The first human move is still assignment, and only then should the return cue compress into one believable same-day read.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet return is already overdue, owner-first pairing should keep the record in deliberate human view. The return scan compresses the list cue and detail cue into one immediate pull-back signal rather than scattering the story across multiple panels.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, pairing should stay owner-visible and concrete. The quiet-lane return scan exists so the list view and the linked inquiry snapshot both express the same same-day checkpoint without extra regrouping.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is approaching, owner-first pairing should stay preparatory instead of urgent. The compressed return scan keeps the next quiet checkpoint readable before the record drifts into a wider queue posture.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the pairing can stay calm and operator-owned. The compressed scan preserves that quiet timing read across both surfaces without overstating urgency.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return belongs to a future quiet window, owner-first pairing should hold the record in a conservative parked state. The compressed scan keeps that future handback visible without turning the workspace into automation.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, owner-first pairing should not promise stability. The next human move is to set a real checkpoint so the quiet-lane return scan can compress around a truthful time signal.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, owner-first pairing should keep the drafting checkpoint visible. The quiet-lane return scan simply keeps the handback story narrow and readable between the loyalty list and linked inquiry snapshot.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, owner-first pairing should stay tied to finish choice. The quiet-lane return scan keeps that prepared handback visible without widening the workspace.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate move, owner-first pairing should keep the named operator and next checkpoint in view. The return scan compresses the handback story so both surfaces stay aligned on that resume posture.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, owner-first pairing can remain conservative and scheduled. The quiet-lane return scan keeps the eventual handback visible without pretending the record should be active right now.';
+    } else {
+        $lines[] = 'Because finish posture is still quiet and conservative, owner-first pairing and quiet-lane return scan compression remain human scan aids only. They reduce list/detail translation without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 
 
 public function getClosureReadinessLabelAttribute(): string

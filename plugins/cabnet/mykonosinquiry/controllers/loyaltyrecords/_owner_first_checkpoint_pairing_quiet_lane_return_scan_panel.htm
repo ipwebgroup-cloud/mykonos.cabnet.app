@@ -1,0 +1,34 @@
+<?php
+$ownerFirstCheckpointPairing = $record ? $record->owner_first_checkpoint_pairing_label : 'Owner-first checkpoint pairing is still forming';
+$quietLaneReturnScanCompression = $record ? $record->quiet_lane_return_scan_compression_label : 'Quiet-lane return scan compression is still forming';
+$ownerFirstCheckpointPairingDigest = $record ? $record->owner_first_checkpoint_pairing_digest : 'Owner-first checkpoint pairing digest is still minimal.';
+$quietLaneReturnScanCompressionFrame = $record ? $record->quiet_lane_return_scan_compression_frame : 'Quiet-lane return scan compression frame is still minimal.';
+?>
+<div class="callout callout-info no-subheader">
+    <div class="header">
+        <i class="icon-user-circle"></i>
+        <h3>Owner-First Checkpoint Pairing and Quiet-Lane Return Scan Compression</h3>
+    </div>
+    <div class="content">
+        <p>
+            Keep the next quiet-lane checkpoint visibly attached to a human owner, then compress the return cue so the loyalty list,
+            overview workspace, and linked inquiry snapshot tell the same handback story without widening the workflow.
+        </p>
+        <div class="scoreboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;">
+            <div class="scoreboard-item title-value">
+                <h4>Owner-first checkpoint pairing</h4>
+                <p><?= e($ownerFirstCheckpointPairing) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane return scan compression</h4>
+                <p><?= e($quietLaneReturnScanCompression) ?></p>
+            </div>
+        </div>
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Digest:</strong> <?= e($ownerFirstCheckpointPairingDigest) ?></li>
+                <li><strong>Frame:</strong> <?= e($quietLaneReturnScanCompressionFrame) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>

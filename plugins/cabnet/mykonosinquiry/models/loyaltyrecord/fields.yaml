@@ -674,45 +674,45 @@ tabs:
             span: full
             comment: Conservative review-slot compression and grouped quiet-lane resurfacing panel without widening the workspace into automation.
 
-        checkpoint_ordering_label:
-            label: Checkpoint Ordering
+        owner_first_checkpoint_pairing_label:
+            label: Owner-First Checkpoint Pairing
             tab: Overview
             readOnly: true
             span: left
-            comment: Ordered checkpoint cue that promotes the next quiet-lane review window into one list-friendly human sequence.
+            comment: Owner-first checkpoint cue that keeps assignment and the next quiet-lane checkpoint readable as one operator-owned pair.
 
-        quiet_lane_scan_pair_compression_label:
-            label: Quiet-Lane Scan-Pair Compression
+        quiet_lane_return_scan_compression_label:
+            label: Quiet-Lane Return Scan Compression
             tab: Overview
             readOnly: true
             span: right
-            comment: Compressed pair that keeps the loyalty list cue and linked inquiry snapshot aligned around the same quiet-lane checkpoint.
+            comment: Compressed return scan that keeps the loyalty list cue and linked inquiry snapshot aligned around the same quiet-lane handback.
 
-        checkpoint_ordering_digest:
-            label: Checkpoint Ordering Digest
+        owner_first_checkpoint_pairing_digest:
+            label: Owner-First Checkpoint Pairing Digest
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: left
-            comment: Ordered digest joining checkpoint sequence, quiet-lane scan-pair compression, slot compression, and resurfacing cadence into one read.
+            comment: Ordered digest joining owner-first checkpoint pairing, quiet-lane return scan compression, checkpoint ordering, and return timing into one read.
 
-        quiet_lane_scan_pair_compression_frame:
-            label: Quiet-Lane Scan-Pair Compression Frame
+        quiet_lane_return_scan_compression_frame:
+            label: Quiet-Lane Return Scan Compression Frame
             type: textarea
             size: large
             tab: Overview
             readOnly: true
             span: right
-            comment: Read-only framing for how the loyalty list cue and linked inquiry snapshot should stay aligned around the same quiet-lane checkpoint.
+            comment: Read-only framing for how the quiet-lane return cue should stay compressed and owner-visible across the loyalty list and linked inquiry snapshot.
 
-        checkpoint_ordering_quiet_lane_scan_pair_panel:
-            label: Checkpoint Ordering and Quiet-Lane Scan-Pair Compression
+        owner_first_checkpoint_pairing_quiet_lane_return_scan_panel:
+            label: Owner-First Checkpoint Pairing and Quiet-Lane Return Scan Compression
             type: partial
-            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_checkpoint_ordering_quiet_lane_scan_pair_panel.htm
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_first_checkpoint_pairing_quiet_lane_return_scan_panel.htm
             tab: Overview
             span: full
-            comment: Conservative checkpoint ordering and quiet-lane scan-pair panel without widening the workspace into automation.
+            comment: Conservative owner-first checkpoint pairing and quiet-lane return scan panel without widening the workspace into automation.
 
 
         queue_watch_readiness_label:

@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.16.0 checkpoint ordering and quiet-lane scan-pair compression workspace`
+- `v6.17.0 owner-first checkpoint pairing and quiet-lane return scan compression workspace`
 
 This is a continuity hint only.
 
@@ -146,10 +146,8 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- review-slot compression
-- quiet-lane resurfacing cadence grouping
-- checkpoint ordering
-- quiet-lane scan-pair compression
+- same-day checkpoint compression
+- owner-visible quiet-lane return handback framing
 - queue-scan prioritization cues
 - human review timing clarity
 

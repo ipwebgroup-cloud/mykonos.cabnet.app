@@ -193,3 +193,6 @@
 
 2.3.30:
   - 'Add checkpoint ordering and quiet-lane scan-pair compression to the guarded loyalty workspace line'
+
+2.3.31:
+  - 'Add owner-first checkpoint pairing and quiet-lane return scan compression to the guarded loyalty workspace line'

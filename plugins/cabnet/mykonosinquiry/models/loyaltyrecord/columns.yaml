@@ -144,12 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    checkpoint_ordering_label:
-        label: Checkpoint Order
+    owner_first_checkpoint_pairing_label:
+        label: Owner Pair
         sortable: false
 
-    quiet_lane_scan_pair_compression_label:
-        label: Scan Pair
+    quiet_lane_return_scan_compression_label:
+        label: Return Scan
         sortable: false
 
 

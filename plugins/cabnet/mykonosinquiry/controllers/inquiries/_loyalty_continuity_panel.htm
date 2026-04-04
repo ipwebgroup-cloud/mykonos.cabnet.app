@@ -246,12 +246,12 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->quiet_lane_cadence_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
-                    <h4>Checkpoint ordering</h4>
-                    <p><?= e($record->checkpoint_ordering_label) ?></p>
+                    <h4>Owner-first checkpoint pair</h4>
+                    <p><?= e($record->owner_first_checkpoint_pairing_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
-                    <h4>Quiet-lane scan pair</h4>
-                    <p><?= e($record->quiet_lane_scan_pair_compression_label) ?></p>
+                    <h4>Quiet-lane return scan</h4>
+                    <p><?= e($record->quiet_lane_return_scan_compression_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
@@ -322,6 +322,8 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <li><strong>Stewardship snapshot:</strong> <?= e($record->stewardship_snapshot_summary) ?></li>
                     <li><strong>Queue compression:</strong> <?= e($record->stewardship_queue_compression_digest) ?></li>
                     <li><strong>Hold-release digest:</strong> <?= e($record->hold_release_digest) ?></li>
+                    <li><strong>Owner-first checkpoint digest:</strong> <?= e($record->owner_first_checkpoint_pairing_digest) ?></li>
+                    <li><strong>Quiet-lane return scan frame:</strong> <?= e($record->quiet_lane_return_scan_compression_frame) ?></li>
                     <li><strong>Quiet-lane return frame:</strong> <?= e($record->quiet_lane_return_frame) ?></li>
                     <li><strong>Queue scan frame:</strong> <?= e($record->stewardship_queue_scan_frame) ?></li>
                     <li><strong>Finish-watch dashboard digest:</strong> <?= e($record->finish_watch_dashboard_digest) ?></li>
