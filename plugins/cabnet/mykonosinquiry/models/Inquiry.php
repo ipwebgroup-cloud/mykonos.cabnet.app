@@ -496,6 +496,113 @@ class Inquiry extends Model
         return \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $this->id);
     }
 
+
+    public function getLoyaltyQueuePostureBucketAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'workspace_staged';
+        }
+
+        if ($this->getLinkedLoyaltyRecord()) {
+            return 'linked';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'transfer_ready';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'draft_ready';
+        }
+
+        return 'queue_only';
+    }
+
+    public function getLoyaltyQueuePostureFilterOptions($scope = null): array
+    {
+        return [
+            'linked' => 'Linked to loyalty',
+            'transfer_ready' => 'Transfer-ready',
+            'draft_ready' => 'Draft-ready',
+            'queue_only' => 'Queue-only',
+            'workspace_staged' => 'Workspace staged',
+        ];
+    }
+
+    public function scopeApplyLoyaltyQueuePosture($query, $scope): void
+    {
+        $activeValues = array_values(array_filter((array) ($scope->value ?? []), static function ($value) {
+            return $value !== null && $value !== '';
+        }));
+
+        if (!count($activeValues)) {
+            return;
+        }
+
+        $workspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+
+        if (!$workspaceReady) {
+            if (in_array('workspace_staged', $activeValues, true)) {
+                return;
+            }
+
+            $query->whereRaw('1 = 0');
+            return;
+        }
+
+        $query->where(function ($outerQuery) use ($activeValues) {
+            foreach ($activeValues as $value) {
+                $outerQuery->orWhere(function ($branchQuery) use ($value) {
+                    switch ($value) {
+                        case 'linked':
+                            $branchQuery->whereHas('loyalty_record');
+                            break;
+
+                        case 'transfer_ready':
+                            $branchQuery->whereDoesntHave('loyalty_record')
+                                ->where(function ($statusQuery) {
+                                    $statusQuery->whereIn('status', ['closed_won', 'closed_lost', 'spam', 'closed'])
+                                        ->orWhereNotNull('closed_at');
+                                });
+                            break;
+
+                        case 'draft_ready':
+                            $branchQuery->whereDoesntHave('loyalty_record')
+                                ->where(function ($statusQuery) {
+                                    $statusQuery->whereNotIn('status', ['closed_won', 'closed_lost', 'spam', 'closed'])
+                                        ->orWhereNull('status');
+                                })
+                                ->whereNull('closed_at')
+                                ->whereNotNull('owner_name')
+                                ->whereRaw("TRIM(owner_name) <> ''")
+                                ->where(function ($priorityQuery) {
+                                    $priorityQuery->whereNotIn('priority', ['urgent', 'high'])
+                                        ->orWhereNull('priority');
+                                })
+                                ->whereNull('follow_up_date');
+                            break;
+
+                        case 'queue_only':
+                            $branchQuery->whereDoesntHave('loyalty_record')
+                                ->where(function ($queueOnlyQuery) {
+                                    $queueOnlyQuery->whereIn('status', ['closed_won', 'closed_lost', 'spam', 'closed'])
+                                        ->orWhereNotNull('closed_at')
+                                        ->orWhereNull('owner_name')
+                                        ->orWhereRaw("TRIM(owner_name) = ''")
+                                        ->orWhereIn('priority', ['urgent', 'high'])
+                                        ->orWhereNotNull('follow_up_date');
+                                });
+                            break;
+
+                        case 'workspace_staged':
+                            $branchQuery->whereRaw('1 = 0');
+                            break;
+                    }
+                });
+            }
+        });
+    }
+
     public function getLoyaltyQueueActionHintAttribute(): string
     {
         if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {

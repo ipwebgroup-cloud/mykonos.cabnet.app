@@ -284,3 +284,7 @@
 
 2.3.60:
   - "Add queue-row loyalty backlink visibility and continuity posture summaries to the Inquiry Queue list"
+
+2.3.61:
+  - "Add Inquiry Queue loyalty-posture filters for linked, transfer-ready, and draft-ready work"
+

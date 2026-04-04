@@ -79,18 +79,18 @@ The current long-running line remains the guarded:
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the immediate value move shifted from render safety to queue-level loyalty visibility and safer transfer guidance
-- the current real production-safe move is **Inquiry Queue direct loyalty-open and seeded-draft actions** so operators can jump straight into the linked continuity record or a seeded draft without opening inquiry detail first
+- the current real production-safe move is **Inquiry Queue loyalty-posture filtering** so operators can isolate linked, transfer-ready, and draft-ready continuity work without leaving the live queue
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.3 queue-row loyalty backlink visibility and continuity posture summaries patch`
-- plugin tracking `2.3.60`
+- `v6.40.4 inquiry queue loyalty-posture filters patch`
+- plugin tracking `2.3.61`
 
 This patch does not change schema and does not touch `/plan`.
-It adds a direct `Loyalty Backlink` lane on the Inquiry Queue list so operators can see the linked loyalty request reference and current continuity posture on each row before using the existing `Loyalty Actions` lane to open the linked record or a seeded draft.
+It adds a dedicated `Loyalty Posture` filter on the Inquiry Queue list so operators can isolate linked, transfer-ready, draft-ready, and queue-only inquiries without widening the live workflow.
 
 ---
 
@@ -109,6 +109,8 @@ Then verify:
 - confirm linked inquiries can use `Open loyalty` directly from the queue
 - confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue
 - confirm prefill-ready inquiries can use `Open draft` directly from the queue
+- confirm the new `Loyalty Posture` filter appears on the Inquiry Queue list
+- confirm the queue can isolate linked, transfer-ready, draft-ready, and queue-only inquiries using that filter
 - confirm the list workspace overview shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save

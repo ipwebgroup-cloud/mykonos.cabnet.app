@@ -67,3 +67,8 @@ filter:
                 detailed: Detailed
                 executive: Executive
                 celebration: Celebration
+        loyalty_queue_posture:
+            label: Loyalty Posture
+            type: group
+            modelScope: applyLoyaltyQueuePosture
+            options: getLoyaltyQueuePostureFilterOptions
