@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $holdAgingCompression = $record ? $record->hold_aging_compression_label : 'Compressed quiet hold / human review';
 $quietLaneReentryReadiness = $record ? $record->quiet_lane_reentry_readiness_label : 'Re-entry readiness under quiet review';
 $holdAgingCompressionDigest = $record ? $record->hold_aging_compression_digest : 'Hold-aging compression digest is still minimal.';

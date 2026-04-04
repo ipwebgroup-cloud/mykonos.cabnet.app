@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $record = $this->formGetModel();
 $checkpointOrdering = $record ? $record->checkpoint_ordering_label : '06 · conservative checkpoint / ordering forming';
 $quietLaneScanPairCompression = $record ? $record->quiet_lane_scan_pair_compression_label : 'List + detail aligned / conservative quiet pairing';

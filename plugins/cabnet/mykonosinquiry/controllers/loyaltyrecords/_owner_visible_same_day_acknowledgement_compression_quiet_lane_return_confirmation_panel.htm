@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $ownerVisibleSameDayAcknowledgementCompression = $record ? $record->owner_visible_same_day_acknowledgement_compression_label : 'Owner-visible same-day acknowledgement compression is still forming';
 $quietLaneReturnConfirmationFraming = $record ? $record->quiet_lane_return_confirmation_framing_label : 'Quiet-lane return confirmation framing is still forming';
 $ownerVisibleSameDayAcknowledgementCompressionDigest = $record ? $record->owner_visible_same_day_acknowledgement_compression_digest : 'Owner-visible same-day acknowledgement compression digest is still minimal.';

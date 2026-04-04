@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $resurfacingCompression = $record ? $record->resurfacing_compression_label : 'Resurfacing compressed / quiet human slotting';
 $quietLaneReviewSlot = $record ? $record->quiet_lane_review_slot_label : '06 · quiet review slot / conservative cadence';
 $resurfacingCompressionDigest = $record ? $record->resurfacing_compression_digest : 'Resurfacing compression digest is still minimal.';

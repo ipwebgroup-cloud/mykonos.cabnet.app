@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $sameDayCheckpointCompression = $record ? $record->same_day_checkpoint_compression_label : 'Same-day checkpoint compression is still forming';
 $ownerVisibleQuietLaneReturnHandback = $record ? $record->owner_visible_quiet_lane_return_handback_label : 'Owner-visible quiet-lane return handback is still forming';
 $sameDayCheckpointCompressionDigest = $record ? $record->same_day_checkpoint_compression_digest : 'Same-day checkpoint compression digest is still minimal.';

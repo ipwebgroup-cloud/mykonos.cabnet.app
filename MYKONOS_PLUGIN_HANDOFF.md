@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.2 loyalty source-context panel parity across create and update screens patch`
-- plugin tracking `2.3.69`
+- `v6.41.3 loyalty update-partial record-context render safety hotfix patch`
+- plugin tracking `2.3.70`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and adds explicit create-mode source inquiry validation so seeded drafts show a real backlink summary when a valid inquiry is supplied, and a safe warning when an example or missing inquiry id is used instead.
+It keeps the Inquiry Queue loyalty bridge intact and hotfixes a live loyalty update-screen regression where several continuity partials assumed `$record` was always injected by the backend renderer. The patch normalizes record context inside the affected loyalty partials so update screens stay render-safe before broader continuity polish continues.
 
 ---
 
@@ -106,6 +106,8 @@ Then verify:
 - click `New Loyalty Record` and confirm create opens cleanly
 - open `/admin/cabnet/mykonosinquiry/loyaltyrecords/create?source_inquiry_id=REAL_ID` and confirm the create screen shows a source inquiry summary with `Open inquiry` and `Back to queue search`
 - open `/admin/cabnet/mykonosinquiry/loyaltyrecords/create?source_inquiry_id=123` with a non-existing id and confirm the create screen shows a safe lookup warning instead of pretending prefill is active
+- open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the page renders instead of throwing `Undefined variable $record`
+- confirm hold / quiet-lane / resurfacing / checkpoint continuity panels load without PHP variable errors
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row

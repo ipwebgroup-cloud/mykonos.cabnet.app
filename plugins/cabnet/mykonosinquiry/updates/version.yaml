@@ -309,3 +309,5 @@
   - 'Add create-mode source inquiry validation, backlink summary, and queue-return cues to the live loyalty workspace line'
 2.3.69:
   - 'Align loyalty source-context panels and queue-return actions across create and update screens'
+2.3.70:
+  - 'Stabilize loyalty update partial rendering by normalizing record context across continuity panels'

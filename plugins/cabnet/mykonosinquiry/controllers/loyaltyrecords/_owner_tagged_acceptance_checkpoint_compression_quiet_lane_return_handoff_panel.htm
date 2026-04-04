@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $ownerTaggedAcceptanceCheckpointCompression = $record ? $record->owner_tagged_acceptance_checkpoint_compression_label : 'Owner-tagged acceptance checkpoint compression is still forming';
 $quietLaneReturnHandoffFraming = $record ? $record->quiet_lane_return_handoff_framing_label : 'Quiet-lane return handoff framing is still forming';
 $ownerTaggedAcceptanceCheckpointCompressionDigest = $record ? $record->owner_tagged_acceptance_checkpoint_compression_digest : 'Owner-tagged acceptance checkpoint compression digest is still minimal.';

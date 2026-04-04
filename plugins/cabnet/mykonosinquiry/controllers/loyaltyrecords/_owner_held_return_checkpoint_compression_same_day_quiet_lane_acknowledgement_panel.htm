@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $ownerHeldReturnCheckpointCompression = $record ? $record->owner_held_return_checkpoint_compression_label : 'Owner-held return checkpoint compression is still forming';
 $sameDayQuietLaneAcknowledgementPolish = $record ? $record->same_day_quiet_lane_acknowledgement_polish_label : 'Same-day quiet-lane acknowledgement polish is still forming';
 $ownerHeldReturnCheckpointCompressionDigest = $record ? $record->owner_held_return_checkpoint_compression_digest : 'Owner-held return checkpoint compression digest is still minimal.';

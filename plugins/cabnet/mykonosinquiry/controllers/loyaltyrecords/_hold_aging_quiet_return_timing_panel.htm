@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $holdAging = $record ? $record->hold_aging_label : 'Conservative hold / quiet review aging';
 $quietReturnTiming = $record ? $record->quiet_return_review_timing_label : 'Return timing under quiet review';
 $holdAgingDigest = $record ? $record->hold_aging_digest : 'Hold-aging digest is still minimal.';

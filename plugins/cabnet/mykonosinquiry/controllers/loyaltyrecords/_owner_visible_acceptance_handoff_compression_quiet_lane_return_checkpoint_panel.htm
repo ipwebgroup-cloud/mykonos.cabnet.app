@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $ownerVisibleAcceptanceHandoffCompression = $record ? $record->owner_visible_acceptance_handoff_compression_label : 'Owner-visible acceptance handoff compression is still forming';
 $quietLaneReturnCheckpointAlignment = $record ? $record->quiet_lane_return_checkpoint_alignment_label : 'Quiet-lane return checkpoint alignment is still forming';
 $ownerVisibleAcceptanceHandoffCompressionDigest = $record ? $record->owner_visible_acceptance_handoff_compression_digest : 'Owner-visible acceptance handoff compression digest is still minimal.';

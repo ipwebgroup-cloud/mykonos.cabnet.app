@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $holdExpiryGroup = $record ? $record->hold_expiry_group_label : 'Conservative expiry / human watch';
 $quietLaneReentryOrder = $record ? $record->quiet_lane_reentry_order_label : '06 · quiet review / keep in sequence';
 $holdExpiryGroupingDigest = $record ? $record->hold_expiry_grouping_digest : 'Hold-expiry grouping digest is still minimal.';

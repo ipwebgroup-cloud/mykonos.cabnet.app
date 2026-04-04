@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.2 loyalty source-context panel parity across create and update screens patch`
+- `v6.41.3 loyalty update-partial record-context render safety hotfix patch`
 
 This is a continuity hint only.
 
@@ -79,6 +79,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
 - make create-mode clearly distinguish valid inquiry-backed drafts from manual drafts or missing-id seed attempts
+- keep loyalty update-screen continuity partials render-safe when backend partial context arrives through different variable injection paths
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 

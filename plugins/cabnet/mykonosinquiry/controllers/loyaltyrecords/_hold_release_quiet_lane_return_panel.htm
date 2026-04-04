@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $holdReleaseCue = $record ? $record->hold_release_cue_label : 'Keep hold under quiet human review';
 $quietLaneReturn = $record ? $record->quiet_lane_return_label : 'Return to quiet review lane';
 $holdReleaseDigest = $record ? $record->hold_release_digest : 'Hold-release digest is still minimal.';

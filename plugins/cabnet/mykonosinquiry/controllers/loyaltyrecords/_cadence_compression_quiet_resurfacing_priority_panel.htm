@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $cadenceCompression = $record ? $record->cadence_compression_label : 'Cadence compressed / quiet human surfacing';
 $quietLaneResurfacingPriority = $record ? $record->quiet_lane_resurfacing_priority_label : '06 · quiet review / conservative resurfacing';
 $cadenceCompressionDigest = $record ? $record->cadence_compression_digest : 'Cadence compression digest is still minimal.';

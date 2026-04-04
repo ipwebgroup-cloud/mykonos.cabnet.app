@@ -1,4 +1,5 @@
 <?php
+$record = $formModel ?? $model ?? $record ?? null;
 $ownerConfirmedSameDayHandbackCue = $record ? $record->owner_confirmed_same_day_handback_cue_label : 'Owner-confirmed same-day handback cue is still forming';
 $quietLaneReturnCheckpointPolish = $record ? $record->quiet_lane_return_checkpoint_polish_label : 'Quiet-lane return checkpoint polish is still forming';
 $ownerConfirmedSameDayHandbackCueDigest = $record ? $record->owner_confirmed_same_day_handback_cue_digest : 'Owner-confirmed same-day handback cue digest is still minimal.';
