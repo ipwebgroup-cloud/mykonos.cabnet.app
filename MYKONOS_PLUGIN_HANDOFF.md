@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.25.0 owner-visible acceptance handoff compression and quiet-lane return checkpoint alignment workspace`
+- `v6.26.0 owner-aligned return checkpoint compression and same-day acceptance handoff framing workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -134,6 +134,12 @@ This means the current workspace already includes the earlier conservative loyal
 - same-day quiet-lane acceptance framing
 - owner-held quiet-lane acceptance compression
 - tagged return checkpoint framing
+- owner-tagged acceptance checkpoint compression
+- quiet-lane return handoff framing
+- owner-visible acceptance handoff compression
+- quiet-lane return checkpoint alignment
+- owner-aligned return checkpoint compression
+- same-day acceptance handoff framing
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -235,16 +241,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve owner-aligned return checkpoint compression
-- improve same-day acceptance handoff framing
+- improve return checkpoint handoff compression
+- improve owner-visible same-day acceptance alignment
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.25.0` is:
+A likely next safe patch direction after `v6.26.0` is:
 
-- **owner-aligned return checkpoint compression and same-day acceptance handoff framing**
+- **return checkpoint handoff compression and owner-visible same-day acceptance alignment**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -282,7 +288,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.25.0 owner-visible acceptance handoff compression and quiet-lane return checkpoint alignment workspace`
+- `v6.26.0 owner-aligned return checkpoint compression and same-day acceptance handoff framing workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

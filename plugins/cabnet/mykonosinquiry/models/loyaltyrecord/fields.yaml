@@ -954,6 +954,47 @@ tabs:
             span: full
             comment: Conservative owner-visible acceptance handoff compression and quiet-lane return checkpoint panel without widening the workspace into automation.
 
+
+        owner_aligned_return_checkpoint_compression_label:
+            label: Owner-Aligned Return Checkpoint Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-aligned return checkpoint cue that compresses the quiet-lane return into one readable signal across the list, overview, and linked inquiry snapshot.
+
+        same_day_acceptance_handoff_framing_label:
+            label: Same-Day Acceptance Handoff Framing
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Framed same-day acceptance handoff cue that keeps the next readable owner move aligned across the list, overview, and linked inquiry snapshot.
+
+        owner_aligned_return_checkpoint_compression_digest:
+            label: Owner-Aligned Return Checkpoint Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-aligned return checkpoint compression, same-day acceptance handoff framing, and the related timing cues into one read.
+
+        same_day_acceptance_handoff_framing_frame:
+            label: Same-Day Acceptance Handoff Framing Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet-lane return should stay owner-aligned while the same-day acceptance move stays easy to scan across every surface.
+
+        owner_aligned_return_checkpoint_compression_same_day_acceptance_handoff_panel:
+            label: Owner-Aligned Return Checkpoint Compression and Same-Day Acceptance Handoff Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_aligned_return_checkpoint_compression_same_day_acceptance_handoff_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-aligned return checkpoint compression and same-day acceptance handoff panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview
