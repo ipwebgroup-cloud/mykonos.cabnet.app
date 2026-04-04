@@ -1075,6 +1075,46 @@ tabs:
             span: full
             comment: Conservative acceptance confirmation compression and quiet-lane return checkpoint confirmation panel without widening the workspace into automation.
 
+        acceptance_confirmation_handoff_compression_label:
+            label: Acceptance Confirmation Handoff Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow acceptance confirmation handoff cue that keeps the owner-visible same-day handoff readable across the list, overview, and linked inquiry snapshot.
+
+        quiet_lane_return_checkpoint_frame_cue_label:
+            label: Quiet-Lane Return Checkpoint Framing
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Quiet return checkpoint framing cue that keeps the checkpoint signal readable across the list, overview, and linked inquiry snapshot.
+
+        acceptance_confirmation_handoff_compression_digest:
+            label: Acceptance Confirmation Handoff Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining the acceptance confirmation handoff compression, quiet-lane return checkpoint framing, and the related timing cues into one read.
+
+        quiet_lane_return_checkpoint_frame_cue_frame:
+            label: Quiet-Lane Return Checkpoint Framing Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the owner-visible same-day handoff should stay compressed while the quiet-lane return checkpoint remains easy to frame across every surface.
+
+        acceptance_confirmation_handoff_compression_quiet_lane_return_checkpoint_frame_cue_panel:
+            label: Acceptance Confirmation Handoff Compression and Quiet-Lane Return Checkpoint Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_acceptance_confirmation_handoff_compression_quiet_lane_return_checkpoint_frame_cue_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative acceptance confirmation handoff compression and quiet-lane return checkpoint framing panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

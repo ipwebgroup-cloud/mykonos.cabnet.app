@@ -1,0 +1,29 @@
+<?php
+    $acceptanceConfirmationHandoffCompression = $formModel->acceptance_confirmation_handoff_compression_label ?? 'No acceptance confirmation handoff compression yet';
+    $quietLaneReturnCheckpointFraming = $formModel->quiet_lane_return_checkpoint_frame_cue_label ?? 'No quiet-lane return checkpoint framing yet';
+    $acceptanceConfirmationHandoffCompressionDigest = $formModel->acceptance_confirmation_handoff_compression_digest ?? 'Acceptance confirmation handoff compression digest is not available yet.';
+    $quietLaneReturnCheckpointFramingFrame = $formModel->quiet_lane_return_checkpoint_frame_cue_frame ?? 'Quiet-lane return checkpoint framing is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Handoff compress</h4>
+            <p><?= e($acceptanceConfirmationHandoffCompression) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Checkpoint frame</h4>
+            <p><?= e($quietLaneReturnCheckpointFraming) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Compression digest</label>
+        <pre><?= e($acceptanceConfirmationHandoffCompressionDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Checkpoint frame</label>
+        <pre><?= e($quietLaneReturnCheckpointFramingFrame) ?></pre>
+    </div>
+</div>
