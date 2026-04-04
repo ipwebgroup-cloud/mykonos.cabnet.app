@@ -182,3 +182,6 @@
 
 2.3.26:
   - 'Introduce hold-expiry compression and quiet-lane cadence framing for live loyalty records'
+
+2.3.27:
+  - 'Introduce cadence compression and quiet-lane resurfacing priority for live loyalty records'
