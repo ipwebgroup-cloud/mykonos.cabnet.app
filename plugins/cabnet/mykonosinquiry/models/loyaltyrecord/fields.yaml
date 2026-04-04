@@ -674,6 +674,46 @@ tabs:
             span: full
             comment: Conservative review-slot compression and grouped quiet-lane resurfacing panel without widening the workspace into automation.
 
+        checkpoint_ordering_label:
+            label: Checkpoint Ordering
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered checkpoint cue that promotes the next quiet-lane review window into one list-friendly human sequence.
+
+        quiet_lane_scan_pair_compression_label:
+            label: Quiet-Lane Scan-Pair Compression
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Compressed pair that keeps the loyalty list cue and linked inquiry snapshot aligned around the same quiet-lane checkpoint.
+
+        checkpoint_ordering_digest:
+            label: Checkpoint Ordering Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining checkpoint sequence, quiet-lane scan-pair compression, slot compression, and resurfacing cadence into one read.
+
+        quiet_lane_scan_pair_compression_frame:
+            label: Quiet-Lane Scan-Pair Compression Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the loyalty list cue and linked inquiry snapshot should stay aligned around the same quiet-lane checkpoint.
+
+        checkpoint_ordering_quiet_lane_scan_pair_panel:
+            label: Checkpoint Ordering and Quiet-Lane Scan-Pair Compression
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_checkpoint_ordering_quiet_lane_scan_pair_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative checkpoint ordering and quiet-lane scan-pair panel without widening the workspace into automation.
+
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness

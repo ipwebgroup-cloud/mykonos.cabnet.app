@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.15.0 review-slot compression and quiet-lane resurfacing cadence grouping workspace`
+- `v6.16.0 checkpoint ordering and quiet-lane scan-pair compression workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -118,6 +118,8 @@ This means the current workspace already includes the earlier conservative loyal
 - quiet-lane review-slot framing
 - review-slot compression
 - quiet-lane resurfacing cadence grouping
+- checkpoint ordering
+- quiet-lane scan-pair compression
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -219,16 +221,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve checkpoint ordering after grouped quiet-lane compression
-- improve queue-scan pairing between the loyalty list and linked inquiry snapshot
+- improve owner-first checkpoint pairing after the new ordered scan cues
+- improve quiet-lane return scan compression after the new list/detail pairing
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.15.0` is:
+A likely next safe patch direction after `v6.16.0` is:
 
-- **checkpoint ordering and quiet-lane scan-pair compression**
+- **owner-first checkpoint pairing and quiet-lane return scan compression**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -266,7 +268,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.15.0 review-slot compression and quiet-lane resurfacing cadence grouping workspace`
+- `v6.16.0 checkpoint ordering and quiet-lane scan-pair compression workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

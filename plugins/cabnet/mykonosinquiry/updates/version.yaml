@@ -190,3 +190,6 @@
 
 2.3.29:
   - 'Add review-slot compression and quiet-lane resurfacing cadence grouping to the guarded loyalty workspace line'
+
+2.3.30:
+  - 'Add checkpoint ordering and quiet-lane scan-pair compression to the guarded loyalty workspace line'

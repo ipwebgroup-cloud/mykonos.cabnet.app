@@ -3645,6 +3645,174 @@ public function getQuietLaneResurfacingCadenceGroupFrameAttribute(): string
 }
 
 
+public function getCheckpointOrderingLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return '01 · active review / reopen now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return '01 · expired checkpoint / immediate review';
+
+            case 'Due today':
+                return '02 · same-day checkpoint / review this shift';
+
+            case 'Due soon':
+                return '03 · next checkpoint / prepare before drift';
+
+            case 'Near-term':
+                return '04 · near-term checkpoint / keep queued';
+
+            case 'Future':
+                return '05 · future checkpoint / keep parked';
+
+            case 'Unscheduled':
+                return '03 · checkpoint missing / assign timing';
+        }
+
+        return '04 · quiet checkpoint / ordering still forming';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return '02 · owner missing / assign before ordering';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return '03 · drafting checkpoint / schedule now';
+
+        case 'Closure packet prepared':
+            return '03 · finish-choice checkpoint / resolve soon';
+
+        case 'Execution still open':
+            return '02 · execution checkpoint / resume early';
+
+        case 'Prepared but not yet executed':
+            return '03 · prepared checkpoint / resume deliberately';
+
+        case 'Timed for later finish':
+            return '05 · timed checkpoint / keep scheduled';
+    }
+
+    return '06 · conservative checkpoint / ordering forming';
+}
+
+public function getQuietLaneScanPairCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'List + detail aligned / active review now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'List + detail aligned / resurface now';
+
+            case 'Due today':
+                return 'List + detail aligned / same-day review';
+
+            case 'Due soon':
+                return 'List + detail aligned / prepare next slot';
+
+            case 'Near-term':
+                return 'List + detail aligned / keep visible';
+
+            case 'Future':
+                return 'List + detail aligned / quiet future hold';
+
+            case 'Unscheduled':
+                return 'Pair untrusted / assign slot first';
+        }
+
+        return 'Pair still forming / keep quiet lane narrow';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Pair blocked / owner before quiet pairing';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'List + detail aligned / drafting slot next';
+
+        case 'Closure packet prepared':
+            return 'List + detail aligned / finish choice next';
+
+        case 'Execution still open':
+            return 'List + detail aligned / execution resume next';
+
+        case 'Prepared but not yet executed':
+            return 'List + detail aligned / prepared resume next';
+
+        case 'Timed for later finish':
+            return 'List + detail aligned / timed finish hold';
+    }
+
+    return 'List + detail aligned / conservative quiet pairing';
+}
+
+public function getCheckpointOrderingDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Checkpoint ordering' => $this->checkpoint_ordering_label,
+        'Quiet-lane scan-pair compression' => $this->quiet_lane_scan_pair_compression_label,
+        'Review-slot compression' => $this->review_slot_compression_label,
+        'Quiet-lane resurfacing cadence group' => $this->quiet_lane_resurfacing_cadence_group_label,
+        'Quiet-lane review slot' => $this->quiet_lane_review_slot_label,
+        'Quiet-lane resurfacing priority' => $this->quiet_lane_resurfacing_priority_label,
+        'Quiet-lane cadence' => $this->quiet_lane_cadence_label,
+        'Next review window' => $this->next_review_window_label,
+    ], 'Checkpoint ordering digest is still minimal.');
+}
+
+public function getQuietLaneScanPairCompressionFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Checkpoint ordering: ' . $this->checkpoint_ordering_label . '.';
+    $lines[] = 'Quiet-lane scan-pair compression: ' . $this->quiet_lane_scan_pair_compression_label . '.';
+    $lines[] = 'Review-slot compression: ' . $this->review_slot_compression_label . '.';
+    $lines[] = 'Quiet-lane resurfacing cadence group: ' . $this->quiet_lane_resurfacing_cadence_group_label . '.';
+    $lines[] = 'Quiet-lane review slot: ' . $this->quiet_lane_review_slot_label . '.';
+    $lines[] = 'Quiet-lane resurfacing priority: ' . $this->quiet_lane_resurfacing_priority_label . '.';
+    $lines[] = 'Quiet-lane cadence: ' . $this->quiet_lane_cadence_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, checkpoint ordering should collapse to active human review. The scan pair simply confirms that the list view and linked inquiry snapshot should now tell the same immediate story.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet checkpoint is overdue, ordering should move the record to the front of deliberate review. The scan pair exists so the loyalty list and linked inquiry snapshot both surface that same immediate return cue without extra regrouping.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the quiet checkpoint is due today, ordering should stay same-day and concrete. The scan pair keeps the list cue and the detail cue aligned so the record does not drift past its intended review window.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the checkpoint is approaching, ordering should stay preparatory instead of urgent. The scan pair keeps both surfaces aligned around the next quiet slot before pressure widens the workspace.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the checkpoint is near-term, ordering can stay narrow and calm. The scan pair exists to preserve the same quiet story in both the list and linked inquiry snapshot without pretending the record is active now.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the checkpoint still belongs to a future window, ordering should remain conservative and operator-owned. The scan pair keeps that future hold visible across both surfaces without turning it into automation.';
+        } else {
+            $lines[] = 'Because the quiet checkpoint is not yet scheduled, ordering cannot be trusted. The next human move is to assign a real slot so the list cue and linked detail cue can compress into one believable pair.';
+        }
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already due and still has no owner, checkpoint ordering should not pretend to be stable. Assignment is the first real move before quiet pairing can stay compressed credibly across the list and linked inquiry snapshot.';
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, ordering should keep the drafting checkpoint visible without widening the workspace. The scan pair keeps that next move aligned between the loyalty list and linked inquiry detail.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, ordering should stay tied to finish choice rather than passive waiting. The scan pair exists to keep both surfaces pointed at the same finish decision.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side work is still open, ordering should surface the next execution checkpoint before the record slips back into passive quiet timing. The scan pair keeps both surfaces aligned on that resume posture.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, ordering can remain conservative and scheduled. The scan pair keeps that scheduled hold readable in both places without turning the loyalty workspace into automation.';
+    } else {
+        $lines[] = 'Because finish posture is still conservative, checkpoint ordering and quiet-lane scan-pair compression remain narrow human scan aids. They reduce regrouping between the loyalty list and linked inquiry snapshot without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
+
 
 public function getClosureReadinessLabelAttribute(): string
     {

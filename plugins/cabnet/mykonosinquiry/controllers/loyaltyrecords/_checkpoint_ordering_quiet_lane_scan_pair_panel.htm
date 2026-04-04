@@ -1,0 +1,68 @@
+<?php
+$record = $this->formGetModel();
+$checkpointOrdering = $record ? $record->checkpoint_ordering_label : '06 · conservative checkpoint / ordering forming';
+$quietLaneScanPairCompression = $record ? $record->quiet_lane_scan_pair_compression_label : 'List + detail aligned / conservative quiet pairing';
+$checkpointOrderingDigest = $record ? $record->checkpoint_ordering_digest : 'Checkpoint ordering digest is still minimal.';
+$quietLaneScanPairCompressionFrame = $record ? $record->quiet_lane_scan_pair_compression_frame : 'Quiet-lane scan-pair compression frame is still forming.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="header">
+        <i class="icon-sort-amount-asc"></i>
+        <h3>Checkpoint Ordering and Quiet-Lane Scan-Pair Compression</h3>
+        <p>
+            This panel keeps the next quiet-lane checkpoint ordered in one human sequence and compresses the loyalty list cue with the linked inquiry snapshot so both surfaces tell the same narrow review story.
+        </p>
+    </div>
+
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Checkpoint ordering</h4>
+                <p><?= e($checkpointOrdering) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane scan pair</h4>
+                <p><?= e($quietLaneScanPairCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Review-slot compression</h4>
+                <p><?= e($record ? $record->review_slot_compression_label : 'Review slot compression still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing cadence group</h4>
+                <p><?= e($record ? $record->quiet_lane_resurfacing_cadence_group_label : '06 · quiet review slot / grouped cadence') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top: 15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Quiet review slot</h4>
+                <p><?= e($record ? $record->quiet_lane_review_slot_label : '06 · quiet review slot / conservative cadence') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing priority</h4>
+                <p><?= e($record ? $record->quiet_lane_resurfacing_priority_label : 'Resurfacing priority still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet cadence</h4>
+                <p><?= e($record ? $record->quiet_lane_cadence_label : 'Quiet cadence still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Review window still forming') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top: 15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Checkpoint ordering digest</h4>
+                <p><?= nl2br(e($checkpointOrderingDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane scan-pair frame</h4>
+                <p><?= nl2br(e($quietLaneScanPairCompressionFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>
