@@ -5,6 +5,7 @@ use Backend\Behaviors\FormController;
 use Backend\Behaviors\ListController;
 use Backend\Classes\Controller;
 use BackendMenu;
+use Cabnet\MykonosInquiry\Models\Inquiry;
 use Cabnet\MykonosInquiry\Models\LoyaltyRecord;
 use Carbon\Carbon;
 use Flash;
@@ -37,9 +38,16 @@ class LoyaltyRecords extends Controller
 
     public function create()
     {
-        $this->pageTitle = 'Create Loyalty Record';
-
         $this->asExtension('FormController')->create();
+
+        $seedInquiry = $this->resolveCreateSeedInquiry();
+        $reference = $seedInquiry && $seedInquiry->request_reference
+            ? $seedInquiry->request_reference
+            : ($seedInquiry && $seedInquiry->full_name ? $seedInquiry->full_name : null);
+
+        $this->pageTitle = $reference
+            ? 'Create Loyalty Record · ' . $reference
+            : 'Create Loyalty Record';
     }
 
     public function update($recordId = null, $context = null)
@@ -62,6 +70,16 @@ class LoyaltyRecords extends Controller
         $context = $form->context ?? null;
 
         if (!$model instanceof LoyaltyRecord) {
+            return;
+        }
+
+        if ($context === 'create') {
+            $seedInquiry = $this->resolveCreateSeedInquiry();
+
+            if ($seedInquiry) {
+                $model->seedFromInquiry($seedInquiry, [], $this->getOperatorName(), true);
+            }
+
             return;
         }
 
@@ -246,6 +264,12 @@ class LoyaltyRecords extends Controller
 
     public function formBeforeSave($model): void
     {
+        $seedInquiry = $this->resolveCreateSeedInquiry();
+
+        if ($seedInquiry && $model instanceof LoyaltyRecord) {
+            $model->seedFromInquiry($seedInquiry, [], $this->getOperatorName(), true);
+        }
+
         $touchpointEntry = $this->captureTouchpointEntryFromPost();
         $this->pendingTouchpointEntry = $touchpointEntry;
 
@@ -1325,6 +1349,17 @@ protected function parkFinishLaneAction($recordId, string $mode, string $success
             'body' => $body,
             'author_name' => $this->getOperatorName(),
         ];
+    }
+
+    protected function resolveCreateSeedInquiry(): ?Inquiry
+    {
+        $seedId = (int) input('source_inquiry_id', 0);
+
+        if ($seedId <= 0) {
+            return null;
+        }
+
+        return Inquiry::find($seedId);
     }
 
     protected function parsePostedDate(string $key): ?Carbon

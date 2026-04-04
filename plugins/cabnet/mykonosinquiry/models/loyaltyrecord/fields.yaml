@@ -1,4 +1,12 @@
 fields:
+    create_transfer_guidance:
+        label: Transfer Guidance
+        type: partial
+        context: create
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_create_transfer_guidance_panel.htm
+        span: full
+        comment: Use inquiry-based prefill when possible so the first saved loyalty record starts with anchored source context.
+
     request_reference:
         label: Request Reference
         disabled: true
@@ -8,7 +16,7 @@ fields:
         label: Source Inquiry ID
         disabled: true
         span: right
-        comment: Read-only originating inquiry link reference.
+        comment: Read-only originating inquiry link reference. Append ?source_inquiry_id=INQUIRY_ID to the create URL to prefill from an inquiry.
 
 tabs:
     fields:

@@ -165,6 +165,9 @@ $touchpointColumnsMissing = (array)($installState['missing_touchpoint_columns'] 
                         Create + open loyalty record
                     </button>
                 </form>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') . '?source_inquiry_id=' . $inquiry->id ?>" class="btn btn-default oc-icon-copy">
+                    Open prefilled loyalty draft
+                </a>
             <?php else: ?>
                 <button type="button" class="btn btn-default disabled" disabled>
                     Transfer remains staged

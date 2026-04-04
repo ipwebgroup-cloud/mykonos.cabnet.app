@@ -272,3 +272,6 @@
 
 2.3.56:
   - 'Make loyalty create-form controller partials update-only and render-safe'
+
+2.3.57:
+  - 'Add source-inquiry prefill support and draft-transfer guidance to the loyalty create flow'

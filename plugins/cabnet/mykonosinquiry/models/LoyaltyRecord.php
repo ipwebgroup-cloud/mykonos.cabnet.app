@@ -8020,6 +8020,83 @@ protected function getLatestFinishLaneTouchpoint(): ?LoyaltyTouchpoint
         return $this->latestTouchpointCache ?: null;
     }
 
+    public function seedFromInquiry(Inquiry $inquiry, array $overrides = [], ?string $operatorName = null, bool $preserveExisting = true): void
+    {
+        if (!$inquiry || !$inquiry->id) {
+            return;
+        }
+
+        $sourceSummary = trim(implode(PHP_EOL, array_filter([
+            static::normalizeLine('Source title', $inquiry->source_title),
+            static::normalizeLine('Source type', static::humanizeStatic($inquiry->source_type)),
+            static::normalizeLine('Source URL', $inquiry->source_url),
+            static::normalizeLine('Requested mode', static::humanizeStatic($inquiry->requested_mode)),
+        ])));
+
+        $continuitySummary = trim(implode(PHP_EOL, array_filter([
+            static::normalizeLine('Inquiry status', static::humanizeStatic($inquiry->status)),
+            static::normalizeLine('Priority', static::humanizeStatic($inquiry->priority)),
+            static::normalizeLine('Owner', $inquiry->owner_name),
+            static::normalizeLine('Last contacted', static::formatDateStatic($inquiry->last_contacted_at, 'Y-m-d H:i')),
+            static::normalizeLine('Follow-up', static::formatDateStatic($inquiry->follow_up_date, 'Y-m-d')),
+            static::normalizeLine('Closed at', static::formatDateStatic($inquiry->closed_at, 'Y-m-d H:i')),
+            static::normalizeLine('Closed reason', $inquiry->closed_reason),
+            static::normalizeLine('Concierge brief', $inquiry->concierge_brief ?? $inquiry->details),
+        ])));
+
+        $seed = [
+            'source_inquiry_id'       => $inquiry->id,
+            'request_reference'       => $inquiry->request_reference,
+            'guest_name'              => $inquiry->full_name,
+            'guest_email'             => $inquiry->email,
+            'guest_phone'             => $inquiry->phone,
+            'country'                 => $inquiry->country,
+            'owner_name'              => $inquiry->owner_name ?: ($operatorName ?: 'Operator'),
+            'service_focus_summary'   => $inquiry->services_inline ?: 'General planning',
+            'source_summary'          => $sourceSummary !== '' ? $sourceSummary : 'Source context was limited on the originating inquiry.',
+            'continuity_summary'      => $continuitySummary !== '' ? $continuitySummary : 'Inquiry continuity summary is still minimal.',
+            'created_by'              => $operatorName ?: 'Operator',
+            'continuity_status'       => 'active_retention',
+            'loyalty_stage'           => 'review',
+            'return_value_tier'       => 'watch',
+            'return_value_candidate'  => false,
+            'next_review_at'          => Carbon::now()->addDays(14),
+        ];
+
+        foreach ($overrides as $field => $value) {
+            $seed[$field] = $value;
+        }
+
+        foreach ($seed as $field => $value) {
+            if ($preserveExisting && $this->seedFieldHasMeaningfulValue($field, $this->{$field} ?? null)) {
+                continue;
+            }
+
+            $this->{$field} = $value;
+        }
+    }
+
+    protected function seedFieldHasMeaningfulValue(string $field, $value): bool
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return true;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_array($value)) {
+            return !empty($value);
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value > 0;
+        }
+
+        return trim((string) $value) !== '';
+    }
+
     public static function syncFromInquiry(Inquiry $inquiry, array $overrides = [], ?string $operatorName = null): ?self
     {
         if (!$inquiry || !$inquiry->id || !static::workspaceStorageReady()) {

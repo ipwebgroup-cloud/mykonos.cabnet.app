@@ -1,0 +1,32 @@
+<?php
+$seedInquiryId = (int) input('source_inquiry_id', 0);
+$seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find($seedInquiryId) : null;
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-random"></i>
+        <h4 style="margin-top:0;">Loyalty draft guidance</h4>
+        <p>
+            Manual loyalty drafts are allowed, but the safest path is still to anchor continuity to a real inquiry whenever one exists.
+        </p>
+    </div>
+    <div class="content">
+        <?php if ($seedInquiry): ?>
+            <p>
+                <strong>Prefill active from inquiry #<?= e((string) $seedInquiry->id) ?></strong>
+                <?= $seedInquiry->request_reference ? ' · ' . e($seedInquiry->request_reference) : '' ?>
+            </p>
+            <p>
+                Guest, source, and continuity basics were seeded from the originating inquiry before first save so the loyalty record starts from real queue context instead of a blank draft.
+            </p>
+            <p>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $seedInquiry->id) ?>">Return to source inquiry</a>
+            </p>
+        <?php else: ?>
+            <p>
+                Create a manual draft only when no originating inquiry exists. For inquiry-backed continuity, open the create URL with
+                <code>?source_inquiry_id=123</code> or use the loyalty bridge actions from the inquiry detail screen.
+            </p>
+        <?php endif; ?>
+    </div>
+</div>

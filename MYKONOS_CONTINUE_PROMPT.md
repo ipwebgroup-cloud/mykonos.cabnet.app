@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.39.2 loyalty workspace activation verification helper patch`
+- `v6.40.0 loyalty source inquiry prefill and draft transfer guidance patch`
 
 This is a continuity hint only.
 
@@ -71,14 +71,14 @@ You must verify the real uploaded files before continuing.
 
 ## Operational priority reminder
 
-The next real production-safe goal after the recent readability-only workspace line is:
+The loyalty workspace is now live and schema-ready, so the next real production-safe goal is:
 
-- verify the real loyalty activation state directly on the server
-- restore the loyalty activation migration files if missing
-- run a forward-only loyalty schema sync on advanced installations when needed
-- get the Loyalty Continuity backend page out of the guarded “missing / upgrade needed” shell
+- keep create-mode render safety intact
+- reduce blank manual-entry drift by prefilling loyalty drafts from real inquiries
+- expose a safer draft-transfer path from inquiry detail without touching `/plan`
+- improve first-save operator usability before adding any broader workflow expansion
 
-Do **not** assume the loyalty workspace is live just because the plugin UI files exist.
+Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 
 ---
 

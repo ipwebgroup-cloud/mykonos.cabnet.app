@@ -77,20 +77,20 @@ The current long-running line remains the guarded:
 - **Loyalty Continuity Workspace**
 
 But the immediate operational priority is now explicit:
-- the loyalty workspace is now schema-ready and rendering its live list view
-- the immediate issue shifted from storage activation to controller-added create-form partial safety
-- the next real production-safe move is a **controller-added create-form partial hotfix**, not more loyalty readability expansion
+- the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
+- the immediate value move shifted from render safety to first-save operator usability
+- the next real production-safe move is **source-inquiry prefill and draft transfer guidance** so loyalty drafts start from real inquiry context instead of a blank form
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.39.4 loyalty create-form controller partial render-safe hotfix patch`
-- plugin tracking `2.3.56`
+- `v6.40.0 loyalty source inquiry prefill and draft transfer guidance patch`
+- plugin tracking `2.3.57`
 
 This patch does not change schema and does not touch `/plan`.
-It makes the loyalty create form render-safe by preventing controller-added overview/workspace/history partials from being injected during create context and by hardening the known failing close-handoff and finish-handback partials to tolerate create-form context if they are ever rendered again.
+It lets the loyalty create form accept `?source_inquiry_id=ID` prefill, seeds first-save loyalty drafts from the originating inquiry, and adds an inquiry-detail shortcut to open a prefilled draft without forcing an immediate saved transfer record.
 
 ---
 
@@ -102,9 +102,9 @@ For this patch, upload the rooted files and then run:
 Then verify:
 
 - Backend -> Mykonos Inquiries -> Loyalty Continuity
-- click `New Loyalty Record`
-- confirm the create form opens instead of crashing
-- confirm the close-handoff / finish-handback overview callouts no longer break create mode
+- click `New Loyalty Record` and confirm create opens cleanly
+- open an inquiry detail screen and use `Open prefilled loyalty draft`
+- confirm request reference, guest basics, and summaries seed from the inquiry before first save
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.
