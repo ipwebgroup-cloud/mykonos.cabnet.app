@@ -10,6 +10,8 @@ if (!$record || $bridgeSource !== 'inquiry_queue' || !in_array($bridgeState, ['c
 }
 
 $sourceInquiryUrl = $sourceInquiryId > 0 ? \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $sourceInquiryId) : null;
+$queueReturnUrl = $record ? $record->source_inquiry_queue_return_url : \Backend::url('cabnet/mykonosinquiry/inquiries');
+$queueReturnLabel = $record ? $record->source_inquiry_queue_return_label : 'Open Inquiry Queue';
 $headline = $bridgeState === 'created'
     ? 'Inquiry-to-loyalty bridge succeeded.'
     : 'Linked loyalty record reopened from the queue bridge.';
@@ -61,10 +63,13 @@ if ($firstRecord && $bridgeState === 'created') {
             </ul>
         </div>
 
-        <?php if ($sourceInquiryUrl): ?>
-            <p style="margin-top:15px; margin-bottom:0;">
-                <a href="<?= e($sourceInquiryUrl) ?>">Return to source inquiry</a>
-            </p>
-        <?php endif; ?>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:15px;">
+            <?php if ($sourceInquiryUrl): ?>
+                <a href="<?= e($sourceInquiryUrl) ?>" class="btn btn-default">Return to source inquiry</a>
+            <?php endif; ?>
+            <?php if ($queueReturnUrl): ?>
+                <a href="<?= e($queueReturnUrl) ?>" class="btn btn-primary"><?= e($queueReturnLabel) ?></a>
+            <?php endif; ?>
+        </div>
     </div>
 </div>

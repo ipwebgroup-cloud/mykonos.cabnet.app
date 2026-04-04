@@ -27,7 +27,7 @@ tabs:
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_source_inquiry_link.htm
             tab: Overview
             span: full
-            comment: Direct jump back to the originating inquiry record.
+            comment: Persistent source inquiry backlink summary with direct return cues back into the filtered Inquiry Queue.
 
         guest_snapshot:
             label: Guest Snapshot

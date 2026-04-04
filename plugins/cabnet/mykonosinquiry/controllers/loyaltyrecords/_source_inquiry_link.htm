@@ -1,16 +1,49 @@
 <?php
 $record = $formModel ?? $model ?? null;
 $inquiry = $record ? $record->source_inquiry : null;
+$reference = $record ? $record->source_inquiry_backlink_reference_label : 'No source inquiry linked';
+$posture = $record ? $record->source_inquiry_backlink_posture_label : 'Queue context unavailable';
+$hint = $record ? $record->source_inquiry_backlink_hint : 'Open Inquiry Queue to find a source inquiry before relying on loyalty continuity cues.';
+$primaryUrl = $record ? $record->source_inquiry_backlink_url : null;
+$primaryLabel = $record ? $record->source_inquiry_backlink_action_label : 'No source inquiry';
+$secondaryUrl = $record ? $record->source_inquiry_queue_return_url : Backend::url('cabnet/mykonosinquiry/inquiries');
+$secondaryLabel = $record ? $record->source_inquiry_queue_return_label : 'Open Inquiry Queue';
+$linked = $inquiry !== null;
+$border = $linked ? '#cfe2ff' : '#e5e7eb';
+$background = $linked ? '#f7fbff' : '#f8f9fa';
+$title = $linked ? '#084298' : '#495057';
+$text = $linked ? '#33577a' : '#6c757d';
 ?>
 <div class="form-group span-full">
-    <?php if ($inquiry): ?>
-        <p>
-            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $inquiry->id) ?>" class="btn btn-default">
-                Open Source Inquiry
-            </a>
+    <div style="border:1px solid <?= e($border) ?>; background:<?= e($background) ?>; border-radius:12px; padding:14px 16px; line-height:1.45;">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between;">
+            <div style="min-width:240px; flex:1 1 320px;">
+                <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
+                    <?= e($reference) ?>
+                </div>
+                <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:6px;">
+                    <?= e($posture) ?>
+                </div>
+                <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.92; white-space:normal;">
+                    <?= e($hint) ?>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                <?php if ($primaryUrl): ?>
+                    <a href="<?= e($primaryUrl) ?>" class="btn btn-default"><?= e($primaryLabel) ?></a>
+                <?php else: ?>
+                    <span class="btn btn-default disabled" style="pointer-events:none; opacity:0.75;"><?= e($primaryLabel) ?></span>
+                <?php endif; ?>
+
+                <?php if ($secondaryUrl): ?>
+                    <a href="<?= e($secondaryUrl) ?>" class="btn btn-primary"><?= e($secondaryLabel) ?></a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <p class="help-block" style="margin:10px 0 0;">
+            This backlink summary stays visible on the loyalty update screen so operators can return to the source inquiry or jump back to the filtered queue without depending on one-time bridge flash state.
         </p>
-        <p class="help-block"><?= e($record->source_inquiry_display) ?></p>
-    <?php else: ?>
-        <p class="help-block">No source inquiry is linked to this loyalty record yet.</p>
-    <?php endif; ?>
+    </div>
 </div>
