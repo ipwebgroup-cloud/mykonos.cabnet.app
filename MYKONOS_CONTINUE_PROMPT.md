@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.39.1 loyalty workspace schema activation sync patch`
+- `v6.39.2 loyalty workspace activation verification helper patch`
 
 This is a continuity hint only.
 
@@ -73,8 +73,9 @@ You must verify the real uploaded files before continuing.
 
 The next real production-safe goal after the recent readability-only workspace line is:
 
+- verify the real loyalty activation state directly on the server
 - restore the loyalty activation migration files if missing
-- run a forward-only loyalty schema sync on advanced installations
+- run a forward-only loyalty schema sync on advanced installations when needed
 - get the Loyalty Continuity backend page out of the guarded “missing / upgrade needed” shell
 
 Do **not** assume the loyalty workspace is live just because the plugin UI files exist.
@@ -140,7 +141,7 @@ Continue in this style:
 - avoid automation
 - avoid speculative expansion
 
-If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation sync before more readability panels.
+If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
 ---
 

@@ -86,8 +86,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.39.1 loyalty workspace schema activation sync patch`
+- `v6.39.2 loyalty workspace activation verification helper patch`
 - plugin tracking `2.3.54`
+
+This helper patch does not advance the schema history beyond `2.3.54`.
+It adds a direct CLI verification script so the real activation state can be checked on-server without relying only on the guarded backend shell.
 
 This patch restores the historically referenced migration files:
 - `create_loyalty_records_table.php`
@@ -103,10 +106,19 @@ That extra recovery migration exists because a live installation can already be 
 ---
 
 ## Deployment note
-For this patch, the first intended activation step is:
+For this patch, the first intended verification step is:
+
+- `php scripts/qa-loyalty-workspace-activation.php`
+
+If storage is still not ready, then run:
 
 - `php artisan october:up`
 - or `php artisan october:migrate` if that is what the install exposes
+
+Then run:
+
+- `php artisan cache:clear`
+- `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.
 The sync migration was added specifically to avoid a destructive rebuild-first posture on a live inquiry plugin.
