@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.40.0 loyalty source inquiry prefill and draft transfer guidance patch`
+- `v6.40.1 inquiry queue loyalty-link visibility and transfer cues patch`
 
 This is a continuity hint only.
 
@@ -74,9 +74,9 @@ You must verify the real uploaded files before continuing.
 The loyalty workspace is now live and schema-ready, so the next real production-safe goal is:
 
 - keep create-mode render safety intact
-- reduce blank manual-entry drift by prefilling loyalty drafts from real inquiries
-- expose a safer draft-transfer path from inquiry detail without touching `/plan`
-- improve first-save operator usability before adding any broader workflow expansion
+- preserve inquiry-detail prefilled draft transfer behavior
+- expose loyalty-link state and transfer cues directly in the Inquiry Queue list
+- improve operator scan clarity before broader workflow expansion
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 

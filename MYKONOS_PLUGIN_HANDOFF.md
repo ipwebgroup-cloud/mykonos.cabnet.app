@@ -78,19 +78,19 @@ The current long-running line remains the guarded:
 
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
-- the immediate value move shifted from render safety to first-save operator usability
-- the next real production-safe move is **source-inquiry prefill and draft transfer guidance** so loyalty drafts start from real inquiry context instead of a blank form
+- the immediate value move shifted from render safety to queue-level loyalty visibility and safer transfer guidance
+- the next real production-safe move is **Inquiry Queue loyalty-link visibility and transfer cues** so operators can see linked continuity posture and transfer readiness without opening each inquiry one by one
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.0 loyalty source inquiry prefill and draft transfer guidance patch`
-- plugin tracking `2.3.57`
+- `v6.40.1 inquiry queue loyalty-link visibility and transfer cues patch`
+- plugin tracking `2.3.58`
 
 This patch does not change schema and does not touch `/plan`.
-It lets the loyalty create form accept `?source_inquiry_id=ID` prefill, seeds first-save loyalty drafts from the originating inquiry, and adds an inquiry-detail shortcut to open a prefilled draft without forcing an immediate saved transfer record.
+It surfaces `Loyalty Link` and `Loyalty Cue` directly on the Inquiry Queue list, adds queue-level `Linked to loyalty` and `Ready for loyalty` metrics, and keeps transfer decisions visible without opening each inquiry detail screen first.
 
 ---
 
@@ -103,6 +103,9 @@ Then verify:
 
 - Backend -> Mykonos Inquiries -> Loyalty Continuity
 - click `New Loyalty Record` and confirm create opens cleanly
+- open backend → `Mykonos Inquiries`
+- confirm the list shows `Loyalty Link` and `Loyalty Cue`
+- confirm the list workspace overview shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save
 - `php scripts/qa-loyalty-workspace-activation.php`

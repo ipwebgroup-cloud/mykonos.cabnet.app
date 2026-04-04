@@ -1,10 +1,33 @@
 <?php
 use Cabnet\MykonosInquiry\Models\Inquiry;
+use Cabnet\MykonosInquiry\Models\LoyaltyRecord;
 use Carbon\Carbon;
 
 $today = Carbon::today();
 $closedStatuses = ['closed_won', 'closed_lost', 'spam', 'closed'];
 $activeQuery = Inquiry::query()->whereNotIn('status', $closedStatuses);
+
+$loyaltyWorkspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+$linkedLoyaltyCount = $loyaltyWorkspaceReady
+    ? Inquiry::query()->whereIn('id', function ($query) {
+        $query->select('source_inquiry_id')
+            ->from(LoyaltyRecord::RECORD_TABLE)
+            ->whereNotNull('source_inquiry_id');
+    })->count()
+    : 0;
+$readyForLoyaltyCount = $loyaltyWorkspaceReady
+    ? Inquiry::query()
+        ->where(function ($query) {
+            $query->whereIn('status', ['closed_won', 'closed_lost', 'closed'])
+                ->orWhereNotNull('closed_at');
+        })
+        ->whereNotIn('id', function ($query) {
+            $query->select('source_inquiry_id')
+                ->from(LoyaltyRecord::RECORD_TABLE)
+                ->whereNotNull('source_inquiry_id');
+        })
+        ->count()
+    : 0;
 
 $metrics = [
     [
@@ -59,6 +82,18 @@ $metrics = [
         'hint' => 'High-sensitivity queue items',
         'tone' => 'critical',
     ],
+    [
+        'label' => 'Linked to loyalty',
+        'value' => $linkedLoyaltyCount,
+        'hint' => $loyaltyWorkspaceReady ? 'Inquiry already has a loyalty record' : 'Loyalty workspace not active yet',
+        'tone' => $loyaltyWorkspaceReady ? 'primary' : 'neutral',
+    ],
+    [
+        'label' => 'Ready for loyalty',
+        'value' => $readyForLoyaltyCount,
+        'hint' => $loyaltyWorkspaceReady ? 'Closed inquiries still waiting for continuity transfer' : 'Activate loyalty workspace first',
+        'tone' => $readyForLoyaltyCount > 0 ? 'warning' : 'neutral',
+    ],
 ];
 
 $paletteFor = function ($tone) {
@@ -102,7 +137,7 @@ $headlinePalette = $paletteFor($headlineTone);
             <?= e($headline) ?>
         </div>
         <div class="mk-copy" style="font-size:13px; color:<?= e($headlinePalette['text']) ?>; opacity:0.92;">
-            Prioritize owner clarity, overdue follow-ups, and first-touch discipline before deep proposal shaping.
+            Prioritize owner clarity, overdue follow-ups, first-touch discipline, and visible loyalty handoff gaps before deep proposal shaping.
         </div>
     </div>
 

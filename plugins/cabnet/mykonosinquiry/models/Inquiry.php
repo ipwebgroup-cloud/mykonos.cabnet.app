@@ -26,6 +26,10 @@ class Inquiry extends Model
         'notes' => [InquiryNote::class, 'order' => 'created_at desc'],
     ];
 
+    public $hasOne = [
+        'loyalty_record' => [LoyaltyRecord::class, 'key' => 'source_inquiry_id'],
+    ];
+
     protected array $workflowChanges = [];
 
     public function getStatusOptions(): array
@@ -229,6 +233,93 @@ class Inquiry extends Model
         }
 
         return 'Keep the internal summary current for the next operator.';
+    }
+
+    public function getLoyaltyRecordLinkStateLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Workspace staged';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            return sprintf('Linked · %s / %s', $record->continuity_status_label, $record->loyalty_stage_label);
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Ready to transfer';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Prefill draft ready';
+        }
+
+        return 'Live queue only';
+    }
+
+    public function getLoyaltyTransferCueLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Schema not active';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            return 'Open linked loyalty record';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Create + open loyalty';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Open prefilled loyalty draft';
+        }
+
+        return 'Keep in inquiry queue';
+    }
+
+    protected function getLinkedLoyaltyRecord(): ?LoyaltyRecord
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {
+            return null;
+        }
+
+        if ($this->relationLoaded('loyalty_record')) {
+            return $this->getRelation('loyalty_record');
+        }
+
+        return $this->loyalty_record;
+    }
+
+    protected function loyaltyTransferReady(): bool
+    {
+        return $this->isClosedStatus($this->status) || !empty($this->closed_at);
+    }
+
+    protected function getLoyaltyTransferReadinessScore(): int
+    {
+        $score = 0;
+
+        if ($this->loyaltyTransferReady()) {
+            $score += 2;
+        }
+
+        if ($this->normalizeDisplayValue($this->owner_name)) {
+            $score += 1;
+        }
+
+        if (!in_array((string) $this->priority, ['urgent', 'high'], true)) {
+            $score += 1;
+        }
+
+        if (empty($this->follow_up_date)) {
+            $score += 1;
+        }
+
+        return $score;
     }
 
 

@@ -275,3 +275,6 @@
 
 2.3.57:
   - 'Add source-inquiry prefill support and draft-transfer guidance to the loyalty create flow'
+
+2.3.58:
+  - "Surface loyalty-link visibility and transfer cues in the Inquiry Queue list"

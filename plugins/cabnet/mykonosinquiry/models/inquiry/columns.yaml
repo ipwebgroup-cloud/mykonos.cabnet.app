@@ -25,6 +25,10 @@ columns:
         label: Owner
     follow_up_queue_summary:
         label: Queue / Follow Up
+    loyalty_record_link_state_label:
+        label: Loyalty Link
+    loyalty_transfer_cue_label:
+        label: Loyalty Cue
     last_contacted_at:
         label: Last Contacted
         type: datetime

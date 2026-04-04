@@ -48,6 +48,13 @@ class Inquiries extends Controller
         $this->asExtension('ListController')->index();
     }
 
+    public function listExtendQuery($query): void
+    {
+        if ($this->loyaltyWorkspaceReady()) {
+            $query->with('loyalty_record');
+        }
+    }
+
     public function create()
     {
         $this->pageTitle = 'Create Inquiry';
