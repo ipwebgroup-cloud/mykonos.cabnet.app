@@ -187,3 +187,6 @@
   - 'Introduce cadence compression and quiet-lane resurfacing priority for live loyalty records'
 2.3.28:
   - 'Add resurfacing compression and quiet-lane review-slot framing to the guarded loyalty workspace line'
+
+2.3.29:
+  - 'Add review-slot compression and quiet-lane resurfacing cadence grouping to the guarded loyalty workspace line'

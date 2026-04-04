@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.14.0 resurfacing compression and quiet-lane review-slot framing workspace`
+- `v6.15.0 review-slot compression and quiet-lane resurfacing cadence grouping workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -116,6 +116,8 @@ This means the current workspace already includes the earlier conservative loyal
 - quiet-lane resurfacing priority
 - resurfacing compression
 - quiet-lane review-slot framing
+- review-slot compression
+- quiet-lane resurfacing cadence grouping
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -217,17 +219,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve quiet-lane resurfacing cadence grouping
-- improve review-slot compression
-- improve queue-scan readability
+- improve checkpoint ordering after grouped quiet-lane compression
+- improve queue-scan pairing between the loyalty list and linked inquiry snapshot
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.14.0` is:
+A likely next safe patch direction after `v6.15.0` is:
 
-- **review-slot compression and quiet-lane resurfacing cadence grouping**
+- **checkpoint ordering and quiet-lane scan-pair compression**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -265,7 +266,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.14.0 resurfacing compression and quiet-lane review-slot framing workspace`
+- `v6.15.0 review-slot compression and quiet-lane resurfacing cadence grouping workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

@@ -144,20 +144,12 @@ columns:
         label: Quiet Cadence
         sortable: false
 
-    cadence_compression_label:
-        label: Cadence Compression
+    review_slot_compression_label:
+        label: Slot Compression
         sortable: false
 
-    quiet_lane_resurfacing_priority_label:
-        label: Resurface Priority
-        sortable: false
-
-    resurfacing_compression_label:
-        label: Resurface Compression
-        sortable: false
-
-    quiet_lane_review_slot_label:
-        label: Review Slot
+    quiet_lane_resurfacing_cadence_group_label:
+        label: Resurface Group
         sortable: false
 
 

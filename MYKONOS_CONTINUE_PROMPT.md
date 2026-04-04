@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.14.0 resurfacing compression and quiet-lane review-slot framing workspace`
+- `v6.15.0 review-slot compression and quiet-lane resurfacing cadence grouping workspace`
 
 This is a continuity hint only.
 

@@ -1,0 +1,81 @@
+<?php
+$reviewSlotCompression = $record ? $record->review_slot_compression_label : 'Review slot compression still forming';
+$quietLaneResurfacingCadenceGroup = $record ? $record->quiet_lane_resurfacing_cadence_group_label : '06 · quiet review slot / grouped cadence';
+$reviewSlotCompressionDigest = $record ? $record->review_slot_compression_digest : 'Review-slot compression digest is still minimal.';
+$quietLaneResurfacingCadenceGroupFrame = $record ? $record->quiet_lane_resurfacing_cadence_group_frame : 'Grouped quiet-lane resurfacing framing is still minimal.';
+?>
+<div class="callout fade in no-subheader">
+    <div class="header">
+        <i class="icon-calendar-check-o"></i>
+        <h4 style="margin-top:0;">Review-Slot Compression and Quiet-Lane Resurfacing Cadence Grouping</h4>
+        <p>
+            This panel compresses the quiet review checkpoint into one readable cue and groups the resurfacing cadence into a single human scan aid so operators can see the next slot without rebuilding the whole quiet-lane story.
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Review-slot compression</h4>
+                <p><?= e($reviewSlotCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing cadence group</h4>
+                <p><?= e($quietLaneResurfacingCadenceGroup) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing compression</h4>
+                <p><?= e($record ? $record->resurfacing_compression_label : 'Resurfacing compression still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane review slot</h4>
+                <p><?= e($record ? $record->quiet_lane_review_slot_label : '06 · quiet review slot / conservative cadence') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurface priority</h4>
+                <p><?= e($record ? $record->quiet_lane_resurfacing_priority_label : '06 · quiet review / conservative resurfacing') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Cadence compression</h4>
+                <p><?= e($record ? $record->cadence_compression_label : 'Cadence compression still forming') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Quiet cadence</h4>
+                <p><?= e($record ? $record->quiet_lane_cadence_label : 'Quiet cadence / human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next review window</h4>
+                <p><?= e($record ? $record->next_review_window_label : 'Unscheduled') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Owner timing</h4>
+                <p><?= e($record ? $record->owner_timing_signal_label : 'Owner and timing still forming') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Hold release cue</h4>
+                <p><?= e($record ? $record->hold_release_cue_label : 'Keep hold under quiet human review') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Re-entry order</h4>
+                <p><?= e($record ? $record->quiet_lane_reentry_order_label : '06 · quiet review / keep in sequence') ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Next finish move</h4>
+                <p><?= e($record ? $record->next_finish_move_label : 'Keep the record in a narrow timed review posture') ?></p>
+            </div>
+        </div>
+
+        <div class="scoreboard" style="margin-top:15px;">
+            <div class="scoreboard-item title-value">
+                <h4>Review-slot compression digest</h4>
+                <p><?= nl2br(e($reviewSlotCompressionDigest)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Resurfacing cadence group frame</h4>
+                <p><?= nl2br(e($quietLaneResurfacingCadenceGroupFrame)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>
