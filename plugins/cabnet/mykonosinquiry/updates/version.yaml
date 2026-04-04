@@ -317,3 +317,5 @@
   - 'Add a saved-record source-context digest above the loyalty overview so source and continuity posture compare cleanly'
 2.3.73:
   - 'Mirror the source-context digest into the loyalty Workspace tab so source posture stays visible during live continuity edits'
+2.3.74:
+  - 'Mirror the source-context digest into the loyalty History tab so source posture, continuity posture, and latest outcome compare without switching tabs'

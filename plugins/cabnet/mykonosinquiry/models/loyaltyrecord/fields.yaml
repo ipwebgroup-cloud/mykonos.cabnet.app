@@ -1859,6 +1859,15 @@ tabs:
             span: full
             comment: Working retention notes for this continuity record.
 
+        history_source_context_digest:
+            label: History Source-Context Digest
+            type: partial
+            context: update
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_history_source_context_digest.htm
+            tab: History
+            span: full
+            comment: Compact comparison of source posture, continuity posture, latest outcome, and packet state before deeper history review.
+
         outcome_digest:
             label: Latest Outcome Digest
             type: textarea

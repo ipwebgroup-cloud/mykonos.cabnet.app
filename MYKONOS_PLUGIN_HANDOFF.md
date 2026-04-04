@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to keep create-mode render-safe while making inquiry-backed loyalty drafts explicitly show whether source context was found, missing, and how to return to the queue without widening the workflow
+- the next production-safe move is to keep source inquiry posture visible across Overview, Workspace, and History on saved loyalty records without widening the workflow
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.6 workspace-tab source-context digest mirror patch`
-- plugin tracking `2.3.73`
+- `v6.41.7 history-tab source-context digest mirror patch`
+- plugin tracking `2.3.74`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and mirrors the compact saved-record source-context digest into the top of the Workspace tab, so source inquiry posture remains visible while operators adjust continuity status, stage, value signal, ownership, and next-step handling.
+It keeps the Inquiry Queue loyalty bridge intact and mirrors the compact saved-record source-context digest into the top of the History tab, so source posture, current continuity posture, latest outcome, latest packet state, and next-review framing can be compared without switching back to Overview or Workspace.
 
 ---
 
@@ -111,6 +111,8 @@ Then verify:
 - open an existing loyalty record and confirm a compact `Source-context digest` appears above the source inquiry panel on the Overview tab
 - open the same loyalty record on the `Workspace` tab and confirm a matching `Workspace source-context digest` appears above the editable continuity fields
 - confirm the digest shows source anchor, source posture, continuity posture, value signal, latest touchpoint, and next-review framing without widening the workflow
+- open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
+- confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row

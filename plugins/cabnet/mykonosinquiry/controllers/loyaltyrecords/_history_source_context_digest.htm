@@ -1,0 +1,55 @@
+<?php
+$record = $formModel ?? $model ?? $record ?? null;
+
+if (!$record) {
+    return;
+}
+
+$sourceAnchor = trim((string) ($record->source_inquiry_backlink_reference_label ?? '')) ?: 'No source inquiry linked';
+$sourcePosture = trim((string) ($record->source_inquiry_backlink_posture_label ?? '')) ?: 'Manual loyalty record';
+$continuityPosture = trim(implode(' · ', array_filter([
+    trim((string) ($record->continuity_status_label ?? '')),
+    trim((string) ($record->loyalty_stage_label ?? '')),
+])));
+$continuityPosture = $continuityPosture !== '' ? $continuityPosture : 'Continuity posture still forming';
+
+$latestOutcome = trim((string) ($record->latest_touchpoint_outcome_label ?? '')) ?: 'No outcome recorded yet.';
+$latestPreparedPacket = trim((string) ($record->latest_prepared_packet_label ?? '')) ?: 'No packet prepared yet.';
+$latestTouch = trim((string) ($record->latest_touchpoint_summary ?? '')) ?: 'No touchpoint logged yet.';
+$nextReview = $record->next_review_at instanceof \DateTimeInterface
+    ? $record->next_review_at->format('Y-m-d H:i') . ' (' . trim((string) ($record->next_review_window_label ?? 'Future')) . ')'
+    : 'No next review scheduled';
+
+$cards = [
+    ['label' => 'Source anchor', 'value' => $sourceAnchor],
+    ['label' => 'Source posture', 'value' => $sourcePosture],
+    ['label' => 'Continuity posture', 'value' => $continuityPosture],
+    ['label' => 'Latest outcome', 'value' => $latestOutcome],
+    ['label' => 'Latest packet', 'value' => $latestPreparedPacket],
+];
+?>
+<div class="form-group span-full">
+    <div style="border:1px solid #dbe7f6; background:#fbfdff; border-radius:12px; padding:14px 16px; line-height:1.45; margin-bottom:8px;">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between; margin-bottom:12px;">
+            <div style="min-width:240px; flex:1 1 420px;">
+                <div style="font-size:12px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;">History source-context digest</div>
+                <div style="font-size:13px; color:#38485a; white-space:normal;">
+                    Keep the source inquiry posture, current continuity lane, and latest touchpoint result visible together before reading the deeper history panels below.
+                </div>
+            </div>
+            <div style="min-width:220px; flex:0 1 360px; display:flex; flex-direction:column; gap:4px; text-align:right;">
+                <div style="font-size:12px; font-weight:700; color:#3a4c63;">Latest touchpoint · <?= e($latestTouch) ?></div>
+                <div style="font-size:11px; color:#6f7f91;">Next review · <?= e($nextReview) ?></div>
+            </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <?php foreach ($cards as $card): ?>
+                <div style="flex:1 1 220px; min-width:200px; border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                    <div style="font-size:11px; font-weight:700; color:#6f7f91; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($card['label']) ?></div>
+                    <div style="font-size:13px; font-weight:600; color:#213449; white-space:normal;"><?= e($card['value']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
