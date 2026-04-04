@@ -146,10 +146,10 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- owner review-slot sequencing cues
-- queue backlog ordering visibility
-- same-day review checkpoint confirmation
+- front-of-queue versus parked-lane separation polish
+- owner-state handoff compression
 - reopen timing discipline
+- same-shift review checkpoint confirmation
 
 But you must confirm this against the real uploaded files before deciding the next patch.
 

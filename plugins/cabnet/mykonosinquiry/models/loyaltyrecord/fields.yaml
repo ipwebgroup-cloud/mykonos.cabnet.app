@@ -1200,14 +1200,14 @@ tabs:
             tab: Overview
             readOnly: true
             span: left
-            comment: Narrow same-shift handoff cue that keeps the next owner pass readable without widening the loyalty workspace into automation.
+            comment: Narrow current-shift handoff cue that tells operators whether this record should lead now, stay visible this shift, or defer safely.
 
         queue_backlog_compression_label:
             label: Queue Backlog Compression
             tab: Overview
             readOnly: true
             span: right
-            comment: Conservative backlog-compression cue that shows whether this record should stay expanded, lightly compressed, or deeply parked.
+            comment: Compressed backlog cue showing how tightly this record can be parked without losing the next human review move.
 
         same_shift_handoff_sequence_digest:
             label: Same-Shift Handoff Sequence Digest
@@ -1216,7 +1216,7 @@ tabs:
             tab: Overview
             readOnly: true
             span: left
-            comment: Ordered digest joining same-shift handoff sequencing, backlog compression, queue priority, and review timing into one read.
+            comment: Ordered digest joining same-shift handoff, backlog compression, owner review sequence, and the next review window into one read.
 
         queue_backlog_compression_frame:
             label: Queue Backlog Compression Frame
@@ -1225,7 +1225,7 @@ tabs:
             tab: Overview
             readOnly: true
             span: right
-            comment: Read-only framing for why this record should stay explicit now, compress slightly, or remain deeply parked in the human backlog.
+            comment: Read-only framing for how tightly the backlog can be compressed while keeping the next same-shift human handoff honest.
 
         same_shift_handoff_sequence_queue_backlog_compression_panel:
             label: Same-Shift Handoff Sequence and Queue Backlog Compression

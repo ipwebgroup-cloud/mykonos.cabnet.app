@@ -4,16 +4,15 @@
 - `mykonos-cabnet-v6.33.0-same-shift-handoff-sequence-and-queue-backlog-compression-workspace-patch.zip`
 
 ## Current state assessment
-The uploaded rooted project state is already deep in the guarded Loyalty Continuity Workspace line and the live operational workspace remains the Inquiry Queue.
-
-The previous rooted line already compressed loyalty reading through:
+The real rooted working tree remained on `v6.32.0` when this continuation started.
+That means the source-of-truth files already included:
 - queue-scan prioritization cues
 - human review timing clarity
 - owner review-slot sequence
 - queue backlog visibility
 
-The next safest move was still not schema work and not public-flow work.
-It was another plugin-only readability step that makes same-shift queue handling more direct for operators.
+The safest next move was still not schema work and not public-flow work.
+It was another plugin-only readability step that makes current-shift queue reading more direct for operators.
 
 ## What changed
 This patch adds two new conservative loyalty readability cues:
@@ -26,9 +25,9 @@ It also adds:
 - `queue_backlog_compression_frame`
 
 ### Workspace effect
-The loyalty workspace now translates the latest queue/backlog state into:
-- the next same-shift owner handoff order
-- how compressed or explicit the record should remain in the human backlog
+The loyalty workspace now translates the current queue posture into:
+- whether the record should lead the current shift, stay visible this shift, or defer safely
+- how tightly the backlog can be compressed without hiding the next human move
 
 ### Surfaces updated
 - loyalty record Overview tab
@@ -42,7 +41,6 @@ The loyalty workspace now translates the latest queue/backlog state into:
 - `mykonos.cabnet.app/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_same_shift_handoff_sequence_queue_backlog_compression_panel.htm`
 - `mykonos.cabnet.app/plugins/cabnet/mykonosinquiry/controllers/inquiries/_loyalty_continuity_panel.htm`
 - `mykonos.cabnet.app/plugins/cabnet/mykonosinquiry/updates/version.yaml`
-- `mykonos.cabnet.app/docs/releases/MYKONOS_V6330_SAME_SHIFT_HANDOFF_SEQUENCE_AND_QUEUE_BACKLOG_COMPRESSION_WORKSPACE_PATCH.md`
 - `mykonos.cabnet.app/MYKONOS_PLUGIN_HANDOFF.md`
 - `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`
 
@@ -71,8 +69,8 @@ Clear cache only if backend output appears stale:
 
 ## Strongest next step
 A safe next continuation would stay in the same lane:
-- handoff compression by owner-state
-- same-shift backlog release readability
 - front-of-queue versus parked-lane separation polish
+- owner-state handoff compression
+- reopen timing discipline
 
 No public `/plan` change is needed for this patch.

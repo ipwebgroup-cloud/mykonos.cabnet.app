@@ -6311,169 +6311,142 @@ public function getQueueBacklogVisibilityFrameAttribute(): string
     return implode(PHP_EOL, $lines);
 }
 
+
 public function getSameShiftHandoffSequenceLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {
-        return '01 · reopened handoff / same-shift owner review now';
+        return 'Immediate same-shift handoff / reopened evidence first';
     }
 
     if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
-        return '01 · assign owner now / same-shift handoff blocked';
+        return 'Unowned same-shift handoff / assign before shift close';
     }
 
-    if ($this->latest_finish_lane_mode !== '') {
-        switch ($this->next_review_window_label) {
-            case 'Overdue':
-                return '01 · overdue handoff / same-shift owner pass';
-
-            case 'Due today':
-                return '02 · same-shift handoff / current owner pass';
-
-            case 'Due soon':
-                return '03 · next-shift handoff / pre-read queue';
-
-            case 'Near-term':
-                return '04 · scheduled handoff / upcoming shift';
-
-            case 'Future':
-                return '05 · later handoff / keep parked';
-
-            case 'Unscheduled':
-                return '02 · handoff blocked / set shift checkpoint';
-        }
-
-        return '04 · same-shift handoff sequence / quiet lane still forming';
+    if ($this->next_review_window_label === 'Overdue') {
+        return 'First same-shift handoff / overdue checkpoint leads';
     }
 
-    switch ($this->closure_readiness_label) {
-        case 'Ready for finish packet':
-            return '03 · drafting handoff / same-shift review soon';
-
-        case 'Closure packet prepared':
-            return '03 · finish-choice handoff / same-shift review soon';
-
-        case 'Execution still open':
-            return '02 · execution handoff / active owner follow-through';
-
-        case 'Prepared but not yet executed':
-            return '03 · prepared handoff / resume deliberately';
-
-        case 'Timed for later finish':
-            return '05 · timed handoff / later scheduled shift';
+    if ($this->next_review_window_label === 'Due today') {
+        return 'Current-shift handoff / same-day checkpoint stays visible';
     }
 
-    return '06 · conservative handoff / background shift watch';
+    if ($this->next_review_window_label === 'Due soon') {
+        return 'Same-shift preview handoff / next slot staged early';
+    }
+
+    if ($this->next_review_window_label === 'Near-term') {
+        return 'Later-shift handoff / visible but not first';
+    }
+
+    if ($this->next_review_window_label === 'Future') {
+        return 'Deferred shift handoff / future quiet slot remains parked';
+    }
+
+    if ($this->next_review_window_label === 'Unscheduled') {
+        return 'Unclear shift handoff / timing still needs naming';
+    }
+
+    if (in_array($this->closure_readiness_label, ['Ready for finish packet', 'Closure packet prepared'], true)) {
+        return 'Decision handoff / finish-ready record stays in sequence';
+    }
+
+    if (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        return 'Follow-through handoff / open execution remains on shift';
+    }
+
+    if ($this->closure_readiness_label === 'Timed for later finish') {
+        return 'Scheduled handoff / later finish window preserved';
+    }
+
+    return 'Background handoff / conservative same-shift review';
 }
 
 public function getQueueBacklogCompressionLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {
-        return 'Low compression / reopened work stays explicit';
+        return 'Minimal compression / reopened record fully surfaced';
     }
 
     if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
-        return 'Low compression / ownership gap stays explicit';
+        return 'Low compression / due work stays visible until assigned';
     }
 
-    if ($this->latest_finish_lane_mode !== '') {
-        switch ($this->next_review_window_label) {
-            case 'Overdue':
-                return 'Low compression / front backlog needs explicit handoff';
-
-            case 'Due today':
-                return 'Low compression / same-shift backlog stays explicit';
-
-            case 'Due soon':
-                return 'Moderate compression / visible pre-read backlog';
-
-            case 'Near-term':
-                return 'Moderate compression / scheduled visible backlog';
-
-            case 'Future':
-                return 'High compression / future backlog can stay parked';
-
-            case 'Unscheduled':
-                return 'Low compression / missing checkpoint stays visible';
-        }
-
-        return 'Moderate compression / quiet-lane backlog still forming';
+    if (strpos($this->queue_backlog_visibility_label, 'Front backlog') === 0 || strpos($this->queue_backlog_visibility_label, 'Top backlog') === 0) {
+        return 'Light compression / front backlog kept readable';
     }
 
-    switch ($this->closure_readiness_label) {
-        case 'Ready for finish packet':
-            return 'Moderate compression / decision backlog visible';
-
-        case 'Closure packet prepared':
-            return 'Moderate compression / prepared close decision visible';
-
-        case 'Execution still open':
-            return 'Low compression / follow-through stays explicit';
-
-        case 'Prepared but not yet executed':
-            return 'Moderate compression / prepared work waiting';
-
-        case 'Timed for later finish':
-            return 'High compression / later finish can stay parked';
+    if (strpos($this->queue_backlog_visibility_label, 'Visible backlog') === 0) {
+        return 'Moderate compression / staged backlog stays scanable';
     }
 
-    return 'High compression / background review watch';
+    if (strpos($this->queue_backlog_visibility_label, 'Deep backlog') === 0) {
+        return 'High compression / deeper parked backlog preserved';
+    }
+
+    if (strpos($this->queue_backlog_visibility_label, 'Standard backlog') === 0) {
+        return 'Balanced compression / conservative backlog read';
+    }
+
+    if (in_array($this->closure_readiness_label, ['Ready for finish packet', 'Closure packet prepared'], true)) {
+        return 'Moderate compression / prepared finish work still visible';
+    }
+
+    if (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        return 'Light compression / execution follow-through near front';
+    }
+
+    return 'Balanced compression / narrow queue compression';
 }
 
 public function getSameShiftHandoffSequenceDigestAttribute(): string
 {
     return $this->formatSummary([
-        'Same-shift handoff sequence' => $this->same_shift_handoff_sequence_label,
-        'Queue backlog compression' => $this->queue_backlog_compression_label,
+        'Same-shift handoff' => $this->same_shift_handoff_sequence_label,
+        'Backlog compression' => $this->queue_backlog_compression_label,
         'Owner review sequence' => $this->owner_review_slot_sequence_label,
         'Queue backlog visibility' => $this->queue_backlog_visibility_label,
         'Queue priority' => $this->queue_scan_prioritization_cue_label,
         'Review timing' => $this->human_review_timing_clarity_label,
         'Next review window' => $this->next_review_window_label,
-    ], 'Same-shift handoff sequence digest is still minimal.');
+    ], 'Same-shift handoff digest is still minimal.');
 }
 
 public function getQueueBacklogCompressionFrameAttribute(): string
 {
     $lines = [];
-    $lines[] = 'Same-shift handoff sequence: ' . $this->same_shift_handoff_sequence_label . '.';
-    $lines[] = 'Queue backlog compression: ' . $this->queue_backlog_compression_label . '.';
+    $lines[] = 'Same-shift handoff: ' . $this->same_shift_handoff_sequence_label . '.';
+    $lines[] = 'Backlog compression: ' . $this->queue_backlog_compression_label . '.';
     $lines[] = 'Owner review sequence: ' . $this->owner_review_slot_sequence_label . '.';
     $lines[] = 'Queue backlog visibility: ' . $this->queue_backlog_visibility_label . '.';
     $lines[] = 'Queue priority: ' . $this->queue_scan_prioritization_cue_label . '.';
     $lines[] = 'Review timing: ' . $this->human_review_timing_clarity_label . '.';
-    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
 
     if ($this->latest_finish_lane_state === 'reopened') {
-        $lines[] = 'Because the finish lane is already reopened, backlog compression should stay deliberately low. The record needs one obvious same-shift handoff and one named owner review now, not another layer of quiet parking language.';
+        $lines[] = 'Because the finish lane is already reopened, same-shift handoff should stay immediate and backlog compression should stay minimal. The record needs a clear current-shift read, not deeper parking.';
     } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
-        $lines[] = 'Because the checkpoint is already due but ownership is still missing, the backlog should not compress this record into the background. The first real move is to assign an owner so the same-shift handoff sequence becomes truthful across the list, overview, and linked inquiry snapshot.';
-    } elseif ($this->latest_finish_lane_mode !== '') {
-        if ($this->next_review_window_label === 'Overdue') {
-            $lines[] = 'Because the parked quiet-lane checkpoint is overdue, the queue should keep this record expanded near the front edge. The same-shift handoff cue exists to make the overdue human read and owner pass unmistakable now.';
-        } elseif ($this->next_review_window_label === 'Due today') {
-            $lines[] = 'Because the quiet checkpoint lands in the current shift, backlog compression should stay low and explicit. The same-shift handoff cue tells the operator that today still belongs to a live owner pass, not to deeper parking.';
-        } elseif ($this->next_review_window_label === 'Due soon') {
-            $lines[] = 'Because the checkpoint is due soon, the backlog can compress slightly without losing visibility. The same-shift handoff cue keeps the next owner pass easy to stage while leaving immediate work at the very front.';
-        } elseif ($this->next_review_window_label === 'Near-term') {
-            $lines[] = 'Because the checkpoint sits in a near-term window, the queue can remain visibly staged with moderate compression. The handoff cue simply keeps the coming owner shift legible during routine human scans.';
-        } elseif ($this->next_review_window_label === 'Future') {
-            $lines[] = 'Because the checkpoint still belongs to a future quiet slot, the backlog can compress more aggressively without losing continuity. The same-shift handoff cue remains as a later reminder rather than an active-lane demand.';
-        } else {
-            $lines[] = 'Because the quiet lane still lacks a usable checkpoint date, the queue should resist deep compression until timing becomes real. The handoff cue exists to show that the next human move is to set that checkpoint before the backlog can calm down.';
-        }
+        $lines[] = 'Because a due checkpoint still lacks ownership, same-shift handoff should stay explicit and backlog compression should remain low. The next safe move is to name an owner before the record is allowed to sink into background backlog.';
+    } elseif ($this->next_review_window_label === 'Overdue') {
+        $lines[] = 'Because the checkpoint is overdue, the current shift should inherit it first and backlog compression should stay light. The purpose is one-pass queue reading, not workflow expansion.';
+    } elseif ($this->next_review_window_label === 'Due today') {
+        $lines[] = 'Because the checkpoint lands today, the record belongs in the current shift handoff and should remain lightly compressed in the visible front backlog. That keeps the same-day read obvious across the list, overview, and linked inquiry snapshot.';
+    } elseif ($this->next_review_window_label === 'Due soon') {
+        $lines[] = 'Because the checkpoint is due soon, the record can stay moderately compressed while still being pre-read during the current shift. The handoff cue exists so near-term work does not disappear behind quieter backlog lanes.';
+    } elseif ($this->next_review_window_label === 'Near-term') {
+        $lines[] = 'Because the checkpoint is near-term rather than immediate, the record can sit in a later shift handoff with moderate backlog compression. The cue keeps it staged without falsely promoting it above current-shift work.';
+    } elseif ($this->next_review_window_label === 'Future') {
+        $lines[] = 'Because the checkpoint belongs to a future quiet slot, backlog compression can stay higher while the deferred shift handoff remains explicit. The goal is to preserve visibility without crowding the front queue.';
+    } elseif ($this->next_review_window_label === 'Unscheduled') {
+        $lines[] = 'Because timing is still unscheduled, backlog compression should stay balanced and the handoff cue should keep the missing checkpoint obvious. The workspace stays human-led by surfacing uncertainty instead of inventing automation.';
     } elseif (in_array($this->closure_readiness_label, ['Ready for finish packet', 'Closure packet prepared'], true)) {
-        $lines[] = 'Because the record is commercially mature, the backlog can compress part of the surrounding noise but should still keep the next same-shift handoff readable. Prepared work should not disappear into a generic watch lane.';
+        $lines[] = 'Because finish work is already prepared, the record should stay in a decision handoff lane with moderate compression. It remains visible enough for the next owner pass without flattening the whole queue into one urgency band.';
     } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
-        $lines[] = 'Because follow-through still needs a deliberate human move, compression should stay moderate at most. The queue needs to keep the next owner handoff explicit until the loop closes or timing is intentionally deferred.';
-    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
-        $lines[] = 'Because later finish timing is intentional, the backlog can compress this record more heavily while still leaving one readable later handoff cue behind. That protects continuity without overstating urgency.';
+        $lines[] = 'Because execution still needs follow-through, same-shift handoff should remain active and backlog compression should stay light. The record should be easy to find during the current operator pass.';
     } else {
-        $lines[] = 'Because the workspace is still quiet and conservative, same-shift handoff sequencing and backlog compression remain narrow human scan aids only. They reduce translation between the queue and the operator without changing the underlying workflow.';
+        $lines[] = 'Because the workspace remains quiet and conservative, same-shift handoff and backlog compression stay narrow human scan aids only. They compress queue reading without changing the underlying inquiry workflow.';
     }
 
     return implode(PHP_EOL, $lines);
 }
-
 
 public function getClosureReadinessLabelAttribute(): string
     {
