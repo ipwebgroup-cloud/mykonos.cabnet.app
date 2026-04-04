@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.32.0 owner review-slot sequence and queue backlog visibility workspace`
+- `v6.33.0 same-shift handoff sequence and queue backlog compression workspace`
 
 This is a continuity hint only.
 

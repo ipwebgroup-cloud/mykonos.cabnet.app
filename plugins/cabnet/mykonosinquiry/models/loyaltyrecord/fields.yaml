@@ -1195,6 +1195,46 @@ tabs:
             span: full
             comment: Conservative owner-sequencing and backlog-visibility panel without widening the loyalty workspace into campaign behavior or automation.
 
+        same_shift_handoff_sequence_label:
+            label: Same-Shift Handoff Sequence
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow same-shift handoff cue that keeps the next owner pass readable without widening the loyalty workspace into automation.
+
+        queue_backlog_compression_label:
+            label: Queue Backlog Compression
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Conservative backlog-compression cue that shows whether this record should stay expanded, lightly compressed, or deeply parked.
+
+        same_shift_handoff_sequence_digest:
+            label: Same-Shift Handoff Sequence Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining same-shift handoff sequencing, backlog compression, queue priority, and review timing into one read.
+
+        queue_backlog_compression_frame:
+            label: Queue Backlog Compression Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for why this record should stay explicit now, compress slightly, or remain deeply parked in the human backlog.
+
+        same_shift_handoff_sequence_queue_backlog_compression_panel:
+            label: Same-Shift Handoff Sequence and Queue Backlog Compression
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_same_shift_handoff_sequence_queue_backlog_compression_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative same-shift handoff and backlog-compression panel without widening the loyalty workspace into campaign behavior or automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

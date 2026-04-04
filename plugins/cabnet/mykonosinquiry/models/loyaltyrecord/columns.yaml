@@ -160,6 +160,14 @@ columns:
         label: Backlog Visibility
         sortable: false
 
+    same_shift_handoff_sequence_label:
+        label: Shift Handoff
+        sortable: false
+
+    queue_backlog_compression_label:
+        label: Backlog Compression
+        sortable: false
+
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false

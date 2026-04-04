@@ -1,0 +1,29 @@
+<?php
+    $sameShiftHandoffSequence = $formModel->same_shift_handoff_sequence_label ?? 'No same-shift handoff sequence yet';
+    $queueBacklogCompression = $formModel->queue_backlog_compression_label ?? 'No queue backlog compression yet';
+    $sameShiftHandoffSequenceDigest = $formModel->same_shift_handoff_sequence_digest ?? 'Same-shift handoff sequence digest is not available yet.';
+    $queueBacklogCompressionFrame = $formModel->queue_backlog_compression_frame ?? 'Queue backlog compression frame is not available yet.';
+?>
+
+<div class="callout callout-info no-subheader">
+    <div class="scoreboard">
+        <div class="scoreboard-item title-value">
+            <h4>Shift handoff</h4>
+            <p><?= e($sameShiftHandoffSequence) ?></p>
+        </div>
+        <div class="scoreboard-item title-value">
+            <h4>Backlog compression</h4>
+            <p><?= e($queueBacklogCompression) ?></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Handoff digest</label>
+        <pre><?= e($sameShiftHandoffSequenceDigest) ?></pre>
+    </div>
+
+    <div class="form-group">
+        <label>Compression frame</label>
+        <pre><?= e($queueBacklogCompressionFrame) ?></pre>
+    </div>
+</div>

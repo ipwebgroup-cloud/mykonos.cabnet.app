@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.32.0 owner review-slot sequence and queue backlog visibility workspace`
+- `v6.33.0 same-shift handoff sequence and queue backlog compression workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -152,6 +152,8 @@ This means the current workspace already includes the earlier conservative loyal
 - human review timing clarity
 - owner review-slot sequence
 - queue backlog visibility
+- same-shift handoff sequence
+- queue backlog compression
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.

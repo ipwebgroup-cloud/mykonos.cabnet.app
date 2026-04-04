@@ -262,6 +262,14 @@ $recommendedRoute = $record ? 'Loyalty Continuity active' : ($transferReady ? 'R
                     <p><?= e($record->queue_backlog_visibility_label) ?></p>
                 </div>
                 <div class="scoreboard-item title-value">
+                    <h4>Shift handoff</h4>
+                    <p><?= e($record->same_shift_handoff_sequence_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
+                    <h4>Backlog compression</h4>
+                    <p><?= e($record->queue_backlog_compression_label) ?></p>
+                </div>
+                <div class="scoreboard-item title-value">
                     <h4>Queue watch</h4>
                     <p><?= e($record->queue_watch_readiness_label) ?></p>
                 </div>
