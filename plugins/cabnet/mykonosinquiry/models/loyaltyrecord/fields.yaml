@@ -554,47 +554,6 @@ tabs:
             span: full
             comment: Conservative hold-expiry compression and quiet cadence panel without widening the workspace into automation.
 
-        cadence_compression_label:
-            label: Cadence Compression
-            tab: Overview
-            readOnly: true
-            span: left
-            comment: Compressed cue showing whether the quiet-lane cadence is still credible, already collapsing, or should resurface back into active human review.
-
-        quiet_lane_resurfacing_priority_label:
-            label: Quiet-Lane Resurfacing Priority
-            tab: Overview
-            readOnly: true
-            span: right
-            comment: Conservative resurfacing priority showing which quiet lane should come back up first in human review without turning into automation.
-
-        cadence_compression_digest:
-            label: Cadence Compression Digest
-            type: textarea
-            size: large
-            tab: Overview
-            readOnly: true
-            span: left
-            comment: Compressed digest joining cadence compression, resurfacing priority, and the related quiet-lane timing cues.
-
-        quiet_lane_resurfacing_priority_frame:
-            label: Quiet-Lane Resurfacing Priority Frame
-            type: textarea
-            size: large
-            tab: Overview
-            readOnly: true
-            span: right
-            comment: Read-only framing for how resurfacing priority should be read from the current quiet cadence and review window posture.
-
-        cadence_compression_quiet_resurfacing_priority_panel:
-            label: Cadence Compression and Quiet-Lane Resurfacing Priority
-            type: partial
-            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_cadence_compression_quiet_resurfacing_priority_panel.htm
-            tab: Overview
-            span: full
-            comment: Conservative cadence compression and resurfacing priority panel without widening the workspace into automation.
-
-
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview
