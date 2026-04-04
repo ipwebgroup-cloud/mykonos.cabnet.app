@@ -1035,6 +1035,46 @@ tabs:
             span: full
             comment: Conservative return checkpoint handoff compression and owner-visible same-day acceptance alignment panel without widening the workspace into automation.
 
+        acceptance_alignment_compression_label:
+            label: Acceptance Alignment Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow acceptance compression cue that keeps the same-day owner move readable across the list, overview, and linked inquiry snapshot.
+
+        quiet_lane_return_handoff_confirmation_label:
+            label: Quiet-Lane Return Handoff Confirmation
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Quiet return confirmation cue that keeps the handoff signal readable across the list, overview, and linked inquiry snapshot.
+
+        acceptance_alignment_compression_digest:
+            label: Acceptance Alignment Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining the acceptance alignment compression, quiet-lane return handoff confirmation, and the related timing cues into one read.
+
+        quiet_lane_return_handoff_confirmation_frame:
+            label: Quiet-Lane Return Handoff Confirmation Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the same-day acceptance move should stay compressed while the quiet-lane return handoff remains easy to confirm across every surface.
+
+        acceptance_alignment_compression_quiet_lane_return_handoff_confirmation_panel:
+            label: Acceptance Alignment Compression and Quiet-Lane Return Handoff Confirmation
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_acceptance_alignment_compression_quiet_lane_return_handoff_confirmation_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative acceptance alignment compression and quiet-lane return handoff confirmation panel without widening the workspace into automation.
+
         queue_watch_readiness_label:
             label: Queue Watch Readiness
             tab: Overview

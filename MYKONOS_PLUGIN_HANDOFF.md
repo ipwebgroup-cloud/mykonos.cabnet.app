@@ -93,7 +93,7 @@ Important realities:
 ## Latest applied patch line
 Latest known applied rooted patch line:
 
-- `v6.27.0 return checkpoint handoff compression and owner-visible same-day acceptance alignment workspace`
+- `v6.28.0 acceptance alignment compression and quiet-lane return handoff confirmation workspace`
 
 This means the current workspace already includes the earlier conservative loyalty readability layers, including:
 - finish-watch / reopen cues
@@ -142,6 +142,8 @@ This means the current workspace already includes the earlier conservative loyal
 - same-day acceptance handoff framing
 - return checkpoint handoff compression
 - owner-visible same-day acceptance alignment
+- acceptance alignment compression
+- quiet-lane return handoff confirmation
 
 Do **not** assume names alone are enough.
 Confirm the actual uploaded files before continuing.
@@ -243,16 +245,16 @@ Strongest next direction:
 - continue plugin-only
 - continue render-safe
 - continue schema-safe when possible
-- improve acceptance alignment compression
-- improve quiet-lane return handoff confirmation
+- improve acceptance confirmation compression
+- improve quiet-lane return checkpoint confirmation
 - improve human prioritization cues
 - avoid automation
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.27.0` is:
+A likely next safe patch direction after `v6.28.0` is:
 
-- **acceptance alignment compression and quiet-lane return handoff confirmation**
+- **acceptance confirmation compression and quiet-lane return checkpoint confirmation**
 
 But this must be confirmed against the real uploaded files first.
 

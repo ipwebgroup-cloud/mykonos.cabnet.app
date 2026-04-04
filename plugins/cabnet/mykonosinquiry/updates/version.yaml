@@ -225,3 +225,6 @@
 
 2.3.41:
   - 'Add return checkpoint handoff compression and owner-visible same-day acceptance alignment to the loyalty workspace line'
+
+2.3.42:
+  - 'Add acceptance alignment compression and quiet-lane return handoff confirmation to the loyalty workspace line'

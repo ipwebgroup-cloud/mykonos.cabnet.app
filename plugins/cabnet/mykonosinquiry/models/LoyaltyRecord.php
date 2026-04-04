@@ -5490,6 +5490,172 @@ public function getOwnerVisibleSameDayAcceptanceAlignmentFrameAttribute(): strin
     return implode(PHP_EOL, $lines);
 }
 
+
+
+public function getAcceptanceAlignmentCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Acceptance compression active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Acceptance compression blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Acceptance compression framed / overdue same-day owner move';
+
+            case 'Due today':
+                return 'Acceptance compression framed / same-day owner confirmation';
+
+            case 'Due soon':
+                return 'Acceptance compression staged / next-slot same-day confirmation';
+
+            case 'Near-term':
+                return 'Acceptance compression staged / near-term same-day confirmation';
+
+            case 'Future':
+                return 'Acceptance compression parked / future same-day confirmation';
+
+            case 'Unscheduled':
+                return 'Acceptance compression open / set quiet checkpoint first';
+        }
+
+        return 'Acceptance compression forming / same-day owner move readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Acceptance compression narrow / drafting move same-day framed';
+
+        case 'Closure packet prepared':
+            return 'Acceptance compression narrow / finish choice same-day framed';
+
+        case 'Execution still open':
+            return 'Acceptance compression narrow / execution resume same-day framed';
+
+        case 'Prepared but not yet executed':
+            return 'Acceptance compression narrow / prepared resume same-day framed';
+
+        case 'Timed for later finish':
+            return 'Acceptance compression narrow / later finish same-day framed';
+    }
+
+    return 'Acceptance compression narrow / conservative same-day read';
+}
+
+public function getQuietLaneReturnHandoffConfirmationLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return confirmation active / reopened lane already visible';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return confirmation blocked / assign owner first';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Return confirmation framed / overdue quiet handoff due';
+
+            case 'Due today':
+                return 'Return confirmation framed / same-day quiet handoff due';
+
+            case 'Due soon':
+                return 'Return confirmation staged / near-slot quiet handoff';
+
+            case 'Near-term':
+                return 'Return confirmation staged / near-term quiet handoff';
+
+            case 'Future':
+                return 'Return confirmation parked / future quiet handoff';
+
+            case 'Unscheduled':
+                return 'Return confirmation open / set quiet checkpoint first';
+        }
+
+        return 'Return confirmation forming / quiet handoff readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return confirmation narrow / drafting return owner-visible';
+
+        case 'Closure packet prepared':
+            return 'Return confirmation narrow / finish choice owner-visible';
+
+        case 'Execution still open':
+            return 'Return confirmation narrow / execution resume owner-visible';
+
+        case 'Prepared but not yet executed':
+            return 'Return confirmation narrow / prepared resume owner-visible';
+
+        case 'Timed for later finish':
+            return 'Return confirmation narrow / later finish owner-visible';
+    }
+
+    return 'Return confirmation narrow / conservative quiet return read';
+}
+
+public function getAcceptanceAlignmentCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Acceptance alignment compression' => $this->acceptance_alignment_compression_label,
+        'Quiet-lane return handoff confirmation' => $this->quiet_lane_return_handoff_confirmation_label,
+        'Return checkpoint handoff compression' => $this->return_checkpoint_handoff_compression_label,
+        'Owner-visible same-day acceptance alignment' => $this->owner_visible_same_day_acceptance_alignment_label,
+        'Next review window' => $this->next_review_window_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+    ], 'Acceptance alignment compression digest is still minimal.');
+}
+
+public function getQuietLaneReturnHandoffConfirmationFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Acceptance alignment compression: ' . $this->acceptance_alignment_compression_label . '.';
+    $lines[] = 'Quiet-lane return handoff confirmation: ' . $this->quiet_lane_return_handoff_confirmation_label . '.';
+    $lines[] = 'Return checkpoint handoff compression: ' . $this->return_checkpoint_handoff_compression_label . '.';
+    $lines[] = 'Owner-visible same-day acceptance alignment: ' . $this->owner_visible_same_day_acceptance_alignment_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, acceptance alignment compression should collapse into active handling instead of quiet framing. The quiet-lane return handoff confirmation simply keeps the reopened owner move readable across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already in an immediate review window but still has no named owner, acceptance alignment compression cannot become truthful yet. The first real move is to assign the operator so the quiet-lane return handoff confirmation can be framed credibly across every surface.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane return is overdue, the workspace should compress into one acceptance alignment compression cue and one quiet-lane return handoff confirmation cue. That keeps the overdue move readable now without widening the workflow or inventing automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, the workspace should read as one acceptance alignment compression cue and one quiet-lane return handoff confirmation cue. That gives the list, overview, and linked inquiry snapshot the same narrow operator signal.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is due soon, acceptance alignment compression can stay calm and readable before urgency rises. The quiet-lane return handoff confirmation keeps the next slot visible early without overstating pressure.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the workspace can stay conservative and owner-led. The acceptance alignment compression keeps the likely same-day move named, while the quiet-lane return handoff confirmation keeps that quiet return readable across every surface.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return still belongs to a future quiet window, acceptance alignment compression can stay parked and owner-visible. The quiet-lane return handoff confirmation exists so the later move remains understandable without pretending it belongs in an active lane.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, acceptance alignment compression cannot finish yet. The next human move is to set a real checkpoint so the quiet-lane return can compress into one believable confirmation and one readable same-day alignment cue.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, acceptance alignment compression should keep the drafting move visibly attached to one owner-visible control point. The quiet-lane return handoff confirmation keeps that likely return move explicit without reopening a wider queue story.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, acceptance alignment compression should stay tied to the finish-choice control point. The quiet-lane return handoff confirmation keeps that prepared move narrow, readable, and easy to confirm across list, overview, and inquiry surfaces.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate operator move, acceptance alignment compression should keep the next resume signal owner-visible. The quiet-lane return handoff confirmation makes that resume posture easier to scan without changing the underlying workflow.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, acceptance alignment compression stays conservative and scheduled. The quiet-lane return handoff confirmation simply keeps the eventual owner move visible without overstating urgency.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, acceptance alignment compression and quiet-lane return handoff confirmation remain narrow human scan aids only. They reduce translation between list, overview, and inquiry surfaces without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getClosureReadinessLabelAttribute(): string
     {
         $finishLaneTouchpoint = $this->getLatestFinishLaneTouchpoint();
