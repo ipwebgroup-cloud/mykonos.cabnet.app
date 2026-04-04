@@ -86,11 +86,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.2 inquiry queue direct loyalty-open and seeded-draft actions patch`
-- plugin tracking `2.3.59`
+- `v6.40.3 queue-row loyalty backlink visibility and continuity posture summaries patch`
+- plugin tracking `2.3.60`
 
 This patch does not change schema and does not touch `/plan`.
-It adds a direct `Loyalty Actions` lane on the Inquiry Queue list so linked inquiries can open their loyalty record immediately, transfer-ready inquiries can create and open a live loyalty record directly from the queue, and prefill-ready inquiries can open a seeded draft without opening inquiry detail first.
+It adds a direct `Loyalty Backlink` lane on the Inquiry Queue list so operators can see the linked loyalty request reference and current continuity posture on each row before using the existing `Loyalty Actions` lane to open the linked record or a seeded draft.
 
 ---
 
@@ -104,7 +104,8 @@ Then verify:
 - Backend -> Mykonos Inquiries -> Loyalty Continuity
 - click `New Loyalty Record` and confirm create opens cleanly
 - open backend → `Mykonos Inquiries`
-- confirm the list shows `Loyalty Link`, `Loyalty Cue`, and `Loyalty Actions`
+- confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
+- confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
 - confirm linked inquiries can use `Open loyalty` directly from the queue
 - confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue
 - confirm prefill-ready inquiries can use `Open draft` directly from the queue

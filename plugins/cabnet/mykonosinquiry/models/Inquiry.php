@@ -281,6 +281,99 @@ class Inquiry extends Model
         return 'Keep in inquiry queue';
     }
 
+
+    public function getLoyaltyQueueBacklinkReferenceLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Workspace staged';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $reference = trim((string) $record->request_reference);
+
+            return $reference !== '' ? $reference : ('Loyalty #' . $record->id);
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'No linked loyalty record yet';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Draft can be opened from queue';
+        }
+
+        return 'Queue-only inquiry';
+    }
+
+    public function getLoyaltyQueueBacklinkPostureLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Activate loyalty storage first';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $parts = [
+                $record->continuity_status_label,
+                $record->loyalty_stage_label,
+            ];
+
+            if ($record->referral_ready) {
+                $parts[] = 'Referral ready';
+            }
+
+            if ($record->next_review_at instanceof \DateTimeInterface) {
+                $parts[] = 'Review ' . $record->next_review_at->format('Y-m-d');
+            } else {
+                $parts[] = $record->return_value_tier_label;
+            }
+
+            return implode(' · ', array_filter($parts));
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Transfer-ready but not linked yet';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Draft-ready continuity posture';
+        }
+
+        return 'No loyalty backlink yet';
+    }
+
+    public function getLoyaltyQueueBacklinkHintAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'The loyalty workspace is not active yet on this install.';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $summary = trim((string) $record->continuity_summary);
+
+            if ($summary !== '') {
+                return $summary;
+            }
+
+            return 'Linked loyalty continuity record is already carrying this inquiry.';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'This inquiry can be moved into a live loyalty record directly from the queue.';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'This inquiry can open a seeded loyalty draft, but the live transfer posture is not final yet.';
+        }
+
+        return 'No linked loyalty continuity record yet.';
+    }
+
     protected function getLinkedLoyaltyRecord(): ?LoyaltyRecord
     {
         if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {

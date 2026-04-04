@@ -27,6 +27,12 @@ columns:
         label: Queue / Follow Up
     loyalty_record_link_state_label:
         label: Loyalty Link
+    loyalty_backlink_summary:
+        label: Loyalty Backlink
+        type: partial
+        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_backlink_summary.htm
+        sortable: false
+        searchable: false
     loyalty_transfer_cue_label:
         label: Loyalty Cue
     loyalty_queue_actions:

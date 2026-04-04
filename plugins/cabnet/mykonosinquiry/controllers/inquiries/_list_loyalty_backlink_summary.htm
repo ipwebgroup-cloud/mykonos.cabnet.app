@@ -1,0 +1,27 @@
+<?php
+$inquiry = $record ?? $model ?? null;
+
+if (!$inquiry) {
+    return;
+}
+
+$reference = $inquiry->loyalty_queue_backlink_reference_label;
+$posture = $inquiry->loyalty_queue_backlink_posture_label;
+$hint = $inquiry->loyalty_queue_backlink_hint;
+$linked = strpos((string) $inquiry->loyalty_record_link_state_label, 'Linked ·') === 0;
+$border = $linked ? '#cfe2ff' : '#e5e7eb';
+$bg = $linked ? '#f7fbff' : '#f8f9fa';
+$title = $linked ? '#084298' : '#495057';
+$text = $linked ? '#33577a' : '#6c757d';
+?>
+<div style="min-width:240px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
+    <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
+        <?= e($reference) ?>
+    </div>
+    <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:4px;">
+        <?= e($posture) ?>
+    </div>
+    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9;">
+        <?= e($hint) ?>
+    </div>
+</div>

@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.40.1 inquiry queue loyalty-link visibility and transfer cues patch`
+- `v6.40.3 queue-row loyalty backlink visibility and continuity posture summaries patch`
 
 This is a continuity hint only.
 
@@ -75,7 +75,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
-- expose loyalty-link state and transfer cues directly in the Inquiry Queue list
+- expose loyalty-link state, backlink reference, continuity posture, and transfer cues directly in the Inquiry Queue list
 - improve operator scan clarity before broader workflow expansion
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
