@@ -205,3 +205,7 @@
 
 2.3.34:
   - 'Add owner-held return checkpoint compression and same-day quiet-lane acknowledgement polish to the guarded loyalty workspace line'
+
+2.3.35:
+  - 'Add owner-visible same-day acknowledgement compression and quiet-lane return confirmation framing to the guarded loyalty workspace line'
+

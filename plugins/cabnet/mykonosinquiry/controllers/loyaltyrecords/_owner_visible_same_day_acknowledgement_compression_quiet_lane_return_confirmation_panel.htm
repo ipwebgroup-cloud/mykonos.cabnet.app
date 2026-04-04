@@ -1,0 +1,33 @@
+<?php
+$ownerVisibleSameDayAcknowledgementCompression = $record ? $record->owner_visible_same_day_acknowledgement_compression_label : 'Owner-visible same-day acknowledgement compression is still forming';
+$quietLaneReturnConfirmationFraming = $record ? $record->quiet_lane_return_confirmation_framing_label : 'Quiet-lane return confirmation framing is still forming';
+$ownerVisibleSameDayAcknowledgementCompressionDigest = $record ? $record->owner_visible_same_day_acknowledgement_compression_digest : 'Owner-visible same-day acknowledgement compression digest is still minimal.';
+$quietLaneReturnConfirmationFramingFrame = $record ? $record->quiet_lane_return_confirmation_framing_frame : 'Quiet-lane return confirmation framing frame is still minimal.';
+?>
+<div class="callout callout-info no-subheader">
+    <div class="header">
+        <i class="icon-check-square-o"></i>
+        <h3>Owner-Visible Same-Day Acknowledgement Compression and Quiet-Lane Return Confirmation Framing</h3>
+    </div>
+    <div class="content">
+        <p>
+            Compress the quiet-lane same-day acknowledgement into one owner-visible cue, then frame the return confirmation so the loyalty list, overview workspace, and linked inquiry snapshot all point to the same narrow human next move.
+        </p>
+        <div class="scoreboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;">
+            <div class="scoreboard-item title-value">
+                <h4>Owner-visible same-day acknowledgement compression</h4>
+                <p><?= e($ownerVisibleSameDayAcknowledgementCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Quiet-lane return confirmation framing</h4>
+                <p><?= e($quietLaneReturnConfirmationFraming) ?></p>
+            </div>
+        </div>
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Digest:</strong> <?= e($ownerVisibleSameDayAcknowledgementCompressionDigest) ?></li>
+                <li><strong>Frame:</strong> <?= e($quietLaneReturnConfirmationFramingFrame) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>

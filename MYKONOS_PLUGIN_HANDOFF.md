@@ -236,9 +236,9 @@ Strongest next direction:
 - avoid public flow changes
 - avoid theme drift
 
-A likely next safe patch direction after `v6.20.0` is:
+A likely next safe patch direction after `v6.21.0` is:
 
-- **owner-visible same-day acknowledgement compression and quiet-lane return confirmation framing**
+- **owner-tagged return confirmation compression and same-day quiet-lane acceptance framing**
 
 But this must be confirmed against the real uploaded files first.
 
@@ -276,7 +276,7 @@ And always update:
 
 ## Commit continuity
 Latest known commit-style patch title:
-- `v6.20.0 owner-held return checkpoint compression and same-day quiet-lane acknowledgement polish workspace`
+- `v6.21.0 owner-visible same-day acknowledgement compression and quiet-lane return confirmation framing workspace`
 
 Next patch naming should continue from the real uploaded state, not from memory alone.
 

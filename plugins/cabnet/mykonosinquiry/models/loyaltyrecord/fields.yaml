@@ -794,6 +794,46 @@ tabs:
             span: full
             comment: Conservative owner-held return checkpoint compression and same-day quiet-lane acknowledgement panel without widening the workspace into automation.
 
+        owner_visible_same_day_acknowledgement_compression_label:
+            label: Owner-Visible Same-Day Acknowledgement Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-visible acknowledgement cue that compresses the same-day quiet-lane move into one readable signal across the list, overview, and linked inquiry snapshot.
+
+        quiet_lane_return_confirmation_framing_label:
+            label: Quiet-Lane Return Confirmation Framing
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Framed quiet-lane return confirmation cue that keeps the next readable control point aligned across the list, overview, and linked inquiry snapshot.
+
+        owner_visible_same_day_acknowledgement_compression_digest:
+            label: Owner-Visible Same-Day Acknowledgement Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-visible same-day acknowledgement compression, quiet-lane return confirmation framing, and the related timing cues into one read.
+
+        quiet_lane_return_confirmation_framing_frame:
+            label: Quiet-Lane Return Confirmation Framing Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet-lane return should stay owner-visible, confirmable, and tightly aligned across every surface.
+
+        owner_visible_same_day_acknowledgement_compression_quiet_lane_return_confirmation_panel:
+            label: Owner-Visible Same-Day Acknowledgement Compression and Quiet-Lane Return Confirmation Framing
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_visible_same_day_acknowledgement_compression_quiet_lane_return_confirmation_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-visible same-day acknowledgement compression and quiet-lane return confirmation panel without widening the workspace into automation.
+
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness
