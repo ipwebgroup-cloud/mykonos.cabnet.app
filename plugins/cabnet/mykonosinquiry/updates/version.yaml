@@ -262,3 +262,7 @@
 
 2.3.53:
   - 'Add owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression to the loyalty workspace line'
+
+2.3.54:
+  - 'Ensure loyalty workspace activation tables and columns exist on advanced installations'
+  - ensure_loyalty_workspace_activation_schema.php

@@ -72,138 +72,49 @@ Preserve first:
 ---
 
 ## Current development line
-The project has progressed far beyond the early v2.x operator/concierge patches.
-
-The current long-running line is the guarded:
+The current long-running line remains the guarded:
 
 - **Loyalty Continuity Workspace**
 
-This line has been developed in staged, render-safe, production-safe increments.
-
-Important realities:
-- earlier backend failures were caused by missing partials or missing tables
-- render safety matters more than feature ambition
-- the loyalty workspace must not break if staged assets are missing
-- Inquiry Queue must remain stable as the live operator system
-- this line should remain plugin-only unless the real files clearly require theme work
-- avoid turning this into automation or campaign logic
+But the immediate operational priority is now explicit:
+- the loyalty workspace code line has advanced to `v6.39.0 / 2.3.53`
+- the live server can still remain stuck on the activation-safe shell if the loyalty tables were never actually installed
+- the next real production-safe move is **schema activation sync**, not another readability-only loyalty panel
 
 ---
 
 ## Latest applied patch line
-Latest known applied rooted patch line:
+Latest known rooted patch prepared for deployment:
 
-- `v6.39.0 owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression workspace`
-- plugin tracking `2.3.53`
+- `v6.39.1 loyalty workspace schema activation sync patch`
+- plugin tracking `2.3.54`
 
-This means the current workspace already includes the earlier conservative loyalty readability layers, including:
-- finish-watch / reopen cues
-- finish-close compression
-- close handoff grouping
-- finish review exit
-- finish-lane handback
-- post-close hold framing
-- hold-release visibility
-- quiet-lane return visibility
-- hold-aging readability
-- quiet-return timing
-- hold-aging compression
-- quiet-lane re-entry readiness
-- hold-expiry grouping
-- quiet-lane re-entry ordering
-- hold-expiry compression
-- quiet-lane cadence framing
-- cadence compression
-- quiet-lane resurfacing priority
-- resurfacing compression
-- quiet-lane review-slot framing
-- review-slot compression
-- quiet-lane resurfacing cadence grouping
-- checkpoint ordering
-- quiet-lane scan-pair compression
-- owner-first checkpoint pairing
-- quiet-lane return scan compression
-- same-day checkpoint compression
-- owner-visible quiet-lane return handback framing
-- owner-confirmed same-day handback cueing
-- quiet-lane return checkpoint polish
-- owner-held return checkpoint compression
-- same-day quiet-lane acknowledgement polish
-- owner-visible same-day acknowledgement compression
-- quiet-lane return confirmation framing
-- owner-tagged return confirmation compression
-- same-day quiet-lane acceptance framing
-- owner-held quiet-lane acceptance compression
-- tagged return checkpoint framing
-- owner-tagged acceptance checkpoint compression
-- quiet-lane return handoff framing
-- owner-visible acceptance handoff compression
-- quiet-lane return checkpoint alignment
-- owner-aligned return checkpoint compression
-- same-day acceptance handoff framing
-- return checkpoint handoff compression
-- owner-visible same-day acceptance alignment
-- acceptance alignment compression
-- quiet-lane return handoff confirmation
-- acceptance confirmation compression
-- quiet-lane return checkpoint confirmation
-- acceptance confirmation handoff compression
-- quiet-lane return checkpoint framing
-- queue-scan prioritization cues
-- human review timing clarity
-- owner review-slot sequence
-- queue backlog visibility
-- same-shift handoff sequence
-- queue backlog compression
-- front-of-queue versus parked-lane separation
-- owner-state handoff compression
-- reopen timing discipline
-- same-shift review checkpoint confirmation
-- parked-lane owner reassignment visibility
-- front-of-list quiet-return confirmation
-- owner-visible deferred review-slot alignment
-- current-shift versus next-shift quiet-return separation
-- parked-lane handback sequencing visibility
-- near-front quiet-return review-slot compression
-- owner-held next-shift handback confirmation
-- current-lane versus deferred-lane return compression
+This patch restores the historically referenced migration files:
+- `create_loyalty_records_table.php`
+- `create_loyalty_touchpoints_table.php`
+- `upgrade_loyalty_records_table_for_workspace_activation.php`
+- `upgrade_loyalty_touchpoints_table_for_workspace_activation.php`
 
-Do **not** assume names alone are enough.
-Confirm the actual uploaded files before continuing.
+It also adds the forward-only recovery migration:
+- `ensure_loyalty_workspace_activation_schema.php`
+
+That extra recovery migration exists because a live installation can already be marked past `2.3.0` to `2.3.3` in version history while still missing the real loyalty tables/columns.
 
 ---
 
-## Important continuity note
-During the last continuation cycle, the rooted `.rar` archive was not reliably readable in the environment, so the working line was reconstructed from:
-- the rooted project state available in the environment
-- the repo comparison
-- the rooted patch line that had already been produced
+## Deployment note
+For this patch, the first intended activation step is:
 
-Because of that:
-- always re-inspect the newly uploaded real rooted archive in the next chat
-- if the uploaded real files differ from this handoff, prefer the real files
-- if this handoff matches the real files, continue forward from this line
+- `php artisan october:up`
+- or `php artisan october:migrate` if that is what the install exposes
 
----
-
-## Render-safety note
-A real render-safety issue was found and fixed in the current line:
-- `fields.yaml` referenced `_finish_handback_post_close_hold_panel.htm`
-- that partial was missing in the current working tree
-- it was restored in the `v6.10.0` line
-
-This reinforces the main guardrail:
-- inspect YAML partial references carefully
-- prefer surgical render-safe fixes over ambitious changes
+Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.
+The sync migration was added specifically to avoid a destructive rebuild-first posture on a live inquiry plugin.
 
 ---
 
 ## Root continuity companion file
-There is now also a reusable new-chat continuity prompt file at the project root:
-
-- `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`
-
-From this point forward, both files should be maintained together:
+Keep both files updated together:
 - `MYKONOS_PLUGIN_HANDOFF.md`
 - `MYKONOS_CONTINUE_PROMPT.md`
 
@@ -217,115 +128,3 @@ The user extracts from:
 
 So patch zips must place files under:
 - `mykonos.cabnet.app/...`
-
-Rules:
-- do **not** send flat plugin-only zips unless explicitly requested
-- send only changed files/folders
-- keep the zip deployment-safe
-- keep all paths exact
-
----
-
-## Install rules
-If a patch is plugin-only and adds no schema or migrations:
-- do **not** require `php artisan plugin:refresh Cabnet.MykonosInquiry`
-- cache clear only if needed for stale backend output
-
-If a patch adds migrations or schema alignment:
-- explicitly state that `php artisan plugin:refresh Cabnet.MykonosInquiry` is required
-- explicitly explain why it is required
-
-Do **not** casually recommend destructive refresh/rebuild commands.
-
----
-
-## Required working style in new chat
-The assistant must behave like a:
-- senior OctoberCMS architect
-- PHP/MySQL engineer
-- backend workflow specialist
-- plugin/theme integration specialist
-- safe refactoring engineer
-- production-safe patch engineer
-
-The assistant must:
-1. inspect first
-2. patch second
-3. use the real uploaded files as source of truth
-4. prefer safe incremental plugin-only changes
-5. preserve routes, rendering, and business continuity
-6. avoid speculative rewrites
-7. avoid drifting into redesign
-8. avoid framework swapping
-9. avoid public theme rewrites unless clearly necessary
-
----
-
-## Safest next development direction
-The current safest likely next step is still within the same conservative plugin-only loyalty readability lane.
-
-Strongest next direction:
-- continue plugin-only
-- continue render-safe
-- continue schema-safe when possible
-- tighten front-of-review parked-return cue alignment
-- tighten parked-review re-entry queue compression
-- keep human prioritization readable
-- avoid automation
-- avoid public flow changes
-- avoid theme drift
-
-A likely next safe patch direction after `v6.39.0` is:
-
-- **front-of-review parked-return cue alignment and parked-review re-entry queue compression**
-
-But this must be confirmed against the real uploaded files first.
-
----
-
-## What the next chat should do first
-Before making changes, the assistant must:
-
-1. inspect the uploaded files in full
-2. inspect `mykonos.cabnet.app/MYKONOS_PLUGIN_HANDOFF.md`
-3. inspect `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`
-4. identify the actual current plugin state
-5. determine what is already implemented vs staged vs guarded
-6. produce a concise current state assessment
-7. recommend the strongest next safe implementation step
-8. only then implement from the real uploaded state
-
----
-
-## Output requirements for the next patch
-When delivering the next patch, always provide:
-
-1. the downloadable rooted zip
-2. concise current state assessment
-3. concise changes summary
-4. commit title
-5. install note
-6. strongest next step
-
-And always update:
-- `mykonos.cabnet.app/MYKONOS_PLUGIN_HANDOFF.md`
-- `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`
-
----
-
-## Commit continuity
-Latest known commit-style patch title:
-- `v6.39.0 owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression workspace`
-
-Next patch naming should continue from the real uploaded state, not from memory alone.
-
----
-
-## Final continuity reminder
-If the user says **continue**:
-- proceed from the latest real uploaded state
-- do not restart the project
-- do not drift
-- do not reinvent the architecture
-- do not rewind to older patch notes
-- inspect first, then continue

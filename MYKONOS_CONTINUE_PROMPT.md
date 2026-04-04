@@ -59,13 +59,25 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 ## Current known line to verify
 
-The current known applied patch line is approximately:
+The current known rooted patch line to verify is approximately:
 
-- `v6.39.0 owner-held next-shift handback confirmation and current-lane versus deferred-lane return compression workspace`
+- `v6.39.1 loyalty workspace schema activation sync patch`
 
 This is a continuity hint only.
 
 You must verify the real uploaded files before continuing.
+
+---
+
+## Operational priority reminder
+
+The next real production-safe goal after the recent readability-only workspace line is:
+
+- restore the loyalty activation migration files if missing
+- run a forward-only loyalty schema sync on advanced installations
+- get the Loyalty Continuity backend page out of the guarded “missing / upgrade needed” shell
+
+Do **not** assume the loyalty workspace is live just because the plugin UI files exist.
 
 ---
 
@@ -103,22 +115,6 @@ You are **not** acting as a speculative rewriter.
 
 ---
 
-## Stable project direction
-
-This is a real **OctoberCMS Mykonos inquiry platform**, not just a luxury theme.
-
-Stable direction:
-
-- public luxury frontend
-- mobile-first `/plan` inquiry flow
-- DB-backed inquiry persistence through the plugin
-- backend inquiry queue and operator workflow
-- guarded Loyalty Continuity Workspace
-- safe plugin/theme integration
-- safe incremental development without breaking live operations
-
----
-
 ## Public flow guardrail
 
 The `/plan` flow must remain on the plugin-backed bridge direction established from the v41 integration line.
@@ -139,33 +135,12 @@ Continue in this style:
 - plugin-only
 - render-safe
 - schema-safe when possible
-- focused on readability, prioritization, queue-scan clarity, finish posture, reopen posture, hold posture, and quiet-lane review visibility
+- focused first on real activation state, then on readability
 - avoid campaign behavior
 - avoid automation
 - avoid speculative expansion
 
-The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
-
-- front-of-review parked-return cue alignment
-- parked-review re-entry queue compression
-- next-review parked-return sequence framing
-- re-entry queue watch compression
-
-But you must confirm this against the real uploaded files before deciding the next patch.
-
----
-
-## Known render-safety reminder
-
-A real render-safety issue existed in this line before:
-
-- `fields.yaml` referenced `_finish_handback_post_close_hold_panel.htm`
-- the partial was missing
-- that was restored in the `v6.10.0` line
-
-So in every new continuation:
-- inspect YAML partial references carefully
-- prefer surgical render-safe fixes if anything is broken
+If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation sync before more readability panels.
 
 ---
 
@@ -190,21 +165,6 @@ Rules:
 
 ---
 
-## What I need first in a new chat
-
-Before making changes, do this in order:
-
-1. inspect the uploaded files in full
-2. inspect `mykonos.cabnet.app/MYKONOS_PLUGIN_HANDOFF.md`
-3. inspect `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`
-4. identify the actual current plugin state
-5. determine what is already implemented vs staged vs guarded
-6. produce a concise but complete **Current state assessment**
-7. recommend the **strongest next safe implementation step**
-8. only then implement from the real uploaded state
-
----
-
 ## Output requirements
 
 When you deliver the next patch, always provide:
@@ -220,61 +180,3 @@ You must also always include/update:
 
 - `mykonos.cabnet.app/MYKONOS_PLUGIN_HANDOFF.md`
 - `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`
-
----
-
-## Safety requirements
-
-If you find a problem:
-
-- prefer **surgical hotfixes**
-- preserve backend rendering first
-- preserve Inquiry Queue first
-- preserve `/plan` plugin bridge first
-- do not expand scope recklessly
-- do not assume missing DB tables exist
-- do not require theme changes unless clearly necessary
-- do not casually recommend `plugin:refresh` without verifying it is truly needed
-
-If the patch adds migrations or schema alignment:
-- explicitly say that `php artisan plugin:refresh Cabnet.MykonosInquiry` is required
-- explicitly explain why it is required
-
-If the patch is UI/readability/plugin-only with no migrations:
-- do **not** require `php artisan plugin:refresh Cabnet.MykonosInquiry`
-- prefer only cache clear if necessary
-
----
-
-## Development style requirements
-
-Focus on:
-
-1. current state assessment
-2. safest next recommendation
-3. complete working implementation when requested
-4. concise summary of what changed
-5. strongest next step
-
-Avoid:
-
-- drifting into redesign
-- speculative architecture
-- framework swapping
-- public theme rewrites unless clearly necessary
-- destructive instructions
-- giant rewrites
-- fake progress based on patch titles alone
-
----
-
-## Strong continuity reminder
-
-If I say **continue**:
-
-- proceed from the latest real uploaded state
-- do not restart the project
-- do not drift
-- do not reinvent the architecture
-- do not rewind to older patch notes
-- inspect first, then continue

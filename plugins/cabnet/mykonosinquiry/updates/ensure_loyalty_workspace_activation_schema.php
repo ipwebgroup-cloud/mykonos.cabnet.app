@@ -4,11 +4,14 @@ use October\Rain\Database\Updates\Migration;
 
 require_once __DIR__ . '/LoyaltyWorkspaceSchema.php';
 
-class UpgradeLoyaltyRecordsTableForWorkspaceActivation extends Migration
+class EnsureLoyaltyWorkspaceActivationSchema extends Migration
 {
     public function up()
     {
-        LoyaltyWorkspaceSchema::ensureRecordColumns();
+        LoyaltyWorkspaceSchema::ensureRecordTable();
+LoyaltyWorkspaceSchema::ensureTouchpointTable();
+LoyaltyWorkspaceSchema::ensureRecordColumns();
+LoyaltyWorkspaceSchema::ensureTouchpointColumns();
     }
 
     public function down()
