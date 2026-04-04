@@ -78,19 +78,20 @@ The current long-running line remains the guarded:
 
 But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
-- the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, and compact transfer-count framing
-- a real runtime edge remained in the `Loyalty Posture` filter popup, so the current production-safe move is a conservative loyalty-list empty-state guidance step so the first real continuity records are seeded from Inquiry Queue instead of a confusing blank live list
+- the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
+- the live loyalty list now shows empty-state guidance when no records exist
+- the next production-safe move is a narrow queue-to-loyalty bridge confirmation step so the first successful transfer is explicitly acknowledged on the loyalty update screen without widening the workflow
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.40.8 loyalty continuity empty-state guidance patch`
-- plugin tracking `2.3.65`
+- `v6.40.9 loyalty first-record confirmation banner after queue transfer patch`
+- plugin tracking `2.3.66`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and adds a first-record guidance panel on the Loyalty Continuity list so operators know when to start from Inquiry Queue instead of a blank manual list.
+It keeps the Inquiry Queue loyalty bridge intact and adds a queue-transfer confirmation banner on the loyalty update screen so operators can see when the bridge created the first live continuity record or reopened an existing linked one.
 
 ---
 
@@ -119,6 +120,10 @@ Then verify:
 - confirm the list workspace overview still shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save
+- use `Create + open loyalty` from the Inquiry Queue or inquiry detail screen
+- confirm the loyalty update screen shows a bridge confirmation banner
+- confirm the banner distinguishes `record created` versus `existing record reopened`
+- confirm the banner explicitly says when the transfer created the first live loyalty record
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.

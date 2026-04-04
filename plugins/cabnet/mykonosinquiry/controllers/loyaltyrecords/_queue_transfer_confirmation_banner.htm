@@ -1,0 +1,70 @@
+<?php
+$record = $record ?? $formModel ?? $model ?? null;
+$bridgeSource = trim((string) input('bridge_source', ''));
+$bridgeState = trim((string) input('bridge_state', ''));
+$firstRecord = (string) input('first_record', '') === '1';
+$sourceInquiryId = (int) input('source_inquiry_id', 0);
+
+if (!$record || $bridgeSource !== 'inquiry_queue' || !in_array($bridgeState, ['created', 'linked'], true)) {
+    return;
+}
+
+$sourceInquiryUrl = $sourceInquiryId > 0 ? \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $sourceInquiryId) : null;
+$headline = $bridgeState === 'created'
+    ? 'Inquiry-to-loyalty bridge succeeded.'
+    : 'Linked loyalty record reopened from the queue bridge.';
+$body = $bridgeState === 'created'
+    ? 'This loyalty record was opened directly from the Inquiry Queue using real source inquiry context.'
+    : 'The queue bridge found an existing loyalty record for this inquiry and reopened it instead of creating a duplicate continuity record.';
+
+if ($firstRecord && $bridgeState === 'created') {
+    $body = 'This queue transfer created the first live Loyalty Continuity record in the workspace and anchored it to the originating inquiry context.';
+}
+?>
+<div class="callout fade in no-subheader" style="border-left:4px solid #6f63ff;">
+    <div class="header">
+        <i class="icon-check-circle"></i>
+        <h4 style="margin-top:0;"><?= e($headline) ?></h4>
+        <p>
+            <?= e($body) ?>
+        </p>
+    </div>
+    <div class="content">
+        <div class="scoreboard">
+            <div class="scoreboard-item title-value">
+                <h4>Bridge state</h4>
+                <p><?= $bridgeState === 'created' ? 'record created' : 'existing record reopened' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Continuity reference</h4>
+                <p><?= e($record->request_reference ?: ('Loyalty #' . $record->id)) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>First-record checkpoint</h4>
+                <p><?= $firstRecord ? 'yes · workspace now has its first live record' : 'not the first live record' ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Source inquiry</h4>
+                <p><?= $sourceInquiryId > 0 ? e('#' . $sourceInquiryId) : 'not supplied' ?></p>
+            </div>
+        </div>
+
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Next safe move:</strong> review the seeded continuity summary, service focus, and retention posture before widening the record into more touchpoint history.</li>
+                <?php if ($firstRecord): ?>
+                    <li><strong>Workspace milestone:</strong> Loyalty Continuity is no longer only schema-ready; it now has its first live continuity record.</li>
+                <?php endif; ?>
+                <?php if ($bridgeState === 'linked'): ?>
+                    <li><strong>Duplicate protection:</strong> the bridge reopened the existing continuity record instead of creating a second record for the same inquiry.</li>
+                <?php endif; ?>
+            </ul>
+        </div>
+
+        <?php if ($sourceInquiryUrl): ?>
+            <p style="margin-top:15px; margin-bottom:0;">
+                <a href="<?= e($sourceInquiryUrl) ?>">Return to source inquiry</a>
+            </p>
+        <?php endif; ?>
+    </div>
+</div>

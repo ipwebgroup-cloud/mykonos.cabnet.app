@@ -88,6 +88,14 @@ class LoyaltyRecords extends Controller
         }
 
         $form->addTabFields([
+            'queue_transfer_confirmation_banner' => [
+                'label'   => 'Queue Transfer Confirmation',
+                'type'    => 'partial',
+                'path'    => '~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_queue_transfer_confirmation_banner.htm',
+                'tab'     => 'Overview',
+                'span'    => 'full',
+                'comment' => 'Brief confirmation that the inquiry-to-loyalty bridge succeeded and whether this became the first live continuity record.',
+            ],
             'transfer_audit_panel' => [
                 'label'   => 'Transfer Audit',
                 'type'    => 'partial',

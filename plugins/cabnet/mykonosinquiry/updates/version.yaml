@@ -299,3 +299,6 @@
 
 2.3.65:
   - "Add Loyalty Continuity empty-state guidance so the first records are seeded from Inquiry Queue instead of a blank list"
+
+2.3.66:
+  - "Add a loyalty first-record confirmation banner after queue transfer and linked-record reopen"

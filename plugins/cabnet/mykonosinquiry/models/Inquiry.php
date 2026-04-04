@@ -446,7 +446,11 @@ class Inquiry extends Model
         $record = $this->getLinkedLoyaltyRecord();
 
         if ($record) {
-            return \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id);
+            return \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) . '?' . http_build_query([
+                'bridge_source' => 'inquiry_queue',
+                'bridge_state' => 'linked',
+                'source_inquiry_id' => $this->id,
+            ]);
         }
 
         if ($this->loyaltyTransferReady()) {

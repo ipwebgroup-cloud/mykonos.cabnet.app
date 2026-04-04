@@ -290,8 +290,15 @@ class Inquiries extends Controller
 
         if ($existing) {
             Flash::success('Opened linked Loyalty Continuity record.');
-            return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $existing->id));
+
+            return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $existing->id) . '?' . http_build_query([
+                'bridge_source' => 'inquiry_queue',
+                'bridge_state' => 'linked',
+                'source_inquiry_id' => $inquiry->id,
+            ]));
         }
+
+        $wasFirstLoyaltyRecord = LoyaltyRecord::workspaceStorageReady() && LoyaltyRecord::workspaceRecordCount() === 0;
 
         $record = LoyaltyRecord::syncFromInquiry($inquiry, [
             'continuity_status' => 'active_retention',
@@ -305,7 +312,17 @@ class Inquiries extends Controller
         $this->appendSystemNote($inquiry, 'Quick action: created and opened a Loyalty Continuity record from the inquiry workspace.');
         Flash::success('Loyalty Continuity record created and opened.');
 
-        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id));
+        $query = [
+            'bridge_source' => 'inquiry_queue',
+            'bridge_state' => 'created',
+            'source_inquiry_id' => $inquiry->id,
+        ];
+
+        if ($wasFirstLoyaltyRecord) {
+            $query['first_record'] = 1;
+        }
+
+        return redirect(\Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) . '?' . http_build_query($query));
     }
 
     protected function dispatchQuickActionFromUpdate($recordId)

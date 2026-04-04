@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.40.8 loyalty continuity empty-state guidance patch`
+- `v6.40.9 loyalty first-record confirmation banner after queue transfer patch`
 
 This is a continuity hint only.
 
@@ -75,8 +75,9 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
-- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, and a filter-mirror badge strip directly in the Inquiry Queue overview
-- improve operator scan clarity before broader workflow expansion
+- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, and filter-mirror guidance directly in the Inquiry Queue overview
+- preserve the live loyalty-list empty-state guidance
+- keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 
