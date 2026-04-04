@@ -754,6 +754,46 @@ tabs:
             span: full
             comment: Conservative owner-confirmed same-day handback cueing and quiet-lane return checkpoint panel without widening the workspace into automation.
 
+        owner_held_return_checkpoint_compression_label:
+            label: Owner-Held Return Checkpoint Compression
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Narrow owner-held checkpoint cue that compresses the quiet-lane return into one readable control point across the list, overview, and linked inquiry snapshot.
+
+        same_day_quiet_lane_acknowledgement_polish_label:
+            label: Same-Day Quiet-Lane Acknowledgement Polish
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Polished same-day acknowledgement cue that confirms the next quiet-lane move without widening the workflow or breaking render safety.
+
+        owner_held_return_checkpoint_compression_digest:
+            label: Owner-Held Return Checkpoint Compression Digest
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: left
+            comment: Ordered digest joining owner-held return checkpoint compression, same-day quiet-lane acknowledgement polish, and the related timing cues into one read.
+
+        same_day_quiet_lane_acknowledgement_polish_frame:
+            label: Same-Day Quiet-Lane Acknowledgement Polish Frame
+            type: textarea
+            size: large
+            tab: Overview
+            readOnly: true
+            span: right
+            comment: Read-only framing for how the quiet-lane return should stay owner-held, same-day legible, and tightly aligned across every surface.
+
+        owner_held_return_checkpoint_compression_same_day_quiet_lane_acknowledgement_panel:
+            label: Owner-Held Return Checkpoint Compression and Same-Day Quiet-Lane Acknowledgement Polish
+            type: partial
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_owner_held_return_checkpoint_compression_same_day_quiet_lane_acknowledgement_panel.htm
+            tab: Overview
+            span: full
+            comment: Conservative owner-held return checkpoint compression and same-day quiet-lane acknowledgement panel without widening the workspace into automation.
+
 
         queue_watch_readiness_label:
             label: Queue Watch Readiness

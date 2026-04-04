@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known applied patch line is approximately:
 
-- `v6.19.0 owner-confirmed same-day handback cueing and quiet-lane return checkpoint polish workspace`
+- `v6.20.0 owner-held return checkpoint compression and same-day quiet-lane acknowledgement polish workspace`
 
 This is a continuity hint only.
 
@@ -146,8 +146,8 @@ Continue in this style:
 
 The current likely next safe direction is still in the same conservative loyalty readability lane, such as:
 
-- owner-held return checkpoint compression
-- same-day quiet-lane acknowledgement polish
+- owner-visible same-day acknowledgement compression
+- quiet-lane return confirmation framing
 - queue-scan prioritization cues
 - human review timing clarity
 

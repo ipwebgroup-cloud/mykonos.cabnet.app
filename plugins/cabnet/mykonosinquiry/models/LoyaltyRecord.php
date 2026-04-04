@@ -1668,6 +1668,170 @@ public function getStewardshipQueueScanFrameAttribute(): string
 }
 
 
+public function getOwnerHeldReturnCheckpointCompressionLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Return compression bypassed / lane already reopened';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Return compression blocked / assign owner now';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Return compression active / overdue owner pull-back';
+
+            case 'Due today':
+                return 'Return compression active / same-day owner checkpoint';
+
+            case 'Due soon':
+                return 'Return compression staged / next-slot owner checkpoint';
+
+            case 'Near-term':
+                return 'Return compression staged / near-term owner checkpoint';
+
+            case 'Future':
+                return 'Return compression parked / future owner hold';
+
+            case 'Unscheduled':
+                return 'Return compression open / set owner checkpoint first';
+        }
+
+        return 'Return compression forming / quiet lane owner-held';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Return compression narrow / drafting checkpoint owner-held';
+
+        case 'Closure packet prepared':
+            return 'Return compression narrow / finish choice owner-held';
+
+        case 'Execution still open':
+            return 'Return compression narrow / execution resume owner-held';
+
+        case 'Prepared but not yet executed':
+            return 'Return compression narrow / prepared resume owner-held';
+
+        case 'Timed for later finish':
+            return 'Return compression narrow / later finish owner hold';
+    }
+
+    return 'Return compression narrow / conservative owner-held read';
+}
+
+public function getSameDayQuietLaneAcknowledgementPolishLabelAttribute(): string
+{
+    if ($this->latest_finish_lane_state === 'reopened') {
+        return 'Same-day acknowledgement bypassed / lane already reopened';
+    }
+
+    if (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        return 'Same-day acknowledgement blocked / owner still unnamed';
+    }
+
+    if ($this->latest_finish_lane_mode !== '') {
+        switch ($this->next_review_window_label) {
+            case 'Overdue':
+                return 'Same-day acknowledgement polished / overdue move acknowledged';
+
+            case 'Due today':
+                return 'Same-day acknowledgement polished / same-day move acknowledged';
+
+            case 'Due soon':
+                return 'Same-day acknowledgement staged / next-slot acknowledgement';
+
+            case 'Near-term':
+                return 'Same-day acknowledgement staged / near-term acknowledgement';
+
+            case 'Future':
+                return 'Same-day acknowledgement parked / future quiet hold';
+
+            case 'Unscheduled':
+                return 'Same-day acknowledgement open / set review timing first';
+        }
+
+        return 'Same-day acknowledgement forming / quiet lane readable';
+    }
+
+    switch ($this->closure_readiness_label) {
+        case 'Ready for finish packet':
+            return 'Same-day acknowledgement narrow / drafting move acknowledged';
+
+        case 'Closure packet prepared':
+            return 'Same-day acknowledgement narrow / finish choice acknowledged';
+
+        case 'Execution still open':
+            return 'Same-day acknowledgement narrow / execution resume acknowledged';
+
+        case 'Prepared but not yet executed':
+            return 'Same-day acknowledgement narrow / prepared resume acknowledged';
+
+        case 'Timed for later finish':
+            return 'Same-day acknowledgement narrow / timed quiet hold';
+    }
+
+    return 'Same-day acknowledgement narrow / conservative quiet-lane read';
+}
+
+public function getOwnerHeldReturnCheckpointCompressionDigestAttribute(): string
+{
+    return $this->formatSummary([
+        'Owner-held return checkpoint compression' => $this->owner_held_return_checkpoint_compression_label,
+        'Same-day quiet-lane acknowledgement polish' => $this->same_day_quiet_lane_acknowledgement_polish_label,
+        'Owner-confirmed same-day handback cue' => $this->owner_confirmed_same_day_handback_cue_label,
+        'Quiet-lane return checkpoint polish' => $this->quiet_lane_return_checkpoint_polish_label,
+        'Next review window' => $this->next_review_window_label,
+        'Quiet-lane return' => $this->quiet_lane_return_label,
+        'Owner timing signal' => $this->owner_timing_signal_label,
+    ], 'Owner-held return checkpoint compression digest is still minimal.');
+}
+
+public function getSameDayQuietLaneAcknowledgementPolishFrameAttribute(): string
+{
+    $lines = [];
+    $lines[] = 'Owner-held return checkpoint compression: ' . $this->owner_held_return_checkpoint_compression_label . '.';
+    $lines[] = 'Same-day quiet-lane acknowledgement polish: ' . $this->same_day_quiet_lane_acknowledgement_polish_label . '.';
+    $lines[] = 'Owner-confirmed same-day handback cue: ' . $this->owner_confirmed_same_day_handback_cue_label . '.';
+    $lines[] = 'Quiet-lane return checkpoint polish: ' . $this->quiet_lane_return_checkpoint_polish_label . '.';
+    $lines[] = 'Next review window: ' . $this->next_review_window_label . '.';
+    $lines[] = 'Owner timing signal: ' . $this->owner_timing_signal_label . '.';
+
+    if ($this->latest_finish_lane_state === 'reopened') {
+        $lines[] = 'Because the finish lane is already reopened, return checkpoint compression should collapse into active handling instead of quiet framing. The same-day acknowledgement polish simply keeps the reopened move explicit across the loyalty list, overview workspace, and linked inquiry snapshot.';
+    } elseif (trim((string) $this->owner_name) === '' && in_array($this->next_review_window_label, ['Overdue', 'Due today'], true)) {
+        $lines[] = 'Because the record is already in an immediate review window but still has no owner, the return checkpoint cannot compress truthfully yet. The first real move is to name the operator so the same-day acknowledgement can become believable across every surface.';
+    } elseif ($this->latest_finish_lane_mode !== '') {
+        if ($this->next_review_window_label === 'Overdue') {
+            $lines[] = 'Because the quiet-lane return is overdue, the workspace should compress down to one owner-held return checkpoint and one explicit same-day acknowledgement. This keeps the overdue pull-back readable now without widening the workflow or inventing automation.';
+        } elseif ($this->next_review_window_label === 'Due today') {
+            $lines[] = 'Because the return is due today, the workspace should read as one owner-held checkpoint and one same-day acknowledgement. That gives the list, overview, and linked inquiry snapshot the same narrow operator signal.';
+        } elseif ($this->next_review_window_label === 'Due soon') {
+            $lines[] = 'Because the return is due soon, the checkpoint can stay compressed and owner-held before urgency rises. The acknowledgement polish keeps the next same-day interpretation ready without overstating pressure.';
+        } elseif ($this->next_review_window_label === 'Near-term') {
+            $lines[] = 'Because the return is near-term, the workspace can stay conservative and owner-led. The checkpoint compression holds the next control point in one place, while the acknowledgement polish keeps the likely same-day move readable across every surface.';
+        } elseif ($this->next_review_window_label === 'Future') {
+            $lines[] = 'Because the return still belongs to a future quiet window, the checkpoint stays compressed and parked. The acknowledgement polish exists so the later move remains understandable without pretending it belongs in an active lane.';
+        } else {
+            $lines[] = 'Because the return still lacks a usable slot, the same-day acknowledgement cannot finish yet. The next human move is to set a real checkpoint so the quiet-lane return can compress into one owner-held control point and one believable acknowledgement.';
+        }
+    } elseif ($this->closure_readiness_label === 'Ready for finish packet') {
+        $lines[] = 'Because the record is ready for close drafting, checkpoint compression should keep the drafting return tied to one owner-held control point. The acknowledgement polish keeps that likely same-day move explicit without reopening a wider queue story.';
+    } elseif ($this->closure_readiness_label === 'Closure packet prepared') {
+        $lines[] = 'Because a close packet is already prepared, checkpoint compression should stay tied to the finish-choice control point. The acknowledgement polish keeps that prepared move narrow, readable, and easy to confirm across list, overview, and inquiry surfaces.';
+    } elseif (in_array($this->closure_readiness_label, ['Execution still open', 'Prepared but not yet executed'], true)) {
+        $lines[] = 'Because close-side execution still needs a deliberate operator move, checkpoint compression should keep the next resume control point owner-held. The acknowledgement polish makes that same-day resume posture easier to scan without changing the underlying workflow.';
+    } elseif ($this->closure_readiness_label === 'Timed for later finish') {
+        $lines[] = 'Because later finish timing is intentional, the checkpoint remains compressed and scheduled. The acknowledgement polish simply keeps the eventual same-day return understandable without overstating urgency.';
+    } else {
+        $lines[] = 'Because the workspace is still quiet and conservative, owner-held return checkpoint compression and same-day quiet-lane acknowledgement polish remain narrow human scan aids only. They reduce translation between list, overview, and inquiry surfaces without changing the underlying workflow.';
+    }
+
+    return implode(PHP_EOL, $lines);
+}
+
 public function getQueueWatchReadinessLabelAttribute(): string
 {
     if ($this->latest_finish_lane_state === 'reopened') {

@@ -1,0 +1,33 @@
+<?php
+$ownerHeldReturnCheckpointCompression = $record ? $record->owner_held_return_checkpoint_compression_label : 'Owner-held return checkpoint compression is still forming';
+$sameDayQuietLaneAcknowledgementPolish = $record ? $record->same_day_quiet_lane_acknowledgement_polish_label : 'Same-day quiet-lane acknowledgement polish is still forming';
+$ownerHeldReturnCheckpointCompressionDigest = $record ? $record->owner_held_return_checkpoint_compression_digest : 'Owner-held return checkpoint compression digest is still minimal.';
+$sameDayQuietLaneAcknowledgementPolishFrame = $record ? $record->same_day_quiet_lane_acknowledgement_polish_frame : 'Same-day quiet-lane acknowledgement polish frame is still minimal.';
+?>
+<div class="callout callout-info no-subheader">
+    <div class="header">
+        <i class="icon-check-square-o"></i>
+        <h3>Owner-Held Return Checkpoint Compression and Same-Day Quiet-Lane Acknowledgement Polish</h3>
+    </div>
+    <div class="content">
+        <p>
+            Compress the quiet-lane return into one owner-held checkpoint, then polish the same-day acknowledgement so the loyalty list, overview workspace, and linked inquiry snapshot all point to the same narrow human next move.
+        </p>
+        <div class="scoreboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;">
+            <div class="scoreboard-item title-value">
+                <h4>Owner-held return checkpoint compression</h4>
+                <p><?= e($ownerHeldReturnCheckpointCompression) ?></p>
+            </div>
+            <div class="scoreboard-item title-value">
+                <h4>Same-day quiet-lane acknowledgement polish</h4>
+                <p><?= e($sameDayQuietLaneAcknowledgementPolish) ?></p>
+            </div>
+        </div>
+        <div class="control-list" style="margin-top:15px;">
+            <ul>
+                <li><strong>Digest:</strong> <?= e($ownerHeldReturnCheckpointCompressionDigest) ?></li>
+                <li><strong>Frame:</strong> <?= e($sameDayQuietLaneAcknowledgementPolishFrame) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>
