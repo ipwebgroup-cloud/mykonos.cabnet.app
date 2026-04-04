@@ -1,0 +1,60 @@
+<?php
+$record = $formModel ?? $model ?? $record ?? null;
+
+if (!$record) {
+    return;
+}
+
+$sourceAnchor = trim((string) ($record->source_inquiry_backlink_reference_label ?? '')) ?: 'No source inquiry linked';
+$sourcePosture = trim((string) ($record->source_inquiry_backlink_posture_label ?? '')) ?: 'Manual loyalty record';
+$continuityPosture = trim(implode(' · ', array_filter([
+    trim((string) ($record->continuity_status_label ?? '')),
+    trim((string) ($record->loyalty_stage_label ?? '')),
+])));
+$continuityPosture = $continuityPosture !== '' ? $continuityPosture : 'Continuity posture still forming';
+
+$valueSignalParts = [];
+$returnValue = trim((string) ($record->return_value_tier_label ?? ''));
+if ($returnValue !== '') {
+    $valueSignalParts[] = $returnValue;
+}
+$valueSignalParts[] = !empty($record->referral_ready) ? 'Referral ready' : 'Referral watch';
+$valueSignal = implode(' · ', array_filter($valueSignalParts));
+
+$nextReview = $record->next_review_at instanceof \DateTimeInterface
+    ? 'Next review · ' . $record->next_review_at->format('Y-m-d H:i')
+    : 'No next review scheduled';
+
+$latestTouch = trim((string) ($record->latest_touchpoint_summary ?? '')) ?: 'No touchpoint logged yet.';
+$cards = [
+    ['label' => 'Source anchor', 'value' => $sourceAnchor],
+    ['label' => 'Source posture', 'value' => $sourcePosture],
+    ['label' => 'Continuity posture', 'value' => $continuityPosture],
+    ['label' => 'Value signal', 'value' => $valueSignal],
+];
+?>
+<div class="form-group span-full">
+    <div style="border:1px solid #dbe7f6; background:#fbfdff; border-radius:12px; padding:14px 16px; line-height:1.45;">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between; margin-bottom:12px;">
+            <div style="min-width:240px; flex:1 1 420px;">
+                <div style="font-size:12px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;">Source-context digest</div>
+                <div style="font-size:13px; color:#38485a; white-space:normal;">
+                    Compare the original inquiry posture with the current continuity lane before dropping into the deeper review panels below.
+                </div>
+            </div>
+            <div style="min-width:220px; flex:0 1 360px; display:flex; flex-direction:column; gap:4px; text-align:right;">
+                <div style="font-size:12px; font-weight:700; color:#3a4c63;"><?= e($latestTouch) ?></div>
+                <div style="font-size:11px; color:#6f7f91;"><?= e($nextReview) ?></div>
+            </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <?php foreach ($cards as $card): ?>
+                <div style="flex:1 1 220px; min-width:200px; border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                    <div style="font-size:11px; font-weight:700; color:#6f7f91; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($card['label']) ?></div>
+                    <div style="font-size:13px; font-weight:600; color:#213449; white-space:normal;"><?= e($card['value']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>

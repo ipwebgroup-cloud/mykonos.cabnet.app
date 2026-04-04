@@ -28,6 +28,15 @@ fields:
 
 tabs:
     fields:
+        source_context_digest:
+            label: Source-Context Digest
+            type: partial
+            context: update
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_source_context_digest.htm
+            tab: Overview
+            span: full
+            comment: Fast comparison of source inquiry posture versus current continuity posture before the deeper review panels.
+
         source_inquiry_link:
             label: Source Inquiry
             type: partial
