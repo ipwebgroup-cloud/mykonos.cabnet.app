@@ -26,6 +26,13 @@ fields:
         span: full
         comment: Create-mode backlink summary and seed validation for inquiry-backed loyalty drafts.
 
+    admin_terminology_glossary:
+        label: Admin Terminology Guide
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_admin_terminology_glossary.htm
+        span: full
+        comment: Quick glossary for continuity terms used across queue, source-context digests, and loyalty history cues.
+
 tabs:
     fields:
         source_context_digest:

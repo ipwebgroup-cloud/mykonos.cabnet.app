@@ -321,3 +321,5 @@
   - 'Mirror the source-context digest into the loyalty History tab so source posture, continuity posture, and latest outcome compare without switching tabs'
 2.3.75:
   - 'Add a queue-side continuity history cue so operators can read latest loyalty outcome without opening the linked record'
+2.3.76:
+  - 'Add admin tooltips and a continuity terminology glossary across loyalty forms and queue-side history cues'

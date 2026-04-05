@@ -21,32 +21,32 @@ $nextReview = $record->next_review_at instanceof \DateTimeInterface
     : 'No next review scheduled';
 
 $cards = [
-    ['label' => 'Source anchor', 'value' => $sourceAnchor],
-    ['label' => 'Source posture', 'value' => $sourcePosture],
-    ['label' => 'Continuity posture', 'value' => $continuityPosture],
-    ['label' => 'Latest outcome', 'value' => $latestOutcome],
-    ['label' => 'Latest packet', 'value' => $latestPreparedPacket],
+    ['label' => 'Source anchor', 'tooltip' => 'Original inquiry reference and guest identity that this loyalty record still anchors back to.', 'value' => $sourceAnchor],
+    ['label' => 'Source posture', 'tooltip' => 'Queue or closing posture of the source inquiry when continuity picked it up.', 'value' => $sourcePosture],
+    ['label' => 'Continuity posture', 'tooltip' => 'Current loyalty lane, usually continuity status plus loyalty stage.', 'value' => $continuityPosture],
+    ['label' => 'Latest outcome', 'tooltip' => 'Most recent recorded result from a loyalty touchpoint or operator action.', 'value' => $latestOutcome],
+    ['label' => 'Latest packet', 'tooltip' => 'Newest internal brief or packet prepared for the next continuity move.', 'value' => $latestPreparedPacket],
 ];
 ?>
 <div class="form-group span-full">
     <div style="border:1px solid #dbe7f6; background:#fbfdff; border-radius:12px; padding:14px 16px; line-height:1.45; margin-bottom:8px;">
         <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between; margin-bottom:12px;">
             <div style="min-width:240px; flex:1 1 420px;">
-                <div style="font-size:12px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;">History source-context digest</div>
+                <div style="font-size:12px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;"><span title="Keeps source posture, continuity posture, and the latest history outcome readable together.">History source-context digest</span></div>
                 <div style="font-size:13px; color:#38485a; white-space:normal;">
                     Keep the source inquiry posture, current continuity lane, and latest touchpoint result visible together before reading the deeper history panels below.
                 </div>
             </div>
             <div style="min-width:220px; flex:0 1 360px; display:flex; flex-direction:column; gap:4px; text-align:right;">
-                <div style="font-size:12px; font-weight:700; color:#3a4c63;">Latest touchpoint · <?= e($latestTouch) ?></div>
-                <div style="font-size:11px; color:#6f7f91;">Next review · <?= e($nextReview) ?></div>
+                <div style="font-size:12px; font-weight:700; color:#3a4c63;"><span title="Most recent continuity touchpoint summary.">Latest touchpoint · <?= e($latestTouch) ?></span></div>
+                <div style="font-size:11px; color:#6f7f91;"><span title="Next human review checkpoint for this loyalty record.">Next review · <?= e($nextReview) ?></span></div>
             </div>
         </div>
 
         <div style="display:flex; flex-wrap:wrap; gap:10px;">
             <?php foreach ($cards as $card): ?>
                 <div style="flex:1 1 220px; min-width:200px; border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                    <div style="font-size:11px; font-weight:700; color:#6f7f91; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($card['label']) ?></div>
+                    <div style="font-size:11px; font-weight:700; color:#6f7f91; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><span title="<?= e($card['tooltip'] ?? '') ?>"><?= e($card['label']) ?></span></div>
                     <div style="font-size:13px; font-weight:600; color:#213449; white-space:normal;"><?= e($card['value']) ?></div>
                 </div>
             <?php endforeach; ?>

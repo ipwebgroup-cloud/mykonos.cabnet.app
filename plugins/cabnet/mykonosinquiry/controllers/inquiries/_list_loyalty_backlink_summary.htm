@@ -20,7 +20,7 @@ $cueBg = $linked ? '#ffffff' : '#ffffff';
 ?>
 <div style="min-width:260px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
-        <?= e($reference) ?>
+        <span title="Linked loyalty record reference and high-level continuity state."><?= e($reference) ?></span>
     </div>
     <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:4px;">
         <?= e($posture) ?>
@@ -31,13 +31,24 @@ $cueBg = $linked ? '#ffffff' : '#ffffff';
 
     <div style="margin-top:8px; border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:8px 10px;">
         <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;">
-            Queue-to-history cue
+            <span title="Queue-side continuity snapshot that shows the latest loyalty history signal without opening the loyalty record.">Queue-to-history cue</span>
         </div>
         <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
-            <?= e($historyCueLabel) ?>
+            <span title="Latest loyalty outcome or packet-state cue visible directly from the queue row."><?= e($historyCueLabel) ?></span>
         </div>
         <div style="font-size:11px; color:<?= e($text) ?>;">
             <?= e($historyCueHint) ?>
         </div>
     </div>
+
+    <details style="margin-top:8px;">
+        <summary style="cursor:pointer; font-size:11px; color:<?= e($text) ?>;" title="Glossary for the loyalty continuity terms used on this queue row.">Glossary</summary>
+        <div style="margin-top:6px; font-size:11px; color:<?= e($text) ?>; line-height:1.45;">
+            <div><strong title="High-level backlink state between this inquiry and its loyalty record.">Loyalty backlink</strong>: queue-side link to the saved loyalty continuity record.</div>
+            <div><strong title="Queue-side continuity snapshot from the linked loyalty history.">Queue-to-history cue</strong>: latest outcome, packet cue, and review timing without opening loyalty first.</div>
+            <div><strong title="Most recent recorded loyalty result.">Latest outcome</strong>: newest touchpoint result logged on the loyalty side.</div>
+            <div><strong title="Newest internal continuity brief prepared for the next human move.">Latest packet</strong>: latest prepared operator packet or brief.</div>
+            <div><strong title="Next human review checkpoint for the linked loyalty record.">Next review</strong>: next visible revisit time for continuity handling.</div>
+        </div>
+    </details>
 </div>

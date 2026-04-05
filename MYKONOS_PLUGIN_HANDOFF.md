@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to expose a compact queue-side continuity history cue on linked inquiry rows so operators can read the latest loyalty outcome without opening the linked record
+- the next production-safe move is to make admin terminology easier to read with tooltips and a compact glossary across loyalty forms and queue-side continuity cues
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.8 inquiry-queue continuity history cue patch`
-- plugin tracking `2.3.75`
+- `v6.41.9 admin terminology tooltips and glossary patch`
+- plugin tracking `2.3.76`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and adds a compact queue-side continuity history cue on the existing loyalty backlink card, so operators can read the latest linked loyalty outcome, touchpoint framing, packet state, and review timing without opening the loyalty record first.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding hover tooltips and a compact admin glossary so operators can decode continuity terminology without leaving the live admin workspace.
 
 ---
 
@@ -138,6 +138,13 @@ Then verify:
 - confirm linked loyalty rows can use `Open inquiry` directly from the list
 - confirm linked loyalty rows can use `Back to queue search` directly from the list
 - `php scripts/qa-loyalty-workspace-activation.php`
+
+- open Backend -> `Mykonos Inquiries` -> `Inquiry Queue` and confirm queue-side loyalty backlink cards still render
+- hover key labels such as `Queue-to-history cue` and confirm tooltip text appears
+- expand the queue-row `Glossary` block and confirm it explains loyalty backlink, latest outcome, latest packet, and next review terminology
+- open `Loyalty Continuity` create or update screens and confirm the new `Admin terminology guide` appears above the tabs
+- open the glossary and confirm it explains source anchor, source posture, continuity posture, value signal, latest outcome, latest packet, next review, queue-to-history cue, and manual vs inquiry-backed drafts
+- hover digest labels on Overview, Workspace, and History and confirm tooltip text appears without breaking render safety
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.
 The sync migration was added specifically to avoid a destructive rebuild-first posture on a live inquiry plugin.

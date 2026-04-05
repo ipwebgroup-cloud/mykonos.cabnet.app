@@ -5,7 +5,7 @@ $seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find(
 <div class="callout fade in no-subheader">
     <div class="header">
         <i class="icon-random"></i>
-        <h4 style="margin-top:0;">Loyalty draft guidance</h4>
+        <h4 style="margin-top:0;"><span title="Plain-language guidance for manual drafts versus inquiry-backed drafts.">Loyalty draft guidance</span></h4>
         <p>
             Manual loyalty drafts are allowed, but the safest path is still to anchor continuity to a real inquiry whenever one exists.
         </p>
@@ -33,7 +33,7 @@ $seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find(
                 Confirm the inquiry still exists, then reopen the create URL from a real queue or inquiry-detail loyalty action instead of using the example placeholder id.
             </p>
             <p>
-                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Open Inquiry Queue</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>"><span title="Return to the live Inquiry Queue to choose a real inquiry for loyalty transfer.">Open Inquiry Queue</span></a>
             </p>
         <?php else: ?>
             <p>

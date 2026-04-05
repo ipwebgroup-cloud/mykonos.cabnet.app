@@ -16,7 +16,7 @@ $text = $linked ? '#33577a' : '#6c757d';
 ?>
 <div class="form-group span-full">
     <div style="border:1px solid <?= e($border) ?>; background:<?= e($background) ?>; border-radius:12px; padding:14px 16px; line-height:1.45;">
-        <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;">Source inquiry context</div>
+        <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;"><span title="Backlink summary for the originating inquiry that this loyalty record is tied to.">Source inquiry context</span></div>
         <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between;">
             <div style="min-width:240px; flex:1 1 320px;">
                 <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
@@ -32,13 +32,13 @@ $text = $linked ? '#33577a' : '#6c757d';
 
             <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
                 <?php if ($primaryUrl): ?>
-                    <a href="<?= e($primaryUrl) ?>" class="btn btn-primary"><?= e($primaryLabel) ?></a>
+                    <a href="<?= e($primaryUrl) ?>" class="btn btn-primary"><span title="Open the originating inquiry record."><?= e($primaryLabel) ?></span></a>
                 <?php else: ?>
                     <span class="btn btn-default disabled" style="pointer-events:none; opacity:0.75;"><?= e($primaryLabel) ?></span>
                 <?php endif; ?>
 
                 <?php if ($secondaryUrl): ?>
-                    <a href="<?= e($secondaryUrl) ?>" class="btn btn-default"><?= e($secondaryLabel) ?></a>
+                    <a href="<?= e($secondaryUrl) ?>" class="btn btn-default"><span title="Return to the Inquiry Queue, usually filtered around this source reference."><?= e($secondaryLabel) ?></span></a>
                 <?php endif; ?>
             </div>
         </div>
