@@ -80,15 +80,15 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the active refinement is now to optimize the centralized right-side docs/help/glossary rail so it reads like a real backend side column, with search, faster scanning, and cleaner section navigation across the active plugin screens
+- the active refinement is now to optimize the centralized right-side docs/help/glossary rail so it reads like a real backend side column, with denser shell layout, search, section counts, expand/collapse controls, faster scanning, and cleaner section navigation across the active plugin screens
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.20 right help rail search filter and navigation optimization patch`
-- plugin tracking `2.3.87`
+- `v6.41.21 right help rail shell compaction and navigation polish patch`
+- plugin tracking `2.3.88`
 
 This patch does not change schema and does not touch `/plan`.
 It keeps the Inquiry Queue and Loyalty Continuity workflow intact while improving the centralized right-side help rail with a search filter, quick section jumps, responsive sizing, and scan-first section filtering on the active plugin backend pages: Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens.

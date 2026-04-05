@@ -15,27 +15,27 @@ $contextMap = [
     'inquiry_queue' => [
         'eyebrow' => 'Inquiry Queue help',
         'title' => 'Queue docs, help & glossary',
-        'summary' => 'Use this right-side help rail while triaging live inquiries. It centralizes the wording for loyalty posture, packet state, next review, and queue-to-history cues so the working queue can stay scan-friendly.',
+        'summary' => 'Scan packet state, next review, and queue-to-history wording without widening the live triage surface.',
         'pageFocus' => [
-            'Read linked-row packet and next-review cues before opening a linked loyalty record.',
-            'Use the queue-to-history cue when you only need the latest continuity result and packet posture.',
+            'Read packet and next-review cues before opening linked loyalty records.',
+            'Use queue-to-history when you only need the latest continuity result and packet posture.',
             'Move into Loyalty Continuity only when the continuity reason is explicit or a linked record already exists.',
         ],
     ],
     'loyalty_list' => [
         'eyebrow' => 'Loyalty list help',
         'title' => 'Loyalty list docs, help & glossary',
-        'summary' => 'Use this right-side help rail while scanning the live Loyalty Continuity list. It explains source posture, packet state, latest outcome, and history jumps without widening each row card.',
+        'summary' => 'Keep source anchor, packet posture, latest outcome, and history jumps readable while the live list stays scan-first.',
         'pageFocus' => [
             'Read source anchor and source posture first so continuity stays tied to the correct inquiry context.',
             'Use latest outcome, latest packet, and next-review cues to decide whether a record needs review now or can stay staged.',
-            'Jump straight to loyalty history when you need the deeper trace rather than scanning the row summary only.',
+            'Jump straight to loyalty history when you need the deeper trace rather than the row summary only.',
         ],
     ],
     'loyalty_create' => [
         'eyebrow' => 'Create-mode help',
         'title' => 'Loyalty draft docs, help & glossary',
-        'summary' => 'Use this right-side help rail while creating a manual or inquiry-backed loyalty draft. It keeps glossary wording and workflow notes centralized instead of spreading long help blocks through the form body.',
+        'summary' => 'Keep manual-vs-seeded draft wording, source-link rules, and first-save guidance in one side rail instead of in the form body.',
         'pageFocus' => [
             'Seed from Inquiry Queue when you want the first loyalty save anchored to a real guest brief.',
             'Treat a missing source inquiry id as a manual draft condition until the link is corrected.',
@@ -45,7 +45,7 @@ $contextMap = [
     'loyalty_update' => [
         'eyebrow' => 'Loyalty record help',
         'title' => 'Loyalty docs, help & glossary',
-        'summary' => 'Use this right-side help rail while reviewing Overview, Workspace, and History on saved loyalty records. It keeps the continuity wording centralized so source-context digests and record panels stay cleaner.',
+        'summary' => 'Keep source-context, continuity posture, packet wording, and history language centralized while Overview, Workspace, and History stay cleaner.',
         'pageFocus' => [
             'Overview compares source posture with current continuity posture before deeper review.',
             'Workspace is where live continuity fields, value posture, owner timing, and packet direction are edited.',
@@ -55,7 +55,7 @@ $contextMap = [
     'general' => [
         'eyebrow' => 'Backend help',
         'title' => 'Docs, help & glossary',
-        'summary' => 'Use this right-side help rail as the centralized documentation source for continuity wording across Inquiry Queue and Loyalty Continuity.',
+        'summary' => 'Use this right rail as the single continuity reference across Inquiry Queue and Loyalty Continuity.',
         'pageFocus' => [
             'Keep queue, list, and record screens aligned to the same terminology.',
             'Use the glossary here instead of widening working surfaces with repeated help blocks.',
@@ -67,8 +67,8 @@ $contextMap = [
 $config = $contextMap[$helpContext] ?? $contextMap['general'];
 $panelId = 'mykonos-help-system-' . preg_replace('/[^a-z0-9\-]+/i', '-', $helpContext);
 $storageKey = 'mykonos_help_panel_state_global';
-$sidebarWidth = 356;
-$sidebarCollapsedWidth = 44;
+$sidebarWidth = 324;
+$sidebarCollapsedWidth = 46;
 $topOffset = 70;
 
 $glossary = [
@@ -106,76 +106,110 @@ $reminders = [
      data-help-width="<?= e((string) $sidebarWidth) ?>"
      data-help-collapsed-width="<?= e((string) $sidebarCollapsedWidth) ?>"
      data-help-top-offset="<?= e((string) $topOffset) ?>"
-     style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f7fbff; box-shadow:none; overflow:hidden; transition:transform .18s ease;">
-    <button type="button" data-help-toggle title="Toggle right-side help rail" style="position:absolute; left:-40px; top:16px; width:40px; height:46px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f7fbff; color:#294c72; font-size:16px; font-weight:700; cursor:pointer;">?</button>
-    <div class="mykonos-help-rail-shell" style="height:100%; display:flex; flex-direction:column; min-height:0;">
-        <div class="mykonos-help-rail-head" style="padding:16px 16px 12px; border-bottom:1px solid #e3ecf8; background:linear-gradient(180deg, #fbfdff 0%, #f1f7ff 100%);">
-            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;"><?= e($config['eyebrow']) ?></div>
-            <div style="font-size:18px; font-weight:700; color:#17324d; margin-bottom:6px; line-height:1.3;"><?= e($config['title']) ?></div>
-            <div style="font-size:12px; color:#4a5d73; line-height:1.5; white-space:normal; margin-bottom:10px;"><?= e($config['summary']) ?></div>
-            <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-                <div style="position:relative; flex:1 1 auto; min-width:0;">
-                    <input type="text" data-help-search placeholder="Search help or glossary" style="width:100%; height:36px; border:1px solid #d5e4f5; border-radius:10px; padding:0 36px 0 12px; background:#ffffff; color:#244564; font-size:12px; outline:none; box-sizing:border-box;">
-                    <button type="button" data-help-clear title="Clear search" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:#6a7f95; font-size:14px; cursor:pointer; padding:4px; line-height:1;">×</button>
+     style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f6f9fd; overflow:hidden; transition:transform .18s ease;">
+    <button type="button" data-help-toggle title="Toggle right-side help rail" style="position:absolute; left:-40px; top:14px; width:40px; height:42px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f6f9fd; color:#294c72; font-size:16px; font-weight:700; cursor:pointer;">?</button>
+
+    <style>
+        #<?= e($panelId) ?> * { box-sizing: border-box; }
+        #<?= e($panelId) ?> .mykonos-help-rail-shell { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+        #<?= e($panelId) ?> .mykonos-help-rail-head { padding: 14px 14px 10px; border-bottom: 1px solid #e3ecf8; background: linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%); }
+        #<?= e($panelId) ?> .mykonos-help-eyebrow { font-size: 10px; font-weight: 700; color: #5b6b7f; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+        #<?= e($panelId) ?> .mykonos-help-title { font-size: 15px; font-weight: 700; color: #17324d; line-height: 1.3; margin-bottom: 6px; }
+        #<?= e($panelId) ?> .mykonos-help-summary { font-size: 12px; color: #4b6178; line-height: 1.45; margin-bottom: 10px; }
+        #<?= e($panelId) ?> .mykonos-help-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        #<?= e($panelId) ?> .mykonos-help-search-wrap { position: relative; flex: 1 1 auto; min-width: 0; }
+        #<?= e($panelId) ?> .mykonos-help-search { width: 100%; height: 34px; border: 1px solid #d5e4f5; border-radius: 9px; padding: 0 34px 0 10px; background: #fff; color: #244564; font-size: 12px; outline: none; }
+        #<?= e($panelId) ?> .mykonos-help-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: none; background: transparent; color: #6a7f95; font-size: 14px; cursor: pointer; padding: 4px; line-height: 1; }
+        #<?= e($panelId) ?> .mykonos-help-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        #<?= e($panelId) ?> .mykonos-help-chip,
+        #<?= e($panelId) ?> .mykonos-help-mini-btn { border: 1px solid #d8e6f5; background: #fff; color: #234462; border-radius: 999px; padding: 4px 8px; font-size: 11px; cursor: pointer; }
+        #<?= e($panelId) ?> .mykonos-help-mini-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        #<?= e($panelId) ?> .mykonos-help-status { font-size: 11px; color: #6a7f95; line-height: 1.4; }
+        #<?= e($panelId) ?> .mykonos-help-scroll { padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: auto; scrollbar-width: thin; }
+        #<?= e($panelId) ?> .mykonos-help-scroll::-webkit-scrollbar { width: 8px; }
+        #<?= e($panelId) ?> .mykonos-help-scroll::-webkit-scrollbar-thumb { background: #cad8e8; border-radius: 999px; }
+        #<?= e($panelId) ?> .mykonos-help-section { border: 1px solid #e3ecf8; background: #fff; border-radius: 10px; padding: 9px 10px; }
+        #<?= e($panelId) ?> .mykonos-help-section > summary { cursor: pointer; font-size: 12px; font-weight: 700; color: #1d3a57; outline: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        #<?= e($panelId) ?> .mykonos-help-count { font-size: 10px; font-weight: 700; color: #60758d; background: #eef4fb; border-radius: 999px; padding: 2px 7px; min-width: 22px; text-align: center; }
+        #<?= e($panelId) ?> .mykonos-help-items { margin-top: 8px; display: flex; flex-direction: column; gap: 7px; }
+        #<?= e($panelId) ?> .mykonos-help-item { border: 1px solid #edf2f8; border-radius: 8px; padding: 8px 9px; background: #fbfdff; }
+        #<?= e($panelId) ?> .mykonos-help-item-label { font-size: 10px; font-weight: 700; color: #5b6b7f; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+        #<?= e($panelId) ?> .mykonos-help-item-text { font-size: 12px; color: #3d5268; line-height: 1.45; }
+        #<?= e($panelId) ?> .mykonos-help-focus-item { font-size: 12px; color: #42566d; line-height: 1.45; padding: 8px 9px; border: 1px solid #edf2f8; border-radius: 8px; background: #fbfdff; }
+        #<?= e($panelId) ?> .mykonos-help-empty { display: none; border: 1px dashed #d7e3f0; background: #fff; border-radius: 10px; padding: 12px; font-size: 12px; color: #5d7086; line-height: 1.5; }
+    </style>
+
+    <div class="mykonos-help-rail-shell">
+        <div class="mykonos-help-rail-head">
+            <div class="mykonos-help-eyebrow"><?= e($config['eyebrow']) ?></div>
+            <div class="mykonos-help-title"><?= e($config['title']) ?></div>
+            <div class="mykonos-help-summary"><?= e($config['summary']) ?></div>
+            <div class="mykonos-help-toolbar">
+                <div class="mykonos-help-search-wrap">
+                    <input type="text" class="mykonos-help-search" data-help-search placeholder="Search help or glossary">
+                    <button type="button" class="mykonos-help-clear" data-help-clear title="Clear search">×</button>
                 </div>
             </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
-                <button type="button" data-help-jump="focus" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Focus</button>
-                <button type="button" data-help-jump="glossary" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Glossary</button>
-                <button type="button" data-help-jump="map" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Screen map</button>
-                <button type="button" data-help-jump="reminders" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Reminders</button>
+            <div class="mykonos-help-chip-row">
+                <button type="button" class="mykonos-help-chip" data-help-jump="focus">Focus</button>
+                <button type="button" class="mykonos-help-chip" data-help-jump="glossary">Glossary</button>
+                <button type="button" class="mykonos-help-chip" data-help-jump="map">Map</button>
+                <button type="button" class="mykonos-help-chip" data-help-jump="reminders">Reminders</button>
             </div>
-            <div data-help-status style="font-size:11px; color:#6a7f95;">Browse the sections or search across help notes and glossary terms.</div>
+            <div class="mykonos-help-mini-actions">
+                <button type="button" class="mykonos-help-mini-btn" data-help-expand-all>Expand all</button>
+                <button type="button" class="mykonos-help-mini-btn" data-help-collapse-all>Collapse all</button>
+            </div>
+            <div class="mykonos-help-status" data-help-status>Browse the sections or search across help notes and glossary terms.</div>
         </div>
-        <div data-help-scroll style="padding:12px 16px 16px; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto;">
-            <details open data-help-section="focus" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Page focus</summary>
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+
+        <div class="mykonos-help-scroll" data-help-scroll>
+            <details open class="mykonos-help-section" data-help-section="focus">
+                <summary><span>Page focus</span><span class="mykonos-help-count" data-help-count>0</span></summary>
+                <div class="mykonos-help-items">
                     <?php foreach ($config['pageFocus'] as $note): ?>
-                        <div data-help-item data-help-text="<?= e(strtolower($note . ' page focus')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
-                            <?= e($note) ?>
-                        </div>
+                        <div class="mykonos-help-focus-item" data-help-item data-help-text="<?= e(strtolower($note . ' page focus')) ?>"><?= e($note) ?></div>
                     <?php endforeach; ?>
                 </div>
             </details>
 
-            <details data-help-section="map" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Screen map</summary>
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <details class="mykonos-help-section" data-help-section="map">
+                <summary><span>Screen map</span><span class="mykonos-help-count" data-help-count>0</span></summary>
+                <div class="mykonos-help-items">
                     <?php foreach ($screenMap as $term => $definition): ?>
-                        <div data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' screen map')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
-                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
-                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        <div class="mykonos-help-item" data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' screen map')) ?>">
+                            <div class="mykonos-help-item-label"><?= e($term) ?></div>
+                            <div class="mykonos-help-item-text"><?= e($definition) ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </details>
 
-            <details open data-help-section="glossary" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Glossary</summary>
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <details open class="mykonos-help-section" data-help-section="glossary">
+                <summary><span>Glossary</span><span class="mykonos-help-count" data-help-count>0</span></summary>
+                <div class="mykonos-help-items">
                     <?php foreach ($glossary as $term => $definition): ?>
-                        <div data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' glossary')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
-                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
-                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        <div class="mykonos-help-item" data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' glossary')) ?>">
+                            <div class="mykonos-help-item-label"><?= e($term) ?></div>
+                            <div class="mykonos-help-item-text"><?= e($definition) ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </details>
 
-            <details data-help-section="reminders" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Operator reminders</summary>
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <details class="mykonos-help-section" data-help-section="reminders">
+                <summary><span>Operator reminders</span><span class="mykonos-help-count" data-help-count>0</span></summary>
+                <div class="mykonos-help-items">
                     <?php foreach ($reminders as $term => $definition): ?>
-                        <div data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' reminder')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
-                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
-                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        <div class="mykonos-help-item" data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' reminder')) ?>">
+                            <div class="mykonos-help-item-label"><?= e($term) ?></div>
+                            <div class="mykonos-help-item-text"><?= e($definition) ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </details>
 
-            <div data-help-empty-state style="display:none; border:1px dashed #d7e3f0; background:#ffffff; border-radius:10px; padding:12px; font-size:12px; color:#5d7086; line-height:1.5;">
+            <div class="mykonos-help-empty" data-help-empty-state>
                 No matching help items were found. Try a shorter term such as <strong>packet</strong>, <strong>review</strong>, <strong>source</strong>, or <strong>history</strong>.
             </div>
         </div>
@@ -189,8 +223,8 @@ $reminders = [
     }
     panel.dataset.helpInit = '1';
 
-    var width = parseInt(panel.getAttribute('data-help-width') || '356', 10);
-    var collapsedWidth = parseInt(panel.getAttribute('data-help-collapsed-width') || '44', 10);
+    var width = parseInt(panel.getAttribute('data-help-width') || '324', 10);
+    var collapsedWidth = parseInt(panel.getAttribute('data-help-collapsed-width') || '46', 10);
     var topOffset = parseInt(panel.getAttribute('data-help-top-offset') || '70', 10);
     var button = panel.querySelector('[data-help-toggle]');
     var searchInput = panel.querySelector('[data-help-search]');
@@ -207,7 +241,7 @@ $reminders = [
 
     function effectiveWidth() {
         var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-        return Math.max(320, Math.min(width, Math.round(vw * 0.28)));
+        return Math.max(296, Math.min(width, Math.round(vw * 0.245)));
     }
 
     var styleId = 'mykonos-backend-help-rail-style';
@@ -250,8 +284,8 @@ $reminders = [
         existingStyle.textContent = '' +
             'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
             'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + liveWidth + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
-            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 18) + 'px !important; }' +
-            'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-rail-host { padding-right:' + (collapsedWidth + 12) + 'px !important; }' +
+            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 16) + 'px !important; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-rail-host { padding-right:' + (collapsedWidth + 10) + 'px !important; }' +
             'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-system-panel { transform:translateX(calc(100% - ' + collapsedWidth + 'px)); }';
     }
 
@@ -300,13 +334,18 @@ $reminders = [
             var section = sections[j];
             var sectionItems = section.querySelectorAll('[data-help-item]');
             var hasVisible = false;
+            var sectionVisibleCount = 0;
             for (var k = 0; k < sectionItems.length; k++) {
                 if (sectionItems[k].style.display !== 'none') {
                     hasVisible = true;
-                    break;
+                    sectionVisibleCount++;
                 }
             }
             section.style.display = hasVisible ? '' : 'none';
+            var countNode = section.querySelector('[data-help-count]');
+            if (countNode) {
+                countNode.textContent = sectionVisibleCount;
+            }
             if (query && hasVisible) {
                 section.open = true;
             }
@@ -317,8 +356,8 @@ $reminders = [
         }
         if (statusNode) {
             statusNode.textContent = query
-                ? (visibleCount ? ('Showing ' + visibleCount + ' help match' + (visibleCount === 1 ? '' : 'es') + ' for “' + searchInput.value + '”.') : 'No help matches for “' + searchInput.value + '”.')
-                : 'Browse the sections or search across help notes and glossary terms.';
+                ? (visibleCount ? ('Showing ' + visibleCount + ' match' + (visibleCount === 1 ? '' : 'es') + ' for “' + searchInput.value + '”.') : 'No help matches for “' + searchInput.value + '”.')
+                : 'Browse sections or search across help notes and glossary terms.';
         }
     }
 
@@ -344,6 +383,27 @@ $reminders = [
             section.open = true;
             if (scrollNode && section.scrollIntoView) {
                 section.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        });
+    }
+
+    var expandAll = panel.querySelector('[data-help-expand-all]');
+    var collapseAll = panel.querySelector('[data-help-collapse-all]');
+    if (expandAll) {
+        expandAll.addEventListener('click', function () {
+            var sections = panel.querySelectorAll('[data-help-section]');
+            for (var i = 0; i < sections.length; i++) {
+                if (sections[i].style.display !== 'none') {
+                    sections[i].open = true;
+                }
+            }
+        });
+    }
+    if (collapseAll) {
+        collapseAll.addEventListener('click', function () {
+            var sections = panel.querySelectorAll('[data-help-section]');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].open = false;
             }
         });
     }
