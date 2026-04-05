@@ -352,3 +352,6 @@
 
 2.3.88:
   - 'Compact and optimize the global backend right help rail with denser layout, section counts, and expand/collapse controls'
+
+2.3.89:
+  - 'Add global right help rail show/hide controls with persistent hidden state and host-width recovery'

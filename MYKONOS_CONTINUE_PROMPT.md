@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.21 right help rail shell compaction and navigation polish patch`
+- `v6.41.22 right help rail show-hide controls patch`
 
 This is a continuity hint only.
 
@@ -76,7 +76,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
 - keep admin terminology readable with hover tooltips while exposing one centralized right-side docs/help/glossary rail that behaves like a backend layout element across Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens
-- optimize that right rail with a search filter, quick section jumps, responsive sizing, and scan-first filtering so it is actually usable as a live backend side column
+- optimize that right rail with a search filter, quick section jumps, responsive sizing, scan-first filtering, and explicit show/hide controls with remembered state so it is actually usable as a live backend side column
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion

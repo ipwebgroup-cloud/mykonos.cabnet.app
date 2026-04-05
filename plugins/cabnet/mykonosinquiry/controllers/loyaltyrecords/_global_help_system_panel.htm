@@ -66,9 +66,9 @@ $contextMap = [
 
 $config = $contextMap[$helpContext] ?? $contextMap['general'];
 $panelId = 'mykonos-help-system-' . preg_replace('/[^a-z0-9\-]+/i', '-', $helpContext);
-$storageKey = 'mykonos_help_panel_state_global';
+$storageKey = 'mykonos_help_panel_visibility_global';
 $sidebarWidth = 324;
-$sidebarCollapsedWidth = 46;
+$sidebarHiddenTabWidth = 46;
 $topOffset = 70;
 
 $glossary = [
@@ -104,10 +104,10 @@ $reminders = [
      class="mykonos-help-system-panel"
      data-help-context="<?= e($helpContext) ?>"
      data-help-width="<?= e((string) $sidebarWidth) ?>"
-     data-help-collapsed-width="<?= e((string) $sidebarCollapsedWidth) ?>"
+     data-help-hidden-width="<?= e((string) $sidebarHiddenTabWidth) ?>"
      data-help-top-offset="<?= e((string) $topOffset) ?>"
      style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f6f9fd; overflow:hidden; transition:transform .18s ease;">
-    <button type="button" data-help-toggle title="Toggle right-side help rail" style="position:absolute; left:-40px; top:14px; width:40px; height:42px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f6f9fd; color:#294c72; font-size:16px; font-weight:700; cursor:pointer;">?</button>
+    <button type="button" data-help-toggle title="Show or hide right-side help rail" style="position:absolute; left:-46px; top:16px; width:46px; height:64px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f6f9fd; color:#294c72; font-size:11px; font-weight:700; letter-spacing:.04em; cursor:pointer;">HELP</button>
 
     <style>
         #<?= e($panelId) ?> * { box-sizing: border-box; }
@@ -159,6 +159,7 @@ $reminders = [
             <div class="mykonos-help-mini-actions">
                 <button type="button" class="mykonos-help-mini-btn" data-help-expand-all>Expand all</button>
                 <button type="button" class="mykonos-help-mini-btn" data-help-collapse-all>Collapse all</button>
+                <button type="button" class="mykonos-help-mini-btn" data-help-hide>Hide rail</button>
             </div>
             <div class="mykonos-help-status" data-help-status>Browse the sections or search across help notes and glossary terms.</div>
         </div>
@@ -224,7 +225,7 @@ $reminders = [
     panel.dataset.helpInit = '1';
 
     var width = parseInt(panel.getAttribute('data-help-width') || '324', 10);
-    var collapsedWidth = parseInt(panel.getAttribute('data-help-collapsed-width') || '46', 10);
+    var hiddenTabWidth = parseInt(panel.getAttribute('data-help-hidden-width') || '46', 10);
     var topOffset = parseInt(panel.getAttribute('data-help-top-offset') || '70', 10);
     var button = panel.querySelector('[data-help-toggle]');
     var searchInput = panel.querySelector('[data-help-search]');
@@ -284,9 +285,9 @@ $reminders = [
         existingStyle.textContent = '' +
             'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
             'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + liveWidth + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
-            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 16) + 'px !important; }' +
-            'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-rail-host { padding-right:' + (collapsedWidth + 10) + 'px !important; }' +
-            'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-system-panel { transform:translateX(calc(100% - ' + collapsedWidth + 'px)); }';
+            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 16) + 'px !important; transition:padding-right .18s ease; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-hidden .mykonos-help-rail-host { padding-right:16px !important; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-hidden .mykonos-help-system-panel { transform:translateX(calc(100% - ' + hiddenTabWidth + 'px)); }';
     }
 
     applyRailStyle();
@@ -295,21 +296,47 @@ $reminders = [
 
     try {
         var stored = window.localStorage ? localStorage.getItem(storageKey) : null;
-        if (stored === 'collapsed') {
-            body.classList.add('mykonos-help-rail-collapsed');
+        if (stored === 'hidden') {
+            body.classList.add('mykonos-help-rail-hidden');
         }
     } catch (e) {}
 
+    function syncVisibilityUi() {
+        var hidden = body.classList.contains('mykonos-help-rail-hidden');
+        if (button) {
+            button.textContent = hidden ? 'HELP' : '×';
+            button.title = hidden ? 'Show right-side help rail' : 'Hide right-side help rail';
+        }
+        var hideButton = panel.querySelector('[data-help-hide]');
+        if (hideButton) {
+            hideButton.textContent = hidden ? 'Show rail' : 'Hide rail';
+        }
+    }
+
+    function setHidden(hidden) {
+        body.classList.toggle('mykonos-help-rail-hidden', !!hidden);
+        try {
+            if (window.localStorage) {
+                localStorage.setItem(storageKey, hidden ? 'hidden' : 'open');
+            }
+        } catch (e) {}
+        syncVisibilityUi();
+    }
+
     if (button) {
         button.addEventListener('click', function () {
-            body.classList.toggle('mykonos-help-rail-collapsed');
-            try {
-                if (window.localStorage) {
-                    localStorage.setItem(storageKey, body.classList.contains('mykonos-help-rail-collapsed') ? 'collapsed' : 'open');
-                }
-            } catch (e) {}
+            setHidden(!body.classList.contains('mykonos-help-rail-hidden'));
         });
     }
+
+    var hideButton = panel.querySelector('[data-help-hide]');
+    if (hideButton) {
+        hideButton.addEventListener('click', function () {
+            setHidden(!body.classList.contains('mykonos-help-rail-hidden'));
+        });
+    }
+
+    syncVisibilityUi();
 
     function updateSearchState() {
         if (!searchInput) {
@@ -409,6 +436,7 @@ $reminders = [
     }
 
     window.addEventListener('resize', applyRailStyle);
+    syncVisibilityUi();
     updateSearchState();
 })();
 </script>
