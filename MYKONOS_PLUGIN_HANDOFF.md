@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to keep the Loyalty Continuity list directly navigable by exposing a saved-record history jump on the existing source-inquiry backlink card without widening the workflow
+- the next production-safe move is to keep the Inquiry Queue directly scan-friendly by adding a visible packet-state badge on linked loyalty queue rows without widening the workflow
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.13 loyalty-list visible packet badge patch`
-- plugin tracking `2.3.80`
+- `v6.41.14 inquiry-queue linked-row packet badge patch`
+- plugin tracking `2.3.81`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding a direct `Open loyalty history` jump on the Loyalty Continuity list card so operators can land on the saved record's History tab without first opening Overview.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding one always-visible packet-state badge on linked Inquiry Queue loyalty cards so operators can scan packet readiness before opening deeper continuity history.
 
 ---
 
@@ -117,6 +117,8 @@ Then verify:
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
 - confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
+- confirm linked inquiries now also show an always-visible `Packet` badge on the queue-side loyalty card
+- confirm the queue-side packet badge shifts tone appropriately between no-packet, pending/watch, and prepared states
 - confirm linked inquiries can use `Open loyalty` directly from the queue
 - confirm linked inquiries can use `Open loyalty history` directly from the queue and land on the saved loyalty `History` tab
 - confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue

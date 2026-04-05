@@ -425,6 +425,89 @@ class Inquiry extends Model
         return 'This inquiry is still staying in live queue handling, so no loyalty history is visible yet.';
     }
 
+    public function getLoyaltyQueuePacketBadgeLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Staged';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $packet = trim((string) $record->latest_prepared_packet_label);
+
+            if ($packet !== '' && $packet !== 'No packet prepared yet.') {
+                return $packet;
+            }
+
+            $outcome = trim((string) $record->latest_touchpoint_outcome_label);
+
+            if ($outcome !== '' && $outcome !== 'No outcome recorded yet.') {
+                return 'No packet';
+            }
+
+            return 'No packet';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Transfer-ready';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Draft-ready';
+        }
+
+        return 'Queue-only';
+    }
+
+    public function getLoyaltyQueuePacketBadgeToneAttribute(): string
+    {
+        $label = strtolower((string) $this->loyalty_queue_packet_badge_label);
+
+        if (str_contains($label, 'no packet') || str_contains($label, 'queue-only') || str_contains($label, 'staged')) {
+            return 'muted';
+        }
+
+        if (str_contains($label, 'watch') || str_contains($label, 'pending') || str_contains($label, 'draft-ready') || str_contains($label, 'transfer-ready')) {
+            return 'warning';
+        }
+
+        if (str_contains($label, 'prepared') || str_contains($label, 'brief') || str_contains($label, 'packet')) {
+            return 'neutral';
+        }
+
+        return 'success';
+    }
+
+    public function getLoyaltyQueuePacketBadgeTitleAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Packet readiness is still staged until the loyalty workspace is active.';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $packet = trim((string) $record->latest_prepared_packet_label);
+
+            if ($packet !== '' && $packet !== 'No packet prepared yet.') {
+                return 'Latest packet state from the linked loyalty record for quick queue-side scan reading.';
+            }
+
+            return 'No prepared packet is logged yet on the linked loyalty record.';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Inquiry is transfer-ready, but no linked loyalty packet exists yet.';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Inquiry is draft-ready, but packet preparation has not started yet.';
+        }
+
+        return 'Inquiry is still queue-only, so no loyalty packet state is available yet.';
+    }
+
     public function getLoyaltyQueueBacklinkHintAttribute(): string
     {
         if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
