@@ -328,3 +328,6 @@
 
 2.3.78:
     - loyalty-list source-history cue badges and glossary patch
+
+2.3.79:
+    - loyalty-list open history jump patch

@@ -13,6 +13,22 @@ $primaryUrl = $loyalty->source_inquiry_backlink_url;
 $primaryLabel = $loyalty->source_inquiry_backlink_action_label;
 $secondaryUrl = $loyalty->source_inquiry_queue_return_url;
 $secondaryLabel = $loyalty->source_inquiry_queue_return_label;
+$historyLabel = 'Open loyalty history';
+$historyUrl = null;
+
+if (!empty($loyalty->id)) {
+    $historyQuery = [
+        'bridge_source' => 'loyalty_list',
+        'bridge_state' => 'linked',
+    ];
+
+    if (!empty($loyalty->source_inquiry_id)) {
+        $historyQuery['source_inquiry_id'] = $loyalty->source_inquiry_id;
+    }
+
+    $historyUrl = Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $loyalty->id) . '?' . http_build_query($historyQuery) . '#primarytab-history';
+}
+
 $latestOutcome = trim((string) ($loyalty->latest_touchpoint_outcome_label ?? '')) ?: 'No outcome yet';
 $latestPacket = trim((string) ($loyalty->latest_prepared_packet_label ?? '')) ?: 'No packet yet';
 $latestTouch = trim((string) ($loyalty->latest_touchpoint_summary ?? '')) ?: 'No touchpoint logged yet';
@@ -78,6 +94,9 @@ $cueBg = '#ffffff';
         <?php else: ?>
             <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;" title="No originating inquiry link is available for this loyalty record."><?= e($primaryLabel) ?></span>
         <?php endif; ?>
+        <?php if ($historyUrl): ?>
+            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" title="Open this saved loyalty record directly on the History tab."><?= e($historyLabel) ?></a>
+        <?php endif; ?>
         <?php if ($secondaryUrl): ?>
             <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" title="Return to the queue filtered around the originating inquiry context."><?= e($secondaryLabel) ?></a>
         <?php endif; ?>
@@ -91,6 +110,7 @@ $cueBg = '#ffffff';
             <div><strong title="Most recent recorded loyalty result.">Latest outcome</strong>: newest touchpoint result logged on this continuity record.</div>
             <div><strong title="Newest internal continuity brief prepared for the next human move.">Latest packet</strong>: latest prepared operator packet or brief.</div>
             <div><strong title="Next visible revisit date or review window for this continuity record.">Next review</strong>: next human review checkpoint for continuity handling.</div>
+            <div><strong title="Open this saved loyalty record directly on its History tab from the live loyalty list.">Open loyalty history</strong>: jump straight into the continuity history tab without landing on Overview first.</div>
         </div>
     </details>
 </div>

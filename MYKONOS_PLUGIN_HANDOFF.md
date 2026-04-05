@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to keep the Loyalty Continuity list as readable as the queue by surfacing compact source-history cues directly on the existing source-inquiry backlink card
+- the next production-safe move is to keep the Loyalty Continuity list directly navigable by exposing a saved-record history jump on the existing source-inquiry backlink card without widening the workflow
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.11 loyalty-list source-history cue badges and glossary patch`
-- plugin tracking `2.3.78`
+- `v6.41.12 loyalty-list open history jump patch`
+- plugin tracking `2.3.79`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while making the Loyalty Continuity list itself more scan-friendly by surfacing compact latest-outcome, latest-packet, and next-review cues directly on the existing source-inquiry backlink card, with matching list-card glossary help.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding a direct `Open loyalty history` jump on the Loyalty Continuity list card so operators can land on the saved record's History tab without first opening Overview.
 
 ---
 
@@ -141,6 +141,8 @@ Then verify:
 - confirm the Loyalty Continuity list `Source Inquiry` card now shows compact `Latest outcome`, `Latest packet`, and `Next review` cue boxes without opening the record
 - confirm hovering those list-card labels shows tooltip help
 - expand the loyalty list-card `Glossary` and confirm it explains source anchor, source posture, latest outcome, latest packet, and next review terminology
+- confirm linked loyalty rows now also show `Open loyalty history` directly on the list card
+- click `Open loyalty history` and confirm the saved loyalty record opens on `#primarytab-history`
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 - open Backend -> `Mykonos Inquiries` -> `Inquiry Queue` and confirm queue-side loyalty backlink cards still render
