@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to keep the Inquiry Queue directly scan-friendly by adding a visible packet-state badge on linked loyalty queue rows without widening the workflow
+- the next production-safe move is to keep the plugin backend layout stable while turning the centralized docs/help/glossary system into a true right-side rail that behaves like a backend layout element across the active plugin screens
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.17 global backend right-side help system visibility patch`
-- plugin tracking `2.3.84`
+- `v6.41.18 global backend right-side help rail layout integration patch`
+- plugin tracking `2.3.85`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while making the centralized docs/help/glossary sidebar visible across the plugin backend pages: Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while turning the centralized docs/help/glossary sidebar into a true right-side backend rail that behaves like a layout element on the active plugin backend pages: Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens.
 
 ---
 
@@ -114,9 +114,10 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm the create screen now shows a right-side `Help & Glossary` panel instead of the old full-width glossary block
-- confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` now shows the same fixed right-side help system
-- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` list now also shows the same fixed right-side help system
-- confirm the same right-side `Help & Glossary` panel appears on Overview, Workspace, and History for saved loyalty records
+- confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` now shows a full-height right-side help rail that behaves like a backend layout element rather than a floating overlay
+- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` list now also shows the same full-height right-side help rail
+- confirm the same right-side help rail appears on create mode plus Overview, Workspace, and History for saved loyalty records
+- confirm the main backend content area now leaves space for the right help rail instead of letting the rail overlap the working surface
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`

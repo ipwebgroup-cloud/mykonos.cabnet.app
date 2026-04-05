@@ -15,7 +15,7 @@ $contextMap = [
     'inquiry_queue' => [
         'eyebrow' => 'Inquiry Queue help',
         'title' => 'Queue docs, help & glossary',
-        'summary' => 'Use this right-side help system while triaging live inquiries. It centralizes the wording for loyalty posture, packet state, next review, and queue-to-history cues so the queue cards can stay scan-friendly.',
+        'summary' => 'Use this right-side help rail while triaging live inquiries. It centralizes the wording for loyalty posture, packet state, next review, and queue-to-history cues so the working queue can stay scan-friendly.',
         'pageFocus' => [
             'Read linked-row packet and next-review cues before opening a linked loyalty record.',
             'Use the queue-to-history cue when you only need the latest continuity result and packet posture.',
@@ -25,7 +25,7 @@ $contextMap = [
     'loyalty_list' => [
         'eyebrow' => 'Loyalty list help',
         'title' => 'Loyalty list docs, help & glossary',
-        'summary' => 'Use this right-side help system while scanning the live Loyalty Continuity list. It explains source posture, packet state, latest outcome, and history jumps without widening each row card.',
+        'summary' => 'Use this right-side help rail while scanning the live Loyalty Continuity list. It explains source posture, packet state, latest outcome, and history jumps without widening each row card.',
         'pageFocus' => [
             'Read source anchor and source posture first so continuity stays tied to the correct inquiry context.',
             'Use latest outcome, latest packet, and next-review cues to decide whether a record needs review now or can stay staged.',
@@ -35,7 +35,7 @@ $contextMap = [
     'loyalty_create' => [
         'eyebrow' => 'Create-mode help',
         'title' => 'Loyalty draft docs, help & glossary',
-        'summary' => 'Use this right-side help system while creating a manual or inquiry-backed loyalty draft. It keeps glossary wording and workflow notes centralized instead of spreading long help blocks through the form.',
+        'summary' => 'Use this right-side help rail while creating a manual or inquiry-backed loyalty draft. It keeps glossary wording and workflow notes centralized instead of spreading long help blocks through the form body.',
         'pageFocus' => [
             'Seed from Inquiry Queue when you want the first loyalty save anchored to a real guest brief.',
             'Treat a missing source inquiry id as a manual draft condition until the link is corrected.',
@@ -45,7 +45,7 @@ $contextMap = [
     'loyalty_update' => [
         'eyebrow' => 'Loyalty record help',
         'title' => 'Loyalty docs, help & glossary',
-        'summary' => 'Use this right-side help system while reviewing Overview, Workspace, and History on saved loyalty records. It keeps the continuity wording centralized so source-context digests and record panels stay cleaner.',
+        'summary' => 'Use this right-side help rail while reviewing Overview, Workspace, and History on saved loyalty records. It keeps the continuity wording centralized so source-context digests and record panels stay cleaner.',
         'pageFocus' => [
             'Overview compares source posture with current continuity posture before deeper review.',
             'Workspace is where live continuity fields, value posture, owner timing, and packet direction are edited.',
@@ -55,7 +55,7 @@ $contextMap = [
     'general' => [
         'eyebrow' => 'Backend help',
         'title' => 'Docs, help & glossary',
-        'summary' => 'Use this right-side help system as the centralized documentation source for continuity wording across Inquiry Queue and Loyalty Continuity.',
+        'summary' => 'Use this right-side help rail as the centralized documentation source for continuity wording across Inquiry Queue and Loyalty Continuity.',
         'pageFocus' => [
             'Keep queue, list, and record screens aligned to the same terminology.',
             'Use the glossary here instead of widening working surfaces with repeated help blocks.',
@@ -66,7 +66,10 @@ $contextMap = [
 
 $config = $contextMap[$helpContext] ?? $contextMap['general'];
 $panelId = 'mykonos-help-system-' . preg_replace('/[^a-z0-9\-]+/i', '-', $helpContext);
-$storageKey = 'mykonos_help_panel_state_' . preg_replace('/[^a-z0-9\-]+/i', '_', $helpContext);
+$storageKey = 'mykonos_help_panel_state_global';
+$sidebarWidth = 340;
+$sidebarCollapsedWidth = 42;
+$topOffset = 70;
 
 $glossary = [
     'Source anchor' => 'The original inquiry reference and guest identity that continuity still ties back to.',
@@ -85,64 +88,60 @@ $glossary = [
     'Back to queue search' => 'A return action that sends the operator back to Inquiry Queue with the source context already framed.',
 ];
 ?>
-<div id="<?= e($panelId) ?>" class="mykonos-help-system-panel" data-help-context="<?= e($helpContext) ?>" style="position:fixed; top:108px; right:14px; width:320px; max-height:calc(100vh - 124px); z-index:650; border:1px solid #d9e6f5; background:#f8fbff; border-radius:16px; box-shadow:0 14px 34px rgba(15,35,60,0.12); overflow:hidden; transition:transform .2s ease, box-shadow .2s ease;">
-    <button type="button" data-help-toggle style="position:absolute; left:-38px; top:18px; width:38px; height:44px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f8fbff; color:#294c72; font-size:16px; font-weight:700; box-shadow:-4px 8px 18px rgba(15,35,60,0.08); cursor:pointer;">?</button>
-    <div style="padding:14px 16px; border-bottom:1px solid #e3ecf8; background:linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%);">
-        <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;"><?= e($config['eyebrow']) ?></div>
-        <div style="font-size:18px; font-weight:700; color:#17324d; margin-bottom:6px;"><?= e($config['title']) ?></div>
-        <div style="font-size:12px; color:#4a5d73; line-height:1.5; white-space:normal;"><?= e($config['summary']) ?></div>
-        <div style="margin-top:8px; font-size:11px; color:#6a7f95;">This panel is the centralized docs/help/glossary system for the plugin backend pages.</div>
-    </div>
-    <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 210px); overflow:auto;">
-        <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-            <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Page focus</summary>
-            <ul style="margin:10px 0 0 18px; padding:0; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
-                <?php foreach ($config['pageFocus'] as $note): ?>
-                    <li style="margin-bottom:6px;"><?= e($note) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </details>
-        <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-            <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Screen map</summary>
-            <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
-                <div><strong>Inquiry Queue</strong>: live triage surface for routing, owner visibility, packet-readiness cues, and loyalty transfer decisions.</div>
-                <div><strong>Loyalty Continuity list</strong>: scan-focused continuity list with source anchoring, packet cues, and direct history jumps.</div>
-                <div><strong>Loyalty create/update</strong>: deeper continuity workspace for source digests, continuity fields, packet posture, and touchpoint history.</div>
-            </div>
-        </details>
-        <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-            <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Glossary</summary>
-            <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                <?php foreach ($glossary as $term => $definition): ?>
-                    <div style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
-                        <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
-                        <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </details>
-        <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-            <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Operator reminders</summary>
-            <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
-                <div><strong>No automation assumption</strong>: review dates and packet states describe human workflow posture, not autonomous messaging.</div>
-                <div><strong>Source integrity first</strong>: if the source relationship is wrong, fix that before polishing continuity notes.</div>
-                <div><strong>Use scans, then deepen</strong>: queue and list surfaces are scan aids; open the saved loyalty record when you need the full continuity trace.</div>
-            </div>
-        </details>
+<div id="<?= e($panelId) ?>"
+     class="mykonos-help-system-panel"
+     data-help-context="<?= e($helpContext) ?>"
+     data-help-width="<?= e((string) $sidebarWidth) ?>"
+     data-help-collapsed-width="<?= e((string) $sidebarCollapsedWidth) ?>"
+     data-help-top-offset="<?= e((string) $topOffset) ?>"
+     style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f8fbff; box-shadow:none; overflow:hidden; transition:transform .18s ease;">
+    <button type="button" data-help-toggle title="Toggle right-side help rail" style="position:absolute; left:-38px; top:16px; width:38px; height:44px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f8fbff; color:#294c72; font-size:16px; font-weight:700; cursor:pointer;">?</button>
+    <div style="height:100%; display:flex; flex-direction:column; min-height:0;">
+        <div style="padding:16px 16px 14px; border-bottom:1px solid #e3ecf8; background:linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%);">
+            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;"><?= e($config['eyebrow']) ?></div>
+            <div style="font-size:18px; font-weight:700; color:#17324d; margin-bottom:6px; line-height:1.3;"><?= e($config['title']) ?></div>
+            <div style="font-size:12px; color:#4a5d73; line-height:1.5; white-space:normal;"><?= e($config['summary']) ?></div>
+            <div style="margin-top:8px; font-size:11px; color:#6a7f95;">This is the centralized docs/help/glossary rail for the plugin backend pages.</div>
+        </div>
+        <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto;">
+            <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Page focus</summary>
+                <ul style="margin:10px 0 0 18px; padding:0; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                    <?php foreach ($config['pageFocus'] as $note): ?>
+                        <li style="margin-bottom:6px;"><?= e($note) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </details>
+            <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Screen map</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                    <div><strong>Inquiry Queue</strong>: live triage surface for routing, owner visibility, packet-readiness cues, and loyalty transfer decisions.</div>
+                    <div><strong>Loyalty Continuity list</strong>: scan-focused continuity list with source anchoring, packet cues, and direct history jumps.</div>
+                    <div><strong>Loyalty create/update</strong>: deeper continuity workspace for source digests, continuity fields, packet posture, and touchpoint history.</div>
+                </div>
+            </details>
+            <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Glossary</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <?php foreach ($glossary as $term => $definition): ?>
+                        <div style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
+                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
+                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </details>
+            <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Operator reminders</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                    <div><strong>No automation assumption</strong>: review dates and packet states describe human workflow posture, not autonomous messaging.</div>
+                    <div><strong>Source integrity first</strong>: if the source relationship is wrong, fix that before polishing continuity notes.</div>
+                    <div><strong>Use scans, then deepen</strong>: queue and list surfaces are scan aids; open the saved loyalty record when you need the full continuity trace.</div>
+                </div>
+            </details>
+        </div>
     </div>
 </div>
-<style>
-    @media (max-width: 1400px) {
-        #<?= e($panelId) ?> { width: 286px !important; }
-    }
-    @media (max-width: 1180px) {
-        #<?= e($panelId) ?> { transform: translateX(calc(100% - 42px)); }
-    }
-    #<?= e($panelId) ?>.is-collapsed {
-        transform: translateX(calc(100% - 42px));
-        box-shadow:0 10px 24px rgba(15,35,60,0.08);
-    }
-</style>
 <script>
 (function () {
     var panel = document.getElementById('<?= e($panelId) ?>');
@@ -150,27 +149,49 @@ $glossary = [
         return;
     }
     panel.dataset.helpInit = '1';
+
+    var width = parseInt(panel.getAttribute('data-help-width') || '340', 10);
+    var collapsedWidth = parseInt(panel.getAttribute('data-help-collapsed-width') || '42', 10);
+    var topOffset = parseInt(panel.getAttribute('data-help-top-offset') || '70', 10);
     var button = panel.querySelector('[data-help-toggle]');
     var storageKey = '<?= e($storageKey) ?>';
-    var hasStored = false;
+    var html = document.documentElement;
+    var body = document.body;
+    if (!body) {
+        return;
+    }
+
+    var styleId = 'mykonos-backend-help-rail-style';
+    var existingStyle = document.getElementById(styleId);
+    if (!existingStyle) {
+        existingStyle = document.createElement('style');
+        existingStyle.id = styleId;
+        document.head.appendChild(existingStyle);
+    }
+
+    existingStyle.textContent = '' +
+        'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
+        'body.mykonos-help-rail-active { box-sizing:border-box; padding-right:' + width + 'px !important; }' +
+        'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + width + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
+        'body.mykonos-help-rail-active.mykonos-help-rail-collapsed { padding-right:' + collapsedWidth + 'px !important; }' +
+        'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-system-panel { transform:translateX(calc(100% - ' + collapsedWidth + 'px)); }';
+
+    html.classList.add('mykonos-help-rail-active');
+    body.classList.add('mykonos-help-rail-active');
+
     try {
         var stored = window.localStorage ? localStorage.getItem(storageKey) : null;
         if (stored === 'collapsed') {
-            panel.classList.add('is-collapsed');
-            hasStored = true;
-        } else if (stored === 'open') {
-            hasStored = true;
+            body.classList.add('mykonos-help-rail-collapsed');
         }
     } catch (e) {}
-    if (!hasStored && window.innerWidth < 1400) {
-        panel.classList.add('is-collapsed');
-    }
+
     if (button) {
         button.addEventListener('click', function () {
-            panel.classList.toggle('is-collapsed');
+            body.classList.toggle('mykonos-help-rail-collapsed');
             try {
                 if (window.localStorage) {
-                    localStorage.setItem(storageKey, panel.classList.contains('is-collapsed') ? 'collapsed' : 'open');
+                    localStorage.setItem(storageKey, body.classList.contains('mykonos-help-rail-collapsed') ? 'collapsed' : 'open');
                 }
             } catch (e) {}
         });
