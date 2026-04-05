@@ -319,3 +319,5 @@
   - 'Mirror the source-context digest into the loyalty Workspace tab so source posture stays visible during live continuity edits'
 2.3.74:
   - 'Mirror the source-context digest into the loyalty History tab so source posture, continuity posture, and latest outcome compare without switching tabs'
+2.3.75:
+  - 'Add a queue-side continuity history cue so operators can read latest loyalty outcome without opening the linked record'

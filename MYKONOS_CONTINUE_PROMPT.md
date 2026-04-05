@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.6 workspace-tab source-context digest mirror patch`
+- `v6.41.7 history-tab source-context digest mirror patch`
 
 This is a continuity hint only.
 
@@ -84,6 +84,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - expose one compact saved-record source-context digest above the loyalty overview so source inquiry posture and continuity posture can be compared before deeper review panels
 - keep the same source-context comparison visible at the top of the Workspace tab while operators edit live continuity fields
 - keep the same source-context comparison visible at the top of the History tab while operators review outcome, packet, and trace fields
+- expose one compact queue-side continuity history cue on linked inquiry rows so operators can read the latest loyalty outcome without opening the linked record
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 

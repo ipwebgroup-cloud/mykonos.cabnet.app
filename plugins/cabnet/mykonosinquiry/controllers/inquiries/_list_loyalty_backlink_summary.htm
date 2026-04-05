@@ -8,13 +8,17 @@ if (!$inquiry) {
 $reference = $inquiry->loyalty_queue_backlink_reference_label;
 $posture = $inquiry->loyalty_queue_backlink_posture_label;
 $hint = $inquiry->loyalty_queue_backlink_hint;
+$historyCueLabel = $inquiry->loyalty_queue_history_cue_label;
+$historyCueHint = $inquiry->loyalty_queue_history_cue_hint;
 $linked = strpos((string) $inquiry->loyalty_record_link_state_label, 'Linked ·') === 0;
 $border = $linked ? '#cfe2ff' : '#e5e7eb';
 $bg = $linked ? '#f7fbff' : '#f8f9fa';
 $title = $linked ? '#084298' : '#495057';
 $text = $linked ? '#33577a' : '#6c757d';
+$cueBorder = $linked ? '#d8e6fb' : '#e9ecef';
+$cueBg = $linked ? '#ffffff' : '#ffffff';
 ?>
-<div style="min-width:240px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
+<div style="min-width:260px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
         <?= e($reference) ?>
     </div>
@@ -23,5 +27,17 @@ $text = $linked ? '#33577a' : '#6c757d';
     </div>
     <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9;">
         <?= e($hint) ?>
+    </div>
+
+    <div style="margin-top:8px; border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:8px 10px;">
+        <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;">
+            Queue-to-history cue
+        </div>
+        <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
+            <?= e($historyCueLabel) ?>
+        </div>
+        <div style="font-size:11px; color:<?= e($text) ?>;">
+            <?= e($historyCueHint) ?>
+        </div>
     </div>
 </div>

@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to keep source inquiry posture visible across Overview, Workspace, and History on saved loyalty records without widening the workflow
+- the next production-safe move is to expose a compact queue-side continuity history cue on linked inquiry rows so operators can read the latest loyalty outcome without opening the linked record
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.7 history-tab source-context digest mirror patch`
-- plugin tracking `2.3.74`
+- `v6.41.8 inquiry-queue continuity history cue patch`
+- plugin tracking `2.3.75`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue loyalty bridge intact and mirrors the compact saved-record source-context digest into the top of the History tab, so source posture, current continuity posture, latest outcome, latest packet state, and next-review framing can be compared without switching back to Overview or Workspace.
+It keeps the Inquiry Queue loyalty bridge intact and adds a compact queue-side continuity history cue on the existing loyalty backlink card, so operators can read the latest linked loyalty outcome, touchpoint framing, packet state, and review timing without opening the loyalty record first.
 
 ---
 
@@ -116,6 +116,7 @@ Then verify:
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
+- confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
 - confirm linked inquiries can use `Open loyalty` directly from the queue
 - confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue
 - confirm prefill-ready inquiries can use `Open draft` directly from the queue

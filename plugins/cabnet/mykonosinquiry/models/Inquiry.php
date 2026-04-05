@@ -345,6 +345,86 @@ class Inquiry extends Model
         return 'No loyalty backlink yet';
     }
 
+    public function getLoyaltyQueueHistoryCueLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'History staged';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $outcome = trim((string) $record->latest_touchpoint_outcome_label);
+
+            if ($outcome !== '' && $outcome !== 'No outcome recorded yet.') {
+                return $outcome;
+            }
+
+            $packet = trim((string) $record->latest_prepared_packet_label);
+
+            if ($packet !== '' && $packet !== 'No packet prepared yet.') {
+                return $packet;
+            }
+
+            return 'Continuity history started';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'No loyalty history yet';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Draft can start history';
+        }
+
+        return 'Queue-only history';
+    }
+
+    public function getLoyaltyQueueHistoryCueHintAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Activate the loyalty workspace before continuity history can be read from the queue.';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            $parts = [];
+
+            $touch = trim((string) $record->latest_touchpoint_summary);
+            if ($touch !== '' && $touch !== 'No touchpoint logged yet.') {
+                $parts[] = $touch;
+            }
+
+            $packet = trim((string) $record->latest_prepared_packet_label);
+            if ($packet !== '' && $packet !== 'No packet prepared yet.') {
+                $parts[] = $packet;
+            }
+
+            if ($record->next_review_at instanceof \DateTimeInterface) {
+                $parts[] = 'Review ' . $record->next_review_at->format('Y-m-d H:i') . ' (' . $record->next_review_window_label . ')';
+            } elseif (trim((string) $record->next_review_window_label) !== '') {
+                $parts[] = 'Review window ' . $record->next_review_window_label;
+            }
+
+            if (!empty($parts)) {
+                return implode(' · ', $parts);
+            }
+
+            return 'Open the linked loyalty record when deeper continuity history review is needed.';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Create + open loyalty to start a real continuity history directly from the queue.';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Open a seeded draft if continuity history needs to start before final transfer posture is confirmed.';
+        }
+
+        return 'This inquiry is still staying in live queue handling, so no loyalty history is visible yet.';
+    }
+
     public function getLoyaltyQueueBacklinkHintAttribute(): string
     {
         if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
