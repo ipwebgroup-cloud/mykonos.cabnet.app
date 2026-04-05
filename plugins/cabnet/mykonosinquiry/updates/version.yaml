@@ -325,3 +325,6 @@
   - 'Add admin tooltips and a continuity terminology glossary across loyalty forms and queue-side history cues'
 2.3.77:
   - 'Add a direct inquiry-queue jump that opens linked loyalty records on the History tab'
+
+2.3.78:
+    - loyalty-list source-history cue badges and glossary patch

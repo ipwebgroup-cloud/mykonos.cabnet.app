@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.10 inquiry-queue open loyalty history jump patch`
+- `v6.41.11 loyalty-list source-history cue badges and glossary patch`
 
 This is a continuity hint only.
 
@@ -86,6 +86,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep the same source-context comparison visible at the top of the Workspace tab while operators edit live continuity fields
 - keep the same source-context comparison visible at the top of the History tab while operators review outcome, packet, and trace fields
 - expose one compact queue-side continuity history cue on linked inquiry rows so operators can read the latest loyalty outcome without opening the linked record
+- keep the Loyalty Continuity list itself scan-friendly by surfacing compact latest-outcome, latest-packet, and next-review cues directly on the existing source-inquiry backlink card, with matching list-card glossary help
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
 
@@ -152,7 +153,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, and a direct linked-row history jump. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, and compact source-context digests across Overview, Workspace, and History. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, and a direct linked-row history jump. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges with glossary help on the live loyalty row card. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
 
 ---
 
