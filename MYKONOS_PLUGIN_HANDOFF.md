@@ -186,5 +186,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.22 right help rail show-hide controls patch`
-- plugin version line: `2.3.89`
+- `v6.41.24 right help rail minimized docked-state patch`
+- plugin version line: `2.3.91`

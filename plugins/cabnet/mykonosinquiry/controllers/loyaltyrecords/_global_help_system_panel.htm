@@ -67,8 +67,12 @@ $contextMap = [
 $config = $contextMap[$helpContext] ?? $contextMap['general'];
 $panelId = 'mykonos-help-system-' . preg_replace('/[^a-z0-9\-]+/i', '-', $helpContext);
 $storageKey = 'mykonos_help_panel_visibility_global';
-$sidebarWidth = 324;
-$sidebarHiddenTabWidth = 46;
+$modeStorageKey = 'mykonos_help_panel_mode_global';
+$widthStorageKey = 'mykonos_help_panel_width_global';
+$sectionStorageKey = 'mykonos_help_panel_sections_' . preg_replace('/[^a-z0-9\-]+/i', '-', $helpContext);
+$sidebarWidth = 312;
+$sidebarMinimizedWidth = 64;
+$sidebarHiddenTabWidth = 42;
 $topOffset = 70;
 
 $glossary = [
@@ -104,28 +108,31 @@ $reminders = [
      class="mykonos-help-system-panel"
      data-help-context="<?= e($helpContext) ?>"
      data-help-width="<?= e((string) $sidebarWidth) ?>"
+     data-help-minimized-width="<?= e((string) $sidebarMinimizedWidth) ?>"
      data-help-hidden-width="<?= e((string) $sidebarHiddenTabWidth) ?>"
      data-help-top-offset="<?= e((string) $topOffset) ?>"
      style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f6f9fd; overflow:hidden; transition:transform .18s ease;">
-    <button type="button" data-help-toggle title="Show or hide right-side help rail" style="position:absolute; left:-46px; top:16px; width:46px; height:64px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f6f9fd; color:#294c72; font-size:11px; font-weight:700; letter-spacing:.04em; cursor:pointer;">HELP</button>
+    <button type="button" data-help-toggle title="Expand or minimize right-side help rail" style="position:absolute; left:-42px; top:14px; width:42px; height:54px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f6f9fd; color:#294c72; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center;">›</button>
 
     <style>
         #<?= e($panelId) ?> * { box-sizing: border-box; }
         #<?= e($panelId) ?> .mykonos-help-rail-shell { height: 100%; display: flex; flex-direction: column; min-height: 0; }
-        #<?= e($panelId) ?> .mykonos-help-rail-head { padding: 14px 14px 10px; border-bottom: 1px solid #e3ecf8; background: linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%); }
+        #<?= e($panelId) ?> .mykonos-help-rail-head { padding: 12px 12px 10px; border-bottom: 1px solid #e3ecf8; background: linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%); position: sticky; top: 0; z-index: 2; }
         #<?= e($panelId) ?> .mykonos-help-eyebrow { font-size: 10px; font-weight: 700; color: #5b6b7f; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
         #<?= e($panelId) ?> .mykonos-help-title { font-size: 15px; font-weight: 700; color: #17324d; line-height: 1.3; margin-bottom: 6px; }
-        #<?= e($panelId) ?> .mykonos-help-summary { font-size: 12px; color: #4b6178; line-height: 1.45; margin-bottom: 10px; }
+        #<?= e($panelId) ?> .mykonos-help-summary { font-size: 12px; color: #4b6178; line-height: 1.42; margin-bottom: 8px; }
         #<?= e($panelId) ?> .mykonos-help-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
         #<?= e($panelId) ?> .mykonos-help-search-wrap { position: relative; flex: 1 1 auto; min-width: 0; }
         #<?= e($panelId) ?> .mykonos-help-search { width: 100%; height: 34px; border: 1px solid #d5e4f5; border-radius: 9px; padding: 0 34px 0 10px; background: #fff; color: #244564; font-size: 12px; outline: none; }
         #<?= e($panelId) ?> .mykonos-help-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: none; background: transparent; color: #6a7f95; font-size: 14px; cursor: pointer; padding: 4px; line-height: 1; }
-        #<?= e($panelId) ?> .mykonos-help-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        #<?= e($panelId) ?> .mykonos-help-width-row, #<?= e($panelId) ?> .mykonos-help-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
         #<?= e($panelId) ?> .mykonos-help-chip,
-        #<?= e($panelId) ?> .mykonos-help-mini-btn { border: 1px solid #d8e6f5; background: #fff; color: #234462; border-radius: 999px; padding: 4px 8px; font-size: 11px; cursor: pointer; }
+        #<?= e($panelId) ?> .mykonos-help-mini-btn,
+        #<?= e($panelId) ?> .mykonos-help-width-btn { border: 1px solid #d8e6f5; background: #fff; color: #234462; border-radius: 999px; padding: 4px 8px; font-size: 11px; cursor: pointer; }
+        #<?= e($panelId) ?> .mykonos-help-width-btn.is-active { background:#2d5d8f; color:#fff; border-color:#2d5d8f; }
         #<?= e($panelId) ?> .mykonos-help-mini-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
         #<?= e($panelId) ?> .mykonos-help-status { font-size: 11px; color: #6a7f95; line-height: 1.4; }
-        #<?= e($panelId) ?> .mykonos-help-scroll { padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: auto; scrollbar-width: thin; }
+        #<?= e($panelId) ?> .mykonos-help-scroll { padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: auto; scrollbar-width: thin; overscroll-behavior: contain; }
         #<?= e($panelId) ?> .mykonos-help-scroll::-webkit-scrollbar { width: 8px; }
         #<?= e($panelId) ?> .mykonos-help-scroll::-webkit-scrollbar-thumb { background: #cad8e8; border-radius: 999px; }
         #<?= e($panelId) ?> .mykonos-help-section { border: 1px solid #e3ecf8; background: #fff; border-radius: 10px; padding: 9px 10px; }
@@ -137,6 +144,22 @@ $reminders = [
         #<?= e($panelId) ?> .mykonos-help-item-text { font-size: 12px; color: #3d5268; line-height: 1.45; }
         #<?= e($panelId) ?> .mykonos-help-focus-item { font-size: 12px; color: #42566d; line-height: 1.45; padding: 8px 9px; border: 1px solid #edf2f8; border-radius: 8px; background: #fbfdff; }
         #<?= e($panelId) ?> .mykonos-help-empty { display: none; border: 1px dashed #d7e3f0; background: #fff; border-radius: 10px; padding: 12px; font-size: 12px; color: #5d7086; line-height: 1.5; }
+        #<?= e($panelId) ?> .mykonos-help-mini-rail-actions { display:none; gap:8px; flex-direction:column; align-items:center; margin-top:12px; }
+        #<?= e($panelId) ?> .mykonos-help-mini-rail-btn { width:36px; height:36px; border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-rail-head { padding: 10px 6px; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; }
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-eyebrow,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-summary,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-toolbar,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-width-row,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-chip-row,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-mini-actions,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-status,
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-scroll { display:none; }
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-title { writing-mode:vertical-rl; transform:rotate(180deg); font-size:13px; line-height:1.15; margin:8px auto 0; text-align:center; }
+        body.mykonos-help-rail-minimized #<?= e($panelId) ?> .mykonos-help-mini-rail-actions { display:flex; }
+        body.mykonos-help-rail-hidden #<?= e($panelId) ?> .mykonos-help-mini-rail-actions { display:none; }
+        body.mykonos-help-rail-hidden #<?= e($panelId) ?> .mykonos-help-scroll,
+        body.mykonos-help-rail-hidden #<?= e($panelId) ?> .mykonos-help-rail-head { opacity:1; }
     </style>
 
     <div class="mykonos-help-rail-shell">
@@ -150,6 +173,11 @@ $reminders = [
                     <button type="button" class="mykonos-help-clear" data-help-clear title="Clear search">×</button>
                 </div>
             </div>
+            <div class="mykonos-help-width-row">
+                <button type="button" class="mykonos-help-width-btn" data-help-width-preset="compact">Compact</button>
+                <button type="button" class="mykonos-help-width-btn" data-help-width-preset="standard">Standard</button>
+                <button type="button" class="mykonos-help-width-btn" data-help-width-preset="wide">Wide</button>
+            </div>
             <div class="mykonos-help-chip-row">
                 <button type="button" class="mykonos-help-chip" data-help-jump="focus">Focus</button>
                 <button type="button" class="mykonos-help-chip" data-help-jump="glossary">Glossary</button>
@@ -159,9 +187,14 @@ $reminders = [
             <div class="mykonos-help-mini-actions">
                 <button type="button" class="mykonos-help-mini-btn" data-help-expand-all>Expand all</button>
                 <button type="button" class="mykonos-help-mini-btn" data-help-collapse-all>Collapse all</button>
+                <button type="button" class="mykonos-help-mini-btn" data-help-minimize>Minimize rail</button>
                 <button type="button" class="mykonos-help-mini-btn" data-help-hide>Hide rail</button>
             </div>
             <div class="mykonos-help-status" data-help-status>Browse the sections or search across help notes and glossary terms.</div>
+            <div class="mykonos-help-mini-rail-actions">
+                <button type="button" class="mykonos-help-mini-rail-btn" data-help-expand-from-minimized title="Expand help rail">‹</button>
+                <button type="button" class="mykonos-help-mini-rail-btn" data-help-hide-from-minimized title="Hide help rail">×</button>
+            </div>
         </div>
 
         <div class="mykonos-help-scroll" data-help-scroll>
@@ -225,6 +258,7 @@ $reminders = [
     panel.dataset.helpInit = '1';
 
     var width = parseInt(panel.getAttribute('data-help-width') || '324', 10);
+    var minimizedWidth = parseInt(panel.getAttribute('data-help-minimized-width') || '64', 10);
     var hiddenTabWidth = parseInt(panel.getAttribute('data-help-hidden-width') || '46', 10);
     var topOffset = parseInt(panel.getAttribute('data-help-top-offset') || '70', 10);
     var button = panel.querySelector('[data-help-toggle]');
@@ -234,15 +268,29 @@ $reminders = [
     var emptyState = panel.querySelector('[data-help-empty-state]');
     var scrollNode = panel.querySelector('[data-help-scroll]');
     var storageKey = '<?= e($storageKey) ?>';
+    var modeStorageKey = '<?= e($modeStorageKey) ?>';
+    var widthStorageKey = '<?= e($widthStorageKey) ?>';
+    var sectionStorageKey = '<?= e($sectionStorageKey) ?>';
     var html = document.documentElement;
     var body = document.body;
     if (!body) {
         return;
     }
 
+    var widthPresets = { compact: 288, standard: width, wide: 360 };
+    var activeWidthPreset = 'standard';
+
+    try {
+        var storedWidthPreset = window.localStorage ? localStorage.getItem(widthStorageKey) : null;
+        if (storedWidthPreset && widthPresets[storedWidthPreset]) {
+            activeWidthPreset = storedWidthPreset;
+        }
+    } catch (e) {}
+
     function effectiveWidth() {
+        var baseWidth = widthPresets[activeWidthPreset] || width;
         var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-        return Math.max(296, Math.min(width, Math.round(vw * 0.245)));
+        return Math.max(272, Math.min(baseWidth, Math.round(vw * 0.255)));
     }
 
     var styleId = 'mykonos-backend-help-rail-style';
@@ -284,8 +332,10 @@ $reminders = [
         var liveWidth = effectiveWidth();
         existingStyle.textContent = '' +
             'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
-            'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + liveWidth + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
-            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 16) + 'px !important; transition:padding-right .18s ease; }' +
+            'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + liveWidth + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; box-shadow:-1px 0 0 #d9e6f5; }' +
+            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 18) + 'px !important; transition:padding-right .18s ease; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-minimized .mykonos-help-rail-host { padding-right:' + (minimizedWidth + 12) + 'px !important; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-minimized .mykonos-help-system-panel { width:' + minimizedWidth + 'px !important; transform:none; }' +
             'body.mykonos-help-rail-active.mykonos-help-rail-hidden .mykonos-help-rail-host { padding-right:16px !important; }' +
             'body.mykonos-help-rail-active.mykonos-help-rail-hidden .mykonos-help-system-panel { transform:translateX(calc(100% - ' + hiddenTabWidth + 'px)); }';
     }
@@ -294,49 +344,162 @@ $reminders = [
     html.classList.add('mykonos-help-rail-active');
     body.classList.add('mykonos-help-rail-active');
 
+    var railMode = 'open';
     try {
-        var stored = window.localStorage ? localStorage.getItem(storageKey) : null;
-        if (stored === 'hidden') {
-            body.classList.add('mykonos-help-rail-hidden');
+        var storedMode = window.localStorage ? (localStorage.getItem(modeStorageKey) || localStorage.getItem(storageKey)) : null;
+        if (storedMode === 'hidden' || storedMode === 'minimized' || storedMode === 'open') {
+            railMode = storedMode;
         }
     } catch (e) {}
 
+    function currentMode() {
+        if (body.classList.contains('mykonos-help-rail-hidden')) {
+            return 'hidden';
+        }
+        if (body.classList.contains('mykonos-help-rail-minimized')) {
+            return 'minimized';
+        }
+        return 'open';
+    }
+
     function syncVisibilityUi() {
-        var hidden = body.classList.contains('mykonos-help-rail-hidden');
+        var mode = currentMode();
         if (button) {
-            button.textContent = hidden ? 'HELP' : '×';
-            button.title = hidden ? 'Show right-side help rail' : 'Hide right-side help rail';
+            button.textContent = mode === 'open' ? '›' : '‹';
+            button.title = mode === 'open' ? 'Minimize right-side help rail' : 'Expand right-side help rail';
         }
         var hideButton = panel.querySelector('[data-help-hide]');
         if (hideButton) {
-            hideButton.textContent = hidden ? 'Show rail' : 'Hide rail';
+            hideButton.textContent = mode === 'hidden' ? 'Show rail' : 'Hide rail';
+        }
+        var minimizeButton = panel.querySelector('[data-help-minimize]');
+        if (minimizeButton) {
+            minimizeButton.textContent = mode === 'minimized' ? 'Expand rail' : 'Minimize rail';
         }
     }
 
-    function setHidden(hidden) {
-        body.classList.toggle('mykonos-help-rail-hidden', !!hidden);
+    function setRailMode(mode) {
+        body.classList.remove('mykonos-help-rail-hidden', 'mykonos-help-rail-minimized');
+        if (mode === 'hidden') {
+            body.classList.add('mykonos-help-rail-hidden');
+        } else if (mode === 'minimized') {
+            body.classList.add('mykonos-help-rail-minimized');
+        }
+        railMode = mode;
         try {
             if (window.localStorage) {
-                localStorage.setItem(storageKey, hidden ? 'hidden' : 'open');
+                localStorage.setItem(modeStorageKey, mode);
+                localStorage.setItem(storageKey, mode);
             }
         } catch (e) {}
         syncVisibilityUi();
     }
 
+    setRailMode(railMode);
+
     if (button) {
         button.addEventListener('click', function () {
-            setHidden(!body.classList.contains('mykonos-help-rail-hidden'));
+            var mode = currentMode();
+            setRailMode(mode === 'open' ? 'minimized' : 'open');
         });
     }
 
     var hideButton = panel.querySelector('[data-help-hide]');
     if (hideButton) {
         hideButton.addEventListener('click', function () {
-            setHidden(!body.classList.contains('mykonos-help-rail-hidden'));
+            var mode = currentMode();
+            setRailMode(mode === 'hidden' ? 'open' : 'hidden');
+        });
+    }
+
+    var minimizeButton = panel.querySelector('[data-help-minimize]');
+    if (minimizeButton) {
+        minimizeButton.addEventListener('click', function () {
+            var mode = currentMode();
+            setRailMode(mode === 'minimized' ? 'open' : 'minimized');
+        });
+    }
+
+    var expandFromMinimized = panel.querySelector('[data-help-expand-from-minimized]');
+    if (expandFromMinimized) {
+        expandFromMinimized.addEventListener('click', function () {
+            setRailMode('open');
+        });
+    }
+
+    var hideFromMinimized = panel.querySelector('[data-help-hide-from-minimized]');
+    if (hideFromMinimized) {
+        hideFromMinimized.addEventListener('click', function () {
+            setRailMode('hidden');
+        });
+    }
+
+    function syncWidthUi() {
+        var buttons = panel.querySelectorAll('[data-help-width-preset]');
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].classList.toggle('is-active', buttons[i].getAttribute('data-help-width-preset') === activeWidthPreset);
+        }
+    }
+
+    function setWidthPreset(preset) {
+        if (!widthPresets[preset]) {
+            return;
+        }
+        activeWidthPreset = preset;
+        try {
+            if (window.localStorage) {
+                localStorage.setItem(widthStorageKey, preset);
+            }
+        } catch (e) {}
+        applyRailStyle();
+        syncWidthUi();
+    }
+
+    var widthButtons = panel.querySelectorAll('[data-help-width-preset]');
+    for (var wb = 0; wb < widthButtons.length; wb++) {
+        widthButtons[wb].addEventListener('click', function () {
+            setWidthPreset(this.getAttribute('data-help-width-preset'));
         });
     }
 
     syncVisibilityUi();
+    syncWidthUi();
+
+    function persistSectionState() {
+        var state = {};
+        var sections = panel.querySelectorAll('[data-help-section]');
+        for (var i = 0; i < sections.length; i++) {
+            state[sections[i].getAttribute('data-help-section')] = !!sections[i].open;
+        }
+        try {
+            if (window.localStorage) {
+                localStorage.setItem(sectionStorageKey, JSON.stringify(state));
+            }
+        } catch (e) {}
+    }
+
+    function restoreSectionState() {
+        try {
+            var stored = window.localStorage ? localStorage.getItem(sectionStorageKey) : null;
+            if (!stored) {
+                return;
+            }
+            var state = JSON.parse(stored);
+            var sections = panel.querySelectorAll('[data-help-section]');
+            for (var i = 0; i < sections.length; i++) {
+                var key = sections[i].getAttribute('data-help-section');
+                if (Object.prototype.hasOwnProperty.call(state, key)) {
+                    sections[i].open = !!state[key];
+                }
+            }
+        } catch (e) {}
+    }
+
+    restoreSectionState();
+    var allSectionsForState = panel.querySelectorAll('[data-help-section]');
+    for (var ss = 0; ss < allSectionsForState.length; ss++) {
+        allSectionsForState[ss].addEventListener('toggle', persistSectionState);
+    }
 
     function updateSearchState() {
         if (!searchInput) {
@@ -437,6 +600,7 @@ $reminders = [
 
     window.addEventListener('resize', applyRailStyle);
     syncVisibilityUi();
+    syncWidthUi();
     updateSearchState();
 })();
 </script>
