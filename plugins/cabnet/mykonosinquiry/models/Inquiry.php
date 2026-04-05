@@ -544,6 +544,34 @@ class Inquiry extends Model
         return null;
     }
 
+    public function getLoyaltyQueueHistoryActionLabelAttribute(): ?string
+    {
+        if ($this->getLinkedLoyaltyRecord()) {
+            return 'Open loyalty history';
+        }
+
+        return null;
+    }
+
+    public function getLoyaltyQueueHistoryActionUrlAttribute(): ?string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {
+            return null;
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if (!$record) {
+            return null;
+        }
+
+        return \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $record->id) . '?' . http_build_query([
+            'bridge_source' => 'inquiry_queue',
+            'bridge_state' => 'linked',
+            'source_inquiry_id' => $this->id,
+        ]) . '#primarytab-history';
+    }
+
     public function getLoyaltyQueueSecondaryActionLabelAttribute(): string
     {
         if ($this->getLinkedLoyaltyRecord()) {

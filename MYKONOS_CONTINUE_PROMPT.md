@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.9 admin terminology tooltips and glossary patch`
+- `v6.41.10 inquiry-queue open loyalty history jump patch`
 
 This is a continuity hint only.
 
@@ -76,7 +76,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
 - keep admin terminology readable with hover tooltips and a compact glossary across loyalty forms and queue-side continuity cues
-- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, and filter-mirror guidance directly in the Inquiry Queue overview
+- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
 - make create-mode clearly distinguish valid inquiry-backed drafts from manual drafts or missing-id seed attempts
@@ -152,7 +152,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, and a queue-side continuity history cue. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, and compact source-context digests across Overview, Workspace, and History. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, and a direct linked-row history jump. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, and compact source-context digests across Overview, Workspace, and History. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
 
 ---
 

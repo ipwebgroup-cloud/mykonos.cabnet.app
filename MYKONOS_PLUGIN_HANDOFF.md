@@ -80,18 +80,18 @@ But the immediate operational priority is now explicit:
 - the loyalty workspace is now schema-ready, rendering its live list view, and the create form opens cleanly
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
-- the next production-safe move is to make admin terminology easier to read with tooltips and a compact glossary across loyalty forms and queue-side continuity cues
+- the next production-safe move is to let linked inquiry rows jump straight into the linked loyalty History tab without opening the default loyalty overview first
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.9 admin terminology tooltips and glossary patch`
-- plugin tracking `2.3.76`
+- `v6.41.10 inquiry-queue open loyalty history jump patch`
+- plugin tracking `2.3.77`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding hover tooltips and a compact admin glossary so operators can decode continuity terminology without leaving the live admin workspace.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding a direct linked-row jump that opens the loyalty record on its History tab from the live queue.
 
 ---
 
@@ -118,6 +118,7 @@ Then verify:
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
 - confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
 - confirm linked inquiries can use `Open loyalty` directly from the queue
+- confirm linked inquiries can use `Open loyalty history` directly from the queue and land on the saved loyalty `History` tab
 - confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue
 - confirm prefill-ready inquiries can use `Open draft` directly from the queue
 - confirm the new `Loyalty Posture` filter appears on the Inquiry Queue list
