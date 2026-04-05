@@ -67,8 +67,8 @@ $contextMap = [
 $config = $contextMap[$helpContext] ?? $contextMap['general'];
 $panelId = 'mykonos-help-system-' . preg_replace('/[^a-z0-9\-]+/i', '-', $helpContext);
 $storageKey = 'mykonos_help_panel_state_global';
-$sidebarWidth = 340;
-$sidebarCollapsedWidth = 42;
+$sidebarWidth = 356;
+$sidebarCollapsedWidth = 44;
 $topOffset = 70;
 
 $glossary = [
@@ -87,6 +87,18 @@ $glossary = [
     'Open loyalty history' => 'A direct jump that opens a saved loyalty record on the History tab instead of landing on the default tab.',
     'Back to queue search' => 'A return action that sends the operator back to Inquiry Queue with the source context already framed.',
 ];
+
+$screenMap = [
+    'Inquiry Queue' => 'Live triage surface for routing, owner visibility, packet-readiness cues, and loyalty transfer decisions.',
+    'Loyalty Continuity list' => 'Scan-focused continuity list with source anchoring, packet cues, and direct history jumps.',
+    'Loyalty create/update' => 'Deeper continuity workspace for source digests, continuity fields, packet posture, and touchpoint history.',
+];
+
+$reminders = [
+    'No automation assumption' => 'Review dates and packet states describe human workflow posture, not autonomous messaging.',
+    'Source integrity first' => 'If the source relationship is wrong, fix that before polishing continuity notes.',
+    'Use scans, then deepen' => 'Queue and list surfaces are scan aids; open the saved loyalty record when you need the full continuity trace.',
+];
 ?>
 <div id="<?= e($panelId) ?>"
      class="mykonos-help-system-panel"
@@ -94,51 +106,78 @@ $glossary = [
      data-help-width="<?= e((string) $sidebarWidth) ?>"
      data-help-collapsed-width="<?= e((string) $sidebarCollapsedWidth) ?>"
      data-help-top-offset="<?= e((string) $topOffset) ?>"
-     style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f8fbff; box-shadow:none; overflow:hidden; transition:transform .18s ease;">
-    <button type="button" data-help-toggle title="Toggle right-side help rail" style="position:absolute; left:-38px; top:16px; width:38px; height:44px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f8fbff; color:#294c72; font-size:16px; font-weight:700; cursor:pointer;">?</button>
-    <div style="height:100%; display:flex; flex-direction:column; min-height:0;">
-        <div style="padding:16px 16px 14px; border-bottom:1px solid #e3ecf8; background:linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%);">
+     style="position:fixed; top:<?= e((string) $topOffset) ?>px; right:0; bottom:0; width:<?= e((string) $sidebarWidth) ?>px; z-index:650; border-left:1px solid #d9e6f5; background:#f7fbff; box-shadow:none; overflow:hidden; transition:transform .18s ease;">
+    <button type="button" data-help-toggle title="Toggle right-side help rail" style="position:absolute; left:-40px; top:16px; width:40px; height:46px; border:1px solid #d9e6f5; border-right:none; border-radius:12px 0 0 12px; background:#f7fbff; color:#294c72; font-size:16px; font-weight:700; cursor:pointer;">?</button>
+    <div class="mykonos-help-rail-shell" style="height:100%; display:flex; flex-direction:column; min-height:0;">
+        <div class="mykonos-help-rail-head" style="padding:16px 16px 12px; border-bottom:1px solid #e3ecf8; background:linear-gradient(180deg, #fbfdff 0%, #f1f7ff 100%);">
             <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;"><?= e($config['eyebrow']) ?></div>
             <div style="font-size:18px; font-weight:700; color:#17324d; margin-bottom:6px; line-height:1.3;"><?= e($config['title']) ?></div>
-            <div style="font-size:12px; color:#4a5d73; line-height:1.5; white-space:normal;"><?= e($config['summary']) ?></div>
-            <div style="margin-top:8px; font-size:11px; color:#6a7f95;">This is the centralized docs/help/glossary rail for the plugin backend pages.</div>
+            <div style="font-size:12px; color:#4a5d73; line-height:1.5; white-space:normal; margin-bottom:10px;"><?= e($config['summary']) ?></div>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                <div style="position:relative; flex:1 1 auto; min-width:0;">
+                    <input type="text" data-help-search placeholder="Search help or glossary" style="width:100%; height:36px; border:1px solid #d5e4f5; border-radius:10px; padding:0 36px 0 12px; background:#ffffff; color:#244564; font-size:12px; outline:none; box-sizing:border-box;">
+                    <button type="button" data-help-clear title="Clear search" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:#6a7f95; font-size:14px; cursor:pointer; padding:4px; line-height:1;">×</button>
+                </div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                <button type="button" data-help-jump="focus" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Focus</button>
+                <button type="button" data-help-jump="glossary" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Glossary</button>
+                <button type="button" data-help-jump="map" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Screen map</button>
+                <button type="button" data-help-jump="reminders" style="border:1px solid #d8e6f5; background:#fff; color:#234462; border-radius:999px; padding:4px 8px; font-size:11px; cursor:pointer;">Reminders</button>
+            </div>
+            <div data-help-status style="font-size:11px; color:#6a7f95;">Browse the sections or search across help notes and glossary terms.</div>
         </div>
-        <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto;">
-            <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+        <div data-help-scroll style="padding:12px 16px 16px; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto;">
+            <details open data-help-section="focus" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
                 <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Page focus</summary>
-                <ul style="margin:10px 0 0 18px; padding:0; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
                     <?php foreach ($config['pageFocus'] as $note): ?>
-                        <li style="margin-bottom:6px;"><?= e($note) ?></li>
+                        <div data-help-item data-help-text="<?= e(strtolower($note . ' page focus')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                            <?= e($note) ?>
+                        </div>
                     <?php endforeach; ?>
-                </ul>
-            </details>
-            <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Screen map</summary>
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
-                    <div><strong>Inquiry Queue</strong>: live triage surface for routing, owner visibility, packet-readiness cues, and loyalty transfer decisions.</div>
-                    <div><strong>Loyalty Continuity list</strong>: scan-focused continuity list with source anchoring, packet cues, and direct history jumps.</div>
-                    <div><strong>Loyalty create/update</strong>: deeper continuity workspace for source digests, continuity fields, packet posture, and touchpoint history.</div>
                 </div>
             </details>
-            <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Glossary</summary>
+
+            <details data-help-section="map" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Screen map</summary>
                 <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                    <?php foreach ($glossary as $term => $definition): ?>
-                        <div style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
+                    <?php foreach ($screenMap as $term => $definition): ?>
+                        <div data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' screen map')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
                             <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
                             <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </details>
-            <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
-                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Operator reminders</summary>
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
-                    <div><strong>No automation assumption</strong>: review dates and packet states describe human workflow posture, not autonomous messaging.</div>
-                    <div><strong>Source integrity first</strong>: if the source relationship is wrong, fix that before polishing continuity notes.</div>
-                    <div><strong>Use scans, then deepen</strong>: queue and list surfaces are scan aids; open the saved loyalty record when you need the full continuity trace.</div>
+
+            <details open data-help-section="glossary" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Glossary</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <?php foreach ($glossary as $term => $definition): ?>
+                        <div data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' glossary')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
+                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
+                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </details>
+
+            <details data-help-section="reminders" style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Operator reminders</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <?php foreach ($reminders as $term => $definition): ?>
+                        <div data-help-item data-help-text="<?= e(strtolower($term . ' ' . $definition . ' reminder')) ?>" style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
+                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
+                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </details>
+
+            <div data-help-empty-state style="display:none; border:1px dashed #d7e3f0; background:#ffffff; border-radius:10px; padding:12px; font-size:12px; color:#5d7086; line-height:1.5;">
+                No matching help items were found. Try a shorter term such as <strong>packet</strong>, <strong>review</strong>, <strong>source</strong>, or <strong>history</strong>.
+            </div>
         </div>
     </div>
 </div>
@@ -150,15 +189,25 @@ $glossary = [
     }
     panel.dataset.helpInit = '1';
 
-    var width = parseInt(panel.getAttribute('data-help-width') || '340', 10);
-    var collapsedWidth = parseInt(panel.getAttribute('data-help-collapsed-width') || '42', 10);
+    var width = parseInt(panel.getAttribute('data-help-width') || '356', 10);
+    var collapsedWidth = parseInt(panel.getAttribute('data-help-collapsed-width') || '44', 10);
     var topOffset = parseInt(panel.getAttribute('data-help-top-offset') || '70', 10);
     var button = panel.querySelector('[data-help-toggle]');
+    var searchInput = panel.querySelector('[data-help-search]');
+    var clearButton = panel.querySelector('[data-help-clear]');
+    var statusNode = panel.querySelector('[data-help-status]');
+    var emptyState = panel.querySelector('[data-help-empty-state]');
+    var scrollNode = panel.querySelector('[data-help-scroll]');
     var storageKey = '<?= e($storageKey) ?>';
     var html = document.documentElement;
     var body = document.body;
     if (!body) {
         return;
+    }
+
+    function effectiveWidth() {
+        var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        return Math.max(320, Math.min(width, Math.round(vw * 0.28)));
     }
 
     var styleId = 'mykonos-backend-help-rail-style';
@@ -170,44 +219,25 @@ $glossary = [
     }
 
     function findHost() {
-        var node = panel.parentElement;
-        var best = null;
-        while (node && node !== body) {
-            if (node === panel) {
-                node = node.parentElement;
+        var selectors = [
+            '#layout-body .control-container > .layout',
+            '#layout-body .layout',
+            '#layout-body .control-container',
+            '.control-container > .layout',
+            '.control-container',
+            '.layout'
+        ];
+        for (var i = 0; i < selectors.length; i++) {
+            var candidate = document.querySelector(selectors[i]);
+            if (!candidate || candidate === panel || candidate.contains(panel)) {
                 continue;
             }
-            var rect = node.getBoundingClientRect ? node.getBoundingClientRect() : null;
-            if (rect && rect.width >= 900 && rect.height >= 320 && rect.top >= (topOffset - 12)) {
-                best = node;
-            }
-            node = node.parentElement;
-        }
-
-        if (!best) {
-            var selectors = [
-                '#layout-body .layout-cell',
-                '#layout-body .layout',
-                '#layout-body .control-container',
-                '.control-container',
-                '.layout',
-                '.layout-cell',
-                '.layout-row'
-            ];
-            for (var i = 0; i < selectors.length; i++) {
-                var candidate = document.querySelector(selectors[i]);
-                if (!candidate) {
-                    continue;
-                }
-                var candidateRect = candidate.getBoundingClientRect ? candidate.getBoundingClientRect() : null;
-                if (candidateRect && candidateRect.width >= 900 && candidateRect.height >= 320 && candidateRect.top >= (topOffset - 12)) {
-                    best = candidate;
-                    break;
-                }
+            var rect = candidate.getBoundingClientRect ? candidate.getBoundingClientRect() : null;
+            if (rect && rect.width >= 900 && rect.height >= 280) {
+                return candidate;
             }
         }
-
-        return best || null;
+        return panel.parentElement && panel.parentElement !== body ? panel.parentElement : null;
     }
 
     var host = findHost();
@@ -215,13 +245,17 @@ $glossary = [
         host.classList.add('mykonos-help-rail-host');
     }
 
-    existingStyle.textContent = '' +
-        'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
-        'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + width + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
-        'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (width + 18) + 'px !important; }' +
-        'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-rail-host { padding-right:' + (collapsedWidth + 12) + 'px !important; }' +
-        'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-system-panel { transform:translateX(calc(100% - ' + collapsedWidth + 'px)); }';
+    function applyRailStyle() {
+        var liveWidth = effectiveWidth();
+        existingStyle.textContent = '' +
+            'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
+            'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + liveWidth + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
+            'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (liveWidth + 18) + 'px !important; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-rail-host { padding-right:' + (collapsedWidth + 12) + 'px !important; }' +
+            'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-system-panel { transform:translateX(calc(100% - ' + collapsedWidth + 'px)); }';
+    }
 
+    applyRailStyle();
     html.classList.add('mykonos-help-rail-active');
     body.classList.add('mykonos-help-rail-active');
 
@@ -242,5 +276,79 @@ $glossary = [
             } catch (e) {}
         });
     }
+
+    function updateSearchState() {
+        if (!searchInput) {
+            return;
+        }
+        var query = (searchInput.value || '').toLowerCase().trim();
+        var items = panel.querySelectorAll('[data-help-item]');
+        var sections = panel.querySelectorAll('[data-help-section]');
+        var visibleCount = 0;
+
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var text = (item.getAttribute('data-help-text') || '').toLowerCase();
+            var match = !query || text.indexOf(query) !== -1;
+            item.style.display = match ? '' : 'none';
+            if (match) {
+                visibleCount++;
+            }
+        }
+
+        for (var j = 0; j < sections.length; j++) {
+            var section = sections[j];
+            var sectionItems = section.querySelectorAll('[data-help-item]');
+            var hasVisible = false;
+            for (var k = 0; k < sectionItems.length; k++) {
+                if (sectionItems[k].style.display !== 'none') {
+                    hasVisible = true;
+                    break;
+                }
+            }
+            section.style.display = hasVisible ? '' : 'none';
+            if (query && hasVisible) {
+                section.open = true;
+            }
+        }
+
+        if (emptyState) {
+            emptyState.style.display = visibleCount ? 'none' : '';
+        }
+        if (statusNode) {
+            statusNode.textContent = query
+                ? (visibleCount ? ('Showing ' + visibleCount + ' help match' + (visibleCount === 1 ? '' : 'es') + ' for “' + searchInput.value + '”.') : 'No help matches for “' + searchInput.value + '”.')
+                : 'Browse the sections or search across help notes and glossary terms.';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', updateSearchState);
+    }
+    if (clearButton && searchInput) {
+        clearButton.addEventListener('click', function () {
+            searchInput.value = '';
+            updateSearchState();
+            searchInput.focus();
+        });
+    }
+
+    var jumpButtons = panel.querySelectorAll('[data-help-jump]');
+    for (var b = 0; b < jumpButtons.length; b++) {
+        jumpButtons[b].addEventListener('click', function () {
+            var key = this.getAttribute('data-help-jump');
+            var section = panel.querySelector('[data-help-section="' + key + '"]');
+            if (!section) {
+                return;
+            }
+            section.open = true;
+            if (scrollNode && section.scrollIntoView) {
+                section.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        });
+    }
+
+    window.addEventListener('resize', applyRailStyle);
+    updateSearchState();
 })();
 </script>

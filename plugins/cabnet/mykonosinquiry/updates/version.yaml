@@ -347,3 +347,5 @@
     - 'Global backend help rail layout integration'
 2.3.86:
   - 'Right help rail content-host layout reservation hotfix for backend plugin pages'
+2.3.87:
+  - 'Optimize the global backend right help rail with search, quick jumps, and scan-first section filtering'
