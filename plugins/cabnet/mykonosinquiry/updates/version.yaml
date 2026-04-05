@@ -345,3 +345,5 @@
   - 'Render the right-side docs/help/glossary sidebar across Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens as one centralized help system'
 2.3.85:
     - 'Global backend help rail layout integration'
+2.3.86:
+  - 'Right help rail content-host layout reservation hotfix for backend plugin pages'

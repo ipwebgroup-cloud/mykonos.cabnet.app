@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.18 global backend right-side help rail layout integration patch`
+- `v6.41.19 backend right help rail content-host layout reservation hotfix patch`
 
 This is a continuity hint only.
 

@@ -169,11 +169,57 @@ $glossary = [
         document.head.appendChild(existingStyle);
     }
 
+    function findHost() {
+        var node = panel.parentElement;
+        var best = null;
+        while (node && node !== body) {
+            if (node === panel) {
+                node = node.parentElement;
+                continue;
+            }
+            var rect = node.getBoundingClientRect ? node.getBoundingClientRect() : null;
+            if (rect && rect.width >= 900 && rect.height >= 320 && rect.top >= (topOffset - 12)) {
+                best = node;
+            }
+            node = node.parentElement;
+        }
+
+        if (!best) {
+            var selectors = [
+                '#layout-body .layout-cell',
+                '#layout-body .layout',
+                '#layout-body .control-container',
+                '.control-container',
+                '.layout',
+                '.layout-cell',
+                '.layout-row'
+            ];
+            for (var i = 0; i < selectors.length; i++) {
+                var candidate = document.querySelector(selectors[i]);
+                if (!candidate) {
+                    continue;
+                }
+                var candidateRect = candidate.getBoundingClientRect ? candidate.getBoundingClientRect() : null;
+                if (candidateRect && candidateRect.width >= 900 && candidateRect.height >= 320 && candidateRect.top >= (topOffset - 12)) {
+                    best = candidate;
+                    break;
+                }
+            }
+        }
+
+        return best || null;
+    }
+
+    var host = findHost();
+    if (host) {
+        host.classList.add('mykonos-help-rail-host');
+    }
+
     existingStyle.textContent = '' +
         'html.mykonos-help-rail-active, body.mykonos-help-rail-active { overflow-x:hidden; }' +
-        'body.mykonos-help-rail-active { box-sizing:border-box; padding-right:' + width + 'px !important; }' +
         'body.mykonos-help-rail-active .mykonos-help-system-panel { width:' + width + 'px !important; top:' + topOffset + 'px !important; bottom:0 !important; right:0 !important; left:auto !important; border-radius:0 !important; }' +
-        'body.mykonos-help-rail-active.mykonos-help-rail-collapsed { padding-right:' + collapsedWidth + 'px !important; }' +
+        'body.mykonos-help-rail-active .mykonos-help-rail-host { box-sizing:border-box; min-height:calc(100vh - ' + topOffset + 'px); padding-right:' + (width + 18) + 'px !important; }' +
+        'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-rail-host { padding-right:' + (collapsedWidth + 12) + 'px !important; }' +
         'body.mykonos-help-rail-active.mykonos-help-rail-collapsed .mykonos-help-system-panel { transform:translateX(calc(100% - ' + collapsedWidth + 'px)); }';
 
     html.classList.add('mykonos-help-rail-active');

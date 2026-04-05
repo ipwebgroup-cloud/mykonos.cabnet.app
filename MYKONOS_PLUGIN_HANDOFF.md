@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.18 global backend right-side help rail layout integration patch`
-- plugin tracking `2.3.85`
+- `v6.41.19 backend right help rail content-host layout reservation hotfix patch`
+- plugin tracking `2.3.86`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while turning the centralized docs/help/glossary sidebar into a true right-side backend rail that behaves like a layout element on the active plugin backend pages: Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while correcting the right-side help rail so it reserves space against the active backend content host instead of shrinking the entire page body. The rail now behaves more like a true backend side column on the active plugin backend pages: Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens.
 
 ---
 
@@ -114,10 +114,11 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm the create screen now shows a right-side `Help & Glossary` panel instead of the old full-width glossary block
-- confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` now shows a full-height right-side help rail that behaves like a backend layout element rather than a floating overlay
-- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` list now also shows the same full-height right-side help rail
+- confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` shows a full-height right-side help rail that no longer shrinks the top navigation bar
+- confirm the help rail now reserves space against the plugin content host instead of the whole page body
+- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` list also uses the same corrected right-side help rail behavior
 - confirm the same right-side help rail appears on create mode plus Overview, Workspace, and History for saved loyalty records
-- confirm the main backend content area now leaves space for the right help rail instead of letting the rail overlap the working surface
+- confirm the active plugin content surface leaves space for the help rail while the top navigation remains full-width
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
