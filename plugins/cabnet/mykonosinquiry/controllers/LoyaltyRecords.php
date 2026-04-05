@@ -36,6 +36,11 @@ class LoyaltyRecords extends Controller
         $this->asExtension('ListController')->index();
     }
 
+    public function listExtendQuery($query): void
+    {
+        $query->with('source_inquiry');
+    }
+
     public function create()
     {
         $this->asExtension('FormController')->create();
