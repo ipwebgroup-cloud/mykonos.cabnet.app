@@ -331,3 +331,5 @@
 
 2.3.79:
     - loyalty-list open history jump patch
+2.3.80:
+  - 'Add visible latest-packet badge to loyalty list source cards for faster scan reading'

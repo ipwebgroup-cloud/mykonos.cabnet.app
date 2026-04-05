@@ -49,6 +49,24 @@ $title = $linked ? '#084298' : '#495057';
 $text = $linked ? '#33577a' : '#6c757d';
 $cueBorder = $linked ? '#d8e6fb' : '#e9ecef';
 $cueBg = '#ffffff';
+
+$packetTone = '#0f5132';
+$packetBg = '#ecfdf3';
+$packetBorder = '#b7ebc6';
+
+if (stripos($latestPacket, 'no packet') !== false) {
+    $packetTone = '#5c6370';
+    $packetBg = '#f3f4f6';
+    $packetBorder = '#d7dce2';
+} elseif (stripos($latestPacket, 'watch') !== false || stripos($latestPacket, 'pending') !== false) {
+    $packetTone = '#7c4a03';
+    $packetBg = '#fff7e6';
+    $packetBorder = '#f5d08a';
+} elseif (stripos($latestPacket, 'prepared') !== false || stripos($latestPacket, 'brief') !== false || stripos($latestPacket, 'packet') !== false) {
+    $packetTone = '#084298';
+    $packetBg = '#eef5ff';
+    $packetBorder = '#cfe2ff';
+}
 ?>
 <div style="min-width:255px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
@@ -59,6 +77,13 @@ $cueBg = '#ffffff';
     </div>
     <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; margin-bottom:8px; white-space:normal;">
         <?= e($hint) ?>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; align-items:center;">
+        <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetTone) ?>; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700;" title="Visible latest packet state so operators can scan packet readiness directly from the live loyalty list row.">
+            <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Packet</span>
+            <span><?= e($latestPacket) ?></span>
+        </span>
     </div>
 
     <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-bottom:8px;">
@@ -109,6 +134,7 @@ $cueBg = '#ffffff';
             <div><strong title="The queue or closing posture of the originating inquiry when it entered loyalty continuity.">Source posture</strong>: how the source inquiry was sitting when loyalty picked it up.</div>
             <div><strong title="Most recent recorded loyalty result.">Latest outcome</strong>: newest touchpoint result logged on this continuity record.</div>
             <div><strong title="Newest internal continuity brief prepared for the next human move.">Latest packet</strong>: latest prepared operator packet or brief.</div>
+            <div><strong title="Visible latest packet state shown as a compact pill before the deeper row cues.">Packet badge</strong>: always-visible scan cue for packet readiness on the live list card.</div>
             <div><strong title="Next visible revisit date or review window for this continuity record.">Next review</strong>: next human review checkpoint for continuity handling.</div>
             <div><strong title="Open this saved loyalty record directly on its History tab from the live loyalty list.">Open loyalty history</strong>: jump straight into the continuity history tab without landing on Overview first.</div>
         </div>

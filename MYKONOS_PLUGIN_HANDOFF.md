@@ -87,8 +87,8 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.12 loyalty-list open history jump patch`
-- plugin tracking `2.3.79`
+- `v6.41.13 loyalty-list visible packet badge patch`
+- plugin tracking `2.3.80`
 
 This patch does not change schema and does not touch `/plan`.
 It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding a direct `Open loyalty history` jump on the Loyalty Continuity list card so operators can land on the saved record's History tab without first opening Overview.
@@ -139,6 +139,7 @@ Then verify:
 - confirm linked loyalty rows can use `Open inquiry` directly from the list
 - confirm linked loyalty rows can use `Back to queue search` directly from the list
 - confirm the Loyalty Continuity list `Source Inquiry` card now shows compact `Latest outcome`, `Latest packet`, and `Next review` cue boxes without opening the record
+- confirm the same loyalty list card now also shows an always-visible `Packet` badge near the top of the row card for faster scan reading
 - confirm hovering those list-card labels shows tooltip help
 - expand the loyalty list-card `Glossary` and confirm it explains source anchor, source posture, latest outcome, latest packet, and next review terminology
 - confirm linked loyalty rows now also show `Open loyalty history` directly on the list card
