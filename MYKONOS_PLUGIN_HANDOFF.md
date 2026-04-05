@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.16 loyalty right-side help panel and glossary centralization patch`
-- plugin tracking `2.3.83`
+- `v6.41.17 global backend right-side help system visibility patch`
+- plugin tracking `2.3.84`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while centralizing docs, help, and glossary content into a shared right-side loyalty help panel on create/update screens and removing older inline glossary blocks from the queue and loyalty list cards.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while making the centralized docs/help/glossary sidebar visible across the plugin backend pages: Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens.
 
 ---
 
@@ -114,6 +114,8 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm the create screen now shows a right-side `Help & Glossary` panel instead of the old full-width glossary block
+- confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` now shows the same fixed right-side help system
+- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` list now also shows the same fixed right-side help system
 - confirm the same right-side `Help & Glossary` panel appears on Overview, Workspace, and History for saved loyalty records
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
