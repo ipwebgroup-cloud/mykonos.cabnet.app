@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.14 inquiry-queue linked-row packet badge patch`
-- plugin tracking `2.3.81`
+- `v6.41.15 inquiry-queue linked-row next-review pill patch`
+- plugin tracking `2.3.82`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding one always-visible packet-state badge on linked Inquiry Queue loyalty cards so operators can scan packet readiness before opening deeper continuity history.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding one always-visible next-review pill beside the linked-row packet badge so operators can scan packet readiness and revisit timing together before opening deeper continuity history.
 
 ---
 
@@ -119,6 +119,8 @@ Then verify:
 - confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
 - confirm linked inquiries now also show an always-visible `Packet` badge on the queue-side loyalty card
 - confirm the queue-side packet badge shifts tone appropriately between no-packet, pending/watch, and prepared states
+- confirm linked inquiries now also show an always-visible `Next review` pill beside the packet badge on the queue-side loyalty card
+- confirm the queue-side next-review pill shifts appropriately between overdue, today, future-review, and no-review states
 - confirm linked inquiries can use `Open loyalty` directly from the queue
 - confirm linked inquiries can use `Open loyalty history` directly from the queue and land on the saved loyalty `History` tab
 - confirm transfer-ready inquiries can use `Create + open loyalty` directly from the queue

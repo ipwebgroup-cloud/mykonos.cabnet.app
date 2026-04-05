@@ -16,6 +16,9 @@ $historyActionUrl = $inquiry->loyalty_queue_history_action_url;
 $packetBadgeLabel = $inquiry->loyalty_queue_packet_badge_label;
 $packetBadgeTitle = $inquiry->loyalty_queue_packet_badge_title;
 $packetTone = $inquiry->loyalty_queue_packet_badge_tone;
+$nextReviewPillLabel = $inquiry->loyalty_queue_next_review_pill_label;
+$nextReviewPillTitle = $inquiry->loyalty_queue_next_review_pill_title;
+$nextReviewTone = $inquiry->loyalty_queue_next_review_pill_tone;
 
 $border = $linked ? '#cfe2ff' : '#e5e7eb';
 $bg = $linked ? '#f7fbff' : '#f8f9fa';
@@ -29,8 +32,10 @@ $packetToneMap = [
     'warning' => ['#7c4a03', '#fff7e6', '#f5d08a'],
     'neutral' => ['#084298', '#eef5ff', '#cfe2ff'],
     'muted' => ['#5c6370', '#f3f4f6', '#d7dce2'],
+    'danger' => ['#842029', '#f8d7da', '#f1aeb5'],
 ];
 [$packetText, $packetBg, $packetBorder] = $packetToneMap[$packetTone] ?? $packetToneMap['muted'];
+[$reviewText, $reviewBg, $reviewBorder] = $packetToneMap[$nextReviewTone] ?? $packetToneMap['muted'];
 ?>
 <div style="min-width:260px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
@@ -43,10 +48,14 @@ $packetToneMap = [
         <?= e($hint) ?>
     </div>
 
-    <div style="margin-top:8px; margin-bottom:8px;">
+    <div style="margin-top:8px; margin-bottom:8px; display:flex; flex-wrap:wrap; gap:8px;">
         <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetText) ?>; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700;" title="<?= e($packetBadgeTitle) ?>">
             <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Packet</span>
             <span><?= e($packetBadgeLabel) ?></span>
+        </span>
+        <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid <?= e($reviewBorder) ?>; background:<?= e($reviewBg) ?>; color:<?= e($reviewText) ?>; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700;" title="<?= e($nextReviewPillTitle) ?>">
+            <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Next review</span>
+            <span><?= e($nextReviewPillLabel) ?></span>
         </span>
     </div>
 
@@ -78,6 +87,7 @@ $packetToneMap = [
             <div><strong title="Most recent recorded loyalty result.">Latest outcome</strong>: newest touchpoint result logged on the loyalty side.</div>
             <div><strong title="Newest internal continuity brief prepared for the next human move.">Latest packet</strong>: latest prepared operator packet or brief.</div>
             <div><strong title="Always-visible scan pill for packet readiness on a linked queue row.">Packet badge</strong>: quick packet-state cue visible before opening loyalty history.</div>
+            <div><strong title="Always-visible scan pill for the next linked loyalty review checkpoint.">Next review pill</strong>: quick revisit-timing cue shown beside the packet badge on linked queue rows.</div>
             <div><strong title="Direct jump into the linked loyalty record on the History tab.">Open loyalty history</strong>: opens the linked continuity record straight on its history timeline.</div>
             <div><strong title="Next human review checkpoint for the linked loyalty record.">Next review</strong>: next visible revisit time for continuity handling.</div>
         </div>

@@ -335,3 +335,6 @@
   - 'Add visible latest-packet badge to loyalty list source cards for faster scan reading'
 2.3.81:
   - 'Add a queue-side packet badge on linked inquiry rows for faster packet readiness scanning'
+2.3.82:
+  - 'Add a queue-side next-review pill on linked inquiry rows for faster revisit timing scans'
+

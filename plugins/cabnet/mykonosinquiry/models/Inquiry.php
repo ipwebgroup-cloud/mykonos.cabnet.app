@@ -508,6 +508,103 @@ class Inquiry extends Model
         return 'Inquiry is still queue-only, so no loyalty packet state is available yet.';
     }
 
+
+    public function getLoyaltyQueueNextReviewPillLabelAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Staged';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            if ($record->next_review_at instanceof \DateTimeInterface) {
+                $reviewAt = Carbon::instance($record->next_review_at);
+                $today = Carbon::today();
+
+                if ($reviewAt->lt($today)) {
+                    return 'Review overdue';
+                }
+
+                if ($reviewAt->isSameDay($today)) {
+                    return 'Review today';
+                }
+
+                return 'Review ' . $reviewAt->format('Y-m-d');
+            }
+
+            $window = trim((string) $record->next_review_window_label);
+
+            if ($window !== '') {
+                return 'Review ' . $window;
+            }
+
+            return 'No review';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Await transfer';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Await draft';
+        }
+
+        return 'Queue-only';
+    }
+
+    public function getLoyaltyQueueNextReviewPillToneAttribute(): string
+    {
+        $label = strtolower((string) $this->loyalty_queue_next_review_pill_label);
+
+        if (str_contains($label, 'overdue')) {
+            return 'danger';
+        }
+
+        if (str_contains($label, 'today') || str_contains($label, 'await')) {
+            return 'warning';
+        }
+
+        if (str_contains($label, 'review ')) {
+            return 'neutral';
+        }
+
+        return 'muted';
+    }
+
+    public function getLoyaltyQueueNextReviewPillTitleAttribute(): string
+    {
+        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+            return 'Review timing stays staged until the loyalty workspace is active.';
+        }
+
+        $record = $this->getLinkedLoyaltyRecord();
+
+        if ($record) {
+            if ($record->next_review_at instanceof \DateTimeInterface) {
+                return 'Next visible human continuity review on the linked loyalty record.';
+            }
+
+            $window = trim((string) $record->next_review_window_label);
+
+            if ($window !== '') {
+                return 'Review window carried from the linked loyalty record for quick queue-side scan reading.';
+            }
+
+            return 'No next review checkpoint is logged yet on the linked loyalty record.';
+        }
+
+        if ($this->loyaltyTransferReady()) {
+            return 'Inquiry is transfer-ready, but a linked loyalty review checkpoint has not been created yet.';
+        }
+
+        if ($this->getLoyaltyTransferReadinessScore() >= 3) {
+            return 'Inquiry can open a seeded loyalty draft, but a live review checkpoint has not been set yet.';
+        }
+
+        return 'Inquiry is still queue-only, so no loyalty review timing is available yet.';
+    }
+
     public function getLoyaltyQueueBacklinkHintAttribute(): string
     {
         if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
