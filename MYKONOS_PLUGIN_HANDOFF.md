@@ -87,11 +87,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.15 inquiry-queue linked-row next-review pill patch`
-- plugin tracking `2.3.82`
+- `v6.41.16 loyalty right-side help panel and glossary centralization patch`
+- plugin tracking `2.3.83`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while adding one always-visible next-review pill beside the linked-row packet badge so operators can scan packet readiness and revisit timing together before opening deeper continuity history.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while centralizing docs, help, and glossary content into a shared right-side loyalty help panel on create/update screens and removing older inline glossary blocks from the queue and loyalty list cards.
 
 ---
 
@@ -113,6 +113,10 @@ Then verify:
 - confirm the digest shows source anchor, source posture, continuity posture, value signal, latest touchpoint, and next-review framing without widening the workflow
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
+- confirm the create screen now shows a right-side `Help & Glossary` panel instead of the old full-width glossary block
+- confirm the same right-side `Help & Glossary` panel appears on Overview, Workspace, and History for saved loyalty records
+- confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
+- confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
@@ -145,16 +149,14 @@ Then verify:
 - confirm the Loyalty Continuity list `Source Inquiry` card now shows compact `Latest outcome`, `Latest packet`, and `Next review` cue boxes without opening the record
 - confirm the same loyalty list card now also shows an always-visible `Packet` badge near the top of the row card for faster scan reading
 - confirm hovering those list-card labels shows tooltip help
-- expand the loyalty list-card `Glossary` and confirm it explains source anchor, source posture, latest outcome, latest packet, and next review terminology
 - confirm linked loyalty rows now also show `Open loyalty history` directly on the list card
 - click `Open loyalty history` and confirm the saved loyalty record opens on `#primarytab-history`
 - `php scripts/qa-loyalty-workspace-activation.php`
 
 - open Backend -> `Mykonos Inquiries` -> `Inquiry Queue` and confirm queue-side loyalty backlink cards still render
 - hover key labels such as `Queue-to-history cue` and confirm tooltip text appears
-- expand the queue-row `Glossary` block and confirm it explains loyalty backlink, latest outcome, latest packet, and next review terminology
-- open `Loyalty Continuity` create or update screens and confirm the new `Admin terminology guide` appears above the tabs
-- open the glossary and confirm it explains source anchor, source posture, continuity posture, value signal, latest outcome, latest packet, next review, queue-to-history cue, and manual vs inquiry-backed drafts
+- open `Loyalty Continuity` create or update screens and confirm the new right-side `Help & Glossary` panel appears
+- open the right-side help panel glossary and confirm it explains source anchor, source posture, continuity posture, value signal, latest outcome, latest packet, next review, queue-to-history cue, and manual vs inquiry-backed drafts
 - hover digest labels on Overview, Workspace, and History and confirm tooltip text appears without breaking render safety
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.

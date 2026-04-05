@@ -338,3 +338,5 @@
 2.3.82:
   - 'Add a queue-side next-review pill on linked inquiry rows for faster revisit timing scans'
 
+2.3.83:
+  - 'Centralize admin docs, help, and glossary content into a right-side loyalty help panel and remove inline glossary blocks from list and queue cards'

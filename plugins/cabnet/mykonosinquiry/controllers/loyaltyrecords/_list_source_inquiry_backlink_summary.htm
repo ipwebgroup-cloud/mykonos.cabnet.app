@@ -126,17 +126,4 @@ if (stripos($latestPacket, 'no packet') !== false) {
             <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" title="Return to the queue filtered around the originating inquiry context."><?= e($secondaryLabel) ?></a>
         <?php endif; ?>
     </div>
-
-    <details style="margin-top:8px;">
-        <summary style="cursor:pointer; font-size:11px; color:<?= e($text) ?>;" title="Quick glossary for the loyalty list card.">Glossary</summary>
-        <div style="margin-top:6px; font-size:11px; color:<?= e($text) ?>; line-height:1.45;">
-            <div><strong title="The originating inquiry reference and guest identity tied back to this continuity record.">Source anchor</strong>: the inquiry reference and guest name continuity is still tied back to.</div>
-            <div><strong title="The queue or closing posture of the originating inquiry when it entered loyalty continuity.">Source posture</strong>: how the source inquiry was sitting when loyalty picked it up.</div>
-            <div><strong title="Most recent recorded loyalty result.">Latest outcome</strong>: newest touchpoint result logged on this continuity record.</div>
-            <div><strong title="Newest internal continuity brief prepared for the next human move.">Latest packet</strong>: latest prepared operator packet or brief.</div>
-            <div><strong title="Visible latest packet state shown as a compact pill before the deeper row cues.">Packet badge</strong>: always-visible scan cue for packet readiness on the live list card.</div>
-            <div><strong title="Next visible revisit date or review window for this continuity record.">Next review</strong>: next human review checkpoint for continuity handling.</div>
-            <div><strong title="Open this saved loyalty record directly on its History tab from the live loyalty list.">Open loyalty history</strong>: jump straight into the continuity history tab without landing on Overview first.</div>
-        </div>
-    </details>
 </div>

@@ -1,0 +1,89 @@
+<?php
+$record = $formModel ?? $model ?? $record ?? null;
+$isCreate = !$record || empty($record->id);
+$modeLabel = $isCreate ? 'Create mode' : 'Saved record';
+$summary = $isCreate
+    ? 'Use this panel as the single place for loyalty docs, help, and glossary guidance while you seed a new manual or inquiry-backed draft.'
+    : 'Use this panel as the single place for loyalty docs, help, and glossary guidance while you review continuity, packet state, and source posture.';
+$workflowNotes = $isCreate
+    ? [
+        'Start from Inquiry Queue when you want a draft anchored to a real guest brief.',
+        'A manual draft is acceptable when no live inquiry exists yet, but it should stay clearly manual until a real source is linked.',
+        'If a supplied source inquiry id does not resolve, return to Inquiry Queue and reseed from a real record rather than forcing the draft forward.',
+      ]
+    : [
+        'Overview compares source posture with current continuity posture before deeper review.',
+        'Workspace is where live continuity fields, timing, value, and ownership are edited by the operator.',
+        'History is where touchpoint outcome, packet framing, and revisit timing are reviewed together.',
+      ];
+$glossary = [
+    'Source anchor' => 'The original inquiry reference and guest identity that the loyalty record still ties back to.',
+    'Source posture' => 'The queue or closing posture of the source inquiry when it entered loyalty continuity.',
+    'Continuity posture' => 'The current loyalty lane, usually continuity status plus loyalty stage.',
+    'Value signal' => 'The compact commercial reading, usually return-value tier plus referral readiness.',
+    'Latest outcome' => 'The most recent recorded result from a loyalty touchpoint or operator follow-through step.',
+    'Latest packet' => 'The newest internal brief or packet prepared for the next human continuity move.',
+    'Packet badge' => 'The always-visible packet readiness cue used for fast scanning on queue and loyalty list rows.',
+    'Next review' => 'The next visible human revisit checkpoint. It is not automation; it is the next operator review moment.',
+    'Next review pill' => 'The compact queue-side timing cue that shows whether review is overdue, due today, scheduled later, or not set.',
+    'Queue-to-history cue' => 'The queue-side mini summary that lets operators read the latest loyalty history signal without opening the loyalty record first.',
+    'Manual draft' => 'A loyalty draft created without a linked source inquiry.',
+    'Inquiry-backed draft' => 'A loyalty draft seeded from a real inquiry through ?source_inquiry_id=... so the first save keeps source context attached.',
+];
+?>
+<div class="form-group">
+    <div style="position:sticky; top:18px; border:1px solid #d9e6f5; background:#f8fbff; border-radius:14px; overflow:hidden; box-shadow:0 8px 22px rgba(15,35,60,0.06);">
+        <div style="padding:14px 16px; border-bottom:1px solid #e3ecf8; background:linear-gradient(180deg, #fbfdff 0%, #f3f8ff 100%);">
+            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;">Help system</div>
+            <div style="font-size:18px; font-weight:700; color:#17324d; margin-bottom:6px;">Docs, help & glossary</div>
+            <div style="font-size:12px; color:#4a5d73; line-height:1.5; white-space:normal;">
+                <?= e($summary) ?>
+            </div>
+            <div style="margin-top:8px; font-size:11px; color:#6a7f95;">
+                Current view: <strong><?= e($modeLabel) ?></strong>. Inline glossary blocks were intentionally removed from the working panels so this sidebar stays the single documentation source.
+            </div>
+        </div>
+
+        <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+            <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Quick workflow notes</summary>
+                <ul style="margin:10px 0 0 18px; padding:0; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                    <?php foreach ($workflowNotes as $note): ?>
+                        <li style="margin-bottom:6px;"><?= e($note) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </details>
+
+            <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Screen map</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                    <div><strong>Overview</strong>: source context, summaries, and top-line continuity posture before deep editing.</div>
+                    <div><strong>Workspace</strong>: live continuity fields, ownership, review timing, and execution posture.</div>
+                    <div><strong>History</strong>: touchpoint trace, latest outcome, packet framing, and revisit evidence.</div>
+                    <div><strong>Queue / list cards</strong>: scan cues only. Use this sidebar for the full wording behind packet, review, and history terminology.</div>
+                </div>
+            </details>
+
+            <details open style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Glossary</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <?php foreach ($glossary as $term => $definition): ?>
+                        <div style="border:1px solid #edf2f8; border-radius:8px; padding:8px 10px; background:#fbfdff;">
+                            <div style="font-size:11px; font-weight:700; color:#5b6b7f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;"><?= e($term) ?></div>
+                            <div style="font-size:12px; color:#3d5268; line-height:1.45; white-space:normal;"><?= e($definition) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </details>
+
+            <details style="border:1px solid #e3ecf8; background:#ffffff; border-radius:10px; padding:10px 12px;">
+                <summary style="cursor:pointer; font-size:12px; font-weight:700; color:#1d3a57; outline:none;">Operator reminders</summary>
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#42566d; line-height:1.5; white-space:normal;">
+                    <div><strong>No automation assumption</strong>: review dates and packet states describe operator posture, not autonomous messaging.</div>
+                    <div><strong>Source integrity first</strong>: if the source relationship is missing or wrong, fix that before polishing continuity notes.</div>
+                    <div><strong>Queue and loyalty stay linked</strong>: queue cards are scan aids; the saved loyalty record remains the deeper continuity workspace.</div>
+                </div>
+            </details>
+        </div>
+    </div>
+</div>

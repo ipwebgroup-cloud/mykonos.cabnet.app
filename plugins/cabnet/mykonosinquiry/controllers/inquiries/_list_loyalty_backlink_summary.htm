@@ -78,18 +78,4 @@ $packetToneMap = [
             </a>
         </div>
     <?php endif; ?>
-
-    <details style="margin-top:8px;">
-        <summary style="cursor:pointer; font-size:11px; color:<?= e($text) ?>;" title="Glossary for the loyalty continuity terms used on this queue row.">Glossary</summary>
-        <div style="margin-top:6px; font-size:11px; color:<?= e($text) ?>; line-height:1.45;">
-            <div><strong title="High-level backlink state between this inquiry and its loyalty record.">Loyalty backlink</strong>: queue-side link to the saved loyalty continuity record.</div>
-            <div><strong title="Queue-side continuity snapshot from the linked loyalty history.">Queue-to-history cue</strong>: latest outcome, packet cue, and review timing without opening loyalty first.</div>
-            <div><strong title="Most recent recorded loyalty result.">Latest outcome</strong>: newest touchpoint result logged on the loyalty side.</div>
-            <div><strong title="Newest internal continuity brief prepared for the next human move.">Latest packet</strong>: latest prepared operator packet or brief.</div>
-            <div><strong title="Always-visible scan pill for packet readiness on a linked queue row.">Packet badge</strong>: quick packet-state cue visible before opening loyalty history.</div>
-            <div><strong title="Always-visible scan pill for the next linked loyalty review checkpoint.">Next review pill</strong>: quick revisit-timing cue shown beside the packet badge on linked queue rows.</div>
-            <div><strong title="Direct jump into the linked loyalty record on the History tab.">Open loyalty history</strong>: opens the linked continuity record straight on its history timeline.</div>
-            <div><strong title="Next human review checkpoint for the linked loyalty record.">Next review</strong>: next visible revisit time for continuity handling.</div>
-        </div>
-    </details>
 </div>

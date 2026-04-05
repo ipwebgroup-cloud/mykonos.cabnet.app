@@ -23,15 +23,16 @@ fields:
         type: partial
         context: create
         path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_create_source_inquiry_context.htm
-        span: full
+        span: left
         comment: Create-mode backlink summary and seed validation for inquiry-backed loyalty drafts.
 
-    admin_terminology_glossary:
-        label: Admin Terminology Guide
+    admin_help_sidebar_create:
+        label: Help & Glossary
         type: partial
-        path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_admin_terminology_glossary.htm
-        span: full
-        comment: Quick glossary for continuity terms used across queue, source-context digests, and loyalty history cues.
+        context: create
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_help_sidebar.htm
+        span: right
+        comment: Centralized docs, help, and glossary panel for loyalty create work.
 
 tabs:
     fields:
@@ -50,8 +51,17 @@ tabs:
             context: update
             path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_source_inquiry_link.htm
             tab: Overview
-            span: full
+            span: left
             comment: Direct jump back to the originating inquiry record.
+
+        overview_help_sidebar:
+            label: Help & Glossary
+            type: partial
+            context: update
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_help_sidebar.htm
+            tab: Overview
+            span: right
+            comment: Centralized docs, help, and glossary panel for loyalty continuity terminology.
 
         guest_snapshot:
             label: Guest Snapshot
@@ -1610,6 +1620,15 @@ tabs:
             span: full
             comment: Keep source inquiry posture visible while operators review and adjust live continuity fields.
 
+        workspace_help_sidebar:
+            label: Help & Glossary
+            type: partial
+            context: update
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_help_sidebar.htm
+            tab: Workspace
+            span: right
+            comment: Centralized docs, help, and glossary panel for live continuity editing.
+
         continuity_status:
             label: Continuity Status
             type: dropdown
@@ -1874,6 +1893,15 @@ tabs:
             tab: History
             span: full
             comment: Compact comparison of source posture, continuity posture, latest outcome, and packet state before deeper history review.
+
+        history_help_sidebar:
+            label: Help & Glossary
+            type: partial
+            context: update
+            path: ~/plugins/cabnet/mykonosinquiry/controllers/loyaltyrecords/_help_sidebar.htm
+            tab: History
+            span: right
+            comment: Centralized docs, help, and glossary panel for outcome and packet review.
 
         outcome_digest:
             label: Latest Outcome Digest
