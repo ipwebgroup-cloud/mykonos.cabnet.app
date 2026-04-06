@@ -418,3 +418,6 @@
 
 2.4.12:
   - 'Add plain-English loyalty screen guidance and simpler docs wording for operator readability'
+
+2.4.13:
+  - 'Simplify the Inquiry Queue toolbar into a faster plain-language fast-start shell and move heavy guidance back to the docs page'

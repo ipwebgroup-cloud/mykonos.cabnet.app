@@ -8,98 +8,57 @@
 </div>
 
 <div class="toolbar-item">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=queue&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to Inquiry Queue') . '&returnTitle=' . rawurlencode('Return to Inquiry Queue after reviewing queue guidance.') . '&returnSummary=' . rawurlencode('Queue docs opened from the live inquiry list, so the primary action returns operators to the queue while keeping Loyalty Continuity one click away.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '&sourceLabel=' . rawurlencode('Inquiry Queue list') . '&sourceSummary=' . rawurlencode('Opened from the live inquiry list toolbar while scanning ownership, urgency, follow-up discipline, and linked continuity cues.') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
-        Queue docs
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
+        Simple queue help
     </a>
 </div>
 
 <div id="myk-list-workspace-shell" class="myk-list-workspace-shell">
     <div class="operator-list-workspace-note">
-        <div class="operator-list-workspace-note__title">List Workspace Shell</div>
+        <div class="operator-list-workspace-note__title">Fast queue guide</div>
         <p class="operator-list-workspace-note__body">
-            This update reduces queue-page scroll fatigue by grouping the operator boards into expandable workspace sections.
-            The old right rail has been moved into a dedicated docs page so the queue can stay wider while operators still have one stable glossary reference point.
+            This page shows incoming guest requests. Keep it quick: pick who owns the request, reply to the guest,
+            set the next follow-up date, and only move a guest into the repeat-guest workspace when they are worth remembering after the trip.
         </p>
     </div>
 
-    <nav class="operator-list-workspace-nav" aria-label="List workspace quick links">
-        <a class="operator-list-workspace-nav__link" href="#workspace-queue-overview">Queue overview</a>
-        <a class="operator-list-workspace-nav__link" href="#workspace-triage-lanes">Triage lanes</a>
-        <a class="operator-list-workspace-nav__link" href="#workspace-triage-playbook">Queue playbook</a>
-        <a class="operator-list-workspace-nav__link" href="#workspace-record-bridge">Queue-to-record bridge</a>
-        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=bridge&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to Inquiry Queue') . '&returnTitle=' . rawurlencode('Return to Inquiry Queue or jump into Loyalty Continuity after checking bridge guidance.') . '&returnSummary=' . rawurlencode('Bridge docs usually open while deciding whether work stays queue-only, becomes transfer-ready, or should move into a loyalty record.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '&sourceLabel=' . rawurlencode('Inquiry Queue bridge workspace') . '&sourceSummary=' . rawurlencode('Opened from the queue workspace shell while deciding whether a row stays queue-only, becomes transfer-ready, or should move into continuity.') . '#help-bridge' ?>">Bridge docs</a>
+    <nav class="operator-list-workspace-nav" aria-label="Queue quick links">
+        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>">Queue help</a>
+        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>">Repeat-guest handoff help</a>
+        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>">Open repeat-guest list</a>
     </nav>
 
-    <details id="workspace-queue-overview" class="operator-list-workspace-section" open>
-        <summary>
-            <span>
-                <span class="operator-list-workspace-section__title">Queue overview</span>
-                <span class="operator-list-workspace-section__subtitle">
-                    Start here for live queue posture before drilling into individual records.
-                </span>
-            </span>
-            <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
-        </summary>
-        <div class="operator-list-workspace-section__body">
-            <?= $this->makePartial('queue_command_board') ?>
-        </div>
-    </details>
-
-    <details id="workspace-triage-lanes" class="operator-list-workspace-section" open>
-        <summary>
-            <span>
-                <span class="operator-list-workspace-section__title">Live triage lanes</span>
-                <span class="operator-list-workspace-section__subtitle">
-                    Open this section when assigning owners, clearing overdue follow-up, or handling today’s checkpoints.
-                </span>
-            </span>
-            <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
-        </summary>
-        <div class="operator-list-workspace-section__body">
-            <?= $this->makePartial('queue_lane_board') ?>
-        </div>
-    </details>
-
-    <details id="workspace-triage-playbook" class="operator-list-workspace-section">
-        <summary>
-            <span>
-                <span class="operator-list-workspace-section__title">Operator triage playbook</span>
-                <span class="operator-list-workspace-section__subtitle">
-                    Expand for queue discipline guidance before opening records one by one.
-                </span>
-            </span>
-            <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
-        </summary>
-        <div class="operator-list-workspace-section__body">
-            <p class="operator-list-workspace-inline-note">
-                Use this section when you need to reset queue handling order without adding more list filters.
-            </p>
-            <?= $this->makePartial('operator_triage_playbook') ?>
-        </div>
-    </details>
-
-    <details id="workspace-record-bridge" class="operator-list-workspace-section">
-        <summary>
-            <span>
-                <span class="operator-list-workspace-section__title">Queue-to-record bridge</span>
-                <span class="operator-list-workspace-section__subtitle">
-                    Expand only when operators need help choosing the safest first tab after opening an inquiry.
-                </span>
-            </span>
-            <span class="operator-list-workspace-section__state" aria-hidden="true"></span>
-        </summary>
+    <div class="operator-list-workspace-section" style="padding:18px 20px;">
         <div class="operator-list-workspace-section__body operator-list-workspace-stack">
-            <div>
-                <?= $this->makePartial('queue_to_record_bridge_board') ?>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+                <div style="border:1px solid #dbe3f0; border-radius:12px; background:#fff; padding:14px 16px;">
+                    <div style="font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#5b6b86; margin-bottom:8px;">What to do first</div>
+                    <div style="font-size:14px; color:#24324a; line-height:1.6;">
+                        Open the newest or most urgent request, confirm who owns it, and make sure the guest gets a reply or a next step.
+                    </div>
+                </div>
+                <div style="border:1px solid #dbe3f0; border-radius:12px; background:#fff; padding:14px 16px;">
+                    <div style="font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#5b6b86; margin-bottom:8px;">When to use the repeat-guest area</div>
+                    <div style="font-size:14px; color:#24324a; line-height:1.6;">
+                        Use the repeat-guest area only for people you may want to remember, re-contact, or welcome back later.
+                    </div>
+                </div>
+                <div style="border:1px solid #dbe3f0; border-radius:12px; background:#fff; padding:14px 16px;">
+                    <div style="font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#5b6b86; margin-bottom:8px;">Keep this page light</div>
+                    <div style="font-size:14px; color:#24324a; line-height:1.6;">
+                        Detailed process notes now live in the help page so this queue can open faster and stay easier to scan.
+                    </div>
+                </div>
             </div>
-            <div>
-                <?= $this->makePartial('record_opening_routes_board') ?>
-            </div>
-            <div>
-                <?= $this->makePartial('queue_to_record_playbook') ?>
+
+            <div style="border:1px dashed #cbd5e1; border-radius:12px; background:#f8fbff; padding:14px 16px; color:#30425f; line-height:1.6;">
+                <strong>Simple rule:</strong>
+                keep active guest work in the inquiry list,
+                keep future memory and return-value work in the repeat-guest list,
+                and use the help page only when you need definitions or step-by-step guidance.
             </div>
         </div>
-    </details>
+    </div>
 </div>
 
 <script>

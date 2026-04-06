@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.45 plain-language loyalty wording patch`
+- `v6.41.46 inquiry-queue fast-start simplification patch`
 
 This is a continuity hint only.
 
@@ -76,6 +76,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
 - keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
+- keep the Inquiry Queue itself lightweight and faster to open by using one plain-language fast-start block on the live page while leaving deeper workflow explanation in the docs page
 - keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
 - keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
 - keep the button labels operator-readable so queue, bridge, continuity, and record-screen help are distinguishable before the page opens
