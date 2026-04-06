@@ -376,3 +376,6 @@
 
 2.3.97:
   - 'Re-ship helpcenter controller bootstrap and backend navigation registration for the dedicated docs page route'
+
+2.3.98:
+  - 'Use context-specific docs button labels across queue, loyalty, and record routes for faster operator recognition'

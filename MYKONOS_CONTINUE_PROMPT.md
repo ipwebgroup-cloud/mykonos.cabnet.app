@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.30 helpcenter route registration hotfix`
+- `v6.41.31 context-aware docs button label polish patch`
 
 This is a continuity hint only.
 
@@ -78,6 +78,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
 - keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
 - keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
+- keep the button labels operator-readable so queue, bridge, continuity, and record-screen help are distinguishable before the page opens
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
@@ -156,7 +157,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one dedicated backend docs page reachable from the Inquiry Queue and Loyalty Continuity toolbars, so the live list screens can stay wider and cleaner. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one dedicated backend docs page reachable from the Inquiry Queue and Loyalty Continuity toolbars, so the live list screens can stay wider and cleaner. The current safe polish direction is context-aware wording: `Queue docs`, `Bridge docs`, `Continuity docs`, `Inquiry screen help`, and `Loyalty screen help`. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
 
 ---
 

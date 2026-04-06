@@ -88,11 +88,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.30 helpcenter route registration hotfix`
-- plugin tracking `2.3.97`
+- `v6.41.31 context-aware docs button label polish patch`
+- plugin tracking `2.3.98`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while routing queue, loyalty, and record-screen docs buttons to the most relevant docs-page anchors, so operators land closer to the section they actually need.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while preserving the context-aware docs-page anchors and making the labels operator-readable at a glance: `Queue docs`, `Bridge docs`, `Continuity docs`, `Inquiry screen help`, and `Loyalty screen help`.
 
 ---
 
@@ -117,23 +117,23 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` no longer shows the old right-side help rail
-- confirm the Inquiry Queue toolbar `Workspace docs & glossary` button opens the docs page at the `Queue docs` section
-- confirm the Queue workspace-shell `Open bridge docs` link opens the docs page at the `Queue-to-loyalty bridge` section
-- confirm the Loyalty Continuity toolbar `Workspace docs & glossary` button opens the docs page at the `Loyalty continuity` section
-- confirm inquiry create/update `Workspace docs & glossary` buttons open the docs page at the `Record screens` section
-- confirm loyalty create/update `Workspace docs & glossary` buttons also open the docs page at the `Record screens` section
+- confirm the Inquiry Queue toolbar `Queue docs` button opens the docs page at the `Queue docs` section
+- confirm the Queue workspace-shell `Bridge docs` link opens the docs page at the `Queue-to-loyalty bridge` section
+- confirm the Loyalty Continuity toolbar `Continuity docs` button opens the docs page at the `Loyalty continuity` section
+- confirm inquiry create/update `Inquiry screen help` buttons open the docs page at the `Record screens` section
+- confirm loyalty create/update `Loyalty screen help` buttons also open the docs page at the `Record screens` section
 - confirm the landing section receives a visible target highlight without reintroducing a right-side rail
-- confirm the queue toolbar now includes `Workspace docs & glossary`
+- confirm the queue toolbar now includes `Queue docs`
 - open that button and confirm the dedicated docs page loads
 - confirm the docs page includes search, quick section jumps, queue guidance, loyalty guidance, and glossary terms
 - confirm the backend side menu now includes `Workspace Docs`
 - open Backend -> Mykonos Inquiries -> Workspace Docs and confirm the dedicated docs page loads directly from navigation
 - open Backend -> Mykonos Inquiries -> New inquiry and confirm `Workspace docs & glossary` appears above the form
-- open an existing inquiry record and confirm the same docs button appears above the inquiry header without narrowing the record screen
-- open Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` -> `New Loyalty Record` and confirm the page now shows a top `Workspace docs & glossary` button
-- open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the update page also shows the same `Workspace docs & glossary` button
+- open an existing inquiry record and confirm the `Inquiry screen help` button appears above the inquiry header without narrowing the record screen
+- open Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` -> `New Loyalty Record` and confirm the page now shows a top `Loyalty screen help` button
+- open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the update page also shows the same `Loyalty screen help` button
 - click the button from create/update and confirm the dedicated docs page opens without restoring an inline right-side rail
-- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` also shows the same `Workspace docs & glossary` button and no longer renders the old right-side help rail on the list page
+- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` now shows `Continuity docs` and no longer renders the old right-side help rail on the list page
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
