@@ -415,3 +415,6 @@
 
 2.4.11:
   - 'Add docs-page copy-mailto-link utility for testing and support troubleshooting'
+
+2.4.12:
+  - 'Add plain-English loyalty screen guidance and simpler docs wording for operator readability'

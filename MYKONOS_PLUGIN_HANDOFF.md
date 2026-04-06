@@ -88,12 +88,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.44 docs-page copy-mailto-link utility patch`
-- plugin tracking `2.4.11`
+- `v6.41.45 plain-language loyalty wording patch`
+- plugin tracking `2.4.12`
 
 This patch does not change schema and does not touch `/plan`.
-It adds one compact `Copy mailto link` helper to the docs-page hero so operators can copy the exact generated mailto URL that matches the current focus, anchor, recipient preset, and docs-link context.
-It keeps the dedicated docs-page workflow intact while extending the email-handoff utility line with one troubleshooting-friendly browser-test artifact that can be pasted into support notes or opened manually when mail-app launch behavior needs verification.
+It adds a plain-English guide block on the loyalty create and update screens, simplifies several loyalty help button labels, and rewrites the docs-page loyalty wording and glossary in more everyday language so the workflow is easier to understand at a glance.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:

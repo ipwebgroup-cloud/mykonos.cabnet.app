@@ -444,35 +444,35 @@
 
 <div class="myk-help-page" id="mykHelpPage">
     <section class="myk-help-hero">
-        <div class="myk-help-hero__eyebrow">Operator reference page</div>
-        <h1>Workspace docs, help &amp; glossary</h1>
+        <div class="myk-help-hero__eyebrow">Simple reference page</div>
+        <h1>Workspace help in plain English</h1>
         <p>
-            The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, inquiry detail handling, continuity posture, transfer cues, shared terminology, and consistent create/update navigation. Queue, loyalty, and record-screen help buttons now land on the most relevant section instead of always dropping operators at the top of the page.
+            The old right-side help rail has been moved into this full page so the working screens can stay wider and easier to read. Use this page as the simple reference for the inquiry list, repeat-guest follow-up, handoff decisions, shared wording, and create or update screens. The help buttons now open the most relevant section first instead of dropping you at the top of the page.
         </p>
         <div class="myk-help-context" id="mykHelpContext" aria-live="polite">
             <span class="myk-help-context__label">Current focus</span>
             <strong class="myk-help-context__badge" id="mykHelpContextBadge">Workspace docs</strong>
-            <span class="myk-help-context__summary" id="mykHelpContextSummary">Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.</span>
+            <span class="myk-help-context__summary" id="mykHelpContextSummary">Open this page from the list or record help buttons to jump straight to the most useful section first.</span>
         </div>
         <div class="myk-help-origin" id="mykHelpOrigin" aria-live="polite">
-            <span class="myk-help-origin__label">Opened from</span>
+            <span class="myk-help-origin__label">You came here from</span>
             <strong class="myk-help-origin__badge" id="mykHelpOriginBadge">Workspace Docs side menu</strong>
-            <span class="myk-help-origin__summary" id="mykHelpOriginSummary">This breadcrumb chip shows the exact screen family that launched the help page, so operators can confirm whether they came from a queue list, bridge view, continuity list, or a specific record screen.</span>
+            <span class="myk-help-origin__summary" id="mykHelpOriginSummary">This line shows which screen opened this help page, so you can quickly tell whether you came from a list, a handoff view, or a specific record.</span>
         </div>
         <div class="myk-help-routestatus" id="mykHelpRouteStatus" aria-live="polite">
             <div class="myk-help-routestatus__item">
-                <span class="myk-help-routestatus__label">Focus</span>
+                <span class="myk-help-routestatus__label">Main topic</span>
                 <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusFocus">Workspace docs</strong>
             </div>
             <div class="myk-help-routestatus__item">
-                <span class="myk-help-routestatus__label">Source route</span>
+                <span class="myk-help-routestatus__label">Opened from</span>
                 <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusOrigin">Workspace Docs side menu</strong>
             </div>
             <div class="myk-help-routestatus__item">
-                <span class="myk-help-routestatus__label">Primary return</span>
-                <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusReturn">Open Inquiry Queue</strong>
+                <span class="myk-help-routestatus__label">Back button goes to</span>
+                <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusReturn">Open inquiry list</strong>
             </div>
-            <div class="myk-help-routestatus__summary" id="mykHelpRouteStatusSummary">Workspace docs opened from Workspace Docs side menu and can return directly to Open Inquiry Queue from the sticky action bar below.</div>
+            <div class="myk-help-routestatus__summary" id="mykHelpRouteStatusSummary">Workspace docs opened from Workspace Docs side menu and can return directly to Open inquiry list from the sticky action bar below.</div>
             <div class="myk-help-routestatus__tools">
                 <button type="button" class="btn btn-default oc-icon-copy" id="mykHelpCopyContext">Copy route context</button>
                 <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyDocsLink">Copy docs link</button>
@@ -482,22 +482,22 @@
                 <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpOpenMailApp">Open mail app</button>
                 <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyMailtoLink">Copy mailto link</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, launch a one-click email draft in your mail app, copy the exact generated mailto link, or open the current docs section in a new tab for operator support and training handoff. Use the mail-recipient preset below to keep the draft blank or pre-address it before launch.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Use these buttons to copy the page context, copy the exact help link, prepare a share note, prepare an email or chat handoff, launch your mail app, copy the raw mailto link, or open the same help section in a new tab. The mail preset below lets you keep the draft blank or pre-address it first.</span>
             </div>
             <div class="myk-help-routestatus__mailpreset">
-                <span class="myk-help-routestatus__mailpreset-label">Mail recipient preset</span>
-                <select id="mykHelpMailRecipientPreset" aria-label="Mail recipient preset"></select>
-                <span class="myk-help-routestatus__mailpreset-summary" id="mykHelpMailRecipientSummary">Choose whether the mail-app draft should stay blank or open pre-addressed to the current project inbox or a route-provided escalation recipient.</span>
+                <span class="myk-help-routestatus__mailpreset-label">Email recipient preset</span>
+                <select id="mykHelpMailRecipientPreset" aria-label="Email recipient preset"></select>
+                <span class="myk-help-routestatus__mailpreset-summary" id="mykHelpMailRecipientSummary">Choose whether the email draft should stay blank or open already addressed to the Mykonos inbox or a future escalation contact.</span>
             </div>
             <div class="myk-help-routestatus__share">
-                <span class="myk-help-routestatus__share-label">Share-ready support snippet</span>
+                <span class="myk-help-routestatus__share-label">Share-ready help note</span>
                 <pre class="myk-help-routestatus__share-text" id="mykHelpShareSnippetPreview">Mykonos workspace docs reference will appear here once the page reads the current focus, source route, return target, and anchored section.</pre>
             </div>
         </div>
         <div class="myk-help-toolbar">
-            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
-            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open Loyalty Continuity</a>
-            <a href="#help-form-routes" class="btn btn-default oc-icon-location-arrow">Record-screen help</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open inquiry list</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open loyalty list</a>
+            <a href="#help-form-routes" class="btn btn-default oc-icon-location-arrow">Screen help</a>
         </div>
     </section>
 
@@ -505,22 +505,22 @@
         <div class="myk-help-returnbar__meta">
             <div class="myk-help-returnbar__eyebrow">Quick return actions</div>
             <div class="myk-help-returnbar__title" id="mykHelpReturnTitle">Return to the route family that opened this help page.</div>
-            <div class="myk-help-returnbar__summary" id="mykHelpReturnSummary">Queue docs can return to Inquiry Queue, continuity docs can return to Loyalty Continuity, and record-screen help can return to the current screen family.</div>
+            <div class="myk-help-returnbar__summary" id="mykHelpReturnSummary">Queue docs can return to Inquiry Queue, continuity docs can return to Repeat-guest follow-up, and record-screen help can return to the current screen family.</div>
         </div>
         <div class="myk-help-returnbar__actions">
-            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-level-up" id="mykHelpReturnPrimary">Open Inquiry Queue</a>
-            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh" id="mykHelpReturnSecondary">Open Loyalty Continuity</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-level-up" id="mykHelpReturnPrimary">Open inquiry list</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh" id="mykHelpReturnSecondary">Open loyalty list</a>
         </div>
     </div>
 
     <div class="myk-help-controls">
         <div class="myk-help-search">
-            <input type="search" id="mykHelpSearch" placeholder="Search docs or glossary" aria-label="Search docs or glossary">
+            <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
             <button type="button" class="myk-help-search__clear" id="mykHelpSearchClear" aria-label="Clear search">×</button>
         </div>
         <nav class="myk-help-nav" aria-label="Docs sections">
             <a href="#help-queue">Queue docs</a>
-            <a href="#help-loyalty">Loyalty continuity</a>
+            <a href="#help-loyalty">Repeat-guest follow-up</a>
             <a href="#help-bridge">Queue-to-loyalty bridge</a>
             <a href="#help-form-routes">Record screens</a>
             <a href="#help-glossary">Glossary</a>
@@ -533,7 +533,7 @@
             <section id="help-queue" class="myk-help-section" data-doc-section>
                 <h2>Inquiry Queue</h2>
                 <p class="myk-help-section__lead">
-                    Use the queue to read live operational posture before drilling into record detail. The queue should stay scan-friendly: owner state, urgency, linked continuity, latest packet signal, and next review timing should be visible before an operator opens deeper panels.
+                    Use the inquiry list to read the live situation before opening a record. Ownership, urgency, linked follow-up, latest brief state, and next review timing should be visible before you open deeper details.
                 </p>
                 <div class="myk-help-grid">
                     <article class="myk-help-card" data-doc-item>
@@ -548,16 +548,16 @@
                     </article>
                     <article class="myk-help-card" data-doc-item>
                         <div class="myk-help-card__eyebrow">Filter discipline</div>
-                        <div class="myk-help-card__title">Use the Loyalty Posture filter to isolate transfer work</div>
+                        <div class="myk-help-card__title">Use the repeat-guest filter to isolate handoff work</div>
                         <div class="myk-help-card__body">Separate linked, transfer-ready, draft-ready, and queue-only rows so continuity work does not widen the whole queue. This keeps proposal shaping and continuity stewardship from competing visually.</div>
                     </article>
                 </div>
             </section>
 
             <section id="help-loyalty" class="myk-help-section" data-doc-section>
-                <h2>Loyalty Continuity</h2>
+                <h2>Repeat-guest follow-up</h2>
                 <p class="myk-help-section__lead">
-                    Loyalty Continuity exists to preserve remembered-return value, referral potential, and revisit timing without confusing draft records with active retention work.
+                    This area tracks repeat-guest follow-up, referral potential, and revisit timing without mixing early drafts with active guest follow-up work.
                 </p>
                 <div class="myk-help-grid">
                     <article class="myk-help-card" data-doc-item>
@@ -586,7 +586,7 @@
                 <div class="myk-help-grid">
                     <article class="myk-help-card" data-doc-item>
                         <div class="myk-help-card__eyebrow">Linked to loyalty</div>
-                        <div class="myk-help-card__title">Continuity already owns the remembered-return lane</div>
+                        <div class="myk-help-card__title">Repeat-guest follow-up already owns this guest lane</div>
                         <div class="myk-help-card__body">The source inquiry already has a loyalty record. Operators can open the linked record or jump straight to history if they only need the latest continuity result.</div>
                     </article>
                     <article class="myk-help-card" data-doc-item>
@@ -637,7 +637,7 @@
                         <div class="myk-help-card__eyebrow">Loyalty screens</div>
                         <div class="myk-help-card__title">Use the same route pattern across continuity work</div>
                         <div class="myk-help-card__body">
-                            Loyalty create and update stay aligned with the same three stable routes: workspace docs, Loyalty Continuity, and Inquiry Queue. This keeps operators oriented without reintroducing a persistent right-side help column.
+                            Repeat-guest create and update screens keep the same three simple routes: help page, loyalty list, and inquiry list. This keeps orientation clear without bringing back a permanent right-side help column.
                         </div>
                     </article>
                 </div>
@@ -647,32 +647,32 @@
                 <h2>Glossary</h2>
                 <div class="myk-help-glossary">
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Source anchor</div>
-                        <div class="myk-help-term__desc">The original inquiry reference and guest identity context that continuity work should keep tied to the live record.</div>
+                        <div class="myk-help-term__name">Original request</div>
+                        <div class="myk-help-term__desc">The original guest request and identity details that this repeat-guest record should stay connected to.</div>
                     </article>
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Source posture</div>
-                        <div class="myk-help-term__desc">The queue or closing posture of the source inquiry, used to compare whether continuity is early, aligned, or already late to the handoff.</div>
+                        <div class="myk-help-term__name">Original request status</div>
+                        <div class="myk-help-term__desc">The status of the original request, used to compare whether repeat-guest follow-up started at the right time.</div>
                     </article>
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Continuity posture</div>
-                        <div class="myk-help-term__desc">The current loyalty lane status, usually continuity state plus stage, showing how mature the remembered-return work is.</div>
+                        <div class="myk-help-term__name">Repeat-guest follow-up status</div>
+                        <div class="myk-help-term__desc">The current repeat-guest status, usually a mix of overall state and stage, showing how far the follow-up work has progressed.</div>
                     </article>
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Value signal</div>
-                        <div class="myk-help-term__desc">A compact commercial reading such as watch, promising, strong, or flagship that helps operators decide how much future-stay memory discipline is justified.</div>
+                        <div class="myk-help-term__name">Repeat-booking signal</div>
+                        <div class="myk-help-term__desc">A short reading such as watch, promising, strong, or flagship that helps decide how much future follow-up effort makes sense.</div>
                     </article>
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Latest outcome</div>
-                        <div class="myk-help-term__desc">The most recent recorded continuity result, used to tell whether the lane advanced, paused, was retained, or needs revisit work.</div>
+                        <div class="myk-help-term__name">Latest result</div>
+                        <div class="myk-help-term__desc">The most recent follow-up result, showing whether the guest lane moved forward, paused, was retained, or needs another review.</div>
                     </article>
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Latest packet</div>
-                        <div class="myk-help-term__desc">The most recent packet-readiness signal, such as no packet, watch, pending, or prepared. It helps operators judge how structured the next remembered-return move already is.</div>
+                        <div class="myk-help-term__name">Latest brief status</div>
+                        <div class="myk-help-term__desc">The latest state of the follow-up brief, such as no brief, watch, pending, or prepared. It shows how ready the next step already is.</div>
                     </article>
                     <article class="myk-help-term" data-doc-item>
-                        <div class="myk-help-term__name">Next review</div>
-                        <div class="myk-help-term__desc">The next continuity checkpoint timing. Queue rows and loyalty rows surface this so operators can see revisit timing without opening deeper forms.</div>
+                        <div class="myk-help-term__name">Next check-in</div>
+                        <div class="myk-help-term__desc">The next planned review time. The lists show this so operators can see timing without opening the full form.</div>
                     </article>
                 </div>
             </section>
@@ -749,7 +749,7 @@
             summary: 'Use this section when deciding whether work should stay in the live inquiry lane, move into continuity, or remain as a seeded draft.'
         },
         'help-form-routes': {
-            badge: 'Record-screen help',
+            badge: 'Screen help',
             summary: 'Use this section while working inside inquiry or loyalty create and update screens so route guidance stays close without shrinking the forms.'
         },
         'help-glossary': {
@@ -764,7 +764,7 @@
 
     var defaultContext = {
         badge: 'Workspace docs',
-        summary: 'Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.'
+        summary: 'Open this page from the list or record help buttons to jump straight to the most useful section first.'
     };
 
     var originMap = {
@@ -777,8 +777,8 @@
             summary: 'This help page was opened from the queue workspace shell while operators were deciding whether work stays queue-only, becomes transfer-ready, or moves into continuity.'
         },
         'continuity': {
-            badge: 'Loyalty Continuity list',
-            summary: 'This help page was opened from the live Loyalty Continuity list, where operators scan latest outcome, packet state, and revisit timing.'
+            badge: 'Repeat-guest follow-up list',
+            summary: 'This help page was opened from the live Repeat-guest follow-up list, where operators scan latest outcome, packet state, and revisit timing.'
         },
         'inquiry-create': {
             badge: 'New inquiry screen',
@@ -805,11 +805,11 @@
 
     var defaultReturnState = {
         title: 'Return to the route family that opened this help page.',
-        summary: 'Queue docs can return to Inquiry Queue, continuity docs can return to Loyalty Continuity, and record-screen help can return to the current screen family.',
+        summary: 'Queue docs can return to Inquiry Queue, continuity docs can return to Repeat-guest follow-up, and record-screen help can return to the current screen family.',
         primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
-        primaryLabel: 'Open Inquiry Queue',
+        primaryLabel: 'Open inquiry list',
         secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
-        secondaryLabel: 'Open Loyalty Continuity'
+        secondaryLabel: 'Open loyalty list'
     };
 
     var inferredReturnMap = {
@@ -819,23 +819,23 @@
             primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
             primaryLabel: 'Back to Inquiry Queue',
             secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
-            secondaryLabel: 'Open Loyalty Continuity'
+            secondaryLabel: 'Open loyalty list'
         },
         'help-bridge': {
-            title: 'Return to Inquiry Queue or jump straight into Loyalty Continuity.',
+            title: 'Return to Inquiry Queue or jump straight into Repeat-guest follow-up.',
             summary: 'Bridge guidance is usually used while deciding whether a record should stay queue-only, become transfer-ready, or move into an inquiry-backed continuity draft.',
             primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
             primaryLabel: 'Back to Inquiry Queue',
             secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
-            secondaryLabel: 'Open Loyalty Continuity'
+            secondaryLabel: 'Open loyalty list'
         },
         'help-loyalty': {
-            title: 'Return to Loyalty Continuity after reviewing continuity posture.',
+            title: 'Return to Repeat-guest follow-up after reviewing continuity posture.',
             summary: 'Use this when latest outcome, packet state, revisit timing, or source-inquiry backlink cues needed a quick reference before going back to the list.',
             primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
-            primaryLabel: 'Back to Loyalty Continuity',
+            primaryLabel: 'Back to Repeat-guest follow-up',
             secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
-            secondaryLabel: 'Open Inquiry Queue'
+            secondaryLabel: 'Open inquiry list'
         },
         'help-form-routes': {
             title: 'Return to the current record-screen family after checking route guidance.',
@@ -843,7 +843,7 @@
             primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
             primaryLabel: 'Back to current screen family',
             secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
-            secondaryLabel: 'Open Inquiry Queue'
+            secondaryLabel: 'Open inquiry list'
         },
         'help-glossary': {
             title: 'Return to the operator route that needed glossary clarification.',
@@ -851,7 +851,7 @@
             primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
             primaryLabel: 'Return to operator route',
             secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
-            secondaryLabel: 'Open Loyalty Continuity'
+            secondaryLabel: 'Open loyalty list'
         },
         'help-reminders': {
             title: 'Return to the working route after checking guardrails.',
@@ -859,7 +859,7 @@
             primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
             primaryLabel: 'Return to operator route',
             secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
-            secondaryLabel: 'Open Loyalty Continuity'
+            secondaryLabel: 'Open loyalty list'
         }
     };
 
@@ -1045,11 +1045,11 @@
         var sectionLabel = currentTargetId || 'top-of-page';
         var preset = currentMailPresetState || getSelectedMailPresetState();
         var lines = [
-            'Focus: ' + ((currentContextState && currentContextState.badge) || defaultContext.badge),
-            'Source route: ' + ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge),
-            'Primary return: ' + ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel),
+            'Main topic: ' + ((currentContextState && currentContextState.badge) || defaultContext.badge),
+            'Opened from: ' + ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge),
+            'Back button goes to: ' + ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel),
             'Target section: ' + sectionLabel,
-            'Mail recipient preset: ' + getMailRecipientDisplay(preset)
+            'Email recipient preset: ' + getMailRecipientDisplay(preset)
         ];
 
         return lines.join('\n');
@@ -1065,11 +1065,11 @@
 
         return [
             'Mykonos workspace docs reference',
-            'Focus: ' + focus,
-            'Opened from: ' + source,
-            'Primary return: ' + primaryReturn,
+            'Main topic: ' + focus,
+            'You came here from: ' + source,
+            'Back button goes to: ' + primaryReturn,
             'Target section: ' + targetSection,
-            'Mail recipient preset: ' + getMailRecipientDisplay(preset),
+            'Email recipient preset: ' + getMailRecipientDisplay(preset),
             'Docs link: ' + link,
             '',
             'Use this link to open the same context-aware help section during operator support, issue review, or training handoff.'
@@ -1108,11 +1108,11 @@
             '',
             'Please review this Mykonos workspace docs context:',
             '',
-            'Focus: ' + focus,
-            'Opened from: ' + source,
-            'Primary return: ' + primaryReturn,
+            'Main topic: ' + focus,
+            'You came here from: ' + source,
+            'Back button goes to: ' + primaryReturn,
             'Target section: ' + targetSection,
-            'Mail recipient preset: ' + getMailRecipientDisplay(preset),
+            'Email recipient preset: ' + getMailRecipientDisplay(preset),
             'Docs link: ' + link,
             '',
             'Use the link above to open the same anchored help section during operator support, escalation, or training handoff.',
@@ -1133,7 +1133,7 @@
 
         return [
             'Mykonos docs handoff',
-            'Focus: ' + focus,
+            'Main topic: ' + focus,
             'From: ' + source,
             'Return: ' + primaryReturn,
             'Section: ' + targetSection,
@@ -1155,11 +1155,11 @@
             '',
             'Please review this Mykonos workspace docs context:',
             '',
-            'Focus: ' + focus,
-            'Opened from: ' + source,
-            'Primary return: ' + primaryReturn,
+            'Main topic: ' + focus,
+            'You came here from: ' + source,
+            'Back button goes to: ' + primaryReturn,
             'Target section: ' + targetSection,
-            'Mail recipient preset: ' + getMailRecipientDisplay(preset),
+            'Email recipient preset: ' + getMailRecipientDisplay(preset),
             'Docs link: ' + link,
             '',
             'Use the link above to open the same anchored help section during operator support, escalation, or training handoff.',
@@ -1411,7 +1411,7 @@
                 mailRecipientSummary.textContent = currentMailPresetState.summary;
             }
             refreshShareSnippetPreview();
-            setCopyStatus('Mail recipient preset updated to ' + getMailRecipientDisplay(currentMailPresetState) + '. Copy/email helpers will now use this selection.');
+            setCopyStatus('Email recipient preset updated to ' + getMailRecipientDisplay(currentMailPresetState) + '. Copy/email helpers will now use this selection.');
         });
     }
 

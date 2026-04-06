@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.44 docs-page copy-mailto-link utility patch`
+- `v6.41.45 plain-language loyalty wording patch`
 
 This is a continuity hint only.
 
@@ -90,6 +90,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep one compact docs-page open-mail-app helper available so operators can launch a one-click mailto draft using the same subject, body, and exact docs-link context already exposed by the email-draft utility
 - keep one compact docs-page mail-recipient preset layer available so operators can keep that email draft blank or pre-address it to the Mykonos inbox or a future route-provided escalation recipient before launch
 - keep one compact docs-page `Copy mailto link` helper available so operators can capture the exact generated mailto URL for browser tests, support notes, or escalation troubleshooting without reconstructing the draft manually
+- keep loyalty create/update screens readable for non-technical operators by pairing stable internal labels with one visible plain-English guide at the top of the form
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion

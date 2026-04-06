@@ -6,15 +6,107 @@
 <?php Block::endPut() ?>
 
 <div data-control="toolbar">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create')) . '&returnLabel=' . rawurlencode('Back to New Loyalty Record') . '&returnTitle=' . rawurlencode('Return to the new loyalty record screen after checking record guidance.') . '&returnSummary=' . rawurlencode('Loyalty screen help opened from the create route, so the primary action returns directly to the new loyalty record form.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '&sourceLabel=' . rawurlencode('New loyalty record screen') . '&sourceSummary=' . rawurlencode('Opened from the loyalty create route while shaping a manual or inquiry-backed continuity draft.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
-        Loyalty screen help
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create')) . '&returnLabel=' . rawurlencode('Back to New Loyalty Record') . '&returnTitle=' . rawurlencode('Return to the new loyalty record screen after checking record guidance.') . '&returnSummary=' . rawurlencode('Simple help for this page opened from the create route, so the primary action returns directly to the new loyalty record form.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '&sourceLabel=' . rawurlencode('New loyalty record screen') . '&sourceSummary=' . rawurlencode('Opened from the loyalty create route while shaping a manual or inquiry-backed continuity draft.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+        Simple help for this page
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
-        Back to Loyalty Continuity
+        Back to loyalty list
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">
-        Open Inquiry Queue
+        Open inquiry list
     </a>
+</div>
+
+<style>
+.myk-plain-guide {
+    margin: 14px 0 16px;
+    border: 1px solid #d9e2f3;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+    padding: 16px 18px;
+    box-shadow: 0 12px 26px rgba(28, 53, 112, 0.05);
+}
+.myk-plain-guide__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #5b66e3;
+    margin-bottom: 6px;
+}
+.myk-plain-guide h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.25;
+    color: #24364b;
+}
+.myk-plain-guide p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #536274;
+}
+.myk-plain-guide__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+.myk-plain-guide__item {
+    border: 1px solid #e0e8f4;
+    border-radius: 14px;
+    background: rgba(255,255,255,.92);
+    padding: 10px 12px;
+}
+.myk-plain-guide__item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #24364b;
+}
+.myk-plain-guide__item span {
+    display: block;
+    color: #5a6a7d;
+    line-height: 1.6;
+    font-size: 13px;
+}
+@media (max-width: 900px) {
+    .myk-plain-guide__grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="myk-plain-guide">
+    <div class="myk-plain-guide__eyebrow">Plain-English guide</div>
+    <h3>Simple meaning of the main terms on this page</h3>
+    <p>
+        This screen is for <strong>repeat-guest follow-up</strong>. The labels are staying stable for now, but this guide explains them in everyday language so the page is easier to read.
+    </p>
+    <div class="myk-plain-guide__grid">
+        <div class="myk-plain-guide__item">
+            <strong>Continuity Status</strong>
+            <span>The overall follow-up status for this guest.</span>
+        </div>
+        <div class="myk-plain-guide__item">
+            <strong>Loyalty Stage</strong>
+            <span>Where this guest stands right now in the repeat-guest journey.</span>
+        </div>
+        <div class="myk-plain-guide__item">
+            <strong>Return-Value Tier</strong>
+            <span>How strong the repeat-booking potential looks.</span>
+        </div>
+        <div class="myk-plain-guide__item">
+            <strong>Packet Recommendation</strong>
+            <span>The kind of next-step brief, reminder, or follow-up pack to prepare.</span>
+        </div>
+        <div class="myk-plain-guide__item">
+            <strong>Source Inquiry ID</strong>
+            <span>The original guest request this record came from.</span>
+        </div>
+        <div class="myk-plain-guide__item">
+            <strong>Workspace Source-Context Digest</strong>
+            <span>A quick summary of the original request and the current repeat-guest follow-up position.</span>
+        </div>
+    </div>
 </div>
 
 <?= Form::open(['class' => 'layout']) ?>
