@@ -187,6 +187,40 @@
     line-height: 1.65;
     color: #4f6176;
 }
+.myk-help-routestatus__mailpreset {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 12px 14px;
+    border: 1px dashed #d6dfef;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.82);
+}
+.myk-help-routestatus__mailpreset-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6d7b90;
+}
+.myk-help-routestatus__mailpreset select {
+    min-width: 240px;
+    max-width: 100%;
+    min-height: 36px;
+    border: 1px solid #ccd6e4;
+    border-radius: 10px;
+    padding: 6px 10px;
+    background: #fff;
+    color: #2a3e58;
+}
+.myk-help-routestatus__mailpreset-summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5f6f83;
+    flex: 1 1 320px;
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -447,7 +481,12 @@
                 <button type="button" class="btn btn-default oc-icon-comment" id="mykHelpCopyChatHandoff">Copy chat handoff</button>
                 <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpOpenMailApp">Open mail app</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, open a one-click email draft in your mail app, or open the current docs section in a new tab for operator support and training handoff.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, launch a one-click email draft in your mail app, or open the current docs section in a new tab for operator support and training handoff. Use the mail-recipient preset below to keep the draft blank or pre-address it before launch.</span>
+            </div>
+            <div class="myk-help-routestatus__mailpreset">
+                <span class="myk-help-routestatus__mailpreset-label">Mail recipient preset</span>
+                <select id="mykHelpMailRecipientPreset" aria-label="Mail recipient preset"></select>
+                <span class="myk-help-routestatus__mailpreset-summary" id="mykHelpMailRecipientSummary">Choose whether the mail-app draft should stay blank or open pre-addressed to the current project inbox or a route-provided escalation recipient.</span>
             </div>
             <div class="myk-help-routestatus__share">
                 <span class="myk-help-routestatus__share-label">Share-ready support snippet</span>
@@ -677,6 +716,8 @@
     var copyChatHandoffButton = document.getElementById('mykHelpCopyChatHandoff');
     var openMailAppButton = document.getElementById('mykHelpOpenMailApp');
     var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
+    var mailRecipientPreset = document.getElementById('mykHelpMailRecipientPreset');
+    var mailRecipientSummary = document.getElementById('mykHelpMailRecipientSummary');
     var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
     var shareSnippetPreview = document.getElementById('mykHelpShareSnippetPreview');
     var returnTitle = document.getElementById('mykHelpReturnTitle');
@@ -690,6 +731,7 @@
     var currentOriginState = null;
     var currentReturnState = null;
     var currentTargetId = '';
+    var currentMailPresetState = null;
 
     var contextMap = {
         'help-queue': {
@@ -836,6 +878,94 @@
         return value ? value : '';
     }
 
+    function getMailPresetOptions() {
+        var params = getSearchParams();
+        var queryMailTo = decodeParam(params, 'mailTo');
+        var queryMailLabel = decodeParam(params, 'mailToLabel');
+        var queryMailSummary = decodeParam(params, 'mailToSummary');
+        var queryMailCc = decodeParam(params, 'mailCc');
+        var queryMailBcc = decodeParam(params, 'mailBcc');
+        var options = [
+            {
+                key: 'blank',
+                label: 'Blank recipient',
+                email: '',
+                summary: 'Leave the draft unaddressed so the operator can choose the final escalation recipient manually before sending.',
+                cc: '',
+                bcc: ''
+            },
+            {
+                key: 'project-inbox',
+                label: 'Mykonos project inbox — mykonos@cabnet.app',
+                email: 'mykonos@cabnet.app',
+                summary: 'Pre-address the draft to the current project inbox while keeping the same subject, body, and docs-link context.',
+                cc: '',
+                bcc: ''
+            }
+        ];
+
+        if (queryMailTo) {
+            options.push({
+                key: 'route-recipient',
+                label: queryMailLabel || ('Route-provided recipient — ' + queryMailTo),
+                email: queryMailTo,
+                summary: queryMailSummary || 'Pre-address the draft to the recipient supplied by the route that opened this docs page.',
+                cc: queryMailCc,
+                bcc: queryMailBcc
+            });
+        }
+
+        return options;
+    }
+
+    function getSelectedMailPresetState() {
+        var options = getMailPresetOptions();
+        var selectedKey = mailRecipientPreset ? mailRecipientPreset.value : 'blank';
+        var selected = null;
+
+        options.forEach(function(option) {
+            if (option.key === selectedKey) {
+                selected = option;
+            }
+        });
+
+        return selected || options[0];
+    }
+
+    function renderMailRecipientPresets() {
+        if (!mailRecipientPreset) {
+            currentMailPresetState = getSelectedMailPresetState();
+            return;
+        }
+
+        var options = getMailPresetOptions();
+        var existingValue = mailRecipientPreset.value || 'blank';
+        mailRecipientPreset.innerHTML = '';
+
+        options.forEach(function(option) {
+            var item = document.createElement('option');
+            item.value = option.key;
+            item.textContent = option.label;
+            mailRecipientPreset.appendChild(item);
+        });
+
+        var nextValue = options.some(function(option) { return option.key === existingValue; }) ? existingValue : 'blank';
+        mailRecipientPreset.value = nextValue;
+        currentMailPresetState = getSelectedMailPresetState();
+
+        if (mailRecipientSummary) {
+            mailRecipientSummary.textContent = currentMailPresetState.summary;
+        }
+    }
+
+    function getMailRecipientDisplay(preset) {
+        if (!preset || !preset.email) {
+            return 'Blank recipient';
+        }
+
+        return preset.label;
+    }
+
     function updateOrigin() {
         var params = getSearchParams();
         var fromKey = decodeParam(params, 'from');
@@ -911,11 +1041,13 @@
 
     function buildCopyContextText() {
         var sectionLabel = currentTargetId || 'top-of-page';
+        var preset = currentMailPresetState || getSelectedMailPresetState();
         var lines = [
             'Focus: ' + ((currentContextState && currentContextState.badge) || defaultContext.badge),
             'Source route: ' + ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge),
             'Primary return: ' + ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel),
-            'Target section: ' + sectionLabel
+            'Target section: ' + sectionLabel,
+            'Mail recipient preset: ' + getMailRecipientDisplay(preset)
         ];
 
         return lines.join('\n');
@@ -927,6 +1059,7 @@
         var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
         var targetSection = currentTargetId || 'top-of-page';
         var link = buildAbsoluteSectionUrl();
+        var preset = currentMailPresetState || getSelectedMailPresetState();
 
         return [
             'Mykonos workspace docs reference',
@@ -934,6 +1067,7 @@
             'Opened from: ' + source,
             'Primary return: ' + primaryReturn,
             'Target section: ' + targetSection,
+            'Mail recipient preset: ' + getMailRecipientDisplay(preset),
             'Docs link: ' + link,
             '',
             'Use this link to open the same context-aware help section during operator support, issue review, or training handoff.'
@@ -946,10 +1080,27 @@
         var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
         var targetSection = currentTargetId || 'top-of-page';
         var link = buildAbsoluteSectionUrl();
+        var preset = currentMailPresetState || getSelectedMailPresetState();
         var subject = 'Mykonos workspace docs support — ' + focus + ' from ' + source;
+        var lines = [
+            'Subject: ' + subject
+        ];
 
-        return [
-            'Subject: ' + subject,
+        if (preset && preset.email) {
+            lines.push('To: ' + preset.email);
+        } else {
+            lines.push('To: [choose recipient in your mail app]');
+        }
+
+        if (preset && preset.cc) {
+            lines.push('Cc: ' + preset.cc);
+        }
+
+        if (preset && preset.bcc) {
+            lines.push('Bcc: ' + preset.bcc);
+        }
+
+        lines = lines.concat([
             '',
             'Hello,',
             '',
@@ -959,12 +1110,15 @@
             'Opened from: ' + source,
             'Primary return: ' + primaryReturn,
             'Target section: ' + targetSection,
+            'Mail recipient preset: ' + getMailRecipientDisplay(preset),
             'Docs link: ' + link,
             '',
             'Use the link above to open the same anchored help section during operator support, escalation, or training handoff.',
             '',
             'Thank you.'
-        ].join('\n');
+        ]);
+
+        return lines.join('\n');
     }
 
     function buildChatHandoffText() {
@@ -973,6 +1127,7 @@
         var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
         var targetSection = currentTargetId || 'top-of-page';
         var link = buildAbsoluteSectionUrl();
+        var preset = currentMailPresetState || getSelectedMailPresetState();
 
         return [
             'Mykonos docs handoff',
@@ -980,6 +1135,7 @@
             'From: ' + source,
             'Return: ' + primaryReturn,
             'Section: ' + targetSection,
+            'Mail preset: ' + getMailRecipientDisplay(preset),
             'Link: ' + link
         ].join('\n');
     }
@@ -990,6 +1146,7 @@
         var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
         var targetSection = currentTargetId || 'top-of-page';
         var link = buildAbsoluteSectionUrl();
+        var preset = currentMailPresetState || getSelectedMailPresetState();
         var subject = 'Mykonos workspace docs support — ' + focus + ' from ' + source;
         var body = [
             'Hello,',
@@ -1000,6 +1157,7 @@
             'Opened from: ' + source,
             'Primary return: ' + primaryReturn,
             'Target section: ' + targetSection,
+            'Mail recipient preset: ' + getMailRecipientDisplay(preset),
             'Docs link: ' + link,
             '',
             'Use the link above to open the same anchored help section during operator support, escalation, or training handoff.',
@@ -1007,7 +1165,21 @@
             'Thank you.'
         ].join('\n');
 
-        return 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        var address = (preset && preset.email) ? preset.email : '';
+        var queryParts = [
+            'subject=' + encodeURIComponent(subject),
+            'body=' + encodeURIComponent(body)
+        ];
+
+        if (preset && preset.cc) {
+            queryParts.push('cc=' + encodeURIComponent(preset.cc));
+        }
+
+        if (preset && preset.bcc) {
+            queryParts.push('bcc=' + encodeURIComponent(preset.bcc));
+        }
+
+        return 'mailto:' + address + '?' + queryParts.join('&');
     }
 
     function openMailAppDraft() {
@@ -1015,9 +1187,9 @@
 
         try {
             window.location.href = targetUrl;
-            setCopyStatus('Opened your mail app with the current docs context as a ready-made draft. Review the subject and body before sending the escalation or handoff.');
+            setCopyStatus('Opened your mail app with the current docs context as a ready-made draft using the selected recipient preset. Review the recipient, subject, and body before sending the escalation or handoff.');
         } catch (error) {
-            setCopyStatus('Mail-app launch was blocked in this browser context. You can still use Copy email draft to paste the same subject and body manually.');
+            setCopyStatus('Mail-app launch was blocked in this browser context. You can still use Copy email draft to paste the same recipient, subject, and body manually.');
         }
     }
 
@@ -1116,6 +1288,7 @@
         currentOriginState = originState;
         currentReturnState = returnState;
         currentTargetId = targetId || '';
+        renderMailRecipientPresets();
         updateRouteStatus(context, originState, returnState);
         refreshShareSnippetPreview();
 
@@ -1202,7 +1375,7 @@
     if (copyShareSnippetButton) {
         copyShareSnippetButton.addEventListener('click', function() {
             copyTextToClipboard(buildShareSnippetText()).then(function() {
-                setCopyStatus('Copied a ready-to-send support snippet with the docs link and current route context. You can paste it into email, chat, or operator handoff notes.');
+                setCopyStatus('Copied a ready-to-send support snippet with the docs link, current route context, and selected mail-recipient preset. You can paste it into email, chat, or operator handoff notes.');
             }).catch(function() {
                 setCopyStatus('Share-snippet copy failed in this browser context. You can still copy the preview block manually from the route-status area below.');
             });
@@ -1212,7 +1385,7 @@
     if (copyEmailDraftButton) {
         copyEmailDraftButton.addEventListener('click', function() {
             copyTextToClipboard(buildEmailDraftText()).then(function() {
-                setCopyStatus('Copied an email-ready escalation draft with subject, body, and the exact context-aware docs link. You can paste it directly into operator email or ticket notes.');
+                setCopyStatus('Copied an email-ready escalation draft with the selected recipient preset, subject, body, and the exact context-aware docs link. You can paste it directly into operator email or ticket notes.');
             }).catch(function() {
                 setCopyStatus('Email-draft copy failed in this browser context. You can still use Copy share snippet or manually build an email from the preview and docs link above.');
             });
@@ -1222,10 +1395,21 @@
     if (copyChatHandoffButton) {
         copyChatHandoffButton.addEventListener('click', function() {
             copyTextToClipboard(buildChatHandoffText()).then(function() {
-                setCopyStatus('Copied a short chat handoff with the current focus, source route, return target, section, and exact docs link. You can paste it into Slack, WhatsApp, or operator chat notes.');
+                setCopyStatus('Copied a short chat handoff with the current focus, source route, return target, section, selected mail preset, and exact docs link. You can paste it into Slack, WhatsApp, or operator chat notes.');
             }).catch(function() {
                 setCopyStatus('Chat-handoff copy failed in this browser context. You can still use Copy route context or Copy share snippet for a longer support message.');
             });
+        });
+    }
+
+    if (mailRecipientPreset) {
+        mailRecipientPreset.addEventListener('change', function() {
+            currentMailPresetState = getSelectedMailPresetState();
+            if (mailRecipientSummary && currentMailPresetState) {
+                mailRecipientSummary.textContent = currentMailPresetState.summary;
+            }
+            refreshShareSnippetPreview();
+            setCopyStatus('Mail recipient preset updated to ' + getMailRecipientDisplay(currentMailPresetState) + '. Copy/email helpers will now use this selection.');
         });
     }
 
