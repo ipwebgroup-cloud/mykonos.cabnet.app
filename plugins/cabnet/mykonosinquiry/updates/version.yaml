@@ -370,3 +370,6 @@
 
 2.3.95:
   - 'Add page-based docs navigation to inquiry create/update screens and expose Workspace Docs in the backend side menu'
+
+2.3.96:
+  - 'Route queue, loyalty, and record-screen docs buttons to context-aware help page anchors'

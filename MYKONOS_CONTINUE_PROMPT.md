@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.28 inquiry screen docs-nav and side-menu docs link patch`
+- `v6.41.29 context-aware docs entry anchors patch`
 
 This is a continuity hint only.
 
@@ -77,6 +77,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - preserve inquiry-detail prefilled draft transfer behavior
 - keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
 - keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
+- keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion

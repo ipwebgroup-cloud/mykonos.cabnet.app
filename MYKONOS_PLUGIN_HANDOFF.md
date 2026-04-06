@@ -88,11 +88,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.28 inquiry screen docs-nav and side-menu docs link patch`
-- plugin tracking `2.3.95`
+- `v6.41.29 context-aware docs entry anchors patch`
+- plugin tracking `2.3.96`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while extending the docs-page navigation pattern onto inquiry create/update screens as well, and exposing the docs page directly in the backend side menu so all operator-facing routes share one stable help entry point.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while routing queue, loyalty, and record-screen docs buttons to the most relevant docs-page anchors, so operators land closer to the section they actually need.
 
 ---
 
@@ -115,6 +115,12 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` no longer shows the old right-side help rail
+- confirm the Inquiry Queue toolbar `Workspace docs & glossary` button opens the docs page at the `Queue docs` section
+- confirm the Queue workspace-shell `Open bridge docs` link opens the docs page at the `Queue-to-loyalty bridge` section
+- confirm the Loyalty Continuity toolbar `Workspace docs & glossary` button opens the docs page at the `Loyalty continuity` section
+- confirm inquiry create/update `Workspace docs & glossary` buttons open the docs page at the `Record screens` section
+- confirm loyalty create/update `Workspace docs & glossary` buttons also open the docs page at the `Record screens` section
+- confirm the landing section receives a visible target highlight without reintroducing a right-side rail
 - confirm the queue toolbar now includes `Workspace docs & glossary`
 - open that button and confirm the dedicated docs page loads
 - confirm the docs page includes search, quick section jumps, queue guidance, loyalty guidance, and glossary terms

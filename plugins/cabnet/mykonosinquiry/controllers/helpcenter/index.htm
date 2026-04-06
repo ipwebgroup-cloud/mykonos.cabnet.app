@@ -103,6 +103,13 @@
     margin-bottom: 18px;
     box-shadow: 0 12px 24px rgba(20, 37, 63, 0.04);
 }
+.myk-help-section {
+    scroll-margin-top: 18px;
+}
+.myk-help-section--target {
+    border-color: #8aa7ff;
+    box-shadow: 0 0 0 3px rgba(91, 102, 227, 0.12), 0 14px 28px rgba(20, 37, 63, 0.08);
+}
 .myk-help-section h2 {
     margin: 0 0 8px;
     font-size: 21px;
@@ -193,7 +200,7 @@
         <div class="myk-help-hero__eyebrow">Operator reference page</div>
         <h1>Workspace docs, help &amp; glossary</h1>
         <p>
-            The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, inquiry detail handling, continuity posture, transfer cues, shared terminology, and consistent create/update navigation.
+            The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, inquiry detail handling, continuity posture, transfer cues, shared terminology, and consistent create/update navigation. Queue, loyalty, and record-screen help buttons now land on the most relevant section instead of always dropping operators at the top of the page.
         </p>
         <div class="myk-help-toolbar">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
@@ -399,7 +406,7 @@
     }
 
     function applySearch() {
-        var query = normalize(searchInput.value);
+        var query = searchInput ? normalize(searchInput.value) : '';
 
         items.forEach(function(item) {
             var text = normalize(item.textContent);
@@ -411,18 +418,49 @@
             var visibleItems = section.querySelectorAll('[data-doc-item]:not(.myk-help-hidden)');
             section.classList.toggle('myk-help-hidden', !!query && visibleItems.length === 0);
         });
+
+        applyTargetFromHash(false);
+    }
+
+    function applyTargetFromHash(shouldFocus) {
+        var hash = window.location.hash || '';
+        var targetId = hash.replace('#', '');
+        var target = targetId ? document.getElementById(targetId) : null;
+
+        sections.forEach(function(section) {
+            section.classList.remove('myk-help-section--target');
+        });
+
+        if (!target || !target.matches('[data-doc-section]') || target.classList.contains('myk-help-hidden')) {
+            return;
+        }
+
+        target.classList.add('myk-help-section--target');
+
+        if (shouldFocus) {
+            target.setAttribute('tabindex', '-1');
+            target.focus({ preventScroll: true });
+            target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        }
     }
 
     if (searchInput) {
         searchInput.addEventListener('input', applySearch);
     }
 
-    if (clearButton) {
+    if (clearButton && searchInput) {
         clearButton.addEventListener('click', function() {
             searchInput.value = '';
             applySearch();
             searchInput.focus();
         });
     }
+
+    window.addEventListener('hashchange', function() {
+        applyTargetFromHash(true);
+    });
+
+    applySearch();
+    applyTargetFromHash(false);
 })();
 </script>
