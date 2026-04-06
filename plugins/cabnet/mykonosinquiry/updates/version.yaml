@@ -364,3 +364,6 @@
   - 'Mount the global right help rail at list-page level so it stays visible on empty or filtered Inquiry Queue and Loyalty Continuity screens'
 2.3.93:
   - 'Move the right help rail into a dedicated backend docs page and add toolbar navigation buttons on the queue and loyalty lists'
+
+2.3.94:
+  - 'Add workspace docs-page navigation buttons to loyalty create/update screens and align docs-page naming across list and form routes'

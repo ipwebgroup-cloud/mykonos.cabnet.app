@@ -1,98 +1,36 @@
-<?php
-$loyaltyStorageReady = class_exists('\Cabnet\MykonosInquiry\Models\LoyaltyRecord')
-    ? \Cabnet\MykonosInquiry\Models\LoyaltyRecord::workspaceStorageReady()
-    : false;
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>">Loyalty Continuity</a></li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
 
-$guardedPartials = [
-    'install_state_overview',
-    'structural_activation_foundation_panel',
-    'inquiry_transfer_bridge_panel',
-    'transfer_staging_rules_panel',
-    'activation_readiness_score_panel',
-    'transfer_packet_preview_panel',
-    'touchpoint_ledger_packet_panel',
-    'retention_history_blueprint_panel',
-    'touchpoint_outcome_taxonomy_panel',
-    'next_contact_window_matrix_panel',
-    'touchpoint_outcome_entry_surface_panel',
-    'continuity_execution_fields_panel',
-    'installable_schema_packet_panel',
-    'transition_scorecard_panel',
-    'activation_scenarios_panel',
-    'first_wave_qualification_panel',
-    'retention_timing_windows_panel',
-    'pilot_candidate_lanes_panel',
-    'reengagement_intent_map_panel',
-    'offer_architecture_panel',
-    'reactivation_cadence_panel',
-    'channel_priority_map_panel',
-    'message_framework_panel',
-    'trigger_library_panel',
-    'continuity_measurement_panel',
-    'return_value_signals_panel',
-    'segment_strategy_panel',
-    'treatment_lane_playbook_panel',
-    'journey_state_framing_panel',
-    'intervention_matrix_panel',
-    'exception_routing_panel',
-    'escalation_thresholds_panel',
-    'ownership_matrix_panel',
-    'suppression_controls_panel',
-    'frequency_cap_rules_panel',
-    'consent_discipline_panel',
-    'approval_checkpoints_panel',
-    'pilot_experiment_ledger_panel',
-    'activation_cutover_sequence_panel',
-    'dependency_map_panel',
-    'launch_decision_register_panel',
-    'risk_register_panel',
-    'mitigation_playbook_panel',
-    'rollback_criteria_panel',
-    'post_launch_review_guardrails_panel',
-    'handoff_evidence_panel',
-    'workspace_separation_rules_panel',
-    'safe_rollout_plan_panel',
-    'operator_routes_panel',
-    'activation_readiness_checklist_panel',
-];
+<?php if (!$this->fatalError): ?>
+    <div data-control="toolbar">
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>" class="btn btn-default oc-icon-book">
+            Workspace docs &amp; glossary
+        </a>
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
+            Back to Loyalty Continuity
+        </a>
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">
+            Open Inquiry Queue
+        </a>
+    </div>
 
-$availableGuardedPartials = [];
-$missingGuardedPartials = [];
-
-foreach ($guardedPartials as $partialName) {
-    $partialPath = plugins_path('cabnet/mykonosinquiry/controllers/loyaltyrecords/_' . $partialName . '.htm');
-
-    if (file_exists($partialPath)) {
-        $availableGuardedPartials[] = $partialName;
-    } else {
-        $missingGuardedPartials[] = $partialName;
-    }
-}
-?>
-
-<div class="layout">
-    <?php if (!$loyaltyStorageReady): ?>
-        <?php foreach ($availableGuardedPartials as $partialName): ?>
-            <?= $this->makePartial($partialName) ?>
-        <?php endforeach; ?>
-
+    <?= Form::open(['class' => 'layout']) ?>
         <div class="layout-row">
-            <div class="callout fade in no-subheader">
-                <div class="content">
-                    <h4 style="margin-top:0;">Edit mode is waiting for storage activation</h4>
-                    <p style="margin-bottom:0;">
-                        Loyalty records cannot be edited until the storage layer is fully aligned and real continuity records are present. This release
-                        keeps the workspace guarded until installation is deliberately completed and verified.
-                    </p>
-                    <?php if (!empty($missingGuardedPartials)): ?>
-                        <p style="margin-top:10px; margin-bottom:0;">
-                            Some staged guarded partials are not present in this deployment, but the workspace remains render-safe.
-                        </p>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <?= $this->formRender() ?>
         </div>
-    <?php else: ?>
-        <?= $this->formRender() ?>
-    <?php endif ?>
-</div>
+    <?= Form::close() ?>
+<?php else: ?>
+    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p>
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default">
+            Return to Loyalty Continuity
+        </a>
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>" class="btn btn-default oc-icon-book">
+            Workspace docs &amp; glossary
+        </a>
+    </p>
+<?php endif ?>

@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.26 docs page extraction and help-nav button patch`
+- `v6.41.27 loyalty form docs-nav button patch`
 
 This is a continuity hint only.
 

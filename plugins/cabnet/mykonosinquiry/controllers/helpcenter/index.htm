@@ -191,13 +191,14 @@
 <div class="myk-help-page" id="mykHelpPage">
     <section class="myk-help-hero">
         <div class="myk-help-hero__eyebrow">Operator reference page</div>
-        <h1>Queue docs, help &amp; glossary</h1>
+        <h1>Workspace docs, help &amp; glossary</h1>
         <p>
-            The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, continuity posture, transfer cues, and shared terminology.
+            The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, continuity posture, transfer cues, shared terminology, and saved loyalty create/update navigation.
         </p>
         <div class="myk-help-toolbar">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
             <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open Loyalty Continuity</a>
+            <a href="#help-form-routes" class="btn btn-default oc-icon-location-arrow">Open saved-record help</a>
         </div>
     </section>
 
@@ -210,6 +211,7 @@
             <a href="#help-queue">Queue docs</a>
             <a href="#help-loyalty">Loyalty continuity</a>
             <a href="#help-bridge">Queue-to-loyalty bridge</a>
+            <a href="#help-form-routes">Saved record screens</a>
             <a href="#help-glossary">Glossary</a>
             <a href="#help-reminders">Reminders</a>
         </nav>
@@ -299,6 +301,36 @@
             <div class="myk-help-aside-note" data-doc-item>
                 Use search to filter both the docs cards and glossary terms. This page is intentionally wider than the old rail so operators can read the terminology without squeezing the main list screens.
             </div>
+
+            <section id="help-form-routes" class="myk-help-section" data-doc-section>
+                <h2>Saved record screens</h2>
+                <p class="myk-help-section__lead">
+                    Loyalty create and update screens now carry the same docs-page navigation pattern as the list views. Use the top action buttons to open this reference page without bringing back an inline side rail.
+                </p>
+                <div class="myk-help-grid">
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Create screen</div>
+                        <div class="myk-help-card__title">Open docs before first-save review</div>
+                        <div class="myk-help-card__body">
+                            Use the form-level docs button when validating inquiry-backed drafts versus manual drafts so the operator can keep terminology and transfer posture guidance nearby without narrowing the form workspace.
+                        </div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Update screen</div>
+                        <div class="myk-help-card__title">Keep docs page separate from the live record</div>
+                        <div class="myk-help-card__body">
+                            The update screen stays focused on continuity editing while this page carries glossary, bridge cues, and queue-reading guidance in a separate destination with a direct return path back to Loyalty Continuity.
+                        </div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Navigation pattern</div>
+                        <div class="myk-help-card__title">Three stable routes</div>
+                        <div class="myk-help-card__body">
+                            The saved loyalty screens now keep three top routes visible: workspace docs, Loyalty Continuity, and Inquiry Queue. This keeps operators oriented without reintroducing a persistent right-side help column.
+                        </div>
+                    </article>
+                </div>
+            </section>
 
             <section id="help-glossary" class="myk-help-section" data-doc-section>
                 <h2>Glossary</h2>

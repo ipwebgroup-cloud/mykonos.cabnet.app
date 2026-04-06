@@ -88,11 +88,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.26 docs page extraction and help-nav button patch`
-- plugin tracking `2.3.93`
+- `v6.41.27 loyalty form docs-nav button patch`
+- plugin tracking `2.3.94`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while moving the old right-side help rail into a dedicated backend docs page and adding direct toolbar navigation buttons from the queue and loyalty list screens.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while extending the docs-page navigation pattern onto loyalty create/update screens, so saved-record work no longer depends on an inline help rail or list-only access path.
 
 ---
 
@@ -115,10 +115,13 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` no longer shows the old right-side help rail
-- confirm the queue toolbar now includes `Queue docs & glossary`
+- confirm the queue toolbar now includes `Workspace docs & glossary`
 - open that button and confirm the dedicated docs page loads
 - confirm the docs page includes search, quick section jumps, queue guidance, loyalty guidance, and glossary terms
-- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` also shows the same `Queue docs & glossary` button and no longer renders the old right-side help rail on the list page
+- open Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` -> `New Loyalty Record` and confirm the page now shows a top `Workspace docs & glossary` button
+- open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the update page also shows the same `Workspace docs & glossary` button
+- click the button from create/update and confirm the dedicated docs page opens without restoring an inline right-side rail
+- confirm Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` also shows the same `Workspace docs & glossary` button and no longer renders the old right-side help rail on the list page
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
@@ -186,5 +189,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.26 docs page extraction and help-nav button patch`
-- plugin version line: `2.3.93`
+- `v6.41.27 loyalty form docs-nav button patch`
+- plugin version line: `2.3.94`
