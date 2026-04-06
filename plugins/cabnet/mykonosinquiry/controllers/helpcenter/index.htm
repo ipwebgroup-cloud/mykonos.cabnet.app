@@ -445,8 +445,9 @@
                 <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpCopyShareSnippet">Copy share snippet</button>
                 <button type="button" class="btn btn-default oc-icon-mail-forward" id="mykHelpCopyEmailDraft">Copy email draft</button>
                 <button type="button" class="btn btn-default oc-icon-comment" id="mykHelpCopyChatHandoff">Copy chat handoff</button>
+                <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpOpenMailApp">Open mail app</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, or open the current docs section in a new tab for operator support and training handoff.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, open a one-click email draft in your mail app, or open the current docs section in a new tab for operator support and training handoff.</span>
             </div>
             <div class="myk-help-routestatus__share">
                 <span class="myk-help-routestatus__share-label">Share-ready support snippet</span>
@@ -674,6 +675,7 @@
     var copyShareSnippetButton = document.getElementById('mykHelpCopyShareSnippet');
     var copyEmailDraftButton = document.getElementById('mykHelpCopyEmailDraft');
     var copyChatHandoffButton = document.getElementById('mykHelpCopyChatHandoff');
+    var openMailAppButton = document.getElementById('mykHelpOpenMailApp');
     var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
     var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
     var shareSnippetPreview = document.getElementById('mykHelpShareSnippetPreview');
@@ -982,6 +984,43 @@
         ].join('\n');
     }
 
+    function buildMailtoUrl() {
+        var focus = ((currentContextState && currentContextState.badge) || defaultContext.badge);
+        var source = ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge);
+        var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
+        var targetSection = currentTargetId || 'top-of-page';
+        var link = buildAbsoluteSectionUrl();
+        var subject = 'Mykonos workspace docs support — ' + focus + ' from ' + source;
+        var body = [
+            'Hello,',
+            '',
+            'Please review this Mykonos workspace docs context:',
+            '',
+            'Focus: ' + focus,
+            'Opened from: ' + source,
+            'Primary return: ' + primaryReturn,
+            'Target section: ' + targetSection,
+            'Docs link: ' + link,
+            '',
+            'Use the link above to open the same anchored help section during operator support, escalation, or training handoff.',
+            '',
+            'Thank you.'
+        ].join('\n');
+
+        return 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    }
+
+    function openMailAppDraft() {
+        var targetUrl = buildMailtoUrl();
+
+        try {
+            window.location.href = targetUrl;
+            setCopyStatus('Opened your mail app with the current docs context as a ready-made draft. Review the subject and body before sending the escalation or handoff.');
+        } catch (error) {
+            setCopyStatus('Mail-app launch was blocked in this browser context. You can still use Copy email draft to paste the same subject and body manually.');
+        }
+    }
+
     function refreshShareSnippetPreview() {
         if (shareSnippetPreview) {
             shareSnippetPreview.textContent = buildShareSnippetText();
@@ -1187,6 +1226,12 @@
             }).catch(function() {
                 setCopyStatus('Chat-handoff copy failed in this browser context. You can still use Copy route context or Copy share snippet for a longer support message.');
             });
+        });
+    }
+
+    if (openMailAppButton) {
+        openMailAppButton.addEventListener('click', function() {
+            openMailAppDraft();
         });
     }
 

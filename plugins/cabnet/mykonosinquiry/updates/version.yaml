@@ -407,3 +407,5 @@
 
 2.4.8:
   - 'Add docs-page copy-chat-handoff utility for Slack, WhatsApp, and short operator support messages'
+2.4.9:
+  - 'Add an open-mail-app docs helper for one-click operator escalation drafts'

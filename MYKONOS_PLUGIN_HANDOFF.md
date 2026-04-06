@@ -81,18 +81,19 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step keeps that help system page-based while adding one compact chat-handoff utility so operators can copy a short Slack/WhatsApp-style support message with focus, source route, return target, target section, and the exact docs link directly from the docs page for fast operator escalation and training handoff
+- the newest safe UX step keeps that help system page-based while adding one compact open-mail-app utility so operators can launch a one-click email draft from the docs page using the same subject, body, and exact docs-link context already exposed by the copy-email helper
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.41 docs-page copy-chat-handoff utility patch`
-- plugin tracking `2.4.8`
+- `v6.41.42 docs-page open-mail-app helper patch`
+- plugin tracking `2.4.9`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the dedicated docs-page workflow intact while adding one compact chat-handoff utility that lets operators copy a short Slack/WhatsApp-style support message with current focus, source route, primary return target, target section, and exact docs link directly from the docs-page hero.
+It adds one compact `Open mail app` helper to the docs-page hero so operators can launch a one-click mailto draft with the same current subject, body, and docs-link context exposed by `Copy email draft`.
+It keeps the dedicated docs-page workflow intact while adding one compact open-mail-app helper that launches a mailto draft using the same subject, body, and exact docs-link context already exposed by the docs-page email-draft utility.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
