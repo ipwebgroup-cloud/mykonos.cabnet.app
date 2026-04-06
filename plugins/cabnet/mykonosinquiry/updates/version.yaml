@@ -393,3 +393,8 @@
   - 'Add a docs-page route-status strip that combines focus, source route, and return target into one scan row'
 2.4.3:
   - 'Add docs-page copyable route-context utility for operator issue reporting and training notes'
+2.4.4:
+  - 'Add docs-page open-matching-section-in-new-tab utility for operator handoff and support workflows'
+
+2.4.5:
+  - 'Add docs-page copy-docs-link utility for sharing the exact context-aware help URL'

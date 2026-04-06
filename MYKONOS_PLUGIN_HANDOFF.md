@@ -199,5 +199,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.35 docs-page route-status strip patch`
-- plugin version line: `2.4.1`
+- `v6.41.38 docs-page copy-docs-link utility patch`
+- plugin version line: `2.4.5`

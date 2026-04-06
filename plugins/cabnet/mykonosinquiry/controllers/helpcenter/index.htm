@@ -417,7 +417,9 @@
             <div class="myk-help-routestatus__summary" id="mykHelpRouteStatusSummary">Workspace docs opened from Workspace Docs side menu and can return directly to Open Inquiry Queue from the sticky action bar below.</div>
             <div class="myk-help-routestatus__tools">
                 <button type="button" class="btn btn-default oc-icon-copy" id="mykHelpCopyContext">Copy route context</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current focus, source route, and primary return target for quick issue reports or operator training notes.</span>
+                <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyDocsLink">Copy docs link</button>
+                <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, or open the current docs section in a new tab for handoff and operator support.</span>
             </div>
         </div>
         <div class="myk-help-toolbar">
@@ -637,6 +639,8 @@
     var routeStatusReturn = document.getElementById('mykHelpRouteStatusReturn');
     var routeStatusSummary = document.getElementById('mykHelpRouteStatusSummary');
     var copyContextButton = document.getElementById('mykHelpCopyContext');
+    var copyDocsLinkButton = document.getElementById('mykHelpCopyDocsLink');
+    var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
     var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
     var returnTitle = document.getElementById('mykHelpReturnTitle');
     var returnSummary = document.getElementById('mykHelpReturnSummary');
@@ -886,6 +890,39 @@
         }
     }
 
+    function buildSectionTabUrl() {
+        var hash = currentTargetId ? '#' + currentTargetId : (window.location.hash || '');
+        return window.location.pathname + window.location.search + hash;
+    }
+
+    function buildAbsoluteSectionUrl() {
+        var relativeUrl = buildSectionTabUrl();
+
+        try {
+            return new URL(relativeUrl, window.location.href).toString();
+        } catch (error) {
+            return window.location.href;
+        }
+    }
+
+    function openSectionInNewTab() {
+        var targetUrl = buildSectionTabUrl();
+        var openedWindow = null;
+
+        try {
+            openedWindow = window.open(targetUrl, '_blank', 'noopener');
+        } catch (error) {
+            openedWindow = null;
+        }
+
+        if (openedWindow) {
+            setCopyStatus('Opened the matching docs section in a new tab. You can keep this tab as your working reference while sharing the same section elsewhere.');
+            return;
+        }
+
+        setCopyStatus('New-tab opening was blocked in this browser context. You can still use Copy route context or manually open the current anchor in another tab.');
+    }
+
     function copyTextToClipboard(value) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             return navigator.clipboard.writeText(value);
@@ -1005,6 +1042,22 @@
             }).catch(function() {
                 setCopyStatus('Copy failed in this browser context. You can still read the focus, source route, and primary return values from the hero strip above.');
             });
+        });
+    }
+
+    if (copyDocsLinkButton) {
+        copyDocsLinkButton.addEventListener('click', function() {
+            copyTextToClipboard(buildAbsoluteSectionUrl()).then(function() {
+                setCopyStatus('Copied the exact context-aware docs link. You can send it directly to another operator or paste it into handoff notes.');
+            }).catch(function() {
+                setCopyStatus('Link copy failed in this browser context. You can still use Copy route context or copy the current page URL manually.');
+            });
+        });
+    }
+
+    if (openSectionTabButton) {
+        openSectionTabButton.addEventListener('click', function() {
+            openSectionInNewTab();
         });
     }
 

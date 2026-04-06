@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.36 docs-page copyable route-context utility patch`
+- `v6.41.38 docs-page copy-docs-link utility patch`
 
 This is a continuity hint only.
 
@@ -83,6 +83,8 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep one sticky docs-page action row available so operators can return to Inquiry Queue, Loyalty Continuity, or the originating inquiry/loyalty record screen family without relying on browser history
 - keep one compact docs-page route-status strip visible in the hero so focus, source route, and primary return target can be read in a single scan row
 - keep one compact docs-page copy utility available so operators can copy that route context into issue reports or operator-training notes without retyping it
+- keep one compact docs-page new-tab utility available so operators can open the current anchored help section in a separate tab for handoff, cross-checking, or operator support without losing the current docs view
+- keep one compact docs-page link-copy utility available so operators can copy the exact context-aware docs URL and send the matching anchored help section directly to another operator
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
@@ -161,7 +163,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one dedicated backend docs page reachable from the Inquiry Queue and Loyalty Continuity toolbars, so the live list screens can stay wider and cleaner. The current safe polish direction is docs-page arrival clarity: context-aware wording already distinguishes `Queue docs`, `Bridge docs`, `Continuity docs`, `Inquiry screen help`, and `Loyalty screen help`, the docs page mirrors that entry context with a visible focus badge and active section highlight, it shows an explicit source-route breadcrumb chip so operators can see exactly which screen family launched help, and it now also exposes one compact route-status strip that combines focus, source route, and primary return target in a single scan row. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one dedicated backend docs page reachable from the Inquiry Queue and Loyalty Continuity toolbars, so the live list screens can stay wider and cleaner. The current safe polish direction is docs-page arrival clarity: context-aware wording already distinguishes `Queue docs`, `Bridge docs`, `Continuity docs`, `Inquiry screen help`, and `Loyalty screen help`, the docs page mirrors that entry context with a visible focus badge and active section highlight, it shows an explicit source-route breadcrumb chip so operators can see exactly which screen family launched help, and it now also exposes one compact route-status strip that combines focus, source route, and primary return target in a single scan row. It also now exposes a compact copy utility for route context plus a matching-section new-tab utility so operators can keep the current docs page open while opening the same help section in another tab for handoff or support. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
 
 ---
 
