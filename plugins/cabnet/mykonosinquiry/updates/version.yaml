@@ -398,3 +398,6 @@
 
 2.4.5:
   - 'Add docs-page copy-docs-link utility for sharing the exact context-aware help URL'
+
+2.4.6:
+  - 'Add docs-page share-snippet utility with ready-to-send support text and exact docs link context'

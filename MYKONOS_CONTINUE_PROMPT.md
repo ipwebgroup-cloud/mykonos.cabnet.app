@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.38 docs-page copy-docs-link utility patch`
+- `v6.41.39 docs-page share-snippet utility patch`
 
 This is a continuity hint only.
 
@@ -85,6 +85,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep one compact docs-page copy utility available so operators can copy that route context into issue reports or operator-training notes without retyping it
 - keep one compact docs-page new-tab utility available so operators can open the current anchored help section in a separate tab for handoff, cross-checking, or operator support without losing the current docs view
 - keep one compact docs-page link-copy utility available so operators can copy the exact context-aware docs URL and send the matching anchored help section directly to another operator
+- keep one compact docs-page share-snippet utility available so operators can copy a ready-to-send support block with the exact docs link and current route summary for email, chat, or operator handoff notes
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion

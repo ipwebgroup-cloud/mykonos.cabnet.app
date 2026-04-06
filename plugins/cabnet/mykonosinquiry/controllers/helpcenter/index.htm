@@ -163,6 +163,30 @@
     line-height: 1.55;
     color: #607084;
 }
+.myk-help-routestatus__share {
+    grid-column: 1 / -1;
+    border: 1px solid #dce5f2;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 14px;
+}
+.myk-help-routestatus__share-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6d7b90;
+    margin-bottom: 6px;
+}
+.myk-help-routestatus__share-text {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #4f6176;
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -418,8 +442,13 @@
             <div class="myk-help-routestatus__tools">
                 <button type="button" class="btn btn-default oc-icon-copy" id="mykHelpCopyContext">Copy route context</button>
                 <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyDocsLink">Copy docs link</button>
+                <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpCopyShareSnippet">Copy share snippet</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, or open the current docs section in a new tab for handoff and operator support.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, or open the current docs section in a new tab for handoff and operator support.</span>
+            </div>
+            <div class="myk-help-routestatus__share">
+                <span class="myk-help-routestatus__share-label">Share-ready support snippet</span>
+                <pre class="myk-help-routestatus__share-text" id="mykHelpShareSnippetPreview">Mykonos workspace docs reference will appear here once the page reads the current focus, source route, return target, and anchored section.</pre>
             </div>
         </div>
         <div class="myk-help-toolbar">
@@ -640,8 +669,10 @@
     var routeStatusSummary = document.getElementById('mykHelpRouteStatusSummary');
     var copyContextButton = document.getElementById('mykHelpCopyContext');
     var copyDocsLinkButton = document.getElementById('mykHelpCopyDocsLink');
+    var copyShareSnippetButton = document.getElementById('mykHelpCopyShareSnippet');
     var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
     var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
+    var shareSnippetPreview = document.getElementById('mykHelpShareSnippetPreview');
     var returnTitle = document.getElementById('mykHelpReturnTitle');
     var returnSummary = document.getElementById('mykHelpReturnSummary');
     var returnPrimary = document.getElementById('mykHelpReturnPrimary');
@@ -884,6 +915,31 @@
         return lines.join('\n');
     }
 
+    function buildShareSnippetText() {
+        var focus = ((currentContextState && currentContextState.badge) || defaultContext.badge);
+        var source = ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge);
+        var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
+        var targetSection = currentTargetId || 'top-of-page';
+        var link = buildAbsoluteSectionUrl();
+
+        return [
+            'Mykonos workspace docs reference',
+            'Focus: ' + focus,
+            'Opened from: ' + source,
+            'Primary return: ' + primaryReturn,
+            'Target section: ' + targetSection,
+            'Docs link: ' + link,
+            '',
+            'Use this link to open the same context-aware help section during operator support, issue review, or training handoff.'
+        ].join('\n');
+    }
+
+    function refreshShareSnippetPreview() {
+        if (shareSnippetPreview) {
+            shareSnippetPreview.textContent = buildShareSnippetText();
+        }
+    }
+
     function setCopyStatus(message) {
         if (copyContextStatus) {
             copyContextStatus.textContent = message;
@@ -974,6 +1030,7 @@
         currentReturnState = returnState;
         currentTargetId = targetId || '';
         updateRouteStatus(context, originState, returnState);
+        refreshShareSnippetPreview();
 
         navLinks.forEach(function(link) {
             var linkTargetId = (link.getAttribute('href') || '').replace('#', '');
@@ -1051,6 +1108,16 @@
                 setCopyStatus('Copied the exact context-aware docs link. You can send it directly to another operator or paste it into handoff notes.');
             }).catch(function() {
                 setCopyStatus('Link copy failed in this browser context. You can still use Copy route context or copy the current page URL manually.');
+            });
+        });
+    }
+
+    if (copyShareSnippetButton) {
+        copyShareSnippetButton.addEventListener('click', function() {
+            copyTextToClipboard(buildShareSnippetText()).then(function() {
+                setCopyStatus('Copied a ready-to-send support snippet with the docs link and current route context. You can paste it into email, chat, or operator handoff notes.');
+            }).catch(function() {
+                setCopyStatus('Share-snippet copy failed in this browser context. You can still copy the preview block manually from the route-status area below.');
             });
         });
     }

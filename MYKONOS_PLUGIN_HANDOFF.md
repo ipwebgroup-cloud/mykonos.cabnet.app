@@ -81,18 +81,18 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step keeps that help system page-based while adding one compact copyable route-context utility so operators can copy focus, source route, and primary return target directly from the docs page when reporting issues or training new staff
+- the newest safe UX step keeps that help system page-based while adding one compact share-snippet utility so operators can copy a ready-to-send support block with focus, source route, return target, target section, and the exact docs link directly from the docs page for issue reporting, operator chat, or training handoff
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.36 docs-page copyable route-context utility patch`
-- plugin tracking `2.4.3`
+- `v6.41.39 docs-page share-snippet utility patch`
+- plugin tracking `2.4.6`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the dedicated docs-page workflow intact while adding one compact copy utility that lets operators copy the current focus, source route, and primary return target directly from the docs-page hero for issue reporting and operator training notes.
+It keeps the dedicated docs-page workflow intact while adding one compact share-snippet utility that lets operators copy a ready-to-send support block with the current focus, source route, primary return target, target section, and exact docs link directly from the docs-page hero.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
@@ -199,5 +199,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.38 docs-page copy-docs-link utility patch`
-- plugin version line: `2.4.5`
+- `v6.41.39 docs-page share-snippet utility patch`
+- plugin version line: `2.4.6`
