@@ -388,3 +388,6 @@
 
 2.4.1:
   - 'Add docs-page source-route breadcrumb chips for queue, bridge, continuity, and record-screen entry points'
+
+2.4.2:
+  - 'Add a docs-page route-status strip that combines focus, source route, and return target into one scan row'

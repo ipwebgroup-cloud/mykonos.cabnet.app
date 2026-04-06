@@ -81,20 +81,18 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step keeps that help system page-based while adding one sticky docs-page return bar with context-aware back links so operators can jump back to Queue, Loyalty Continuity, or the originating record-screen family without relying on browser history
+- the newest safe UX step keeps that help system page-based while adding one compact docs-page route-status strip so operators can see focus, source route, and primary return target in one scan row before using the sticky return actions
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.31 context-aware docs button label polish patch`
-- plugin tracking `2.3.98`
+- `v6.41.35 docs-page route-status strip patch`
+- plugin tracking `2.4.2`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while preserving the context-aware docs-page anchors and making the labels operator-readable at a glance: `Queue docs`, `Bridge docs`, `Continuity docs`, `Inquiry screen help`, and `Loyalty screen help`.
-
----
+It keeps the dedicated docs-page workflow intact while adding one compact hero strip that combines current focus, source route, and primary return target into a single scan row for faster operator orientation.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:

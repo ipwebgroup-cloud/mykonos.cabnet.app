@@ -104,6 +104,49 @@
     color: #5d6d7e;
     flex: 1 1 320px;
 }
+.myk-help-routestatus {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid #d8e2f1;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(243, 247, 255, 0.95) 0%, rgba(255, 255, 255, 0.96) 100%);
+}
+.myk-help-routestatus__item {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #e0e7f2;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.88);
+}
+.myk-help-routestatus__label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6d7b90;
+    margin-bottom: 5px;
+}
+.myk-help-routestatus__value {
+    display: block;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 700;
+    color: #22364f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.myk-help-routestatus__summary {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5a6879;
+    padding: 2px 2px 0;
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -314,6 +357,11 @@
     display: none !important;
 }
 @media (max-width: 1024px) {
+    .myk-help-routestatus {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 1024px) {
     .myk-help-layout {
         grid-template-columns: 1fr;
     }
@@ -336,6 +384,21 @@
             <span class="myk-help-origin__label">Opened from</span>
             <strong class="myk-help-origin__badge" id="mykHelpOriginBadge">Workspace Docs side menu</strong>
             <span class="myk-help-origin__summary" id="mykHelpOriginSummary">This breadcrumb chip shows the exact screen family that launched the help page, so operators can confirm whether they came from a queue list, bridge view, continuity list, or a specific record screen.</span>
+        </div>
+        <div class="myk-help-routestatus" id="mykHelpRouteStatus" aria-live="polite">
+            <div class="myk-help-routestatus__item">
+                <span class="myk-help-routestatus__label">Focus</span>
+                <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusFocus">Workspace docs</strong>
+            </div>
+            <div class="myk-help-routestatus__item">
+                <span class="myk-help-routestatus__label">Source route</span>
+                <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusOrigin">Workspace Docs side menu</strong>
+            </div>
+            <div class="myk-help-routestatus__item">
+                <span class="myk-help-routestatus__label">Primary return</span>
+                <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusReturn">Open Inquiry Queue</strong>
+            </div>
+            <div class="myk-help-routestatus__summary" id="mykHelpRouteStatusSummary">Workspace docs opened from Workspace Docs side menu and can return directly to Open Inquiry Queue from the sticky action bar below.</div>
         </div>
         <div class="myk-help-toolbar">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
@@ -549,6 +612,10 @@
     var contextSummary = document.getElementById('mykHelpContextSummary');
     var originBadge = document.getElementById('mykHelpOriginBadge');
     var originSummary = document.getElementById('mykHelpOriginSummary');
+    var routeStatusFocus = document.getElementById('mykHelpRouteStatusFocus');
+    var routeStatusOrigin = document.getElementById('mykHelpRouteStatusOrigin');
+    var routeStatusReturn = document.getElementById('mykHelpRouteStatusReturn');
+    var routeStatusSummary = document.getElementById('mykHelpRouteStatusSummary');
     var returnTitle = document.getElementById('mykHelpReturnTitle');
     var returnSummary = document.getElementById('mykHelpReturnSummary');
     var returnPrimary = document.getElementById('mykHelpReturnPrimary');
@@ -720,6 +787,8 @@
         if (originSummary) {
             originSummary.textContent = originState.summary;
         }
+
+        return originState;
     }
 
     function updateReturnActions(targetId) {
@@ -751,6 +820,26 @@
             returnSecondary.setAttribute('href', state.secondaryHref);
             returnSecondary.textContent = state.secondaryLabel;
         }
+
+        return state;
+    }
+
+    function updateRouteStatus(contextState, originState, returnState) {
+        if (routeStatusFocus) {
+            routeStatusFocus.textContent = contextState.badge;
+        }
+
+        if (routeStatusOrigin) {
+            routeStatusOrigin.textContent = originState.badge;
+        }
+
+        if (routeStatusReturn) {
+            routeStatusReturn.textContent = returnState.primaryLabel;
+        }
+
+        if (routeStatusSummary) {
+            routeStatusSummary.textContent = contextState.badge + ' opened from ' + originState.badge + ' and can return directly to ' + returnState.primaryLabel + ' from the sticky action bar below.';
+        }
     }
 
     function updateContext(targetId, isAvailable) {
@@ -764,8 +853,9 @@
             contextSummary.textContent = context.summary;
         }
 
-        updateOrigin();
-        updateReturnActions(targetId);
+        var originState = updateOrigin();
+        var returnState = updateReturnActions(targetId);
+        updateRouteStatus(context, originState, returnState);
 
         navLinks.forEach(function(link) {
             var linkTargetId = (link.getAttribute('href') || '').replace('#', '');
