@@ -1,1 +1,20 @@
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>">Mykonos Inquiries</a></li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
+<div data-control="toolbar">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>" class="btn btn-default oc-icon-book">
+        Workspace docs &amp; glossary
+    </a>
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">
+        Back to Inquiry Queue
+    </a>
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
+        Open Loyalty Continuity
+    </a>
+</div>
+
 <?= $this->formRender() ?>

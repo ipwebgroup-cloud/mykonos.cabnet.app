@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.27 loyalty form docs-nav button patch`
+- `v6.41.28 inquiry screen docs-nav and side-menu docs link patch`
 
 This is a continuity hint only.
 
@@ -75,7 +75,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
-- keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue and Loyalty Continuity
+- keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
 - keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
@@ -87,7 +87,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep the same source-context comparison visible at the top of the Workspace tab while operators edit live continuity fields
 - keep the same source-context comparison visible at the top of the History tab while operators review outcome, packet, and trace fields
 - expose one compact queue-side continuity history cue on linked inquiry rows so operators can read the latest loyalty outcome without opening the linked record
-- keep the Loyalty Continuity list itself scan-friendly by surfacing compact latest-outcome, latest-packet, and next-review cues directly on the existing source-inquiry backlink card, while using the right-side loyalty help panel as the deeper glossary source
+- keep the Loyalty Continuity list itself scan-friendly by surfacing compact latest-outcome, latest-packet, and next-review cues directly on the existing source-inquiry backlink card, while using the dedicated workspace docs page as the deeper glossary source
 - keep the Inquiry Queue equally scan-friendly by surfacing one always-visible packet-state badge plus one always-visible next-review pill on linked loyalty queue rows before operators open the deeper continuity history cue
 
 Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.

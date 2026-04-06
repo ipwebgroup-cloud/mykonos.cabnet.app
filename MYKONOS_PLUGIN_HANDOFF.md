@@ -88,11 +88,11 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.27 loyalty form docs-nav button patch`
-- plugin tracking `2.3.94`
+- `v6.41.28 inquiry screen docs-nav and side-menu docs link patch`
+- plugin tracking `2.3.95`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the Inquiry Queue and Loyalty Continuity workflow intact while extending the docs-page navigation pattern onto loyalty create/update screens, so saved-record work no longer depends on an inline help rail or list-only access path.
+It keeps the Inquiry Queue and Loyalty Continuity workflow intact while extending the docs-page navigation pattern onto inquiry create/update screens as well, and exposing the docs page directly in the backend side menu so all operator-facing routes share one stable help entry point.
 
 ---
 
@@ -118,6 +118,10 @@ Then verify:
 - confirm the queue toolbar now includes `Workspace docs & glossary`
 - open that button and confirm the dedicated docs page loads
 - confirm the docs page includes search, quick section jumps, queue guidance, loyalty guidance, and glossary terms
+- confirm the backend side menu now includes `Workspace Docs`
+- open Backend -> Mykonos Inquiries -> Workspace Docs and confirm the dedicated docs page loads directly from navigation
+- open Backend -> Mykonos Inquiries -> New inquiry and confirm `Workspace docs & glossary` appears above the form
+- open an existing inquiry record and confirm the same docs button appears above the inquiry header without narrowing the record screen
 - open Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` -> `New Loyalty Record` and confirm the page now shows a top `Workspace docs & glossary` button
 - open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the update page also shows the same `Workspace docs & glossary` button
 - click the button from create/update and confirm the dedicated docs page opens without restoring an inline right-side rail
@@ -162,8 +166,8 @@ Then verify:
 
 - open Backend -> `Mykonos Inquiries` -> `Inquiry Queue` and confirm queue-side loyalty backlink cards still render
 - hover key labels such as `Queue-to-history cue` and confirm tooltip text appears
-- open `Loyalty Continuity` create or update screens and confirm the new right-side `Help & Glossary` panel appears
-- open the right-side help panel glossary and confirm it explains source anchor, source posture, continuity posture, value signal, latest outcome, latest packet, next review, queue-to-history cue, and manual vs inquiry-backed drafts
+- open `Loyalty Continuity` create or update screens and confirm the top `Workspace docs & glossary` button appears
+- open the dedicated docs page and confirm it explains source anchor, source posture, continuity posture, value signal, latest outcome, latest packet, next review, queue-to-history cue, and manual vs inquiry-backed drafts
 - hover digest labels on Overview, Workspace, and History and confirm tooltip text appears without breaking render safety
 
 Do **not** treat `plugin:refresh Cabnet.MykonosInquiry` as the default first production step for this line.
@@ -189,5 +193,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.27 loyalty form docs-nav button patch`
-- plugin version line: `2.3.94`
+- `v6.41.28 inquiry screen docs-nav and side-menu docs link patch`
+- plugin version line: `2.3.95`

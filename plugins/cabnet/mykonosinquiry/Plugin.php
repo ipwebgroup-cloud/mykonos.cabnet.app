@@ -61,6 +61,15 @@ class Plugin extends PluginBase
                         'url'         => Backend::url('cabnet/mykonosinquiry/loyaltyrecords'),
                         'permissions' => ['cabnet.mykonosinquiry.manage_loyalty_continuity'],
                     ],
+                    'helpcenter' => [
+                        'label'       => 'Workspace Docs',
+                        'icon'        => 'icon-book',
+                        'url'         => Backend::url('cabnet/mykonosinquiry/helpcenter'),
+                        'permissions' => [
+                            'cabnet.mykonosinquiry.manage_inquiries',
+                            'cabnet.mykonosinquiry.manage_loyalty_continuity',
+                        ],
+                    ],
                 ],
             ],
         ];

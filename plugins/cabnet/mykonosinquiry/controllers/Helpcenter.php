@@ -11,7 +11,7 @@ class Helpcenter extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('Cabnet.MykonosInquiry', 'mykonosinquiry', 'inquiries');
+        BackendMenu::setContext('Cabnet.MykonosInquiry', 'mykonosinquiry', 'helpcenter');
         $this->pageTitle = 'Workspace docs, help & glossary';
     }
 }
