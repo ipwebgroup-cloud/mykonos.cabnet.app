@@ -385,3 +385,6 @@
 
 2.4.0:
   - 'Add a sticky docs-page return bar with context-aware back links to queue, continuity, and originating record-screen routes'
+
+2.4.1:
+  - 'Add docs-page source-route breadcrumb chips for queue, bridge, continuity, and record-screen entry points'

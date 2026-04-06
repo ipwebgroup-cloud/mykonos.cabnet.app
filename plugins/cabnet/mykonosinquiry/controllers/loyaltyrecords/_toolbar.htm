@@ -20,7 +20,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
     <?php endif ?>
 
     <a
-        href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to Loyalty Continuity') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Continuity docs opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open Inquiry Queue') . '#help-loyalty' ?>"
+        href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to Loyalty Continuity') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Continuity docs opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open Inquiry Queue') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, packet posture, and next-review timing.') . '#help-loyalty' ?>"
         class="btn btn-default oc-icon-book">
         Continuity docs
     </a>

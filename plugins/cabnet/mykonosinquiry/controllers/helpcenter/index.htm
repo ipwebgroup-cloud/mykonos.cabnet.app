@@ -68,6 +68,42 @@
     color: #596879;
     flex: 1 1 320px;
 }
+.myk-help-origin {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin-top: 12px;
+    padding: 11px 14px;
+    border: 1px dashed #d6dfef;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.78);
+}
+.myk-help-origin__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #6b7890;
+}
+.myk-help-origin__badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #f6f8fc;
+    border: 1px solid #d8e1f0;
+    color: #30435f;
+    font-size: 13px;
+    font-weight: 700;
+}
+.myk-help-origin__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6d7e;
+    flex: 1 1 320px;
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -296,6 +332,11 @@
             <strong class="myk-help-context__badge" id="mykHelpContextBadge">Workspace docs</strong>
             <span class="myk-help-context__summary" id="mykHelpContextSummary">Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.</span>
         </div>
+        <div class="myk-help-origin" id="mykHelpOrigin" aria-live="polite">
+            <span class="myk-help-origin__label">Opened from</span>
+            <strong class="myk-help-origin__badge" id="mykHelpOriginBadge">Workspace Docs side menu</strong>
+            <span class="myk-help-origin__summary" id="mykHelpOriginSummary">This breadcrumb chip shows the exact screen family that launched the help page, so operators can confirm whether they came from a queue list, bridge view, continuity list, or a specific record screen.</span>
+        </div>
         <div class="myk-help-toolbar">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
             <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open Loyalty Continuity</a>
@@ -506,6 +547,8 @@
     var clearButton = document.getElementById('mykHelpSearchClear');
     var contextBadge = document.getElementById('mykHelpContextBadge');
     var contextSummary = document.getElementById('mykHelpContextSummary');
+    var originBadge = document.getElementById('mykHelpOriginBadge');
+    var originSummary = document.getElementById('mykHelpOriginSummary');
     var returnTitle = document.getElementById('mykHelpReturnTitle');
     var returnSummary = document.getElementById('mykHelpReturnSummary');
     var returnPrimary = document.getElementById('mykHelpReturnPrimary');
@@ -544,6 +587,42 @@
     var defaultContext = {
         badge: 'Workspace docs',
         summary: 'Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.'
+    };
+
+    var originMap = {
+        'queue': {
+            badge: 'Inquiry Queue list',
+            summary: 'This help page was opened from the live inquiry list toolbar, where operators scan ownership, urgency, follow-up discipline, and linked continuity cues.'
+        },
+        'bridge': {
+            badge: 'Inquiry Queue bridge workspace',
+            summary: 'This help page was opened from the queue workspace shell while operators were deciding whether work stays queue-only, becomes transfer-ready, or moves into continuity.'
+        },
+        'continuity': {
+            badge: 'Loyalty Continuity list',
+            summary: 'This help page was opened from the live Loyalty Continuity list, where operators scan latest outcome, packet state, and revisit timing.'
+        },
+        'inquiry-create': {
+            badge: 'New inquiry screen',
+            summary: 'This help page was opened from the inquiry create route before first-touch drafting, ownership framing, or follow-up planning.'
+        },
+        'inquiry-update': {
+            badge: 'Inquiry record screen',
+            summary: 'This help page was opened from a saved inquiry record while operators were editing workflow posture, summaries, or queue-side continuity cues.'
+        },
+        'loyalty-create': {
+            badge: 'New loyalty record screen',
+            summary: 'This help page was opened from the loyalty create route while a manual or inquiry-backed continuity draft was being shaped.'
+        },
+        'loyalty-update': {
+            badge: 'Loyalty record screen',
+            summary: 'This help page was opened from a saved loyalty record while operators were reviewing continuity posture, packet readiness, or revisit timing.'
+        }
+    };
+
+    var defaultOriginState = {
+        badge: 'Workspace Docs side menu',
+        summary: 'This help page was opened directly from the Workspace Docs navigation entry rather than a route-specific queue, bridge, continuity, or record-screen help button.'
     };
 
     var defaultReturnState = {
@@ -623,6 +702,26 @@
         return value ? value : '';
     }
 
+    function updateOrigin() {
+        var params = getSearchParams();
+        var fromKey = decodeParam(params, 'from');
+        var explicitLabel = decodeParam(params, 'sourceLabel');
+        var explicitSummary = decodeParam(params, 'sourceSummary');
+        var mappedOrigin = originMap[fromKey] || defaultOriginState;
+        var originState = {
+            badge: explicitLabel || mappedOrigin.badge || defaultOriginState.badge,
+            summary: explicitSummary || mappedOrigin.summary || defaultOriginState.summary
+        };
+
+        if (originBadge) {
+            originBadge.textContent = originState.badge;
+        }
+
+        if (originSummary) {
+            originSummary.textContent = originState.summary;
+        }
+    }
+
     function updateReturnActions(targetId) {
         var params = getSearchParams();
         var inferredState = inferredReturnMap[targetId] || defaultReturnState;
@@ -665,6 +764,7 @@
             contextSummary.textContent = context.summary;
         }
 
+        updateOrigin();
         updateReturnActions(targetId);
 
         navLinks.forEach(function(link) {

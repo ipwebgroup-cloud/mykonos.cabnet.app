@@ -201,5 +201,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.33 docs-page sticky return actions and context-aware back-links patch`
-- plugin version line: `2.4.0`
+- `v6.41.34 docs-page source-route breadcrumb chip patch`
+- plugin version line: `2.4.1`
