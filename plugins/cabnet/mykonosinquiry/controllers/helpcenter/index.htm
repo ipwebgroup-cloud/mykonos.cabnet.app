@@ -480,8 +480,9 @@
                 <button type="button" class="btn btn-default oc-icon-mail-forward" id="mykHelpCopyEmailDraft">Copy email draft</button>
                 <button type="button" class="btn btn-default oc-icon-comment" id="mykHelpCopyChatHandoff">Copy chat handoff</button>
                 <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpOpenMailApp">Open mail app</button>
+                <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyMailtoLink">Copy mailto link</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, launch a one-click email draft in your mail app, or open the current docs section in a new tab for operator support and training handoff. Use the mail-recipient preset below to keep the draft blank or pre-address it before launch.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, launch a one-click email draft in your mail app, copy the exact generated mailto link, or open the current docs section in a new tab for operator support and training handoff. Use the mail-recipient preset below to keep the draft blank or pre-address it before launch.</span>
             </div>
             <div class="myk-help-routestatus__mailpreset">
                 <span class="myk-help-routestatus__mailpreset-label">Mail recipient preset</span>
@@ -715,6 +716,7 @@
     var copyEmailDraftButton = document.getElementById('mykHelpCopyEmailDraft');
     var copyChatHandoffButton = document.getElementById('mykHelpCopyChatHandoff');
     var openMailAppButton = document.getElementById('mykHelpOpenMailApp');
+    var copyMailtoLinkButton = document.getElementById('mykHelpCopyMailtoLink');
     var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
     var mailRecipientPreset = document.getElementById('mykHelpMailRecipientPreset');
     var mailRecipientSummary = document.getElementById('mykHelpMailRecipientSummary');
@@ -1416,6 +1418,16 @@
     if (openMailAppButton) {
         openMailAppButton.addEventListener('click', function() {
             openMailAppDraft();
+        });
+    }
+
+    if (copyMailtoLinkButton) {
+        copyMailtoLinkButton.addEventListener('click', function() {
+            copyTextToClipboard(buildMailtoUrl()).then(function() {
+                setCopyStatus('Copied the exact generated mailto link for the current docs context and selected recipient preset. You can paste it into browser tests, support notes, or operator troubleshooting steps.');
+            }).catch(function() {
+                setCopyStatus('Mailto-link copy failed in this browser context. You can still use Open mail app or Copy email draft to capture the same recipient, subject, and body context manually.');
+            });
         });
     }
 

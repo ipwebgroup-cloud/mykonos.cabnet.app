@@ -81,19 +81,19 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step keeps that help system page-based while adding one compact mail-recipient preset layer so operators can leave the docs-page email draft blank or pre-address it before using the open-mail-app and copy-email helpers
+- the newest safe UX step keeps that help system page-based while adding one compact copy-mailto-link helper so operators can capture the exact generated mailto URL for browser testing, support notes, and escalation troubleshooting without reconstructing the draft manually
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.43 docs-page mail-recipient-preset helper patch`
-- plugin tracking `2.4.10`
+- `v6.41.44 docs-page copy-mailto-link utility patch`
+- plugin tracking `2.4.11`
 
 This patch does not change schema and does not touch `/plan`.
-It adds one compact `Mail recipient preset` layer to the docs-page hero so operators can keep the email draft blank or pre-address it before using `Copy email draft` or `Open mail app`.
-It keeps the dedicated docs-page workflow intact while extending the docs-page email helpers with safe preset support for the blank-recipient path, the Mykonos project inbox, and any future route-provided recipient passed in through docs-link context.
+It adds one compact `Copy mailto link` helper to the docs-page hero so operators can copy the exact generated mailto URL that matches the current focus, anchor, recipient preset, and docs-link context.
+It keeps the dedicated docs-page workflow intact while extending the email-handoff utility line with one troubleshooting-friendly browser-test artifact that can be pasted into support notes or opened manually when mail-app launch behavior needs verification.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
