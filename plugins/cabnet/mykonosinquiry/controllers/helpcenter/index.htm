@@ -147,6 +147,22 @@
     color: #5a6879;
     padding: 2px 2px 0;
 }
+.myk-help-routestatus__tools {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding-top: 2px;
+}
+.myk-help-routestatus__tools .btn {
+    border-radius: 999px;
+}
+.myk-help-routestatus__copy-status {
+    font-size: 12px;
+    line-height: 1.55;
+    color: #607084;
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -399,6 +415,10 @@
                 <strong class="myk-help-routestatus__value" id="mykHelpRouteStatusReturn">Open Inquiry Queue</strong>
             </div>
             <div class="myk-help-routestatus__summary" id="mykHelpRouteStatusSummary">Workspace docs opened from Workspace Docs side menu and can return directly to Open Inquiry Queue from the sticky action bar below.</div>
+            <div class="myk-help-routestatus__tools">
+                <button type="button" class="btn btn-default oc-icon-copy" id="mykHelpCopyContext">Copy route context</button>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current focus, source route, and primary return target for quick issue reports or operator training notes.</span>
+            </div>
         </div>
         <div class="myk-help-toolbar">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
@@ -616,6 +636,8 @@
     var routeStatusOrigin = document.getElementById('mykHelpRouteStatusOrigin');
     var routeStatusReturn = document.getElementById('mykHelpRouteStatusReturn');
     var routeStatusSummary = document.getElementById('mykHelpRouteStatusSummary');
+    var copyContextButton = document.getElementById('mykHelpCopyContext');
+    var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
     var returnTitle = document.getElementById('mykHelpReturnTitle');
     var returnSummary = document.getElementById('mykHelpReturnSummary');
     var returnPrimary = document.getElementById('mykHelpReturnPrimary');
@@ -623,6 +645,10 @@
     var items = Array.prototype.slice.call(document.querySelectorAll('[data-doc-item]'));
     var sections = Array.prototype.slice.call(document.querySelectorAll('[data-doc-section]'));
     var navLinks = Array.prototype.slice.call(document.querySelectorAll('.myk-help-nav a'));
+    var currentContextState = null;
+    var currentOriginState = null;
+    var currentReturnState = null;
+    var currentTargetId = '';
 
     var contextMap = {
         'help-queue': {
@@ -842,6 +868,57 @@
         }
     }
 
+    function buildCopyContextText() {
+        var sectionLabel = currentTargetId || 'top-of-page';
+        var lines = [
+            'Focus: ' + ((currentContextState && currentContextState.badge) || defaultContext.badge),
+            'Source route: ' + ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge),
+            'Primary return: ' + ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel),
+            'Target section: ' + sectionLabel
+        ];
+
+        return lines.join('\n');
+    }
+
+    function setCopyStatus(message) {
+        if (copyContextStatus) {
+            copyContextStatus.textContent = message;
+        }
+    }
+
+    function copyTextToClipboard(value) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(value);
+        }
+
+        return new Promise(function(resolve, reject) {
+            var textarea = document.createElement('textarea');
+            textarea.value = value;
+            textarea.setAttribute('readonly', 'readonly');
+            textarea.style.position = 'fixed';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+
+            try {
+                var success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                if (success) {
+                    resolve();
+                    return;
+                }
+            } catch (error) {
+                document.body.removeChild(textarea);
+                reject(error);
+                return;
+            }
+
+            reject(new Error('copy failed'));
+        });
+    }
+
     function updateContext(targetId, isAvailable) {
         var context = (targetId && isAvailable && contextMap[targetId]) ? contextMap[targetId] : defaultContext;
 
@@ -855,6 +932,10 @@
 
         var originState = updateOrigin();
         var returnState = updateReturnActions(targetId);
+        currentContextState = context;
+        currentOriginState = originState;
+        currentReturnState = returnState;
+        currentTargetId = targetId || '';
         updateRouteStatus(context, originState, returnState);
 
         navLinks.forEach(function(link) {
@@ -914,6 +995,16 @@
             searchInput.value = '';
             applySearch();
             searchInput.focus();
+        });
+    }
+
+    if (copyContextButton) {
+        copyContextButton.addEventListener('click', function() {
+            copyTextToClipboard(buildCopyContextText()).then(function() {
+                setCopyStatus('Route context copied. Paste it into issue reports, operator notes, or training handoff text.');
+            }).catch(function() {
+                setCopyStatus('Copy failed in this browser context. You can still read the focus, source route, and primary return values from the hero strip above.');
+            });
         });
     }
 

@@ -391,3 +391,5 @@
 
 2.4.2:
   - 'Add a docs-page route-status strip that combines focus, source route, and return target into one scan row'
+2.4.3:
+  - 'Add docs-page copyable route-context utility for operator issue reporting and training notes'

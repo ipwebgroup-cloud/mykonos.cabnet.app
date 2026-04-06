@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.35 docs-page route-status strip patch`
+- `v6.41.36 docs-page copyable route-context utility patch`
 
 This is a continuity hint only.
 
@@ -82,6 +82,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep the docs page arrival state explicit so the incoming anchor updates one visible focus badge and active section cue in the page header/navigation
 - keep one sticky docs-page action row available so operators can return to Inquiry Queue, Loyalty Continuity, or the originating inquiry/loyalty record screen family without relying on browser history
 - keep one compact docs-page route-status strip visible in the hero so focus, source route, and primary return target can be read in a single scan row
+- keep one compact docs-page copy utility available so operators can copy that route context into issue reports or operator-training notes without retyping it
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion

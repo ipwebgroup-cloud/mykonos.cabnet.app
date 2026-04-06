@@ -81,18 +81,18 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step keeps that help system page-based while adding one compact docs-page route-status strip so operators can see focus, source route, and primary return target in one scan row before using the sticky return actions
+- the newest safe UX step keeps that help system page-based while adding one compact copyable route-context utility so operators can copy focus, source route, and primary return target directly from the docs page when reporting issues or training new staff
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.35 docs-page route-status strip patch`
-- plugin tracking `2.4.2`
+- `v6.41.36 docs-page copyable route-context utility patch`
+- plugin tracking `2.4.3`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the dedicated docs-page workflow intact while adding one compact hero strip that combines current focus, source route, and primary return target into a single scan row for faster operator orientation.
+It keeps the dedicated docs-page workflow intact while adding one compact copy utility that lets operators copy the current focus, source route, and primary return target directly from the docs-page hero for issue reporting and operator training notes.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
@@ -199,5 +199,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.34 docs-page source-route breadcrumb chip patch`
+- `v6.41.35 docs-page route-status strip patch`
 - plugin version line: `2.4.1`
