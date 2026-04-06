@@ -81,18 +81,18 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step keeps that help system page-based while adding one compact share-snippet utility so operators can copy a ready-to-send support block with focus, source route, return target, target section, and the exact docs link directly from the docs page for issue reporting, operator chat, or training handoff
+- the newest safe UX step keeps that help system page-based while adding one compact email-draft utility so operators can copy a ready-to-send escalation draft with subject, body, focus, source route, return target, target section, and the exact docs link directly from the docs page for operator email, support escalation, or training handoff
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.39 docs-page share-snippet utility patch`
-- plugin tracking `2.4.6`
+- `v6.41.40 docs-page copy-email-draft utility patch`
+- plugin tracking `2.4.7`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the dedicated docs-page workflow intact while adding one compact share-snippet utility that lets operators copy a ready-to-send support block with the current focus, source route, primary return target, target section, and exact docs link directly from the docs-page hero.
+It keeps the dedicated docs-page workflow intact while adding one compact email-draft utility that lets operators copy a ready-to-send escalation draft with subject, body, current focus, source route, primary return target, target section, and exact docs link directly from the docs-page hero.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:

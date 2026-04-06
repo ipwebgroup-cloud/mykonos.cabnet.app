@@ -443,8 +443,9 @@
                 <button type="button" class="btn btn-default oc-icon-copy" id="mykHelpCopyContext">Copy route context</button>
                 <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyDocsLink">Copy docs link</button>
                 <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpCopyShareSnippet">Copy share snippet</button>
+                <button type="button" class="btn btn-default oc-icon-mail-forward" id="mykHelpCopyEmailDraft">Copy email draft</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, or open the current docs section in a new tab for handoff and operator support.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, or open the current docs section in a new tab for handoff and operator support.</span>
             </div>
             <div class="myk-help-routestatus__share">
                 <span class="myk-help-routestatus__share-label">Share-ready support snippet</span>
@@ -670,6 +671,7 @@
     var copyContextButton = document.getElementById('mykHelpCopyContext');
     var copyDocsLinkButton = document.getElementById('mykHelpCopyDocsLink');
     var copyShareSnippetButton = document.getElementById('mykHelpCopyShareSnippet');
+    var copyEmailDraftButton = document.getElementById('mykHelpCopyEmailDraft');
     var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
     var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
     var shareSnippetPreview = document.getElementById('mykHelpShareSnippetPreview');
@@ -934,6 +936,33 @@
         ].join('\n');
     }
 
+    function buildEmailDraftText() {
+        var focus = ((currentContextState && currentContextState.badge) || defaultContext.badge);
+        var source = ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge);
+        var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
+        var targetSection = currentTargetId || 'top-of-page';
+        var link = buildAbsoluteSectionUrl();
+        var subject = 'Mykonos workspace docs support — ' + focus + ' from ' + source;
+
+        return [
+            'Subject: ' + subject,
+            '',
+            'Hello,',
+            '',
+            'Please review this Mykonos workspace docs context:',
+            '',
+            'Focus: ' + focus,
+            'Opened from: ' + source,
+            'Primary return: ' + primaryReturn,
+            'Target section: ' + targetSection,
+            'Docs link: ' + link,
+            '',
+            'Use the link above to open the same anchored help section during operator support, escalation, or training handoff.',
+            '',
+            'Thank you.'
+        ].join('\n');
+    }
+
     function refreshShareSnippetPreview() {
         if (shareSnippetPreview) {
             shareSnippetPreview.textContent = buildShareSnippetText();
@@ -1118,6 +1147,16 @@
                 setCopyStatus('Copied a ready-to-send support snippet with the docs link and current route context. You can paste it into email, chat, or operator handoff notes.');
             }).catch(function() {
                 setCopyStatus('Share-snippet copy failed in this browser context. You can still copy the preview block manually from the route-status area below.');
+            });
+        });
+    }
+
+    if (copyEmailDraftButton) {
+        copyEmailDraftButton.addEventListener('click', function() {
+            copyTextToClipboard(buildEmailDraftText()).then(function() {
+                setCopyStatus('Copied an email-ready escalation draft with subject, body, and the exact context-aware docs link. You can paste it directly into operator email or ticket notes.');
+            }).catch(function() {
+                setCopyStatus('Email-draft copy failed in this browser context. You can still use Copy share snippet or manually build an email from the preview and docs link above.');
             });
         });
     }

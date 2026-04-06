@@ -401,3 +401,6 @@
 
 2.4.6:
   - 'Add docs-page share-snippet utility with ready-to-send support text and exact docs link context'
+
+2.4.7:
+  - 'Add docs-page copy-email-draft utility for operator escalation and support handoff'
