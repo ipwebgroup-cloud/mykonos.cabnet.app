@@ -8,7 +8,7 @@
 </div>
 
 <div class="toolbar-item">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=queue&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to Inquiry Queue') . '&returnTitle=' . rawurlencode('Return to Inquiry Queue after reviewing queue guidance.') . '&returnSummary=' . rawurlencode('Queue docs opened from the live inquiry list, so the primary action returns operators to the queue while keeping Loyalty Continuity one click away.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
         Queue docs
     </a>
 </div>
@@ -27,7 +27,7 @@
         <a class="operator-list-workspace-nav__link" href="#workspace-triage-lanes">Triage lanes</a>
         <a class="operator-list-workspace-nav__link" href="#workspace-triage-playbook">Queue playbook</a>
         <a class="operator-list-workspace-nav__link" href="#workspace-record-bridge">Queue-to-record bridge</a>
-        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>">Bridge docs</a>
+        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=bridge&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to Inquiry Queue') . '&returnTitle=' . rawurlencode('Return to Inquiry Queue or jump into Loyalty Continuity after checking bridge guidance.') . '&returnSummary=' . rawurlencode('Bridge docs usually open while deciding whether work stays queue-only, becomes transfer-ready, or should move into a loyalty record.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '#help-bridge' ?>">Bridge docs</a>
     </nav>
 
     <details id="workspace-queue-overview" class="operator-list-workspace-section" open>

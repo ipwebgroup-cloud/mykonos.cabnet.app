@@ -6,7 +6,7 @@
 <?php Block::endPut() ?>
 
 <div data-control="toolbar">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/create')) . '&returnLabel=' . rawurlencode('Back to New inquiry') . '&returnTitle=' . rawurlencode('Return to the new inquiry screen after checking record guidance.') . '&returnSummary=' . rawurlencode('Inquiry screen help opened from the create route, so the primary action returns directly to the new inquiry form.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open Inquiry Queue') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
         Inquiry screen help
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">

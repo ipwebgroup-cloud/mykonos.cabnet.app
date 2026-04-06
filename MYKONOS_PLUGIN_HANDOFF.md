@@ -81,7 +81,7 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the newest safe UX step moves that help system out of the list-page right rail and into a dedicated backend docs page with toolbar navigation buttons so Inquiry Queue and Loyalty Continuity regain full working width
+- the newest safe UX step keeps that help system page-based while adding one sticky docs-page return bar with context-aware back links so operators can jump back to Queue, Loyalty Continuity, or the originating record-screen family without relying on browser history
 
 ---
 
@@ -101,7 +101,7 @@ For this patch, upload the rooted files and then run:
 
 - `php artisan cache:clear`
 
-This specific hotfix re-ships the docs-page controller bootstrap files and side-menu registration so the backend `/helpcenter` route can resolve even if an earlier incremental docs patch was applied without the controller registration files. No schema change is introduced and no plugin refresh is required for this hotfix.
+This docs-page patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 
@@ -201,5 +201,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.32 docs-page focus badge and active section context patch`
-- plugin version line: `2.3.99`
+- `v6.41.33 docs-page sticky return actions and context-aware back-links patch`
+- plugin version line: `2.4.0`

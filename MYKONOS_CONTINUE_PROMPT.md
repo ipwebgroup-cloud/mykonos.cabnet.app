@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.32 docs-page focus badge and active section context patch`
+- `v6.41.33 docs-page sticky return actions and context-aware back-links patch`
 
 This is a continuity hint only.
 
@@ -80,6 +80,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
 - keep the button labels operator-readable so queue, bridge, continuity, and record-screen help are distinguishable before the page opens
 - keep the docs page arrival state explicit so the incoming anchor updates one visible focus badge and active section cue in the page header/navigation
+- keep one sticky docs-page action row available so operators can return to Inquiry Queue, Loyalty Continuity, or the originating inquiry/loyalty record screen family without relying on browser history
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion

@@ -77,6 +77,54 @@
 .myk-help-toolbar .btn {
     border-radius: 999px;
 }
+.myk-help-returnbar {
+    position: sticky;
+    top: 12px;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid #d9e2f3;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 14px 28px rgba(20, 37, 63, 0.08);
+    backdrop-filter: blur(8px);
+}
+.myk-help-returnbar__meta {
+    flex: 1 1 280px;
+    min-width: 240px;
+}
+.myk-help-returnbar__eyebrow {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6d7b90;
+    margin-bottom: 4px;
+}
+.myk-help-returnbar__title {
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #23364f;
+}
+.myk-help-returnbar__summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5a6778;
+    margin-top: 2px;
+}
+.myk-help-returnbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.myk-help-returnbar__actions .btn {
+    border-radius: 999px;
+}
 .myk-help-controls {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -254,6 +302,18 @@
             <a href="#help-form-routes" class="btn btn-default oc-icon-location-arrow">Record-screen help</a>
         </div>
     </section>
+
+    <div class="myk-help-returnbar" id="mykHelpReturnBar" aria-live="polite">
+        <div class="myk-help-returnbar__meta">
+            <div class="myk-help-returnbar__eyebrow">Quick return actions</div>
+            <div class="myk-help-returnbar__title" id="mykHelpReturnTitle">Return to the route family that opened this help page.</div>
+            <div class="myk-help-returnbar__summary" id="mykHelpReturnSummary">Queue docs can return to Inquiry Queue, continuity docs can return to Loyalty Continuity, and record-screen help can return to the current screen family.</div>
+        </div>
+        <div class="myk-help-returnbar__actions">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-level-up" id="mykHelpReturnPrimary">Open Inquiry Queue</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh" id="mykHelpReturnSecondary">Open Loyalty Continuity</a>
+        </div>
+    </div>
 
     <div class="myk-help-controls">
         <div class="myk-help-search">
@@ -446,6 +506,10 @@
     var clearButton = document.getElementById('mykHelpSearchClear');
     var contextBadge = document.getElementById('mykHelpContextBadge');
     var contextSummary = document.getElementById('mykHelpContextSummary');
+    var returnTitle = document.getElementById('mykHelpReturnTitle');
+    var returnSummary = document.getElementById('mykHelpReturnSummary');
+    var returnPrimary = document.getElementById('mykHelpReturnPrimary');
+    var returnSecondary = document.getElementById('mykHelpReturnSecondary');
     var items = Array.prototype.slice.call(document.querySelectorAll('[data-doc-item]'));
     var sections = Array.prototype.slice.call(document.querySelectorAll('[data-doc-section]'));
     var navLinks = Array.prototype.slice.call(document.querySelectorAll('.myk-help-nav a'));
@@ -482,8 +546,112 @@
         summary: 'Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.'
     };
 
+    var defaultReturnState = {
+        title: 'Return to the route family that opened this help page.',
+        summary: 'Queue docs can return to Inquiry Queue, continuity docs can return to Loyalty Continuity, and record-screen help can return to the current screen family.',
+        primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+        primaryLabel: 'Open Inquiry Queue',
+        secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
+        secondaryLabel: 'Open Loyalty Continuity'
+    };
+
+    var inferredReturnMap = {
+        'help-queue': {
+            title: 'Return to Inquiry Queue after reviewing queue guidance.',
+            summary: 'Use this when queue reading order, loyalty posture filtering, or row-level packet and next-review cues needed a quick glossary check.',
+            primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            primaryLabel: 'Back to Inquiry Queue',
+            secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
+            secondaryLabel: 'Open Loyalty Continuity'
+        },
+        'help-bridge': {
+            title: 'Return to Inquiry Queue or jump straight into Loyalty Continuity.',
+            summary: 'Bridge guidance is usually used while deciding whether a record should stay queue-only, become transfer-ready, or move into an inquiry-backed continuity draft.',
+            primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            primaryLabel: 'Back to Inquiry Queue',
+            secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
+            secondaryLabel: 'Open Loyalty Continuity'
+        },
+        'help-loyalty': {
+            title: 'Return to Loyalty Continuity after reviewing continuity posture.',
+            summary: 'Use this when latest outcome, packet state, revisit timing, or source-inquiry backlink cues needed a quick reference before going back to the list.',
+            primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
+            primaryLabel: 'Back to Loyalty Continuity',
+            secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            secondaryLabel: 'Open Inquiry Queue'
+        },
+        'help-form-routes': {
+            title: 'Return to the current record-screen family after checking route guidance.',
+            summary: 'When create or update screens open this help page, the primary return action should point back to the specific inquiry or loyalty route that launched it.',
+            primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            primaryLabel: 'Back to current screen family',
+            secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            secondaryLabel: 'Open Inquiry Queue'
+        },
+        'help-glossary': {
+            title: 'Return to the operator route that needed glossary clarification.',
+            summary: 'Use the primary action to go back where you came from once the shared terminology is clear again.',
+            primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            primaryLabel: 'Return to operator route',
+            secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
+            secondaryLabel: 'Open Loyalty Continuity'
+        },
+        'help-reminders': {
+            title: 'Return to the working route after checking guardrails.',
+            summary: 'Use the primary action to resume work once the public-flow, manual-draft, or handoff reminder has been reviewed.',
+            primaryHref: '<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>',
+            primaryLabel: 'Return to operator route',
+            secondaryHref: '<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>',
+            secondaryLabel: 'Open Loyalty Continuity'
+        }
+    };
+
     function normalize(value) {
         return (value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    function getSearchParams() {
+        try {
+            return new URLSearchParams(window.location.search || '');
+        } catch (error) {
+            return new URLSearchParams('');
+        }
+    }
+
+    function decodeParam(params, key) {
+        var value = params.get(key);
+        return value ? value : '';
+    }
+
+    function updateReturnActions(targetId) {
+        var params = getSearchParams();
+        var inferredState = inferredReturnMap[targetId] || defaultReturnState;
+        var state = {
+            title: decodeParam(params, 'returnTitle') || inferredState.title || defaultReturnState.title,
+            summary: decodeParam(params, 'returnSummary') || inferredState.summary || defaultReturnState.summary,
+            primaryHref: decodeParam(params, 'return') || inferredState.primaryHref || defaultReturnState.primaryHref,
+            primaryLabel: decodeParam(params, 'returnLabel') || inferredState.primaryLabel || defaultReturnState.primaryLabel,
+            secondaryHref: decodeParam(params, 'secondary') || inferredState.secondaryHref || defaultReturnState.secondaryHref,
+            secondaryLabel: decodeParam(params, 'secondaryLabel') || inferredState.secondaryLabel || defaultReturnState.secondaryLabel
+        };
+
+        if (returnTitle) {
+            returnTitle.textContent = state.title;
+        }
+
+        if (returnSummary) {
+            returnSummary.textContent = state.summary;
+        }
+
+        if (returnPrimary) {
+            returnPrimary.setAttribute('href', state.primaryHref);
+            returnPrimary.textContent = state.primaryLabel;
+        }
+
+        if (returnSecondary) {
+            returnSecondary.setAttribute('href', state.secondaryHref);
+            returnSecondary.textContent = state.secondaryLabel;
+        }
     }
 
     function updateContext(targetId, isAvailable) {
@@ -496,6 +664,8 @@
         if (contextSummary) {
             contextSummary.textContent = context.summary;
         }
+
+        updateReturnActions(targetId);
 
         navLinks.forEach(function(link) {
             var linkTargetId = (link.getAttribute('href') || '').replace('#', '');

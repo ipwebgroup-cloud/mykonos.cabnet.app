@@ -7,7 +7,7 @@
 
 <?php if (!$this->fatalError): ?>
     <div data-control="toolbar">
-        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-update&return=' . rawurlencode(isset($formModel) && $formModel && $formModel->id ? Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $formModel->id) : Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty record') . '&returnTitle=' . rawurlencode('Return to the loyalty record after checking record-screen guidance.') . '&returnSummary=' . rawurlencode('Loyalty screen help opened from a saved continuity record, so the primary action returns to the current record while keeping the live list one click away.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
             Loyalty screen help
         </a>
         <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
@@ -29,7 +29,7 @@
         <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default">
             Return to Loyalty Continuity
         </a>
-        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-update&return=' . rawurlencode(isset($formModel) && $formModel && $formModel->id ? Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $formModel->id) : Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty record') . '&returnTitle=' . rawurlencode('Return to the loyalty record after checking record-screen guidance.') . '&returnSummary=' . rawurlencode('Loyalty screen help opened from a saved continuity record, so the primary action returns to the current record while keeping the live list one click away.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
             Loyalty screen help
         </a>
     </p>

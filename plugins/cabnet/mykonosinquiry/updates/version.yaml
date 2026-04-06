@@ -382,3 +382,6 @@
 
 2.3.99:
   - 'Add a docs-page focus badge and active section context so incoming anchors are immediately obvious to operators'
+
+2.4.0:
+  - 'Add a sticky docs-page return bar with context-aware back links to queue, continuity, and originating record-screen routes'

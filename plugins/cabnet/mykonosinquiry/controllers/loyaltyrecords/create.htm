@@ -6,7 +6,7 @@
 <?php Block::endPut() ?>
 
 <div data-control="toolbar">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create')) . '&returnLabel=' . rawurlencode('Back to New Loyalty Record') . '&returnTitle=' . rawurlencode('Return to the new loyalty record screen after checking record guidance.') . '&returnSummary=' . rawurlencode('Loyalty screen help opened from the create route, so the primary action returns directly to the new loyalty record form.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
         Loyalty screen help
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
