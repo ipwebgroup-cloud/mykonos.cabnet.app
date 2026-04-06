@@ -33,6 +33,41 @@
     color: #526071;
     max-width: 860px;
 }
+.myk-help-context {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1px solid #dbe4f4;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.82);
+}
+.myk-help-context__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #6b7890;
+}
+.myk-help-context__badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #324b7f;
+    font-size: 13px;
+    font-weight: 700;
+}
+.myk-help-context__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #596879;
+    flex: 1 1 320px;
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -89,6 +124,12 @@
     text-decoration: none;
     font-size: 13px;
     font-weight: 600;
+}
+.myk-help-nav a.myk-help-nav__link--active {
+    border-color: #8aa7ff;
+    background: #eef3ff;
+    color: #284577;
+    box-shadow: 0 0 0 2px rgba(91, 102, 227, 0.10);
 }
 .myk-help-layout {
     display: grid;
@@ -202,6 +243,11 @@
         <p>
             The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, inquiry detail handling, continuity posture, transfer cues, shared terminology, and consistent create/update navigation. Queue, loyalty, and record-screen help buttons now land on the most relevant section instead of always dropping operators at the top of the page.
         </p>
+        <div class="myk-help-context" id="mykHelpContext" aria-live="polite">
+            <span class="myk-help-context__label">Current focus</span>
+            <strong class="myk-help-context__badge" id="mykHelpContextBadge">Workspace docs</strong>
+            <span class="myk-help-context__summary" id="mykHelpContextSummary">Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.</span>
+        </div>
         <div class="myk-help-toolbar">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
             <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open Loyalty Continuity</a>
@@ -398,11 +444,63 @@
 (function() {
     var searchInput = document.getElementById('mykHelpSearch');
     var clearButton = document.getElementById('mykHelpSearchClear');
+    var contextBadge = document.getElementById('mykHelpContextBadge');
+    var contextSummary = document.getElementById('mykHelpContextSummary');
     var items = Array.prototype.slice.call(document.querySelectorAll('[data-doc-item]'));
     var sections = Array.prototype.slice.call(document.querySelectorAll('[data-doc-section]'));
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll('.myk-help-nav a'));
+
+    var contextMap = {
+        'help-queue': {
+            badge: 'Queue docs',
+            summary: 'Start with live inquiry posture, owner and follow-up scan order, linked continuity cues, packet signals, and queue-side filter discipline.'
+        },
+        'help-loyalty': {
+            badge: 'Continuity docs',
+            summary: 'Use this section for loyalty list posture, inquiry-backed versus manual draft clarity, latest outcome reading, and revisit timing.'
+        },
+        'help-bridge': {
+            badge: 'Bridge docs',
+            summary: 'Use this section when deciding whether work should stay in the live inquiry lane, move into continuity, or remain as a seeded draft.'
+        },
+        'help-form-routes': {
+            badge: 'Record-screen help',
+            summary: 'Use this section while working inside inquiry or loyalty create and update screens so route guidance stays close without shrinking the forms.'
+        },
+        'help-glossary': {
+            badge: 'Glossary',
+            summary: 'Use these shared operator definitions when labels such as source posture, continuity posture, packet state, or next review need a consistent meaning.'
+        },
+        'help-reminders': {
+            badge: 'Operator reminders',
+            summary: 'Use this section for working guardrails such as the plugin-backed /plan flow, manual draft distinctions, and narrow queue-to-loyalty handoff discipline.'
+        }
+    };
+
+    var defaultContext = {
+        badge: 'Workspace docs',
+        summary: 'Open this page from Queue, Bridge, Continuity, or record-screen help buttons to land in the most relevant operator section first.'
+    };
 
     function normalize(value) {
         return (value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    function updateContext(targetId, isAvailable) {
+        var context = (targetId && isAvailable && contextMap[targetId]) ? contextMap[targetId] : defaultContext;
+
+        if (contextBadge) {
+            contextBadge.textContent = context.badge;
+        }
+
+        if (contextSummary) {
+            contextSummary.textContent = context.summary;
+        }
+
+        navLinks.forEach(function(link) {
+            var linkTargetId = (link.getAttribute('href') || '').replace('#', '');
+            link.classList.toggle('myk-help-nav__link--active', !!targetId && isAvailable && linkTargetId === targetId);
+        });
     }
 
     function applySearch() {
@@ -426,12 +524,15 @@
         var hash = window.location.hash || '';
         var targetId = hash.replace('#', '');
         var target = targetId ? document.getElementById(targetId) : null;
+        var targetIsAvailable = !!(target && target.matches('[data-doc-section]') && !target.classList.contains('myk-help-hidden'));
 
         sections.forEach(function(section) {
             section.classList.remove('myk-help-section--target');
         });
 
-        if (!target || !target.matches('[data-doc-section]') || target.classList.contains('myk-help-hidden')) {
+        updateContext(targetId, targetIsAvailable);
+
+        if (!targetIsAvailable) {
             return;
         }
 

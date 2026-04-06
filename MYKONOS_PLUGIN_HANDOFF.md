@@ -201,5 +201,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.28 inquiry screen docs-nav and side-menu docs link patch`
-- plugin version line: `2.3.95`
+- `v6.41.32 docs-page focus badge and active section context patch`
+- plugin version line: `2.3.99`

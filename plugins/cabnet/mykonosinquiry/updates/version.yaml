@@ -379,3 +379,6 @@
 
 2.3.98:
   - 'Use context-specific docs button labels across queue, loyalty, and record routes for faster operator recognition'
+
+2.3.99:
+  - 'Add a docs-page focus badge and active section context so incoming anchors are immediately obvious to operators'
