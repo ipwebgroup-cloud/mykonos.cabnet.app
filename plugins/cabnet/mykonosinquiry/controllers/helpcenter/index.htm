@@ -1,0 +1,396 @@
+<style>
+.myk-help-page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px 18px 28px;
+}
+.myk-help-hero {
+    border: 1px solid #d9e2f3;
+    background: linear-gradient(135deg, #f7f9ff 0%, #ffffff 100%);
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 14px 30px rgba(28, 53, 112, 0.06);
+}
+.myk-help-hero__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #5b66e3;
+    margin-bottom: 8px;
+}
+.myk-help-hero h1 {
+    margin: 0 0 8px;
+    font-size: 29px;
+    line-height: 1.18;
+    color: #1f2d3d;
+}
+.myk-help-hero p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #526071;
+    max-width: 860px;
+}
+.myk-help-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 0;
+}
+.myk-help-toolbar .btn {
+    border-radius: 999px;
+}
+.myk-help-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.myk-help-search {
+    position: relative;
+}
+.myk-help-search input {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #ccd6e4;
+    border-radius: 12px;
+    background: #fff;
+    padding: 10px 42px 10px 14px;
+    font-size: 14px;
+    color: #243447;
+}
+.myk-help-search__clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: #6b7785;
+    font-size: 18px;
+    cursor: pointer;
+}
+.myk-help-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.myk-help-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #d6dfeb;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: #fff;
+    color: #2e4a75;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+.myk-help-layout {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 18px;
+}
+.myk-help-section {
+    border: 1px solid #dce3ee;
+    border-radius: 16px;
+    background: #fff;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 12px 24px rgba(20, 37, 63, 0.04);
+}
+.myk-help-section h2 {
+    margin: 0 0 8px;
+    font-size: 21px;
+    color: #1e2f46;
+}
+.myk-help-section__lead {
+    margin: 0 0 16px;
+    color: #5a6777;
+    line-height: 1.65;
+    font-size: 14px;
+}
+.myk-help-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+}
+.myk-help-card {
+    border: 1px solid #e1e7f0;
+    border-radius: 14px;
+    padding: 14px;
+    background: #fbfcff;
+}
+.myk-help-card__eyebrow {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #738197;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.myk-help-card__title {
+    font-size: 15px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #22354b;
+    margin-bottom: 6px;
+}
+.myk-help-card__body {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5e6d7d;
+}
+.myk-help-glossary {
+    display: grid;
+    gap: 10px;
+}
+.myk-help-term {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    padding: 12px 14px;
+}
+.myk-help-term__name {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #627084;
+    margin-bottom: 5px;
+}
+.myk-help-term__desc {
+    color: #4e5d6f;
+    font-size: 13px;
+    line-height: 1.65;
+}
+.myk-help-aside-note {
+    border: 1px solid #f0d9a8;
+    border-radius: 14px;
+    background: #fff8e6;
+    padding: 14px;
+    color: #80541a;
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 14px;
+}
+.myk-help-hidden {
+    display: none !important;
+}
+@media (max-width: 1024px) {
+    .myk-help-layout {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="myk-help-page" id="mykHelpPage">
+    <section class="myk-help-hero">
+        <div class="myk-help-hero__eyebrow">Operator reference page</div>
+        <h1>Queue docs, help &amp; glossary</h1>
+        <p>
+            The old right-side rail has been moved into a dedicated backend page so Inquiry Queue and Loyalty Continuity can stay wider and easier to scan. Use this page as the stable operator reference for queue reading, continuity posture, transfer cues, and shared terminology.
+        </p>
+        <div class="myk-help-toolbar">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-list-ul">Open Inquiry Queue</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open Loyalty Continuity</a>
+        </div>
+    </section>
+
+    <div class="myk-help-controls">
+        <div class="myk-help-search">
+            <input type="search" id="mykHelpSearch" placeholder="Search docs or glossary" aria-label="Search docs or glossary">
+            <button type="button" class="myk-help-search__clear" id="mykHelpSearchClear" aria-label="Clear search">×</button>
+        </div>
+        <nav class="myk-help-nav" aria-label="Docs sections">
+            <a href="#help-queue">Queue docs</a>
+            <a href="#help-loyalty">Loyalty continuity</a>
+            <a href="#help-bridge">Queue-to-loyalty bridge</a>
+            <a href="#help-glossary">Glossary</a>
+            <a href="#help-reminders">Reminders</a>
+        </nav>
+    </div>
+
+    <div class="myk-help-layout">
+        <div>
+            <section id="help-queue" class="myk-help-section" data-doc-section>
+                <h2>Inquiry Queue</h2>
+                <p class="myk-help-section__lead">
+                    Use the queue to read live operational posture before drilling into record detail. The queue should stay scan-friendly: owner state, urgency, linked continuity, latest packet signal, and next review timing should be visible before an operator opens deeper panels.
+                </p>
+                <div class="myk-help-grid">
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Queue reading order</div>
+                        <div class="myk-help-card__title">Scan owner, urgency, and follow-up first</div>
+                        <div class="myk-help-card__body">Start with who owns the inquiry, whether follow-up is overdue or due today, and whether the guest still needs first-touch or proposal shaping before loyalty work begins.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Linked continuity</div>
+                        <div class="myk-help-card__title">Use packet and next-review cues before opening history</div>
+                        <div class="myk-help-card__body">Linked queue rows should let operators read the latest packet posture and revisit timing at a glance. Open loyalty history only when the compact row cue shows something that needs deeper context.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Filter discipline</div>
+                        <div class="myk-help-card__title">Use the Loyalty Posture filter to isolate transfer work</div>
+                        <div class="myk-help-card__body">Separate linked, transfer-ready, draft-ready, and queue-only rows so continuity work does not widen the whole queue. This keeps proposal shaping and continuity stewardship from competing visually.</div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="help-loyalty" class="myk-help-section" data-doc-section>
+                <h2>Loyalty Continuity</h2>
+                <p class="myk-help-section__lead">
+                    Loyalty Continuity exists to preserve remembered-return value, referral potential, and revisit timing without confusing draft records with active retention work.
+                </p>
+                <div class="myk-help-grid">
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">List posture</div>
+                        <div class="myk-help-card__title">Use the list for latest outcome, latest packet, and next review</div>
+                        <div class="myk-help-card__body">The list should stay compact and scan-friendly. Operators should see the source inquiry backlink, continuity posture, and next review cue before opening a record.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Create mode safety</div>
+                        <div class="myk-help-card__title">Keep inquiry-backed drafts distinct from manual drafts</div>
+                        <div class="myk-help-card__body">If a loyalty record came from a real inquiry, keep the source reference visible. If it is a manual draft, keep that distinction explicit so operators do not mistake it for a fully linked continuity lane.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Workspace tabs</div>
+                        <div class="myk-help-card__title">Compare source posture before editing continuity fields</div>
+                        <div class="myk-help-card__body">Overview, Workspace, and History should all let operators compare source inquiry posture against current continuity posture before they widen retention notes or review packet strategy.</div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="help-bridge" class="myk-help-section" data-doc-section>
+                <h2>Queue-to-loyalty bridge</h2>
+                <p class="myk-help-section__lead">
+                    Use continuity only when it helps operators route real post-inquiry value. Closed or maturing records can move into loyalty, but the queue should still show whether that handoff already happened.
+                </p>
+                <div class="myk-help-grid">
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Linked to loyalty</div>
+                        <div class="myk-help-card__title">Continuity already owns the remembered-return lane</div>
+                        <div class="myk-help-card__body">The source inquiry already has a loyalty record. Operators can open the linked record or jump straight to history if they only need the latest continuity result.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Transfer-ready</div>
+                        <div class="myk-help-card__title">Queue work is mature enough for continuity handoff</div>
+                        <div class="myk-help-card__body">Use this when the inquiry is closed or stable enough that remembered-return value should be preserved in a continuity record rather than living only in the queue timeline.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Draft-ready</div>
+                        <div class="myk-help-card__title">A seeded draft exists but still needs operator review</div>
+                        <div class="myk-help-card__body">This is useful when an operator wants create-mode context preserved from the inquiry while still keeping the continuity lane clearly marked as draft or watch-level.</div>
+                    </article>
+                    <article class="myk-help-card" data-doc-item>
+                        <div class="myk-help-card__eyebrow">Queue-only</div>
+                        <div class="myk-help-card__title">Stay in the live inquiry lane for now</div>
+                        <div class="myk-help-card__body">Not every inquiry needs continuity immediately. Leave purely active operational work in the queue until there is enough evidence of return value, referral readiness, or retention timing.</div>
+                    </article>
+                </div>
+            </section>
+        </div>
+
+        <aside>
+            <div class="myk-help-aside-note" data-doc-item>
+                Use search to filter both the docs cards and glossary terms. This page is intentionally wider than the old rail so operators can read the terminology without squeezing the main list screens.
+            </div>
+
+            <section id="help-glossary" class="myk-help-section" data-doc-section>
+                <h2>Glossary</h2>
+                <div class="myk-help-glossary">
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Source anchor</div>
+                        <div class="myk-help-term__desc">The original inquiry reference and guest identity context that continuity work should keep tied to the live record.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Source posture</div>
+                        <div class="myk-help-term__desc">The queue or closing posture of the source inquiry, used to compare whether continuity is early, aligned, or already late to the handoff.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Continuity posture</div>
+                        <div class="myk-help-term__desc">The current loyalty lane status, usually continuity state plus stage, showing how mature the remembered-return work is.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Value signal</div>
+                        <div class="myk-help-term__desc">A compact commercial reading such as watch, promising, strong, or flagship that helps operators decide how much future-stay memory discipline is justified.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Latest outcome</div>
+                        <div class="myk-help-term__desc">The most recent recorded continuity result, used to tell whether the lane advanced, paused, was retained, or needs revisit work.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Latest packet</div>
+                        <div class="myk-help-term__desc">The most recent packet-readiness signal, such as no packet, watch, pending, or prepared. It helps operators judge how structured the next remembered-return move already is.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Next review</div>
+                        <div class="myk-help-term__desc">The next continuity checkpoint timing. Queue rows and loyalty rows surface this so operators can see revisit timing without opening deeper forms.</div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="help-reminders" class="myk-help-section" data-doc-section>
+                <h2>Operator reminders</h2>
+                <div class="myk-help-glossary">
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Public flow guardrail</div>
+                        <div class="myk-help-term__desc">The <code>/plan</code> flow remains plugin-backed and continues to send email continuity to <code>mykonos@cabnet.app</code>. This docs page does not change the public intake bridge.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Manual drafts</div>
+                        <div class="myk-help-term__desc">Keep manual loyalty drafts clearly marked so operators do not confuse them with inquiry-backed continuity lanes.</div>
+                    </article>
+                    <article class="myk-help-term" data-doc-item>
+                        <div class="myk-help-term__name">Narrow handoffs</div>
+                        <div class="myk-help-term__desc">Queue-to-loyalty bridge confirmations should stay explicit and operator-visible before any broader automation or speculative workflow expansion.</div>
+                    </article>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<script>
+(function() {
+    var searchInput = document.getElementById('mykHelpSearch');
+    var clearButton = document.getElementById('mykHelpSearchClear');
+    var items = Array.prototype.slice.call(document.querySelectorAll('[data-doc-item]'));
+    var sections = Array.prototype.slice.call(document.querySelectorAll('[data-doc-section]'));
+
+    function normalize(value) {
+        return (value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    function applySearch() {
+        var query = normalize(searchInput.value);
+
+        items.forEach(function(item) {
+            var text = normalize(item.textContent);
+            var match = !query || text.indexOf(query) !== -1;
+            item.classList.toggle('myk-help-hidden', !match);
+        });
+
+        sections.forEach(function(section) {
+            var visibleItems = section.querySelectorAll('[data-doc-item]:not(.myk-help-hidden)');
+            section.classList.toggle('myk-help-hidden', !!query && visibleItems.length === 0);
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applySearch);
+    }
+
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            searchInput.value = '';
+            applySearch();
+            searchInput.focus();
+        });
+    }
+})();
+</script>

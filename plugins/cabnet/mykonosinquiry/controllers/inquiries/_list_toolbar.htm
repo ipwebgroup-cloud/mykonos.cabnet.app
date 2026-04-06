@@ -7,12 +7,18 @@
     </a>
 </div>
 
+<div class="toolbar-item">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>" class="btn btn-default oc-icon-book">
+        Queue docs &amp; glossary
+    </a>
+</div>
+
 <div id="myk-list-workspace-shell" class="myk-list-workspace-shell">
     <div class="operator-list-workspace-note">
         <div class="operator-list-workspace-note__title">List Workspace Shell</div>
         <p class="operator-list-workspace-note__body">
             This update reduces queue-page scroll fatigue by grouping the operator boards into expandable workspace sections.
-            Keep the queue overview open, and expand the bridge sections only when routing decisions need extra help.
+            The old right rail has been moved into a dedicated docs page so the queue can stay wider while operators still have one stable glossary reference point.
         </p>
     </div>
 
@@ -21,6 +27,7 @@
         <a class="operator-list-workspace-nav__link" href="#workspace-triage-lanes">Triage lanes</a>
         <a class="operator-list-workspace-nav__link" href="#workspace-triage-playbook">Queue playbook</a>
         <a class="operator-list-workspace-nav__link" href="#workspace-record-bridge">Queue-to-record bridge</a>
+        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>">Open docs page</a>
     </nav>
 
     <details id="workspace-queue-overview" class="operator-list-workspace-section" open>

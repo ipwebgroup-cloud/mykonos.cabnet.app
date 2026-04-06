@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.24 right help rail minimized docked-state patch`
+- `v6.41.26 docs page extraction and help-nav button patch`
 
 This is a continuity hint only.
 
@@ -75,8 +75,8 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 
 - keep create-mode render safety intact
 - preserve inquiry-detail prefilled draft transfer behavior
-- keep admin terminology readable with hover tooltips while exposing one centralized right-side docs/help/glossary rail that behaves like a backend layout element across Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens
-- optimize that right rail with a search filter, quick section jumps, responsive sizing, scan-first filtering, explicit show/hide controls with remembered state, compact/standard/wide width presets, and section open/collapse memory so it behaves like a usable backend side column
+- keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue and Loyalty Continuity
+- keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
 - expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
 - preserve the live loyalty-list empty-state guidance
 - keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
@@ -155,7 +155,7 @@ Continue in this style:
 
 If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
 
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one right-side help rail visible across Inquiry Queue, Loyalty Continuity list, and loyalty create/update screens so working panels and row cards can stay cleaner. The active next refinement is to keep that rail behaving like part of the backend layout while making it actually usable with a search filter, quicker navigation, and cleaner section scanning. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
+Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one dedicated backend docs page reachable from the Inquiry Queue and Loyalty Continuity toolbars, so the live list screens can stay wider and cleaner. Prefer direct queue-to-loyalty clarity and readable admin terminology before broader workflow expansion.
 
 ---
 
