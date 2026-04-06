@@ -444,8 +444,9 @@
                 <button type="button" class="btn btn-default oc-icon-link" id="mykHelpCopyDocsLink">Copy docs link</button>
                 <button type="button" class="btn btn-default oc-icon-envelope" id="mykHelpCopyShareSnippet">Copy share snippet</button>
                 <button type="button" class="btn btn-default oc-icon-mail-forward" id="mykHelpCopyEmailDraft">Copy email draft</button>
+                <button type="button" class="btn btn-default oc-icon-comment" id="mykHelpCopyChatHandoff">Copy chat handoff</button>
                 <button type="button" class="btn btn-default oc-icon-external-link" id="mykHelpOpenSectionTab">Open matching section in new tab</button>
-                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, or open the current docs section in a new tab for handoff and operator support.</span>
+                <span class="myk-help-routestatus__copy-status" id="mykHelpCopyContextStatus" aria-live="polite">Copy the current route summary, copy the exact context-aware docs link, copy a ready-to-send support snippet, copy an email-ready escalation draft, copy a short chat handoff, or open the current docs section in a new tab for operator support and training handoff.</span>
             </div>
             <div class="myk-help-routestatus__share">
                 <span class="myk-help-routestatus__share-label">Share-ready support snippet</span>
@@ -672,6 +673,7 @@
     var copyDocsLinkButton = document.getElementById('mykHelpCopyDocsLink');
     var copyShareSnippetButton = document.getElementById('mykHelpCopyShareSnippet');
     var copyEmailDraftButton = document.getElementById('mykHelpCopyEmailDraft');
+    var copyChatHandoffButton = document.getElementById('mykHelpCopyChatHandoff');
     var openSectionTabButton = document.getElementById('mykHelpOpenSectionTab');
     var copyContextStatus = document.getElementById('mykHelpCopyContextStatus');
     var shareSnippetPreview = document.getElementById('mykHelpShareSnippetPreview');
@@ -963,6 +965,23 @@
         ].join('\n');
     }
 
+    function buildChatHandoffText() {
+        var focus = ((currentContextState && currentContextState.badge) || defaultContext.badge);
+        var source = ((currentOriginState && currentOriginState.badge) || defaultOriginState.badge);
+        var primaryReturn = ((currentReturnState && currentReturnState.primaryLabel) || defaultReturnState.primaryLabel);
+        var targetSection = currentTargetId || 'top-of-page';
+        var link = buildAbsoluteSectionUrl();
+
+        return [
+            'Mykonos docs handoff',
+            'Focus: ' + focus,
+            'From: ' + source,
+            'Return: ' + primaryReturn,
+            'Section: ' + targetSection,
+            'Link: ' + link
+        ].join('\n');
+    }
+
     function refreshShareSnippetPreview() {
         if (shareSnippetPreview) {
             shareSnippetPreview.textContent = buildShareSnippetText();
@@ -1157,6 +1176,16 @@
                 setCopyStatus('Copied an email-ready escalation draft with subject, body, and the exact context-aware docs link. You can paste it directly into operator email or ticket notes.');
             }).catch(function() {
                 setCopyStatus('Email-draft copy failed in this browser context. You can still use Copy share snippet or manually build an email from the preview and docs link above.');
+            });
+        });
+    }
+
+    if (copyChatHandoffButton) {
+        copyChatHandoffButton.addEventListener('click', function() {
+            copyTextToClipboard(buildChatHandoffText()).then(function() {
+                setCopyStatus('Copied a short chat handoff with the current focus, source route, return target, section, and exact docs link. You can paste it into Slack, WhatsApp, or operator chat notes.');
+            }).catch(function() {
+                setCopyStatus('Chat-handoff copy failed in this browser context. You can still use Copy route context or Copy share snippet for a longer support message.');
             });
         });
     }

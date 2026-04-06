@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.40 docs-page copy-email-draft utility patch`
+- `v6.41.41 docs-page copy-chat-handoff utility patch`
 
 This is a continuity hint only.
 
