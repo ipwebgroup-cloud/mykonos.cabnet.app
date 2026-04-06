@@ -373,3 +373,6 @@
 
 2.3.96:
   - 'Route queue, loyalty, and record-screen docs buttons to context-aware help page anchors'
+
+2.3.97:
+  - 'Re-ship helpcenter controller bootstrap and backend navigation registration for the dedicated docs page route'

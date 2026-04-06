@@ -69,6 +69,7 @@ class Plugin extends PluginBase
                             'cabnet.mykonosinquiry.manage_inquiries',
                             'cabnet.mykonosinquiry.manage_loyalty_continuity',
                         ],
+                        'order'       => 30,
                     ],
                 ],
             ],

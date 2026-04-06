@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.29 context-aware docs entry anchors patch`
+- `v6.41.30 helpcenter route registration hotfix`
 
 This is a continuity hint only.
 

@@ -88,8 +88,8 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.29 context-aware docs entry anchors patch`
-- plugin tracking `2.3.96`
+- `v6.41.30 helpcenter route registration hotfix`
+- plugin tracking `2.3.97`
 
 This patch does not change schema and does not touch `/plan`.
 It keeps the Inquiry Queue and Loyalty Continuity workflow intact while routing queue, loyalty, and record-screen docs buttons to the most relevant docs-page anchors, so operators land closer to the section they actually need.
@@ -100,6 +100,8 @@ It keeps the Inquiry Queue and Loyalty Continuity workflow intact while routing 
 For this patch, upload the rooted files and then run:
 
 - `php artisan cache:clear`
+
+This specific hotfix re-ships the docs-page controller bootstrap files and side-menu registration so the backend `/helpcenter` route can resolve even if an earlier incremental docs patch was applied without the controller registration files. No schema change is introduced and no plugin refresh is required for this hotfix.
 
 Then verify:
 

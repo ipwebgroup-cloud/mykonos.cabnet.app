@@ -5,7 +5,10 @@ use BackendMenu;
 
 class Helpcenter extends Controller
 {
-    public $requiredPermissions = [];
+    public $requiredPermissions = [
+        'cabnet.mykonosinquiry.manage_inquiries',
+        'cabnet.mykonosinquiry.manage_loyalty_continuity',
+    ];
 
     public function __construct()
     {
@@ -13,5 +16,9 @@ class Helpcenter extends Controller
 
         BackendMenu::setContext('Cabnet.MykonosInquiry', 'mykonosinquiry', 'helpcenter');
         $this->pageTitle = 'Workspace docs, help & glossary';
+    }
+
+    public function index()
+    {
     }
 }
