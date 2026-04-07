@@ -82,18 +82,18 @@ But the immediate operational priority is now explicit:
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
 - the Inquiry Queue toolbar has now been reduced to a minimal button-first layout so the live queue page avoids rendering the heavier inline workspace shell before the list appears
-- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, and only reintroduce extra live-page guidance if it can be proven lightweight
+- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, compress heavy row rendering where possible, and use simple row-count controls so operators can scan the queue in smaller chunks before any deeper list-controller rewrite
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.48 inquiry-queue minimal-toolbar render hotfix`
-- plugin tracking `2.4.15`
+- `v6.41.49 inquiry-queue compact-row pager patch`
+- plugin tracking `2.4.16`
 
 This patch does not change schema and does not touch `/plan`.
-It strips the Inquiry Queue toolbar back to a minimal button-first layout, removes the heavier inline queue workspace shell from the live list page, and keeps deeper guidance in the docs page so the queue can paint faster and feel lighter in day-to-day use.
+It keeps the lighter Inquiry Queue toolbar, adds simple 5 / 10 / 50 / All row controls with Previous / Next paging on the live queue page, and compresses the queue-side repeat-guest summary card so each row renders with less visual weight and more records fit on screen at once.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:

@@ -25,5 +25,175 @@
 </div>
 
 <div class="toolbar-item" style="padding-top: 8px; color: #61708a; font-size: 13px;">
-    Open a guest request, assign an owner, reply, and set the next step. Use repeat-guest tools only for people worth remembering later.
+    Open a guest request, assign an owner, reply, and set the next step.
 </div>
+
+<div class="toolbar-item" style="width:100%; padding-top:8px;">
+    <div id="inquiryQueuePager" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 0 2px; color:#5f6b82; font-size:12px;">
+        <span style="font-weight:700; color:#44526b;">Show rows:</span>
+        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="5">5</button>
+        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="10">10</button>
+        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="50">50</button>
+        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="all">All</button>
+        <span style="width:12px;"></span>
+        <button type="button" class="btn btn-default btn-sm" data-page-nav="prev">Previous</button>
+        <button type="button" class="btn btn-default btn-sm" data-page-nav="next">Next</button>
+        <span id="inquiryQueuePagerStatus" style="font-weight:700; color:#44526b; min-width:120px;">Rows 1-10</span>
+        <span style="color:#74829b;">This keeps the queue easier to scan without changing the saved records.</span>
+    </div>
+</div>
+
+<script>
+(function() {
+    if (window.__cabnetInquiryQueuePagerInit) {
+        return;
+    }
+    window.__cabnetInquiryQueuePagerInit = true;
+
+    var STORAGE_KEY_SIZE = 'cabnetInquiryQueuePageSize';
+    var STORAGE_KEY_PAGE = 'cabnetInquiryQueuePage';
+
+    function getPagerRoot() {
+        return document.getElementById('inquiryQueuePager');
+    }
+
+    function getListRows() {
+        var candidates = document.querySelectorAll('.control-list table tbody tr');
+        return Array.prototype.filter.call(candidates, function(row) {
+            if (!row || row.classList.contains('group') || row.classList.contains('no-data') || row.classList.contains('list-no-data')) {
+                return false;
+            }
+            if (row.querySelector('td[colspan]') && row.textContent.toLowerCase().indexOf('no records') !== -1) {
+                return false;
+            }
+            return true;
+        });
+    }
+
+    function getPageSize() {
+        return localStorage.getItem(STORAGE_KEY_SIZE) || '10';
+    }
+
+    function getCurrentPage() {
+        var page = parseInt(localStorage.getItem(STORAGE_KEY_PAGE) || '1', 10);
+        return page > 0 ? page : 1;
+    }
+
+    function setCurrentPage(page) {
+        localStorage.setItem(STORAGE_KEY_PAGE, String(page > 0 ? page : 1));
+    }
+
+    function setPageSize(size) {
+        localStorage.setItem(STORAGE_KEY_SIZE, String(size));
+        setCurrentPage(1);
+        applyQueuePaging();
+    }
+
+    function updateButtonState(size) {
+        var root = getPagerRoot();
+        if (!root) {
+            return;
+        }
+        Array.prototype.forEach.call(root.querySelectorAll('.queue-page-size'), function(button) {
+            var active = String(button.getAttribute('data-page-size')) === String(size);
+            button.classList.toggle('btn-primary', active);
+            button.classList.toggle('btn-default', !active);
+        });
+    }
+
+    function applyQueuePaging() {
+        var root = getPagerRoot();
+        if (!root) {
+            return;
+        }
+
+        var rows = getListRows();
+        var size = getPageSize();
+        var status = document.getElementById('inquiryQueuePagerStatus');
+        var currentPage = getCurrentPage();
+        var perPage = size === 'all' ? (rows.length || 1) : parseInt(size, 10);
+        var totalPages = size === 'all' ? 1 : Math.max(1, Math.ceil(rows.length / perPage));
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+            setCurrentPage(currentPage);
+        }
+
+        var start = size === 'all' ? 0 : (currentPage - 1) * perPage;
+        var end = size === 'all' ? rows.length : start + perPage;
+
+        Array.prototype.forEach.call(rows, function(row, index) {
+            row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+
+        updateButtonState(size);
+
+        var prevButton = root.querySelector('[data-page-nav="prev"]');
+        var nextButton = root.querySelector('[data-page-nav="next"]');
+        if (prevButton) {
+            prevButton.disabled = currentPage <= 1 || size === 'all';
+        }
+        if (nextButton) {
+            nextButton.disabled = currentPage >= totalPages || size === 'all';
+        }
+
+        if (status) {
+            if (!rows.length) {
+                status.textContent = 'No rows to show';
+            } else if (size === 'all') {
+                status.textContent = 'Showing all ' + rows.length + ' rows';
+            } else {
+                status.textContent = 'Rows ' + (start + 1) + '-' + Math.min(end, rows.length) + ' of ' + rows.length + ' · Page ' + currentPage + ' / ' + totalPages;
+            }
+        }
+    }
+
+    function bindPagerEvents() {
+        var root = getPagerRoot();
+        if (!root || root.getAttribute('data-bound') === '1') {
+            return;
+        }
+        root.setAttribute('data-bound', '1');
+
+        root.addEventListener('click', function(event) {
+            var sizeButton = event.target.closest('.queue-page-size');
+            if (sizeButton) {
+                event.preventDefault();
+                setPageSize(sizeButton.getAttribute('data-page-size'));
+                return;
+            }
+
+            var navButton = event.target.closest('[data-page-nav]');
+            if (navButton) {
+                event.preventDefault();
+                var direction = navButton.getAttribute('data-page-nav');
+                var currentPage = getCurrentPage();
+                setCurrentPage(direction === 'next' ? currentPage + 1 : currentPage - 1);
+                applyQueuePaging();
+            }
+        });
+    }
+
+    function initQueuePaging() {
+        bindPagerEvents();
+        applyQueuePaging();
+    }
+
+    document.addEventListener('DOMContentLoaded', initQueuePaging);
+    document.addEventListener('render', initQueuePaging, true);
+    document.addEventListener('ajaxUpdateComplete', initQueuePaging, true);
+    window.setTimeout(initQueuePaging, 50);
+    window.setTimeout(initQueuePaging, 300);
+
+    var observer = new MutationObserver(function() {
+        initQueuePaging();
+    });
+
+    window.setTimeout(function() {
+        var listRoot = document.querySelector('.control-list');
+        if (listRoot) {
+            observer.observe(listRoot, {childList: true, subtree: true});
+        }
+    }, 200);
+})();
+</script>

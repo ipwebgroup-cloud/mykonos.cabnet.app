@@ -9,7 +9,6 @@ $reference = $inquiry->loyalty_queue_backlink_reference_label;
 $posture = $inquiry->loyalty_queue_backlink_posture_label;
 $hint = $inquiry->loyalty_queue_backlink_hint;
 $historyCueLabel = $inquiry->loyalty_queue_history_cue_label;
-$historyCueHint = $inquiry->loyalty_queue_history_cue_hint;
 $linked = strpos((string) $inquiry->loyalty_record_link_state_label, 'Linked ·') === 0;
 $historyActionLabel = $inquiry->loyalty_queue_history_action_label;
 $historyActionUrl = $inquiry->loyalty_queue_history_action_url;
@@ -20,62 +19,45 @@ $nextReviewPillLabel = $inquiry->loyalty_queue_next_review_pill_label;
 $nextReviewPillTitle = $inquiry->loyalty_queue_next_review_pill_title;
 $nextReviewTone = $inquiry->loyalty_queue_next_review_pill_tone;
 
-$border = $linked ? '#cfe2ff' : '#e5e7eb';
-$bg = $linked ? '#f7fbff' : '#f8f9fa';
-$title = $linked ? '#084298' : '#495057';
-$text = $linked ? '#33577a' : '#6c757d';
-$cueBorder = $linked ? '#d8e6fb' : '#e9ecef';
-$cueBg = $linked ? '#ffffff' : '#ffffff';
+$border = $linked ? '#d7e7ff' : '#e5e7eb';
+$bg = $linked ? '#fbfdff' : '#fafbfc';
+$title = $linked ? '#0b4f99' : '#475569';
+$text = $linked ? '#4a6b8a' : '#667085';
 
-$packetToneMap = [
+$toneMap = [
     'success' => ['#0f5132', '#ecfdf3', '#b7ebc6'],
     'warning' => ['#7c4a03', '#fff7e6', '#f5d08a'],
     'neutral' => ['#084298', '#eef5ff', '#cfe2ff'],
     'muted' => ['#5c6370', '#f3f4f6', '#d7dce2'],
     'danger' => ['#842029', '#f8d7da', '#f1aeb5'],
 ];
-[$packetText, $packetBg, $packetBorder] = $packetToneMap[$packetTone] ?? $packetToneMap['muted'];
-[$reviewText, $reviewBg, $reviewBorder] = $packetToneMap[$nextReviewTone] ?? $packetToneMap['muted'];
+[$packetText, $packetBg, $packetBorder] = $toneMap[$packetTone] ?? $toneMap['muted'];
+[$reviewText, $reviewBg, $reviewBorder] = $toneMap[$nextReviewTone] ?? $toneMap['muted'];
 ?>
-<div style="min-width:260px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
-    <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
-        <span title="Linked loyalty record reference and high-level continuity state."><?= e($reference) ?></span>
+<div style="min-width:230px; max-width:300px; line-height:1.25; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:8px 10px;">
+    <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($reference) ?>">
+        <?= e($reference) ?>
     </div>
-    <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:4px;">
+
+    <div style="font-size:11px; color:<?= e($text) ?>; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($posture) ?>">
         <?= e($posture) ?>
     </div>
-    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9;">
-        <?= e($hint) ?>
+
+    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($historyCueLabel ?: $hint) ?>">
+        <?= e($historyCueLabel ?: $hint) ?>
     </div>
 
-    <div style="margin-top:8px; margin-bottom:8px; display:flex; flex-wrap:wrap; gap:8px;">
-        <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetText) ?>; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700;" title="<?= e($packetBadgeTitle) ?>">
-            <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Packet</span>
-            <span><?= e($packetBadgeLabel) ?></span>
+    <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+        <span style="display:inline-flex; align-items:center; gap:4px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="<?= e($packetBadgeTitle) ?>">
+            Packet: <?= e($packetBadgeLabel) ?>
         </span>
-        <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid <?= e($reviewBorder) ?>; background:<?= e($reviewBg) ?>; color:<?= e($reviewText) ?>; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700;" title="<?= e($nextReviewPillTitle) ?>">
-            <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Next review</span>
-            <span><?= e($nextReviewPillLabel) ?></span>
+        <span style="display:inline-flex; align-items:center; gap:4px; border:1px solid <?= e($reviewBorder) ?>; background:<?= e($reviewBg) ?>; color:<?= e($reviewText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="<?= e($nextReviewPillTitle) ?>">
+            Review: <?= e($nextReviewPillLabel) ?>
         </span>
-    </div>
-
-    <div style="margin-top:8px; border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:8px 10px;">
-        <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;">
-            <span title="Queue-side continuity snapshot that shows the latest loyalty history signal without opening the loyalty record.">Queue-to-history cue</span>
-        </div>
-        <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
-            <span title="Latest loyalty outcome or packet-state cue visible directly from the queue row."><?= e($historyCueLabel) ?></span>
-        </div>
-        <div style="font-size:11px; color:<?= e($text) ?>;">
-            <?= e($historyCueHint) ?>
-        </div>
-    </div>
-
-    <?php if ($linked && $historyActionLabel && $historyActionUrl): ?>
-        <div style="margin-top:8px;">
-            <a href="<?= e($historyActionUrl) ?>" class="btn btn-sm btn-default" title="Open the linked loyalty record directly on the History tab." style="margin-right:6px;">
+        <?php if ($linked && $historyActionLabel && $historyActionUrl): ?>
+            <a href="<?= e($historyActionUrl) ?>" style="font-size:10px; font-weight:700; color:#0b63ce; text-decoration:none;" title="Open the linked repeat-guest record on its history tab.">
                 <?= e($historyActionLabel) ?>
             </a>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
+    </div>
 </div>
