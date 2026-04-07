@@ -433,3 +433,6 @@
 
 2.4.17:
   - 'Align the Inquiry Queue pager into a clean second-row toolbar layout so the faster row controls do not collide with search and list setup'
+
+2.4.18:
+  - 'Refine the Inquiry Queue pager into a right-aligned dedicated control row so the faster row controls sit cleanly below the main toolbar'

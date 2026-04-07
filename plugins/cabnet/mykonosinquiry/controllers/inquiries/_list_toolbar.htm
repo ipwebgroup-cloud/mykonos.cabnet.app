@@ -1,30 +1,29 @@
 <?= $this->makePartial('operator_list_ui_styles') ?>
 
 <style>
-.control-toolbar .toolbar-item.queue-toolbar-note,
 .control-toolbar .toolbar-item.queue-toolbar-pager-row {
     flex: 1 0 100%;
     width: 100%;
-}
-
-.control-toolbar .toolbar-item.queue-toolbar-note {
-    order: 90;
+    order: 100;
     padding-top: 6px;
 }
 
-.control-toolbar .toolbar-item.queue-toolbar-pager-row {
-    order: 100;
-    padding-top: 2px;
+#inquiryQueuePagerWrap {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
 }
 
 #inquiryQueuePager {
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
-    padding: 4px 0 0;
+    padding: 8px 0 0;
     color: #5f6b82;
     font-size: 12px;
+    text-align: right;
 }
 
 #inquiryQueuePager .queue-pager-label,
@@ -33,13 +32,22 @@
     color: #44526b;
 }
 
+#inquiryQueuePagerStatus {
+    white-space: nowrap;
+}
+
 #inquiryQueuePager .queue-pager-separator {
-    width: 10px;
+    width: 8px;
 }
 
 @media (max-width: 1200px) {
-    .control-toolbar .toolbar-item.queue-toolbar-note {
-        display: none;
+    #inquiryQueuePagerWrap {
+        justify-content: flex-start;
+    }
+
+    #inquiryQueuePager {
+        justify-content: flex-start;
+        text-align: left;
     }
 }
 </style>
@@ -68,21 +76,20 @@
     </a>
 </div>
 
-<div class="toolbar-item queue-toolbar-note" style="color:#61708a; font-size:13px;">
-    Open a guest request, assign an owner, reply, and set the next step.
-</div>
 
 <div class="toolbar-item queue-toolbar-pager-row">
-    <div id="inquiryQueuePager">
-        <span class="queue-pager-label">Show rows:</span>
-        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="5">5</button>
-        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="10">10</button>
-        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="50">50</button>
-        <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="all">All</button>
-        <span class="queue-pager-separator"></span>
-        <button type="button" class="btn btn-default btn-sm" data-page-nav="prev">Previous</button>
-        <button type="button" class="btn btn-default btn-sm" data-page-nav="next">Next</button>
-        <span id="inquiryQueuePagerStatus">Rows 1-10</span>
+    <div id="inquiryQueuePagerWrap">
+        <div id="inquiryQueuePager">
+            <span class="queue-pager-label">Rows per page</span>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="5">5</button>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="10">10</button>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="50">50</button>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="all">All</button>
+            <span class="queue-pager-separator"></span>
+            <button type="button" class="btn btn-default btn-sm" data-page-nav="prev">Previous</button>
+            <button type="button" class="btn btn-default btn-sm" data-page-nav="next">Next</button>
+            <span id="inquiryQueuePagerStatus">Rows 1-10</span>
+        </div>
     </div>
 </div>
 

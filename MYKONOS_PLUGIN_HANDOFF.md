@@ -89,8 +89,8 @@ But the immediate operational priority is now explicit:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.50 inquiry-queue pager layout alignment fix patch`
-- plugin tracking `2.4.17`
+- `v6.41.51 inquiry-queue pager dedicated row alignment patch`
+- plugin tracking `2.4.18`
 
 This patch does not change schema and does not touch `/plan`.
 It keeps the lighter Inquiry Queue toolbar and row controls, but realigns the new 5 / 10 / 50 / All pager into a clean second toolbar row so it no longer collides with the native search box or list-setup controls on the right side.

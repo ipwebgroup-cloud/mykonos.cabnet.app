@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.50 inquiry-queue pager layout alignment fix patch`
+- `v6.41.51 inquiry-queue pager dedicated row alignment patch`
 
 This is a continuity hint only.
 
