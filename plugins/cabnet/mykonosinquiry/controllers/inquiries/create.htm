@@ -6,15 +6,45 @@
 <?php Block::endPut() ?>
 
 <div data-control="toolbar">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/create')) . '&returnLabel=' . rawurlencode('Back to New inquiry') . '&returnTitle=' . rawurlencode('Return to the new inquiry screen after checking record guidance.') . '&returnSummary=' . rawurlencode('Inquiry screen help opened from the create route, so the primary action returns directly to the new inquiry form.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open Inquiry Queue') . '&sourceLabel=' . rawurlencode('New inquiry screen') . '&sourceSummary=' . rawurlencode('Opened from the inquiry create route before first-touch drafting, ownership framing, and follow-up planning.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
-        Inquiry screen help
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/create')) . '&returnLabel=' . rawurlencode('Back to new inquiry') . '&returnTitle=' . rawurlencode('Return to the new inquiry form after checking simple guidance.') . '&returnSummary=' . rawurlencode('This help page was opened from the new inquiry screen before saving the first draft.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('New inquiry screen') . '&sourceSummary=' . rawurlencode('Opened from the new inquiry screen while preparing the first summary, owner, and follow-up plan.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+        Simple help for this page
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">
-        Back to Inquiry Queue
+        Back to inquiry list
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
-        Open Loyalty Continuity
+        Open repeat-guest list
     </a>
+</div>
+
+<div class="layout-row">
+    <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
+        <div class="content" style="padding:18px 20px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:8px;">Plain-English guide</div>
+            <h3 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#1f2937;">New inquiry</h3>
+            <p style="margin:0 0 12px 0;font-size:14px;line-height:1.65;color:#475569;">
+                Use this page to save a guest request into the working list. Keep the notes simple: who the guest is, what they want, who owns it, and when someone should follow up.
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Status</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">Where this request currently stands, such as new, contacted, or closed.</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Priority</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">How urgent or important the request feels right now.</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Owner</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">The person responsible for the next step.</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Follow-up date</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">The next day someone should check in or act on this request.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?= $this->formRender() ?>

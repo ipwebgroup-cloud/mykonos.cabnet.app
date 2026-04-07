@@ -421,3 +421,6 @@
 
 2.4.13:
   - 'Simplify the Inquiry Queue toolbar into a faster plain-language fast-start shell and move heavy guidance back to the docs page'
+
+2.4.14:
+  - 'Simplify the inquiry create/update screens with plain-language guides, lighter record headers, and easier toolbar wording'

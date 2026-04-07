@@ -128,7 +128,7 @@ Then verify:
 - confirm the backend side menu now includes `Workspace Docs`
 - open Backend -> Mykonos Inquiries -> Workspace Docs and confirm the dedicated docs page loads directly from navigation
 - open Backend -> Mykonos Inquiries -> New inquiry and confirm `Workspace docs & glossary` appears above the form
-- open an existing inquiry record and confirm the `Inquiry screen help` button appears above the inquiry header without narrowing the record screen
+- open an existing inquiry record and confirm the simplified `Simple help for this page` button appears above the record without narrowing the screen
 - open Backend -> `Mykonos Inquiries` -> `Loyalty Continuity` -> `New Loyalty Record` and confirm the page now shows a top `Loyalty screen help` button
 - open an existing loyalty record such as `/admin/cabnet/mykonosinquiry/loyaltyrecords/update/3` and confirm the update page also shows the same `Loyalty screen help` button
 - click the button from create/update and confirm the dedicated docs page opens without restoring an inline right-side rail
@@ -171,7 +171,7 @@ Then verify:
 - click `Open loyalty history` and confirm the saved loyalty record opens on `#primarytab-history`
 - `php scripts/qa-loyalty-workspace-activation.php`
 
-- open Backend -> `Mykonos Inquiries` -> `Inquiry Queue` and confirm queue-side loyalty backlink cards still render
+- open Backend -> `Mykonos Inquiries` -> `Inquiry Queue` and confirm the lighter queue shell still renders and queue-side loyalty backlink cards still render
 - hover key labels such as `Queue-to-history cue` and confirm tooltip text appears
 - open `Loyalty Continuity` create or update screens and confirm the top `Workspace docs & glossary` button appears
 - open the dedicated docs page and confirm it explains source anchor, source posture, continuity posture, value signal, latest outcome, latest packet, next review, queue-to-history cue, and manual vs inquiry-backed drafts
@@ -200,5 +200,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.39 docs-page share-snippet utility patch`
-- plugin version line: `2.4.6`
+- `v6.41.47 inquiry-screen plain-language and lighter-record-header patch`
+- plugin version line: `2.4.14`

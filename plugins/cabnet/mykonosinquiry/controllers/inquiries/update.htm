@@ -6,75 +6,27 @@
     $status = $model && !empty($model->status) ? $model->status : 'new';
     $priority = $model && !empty($model->priority) ? $model->priority : 'normal';
     $statusLabel = $model && method_exists($model, 'getStatusLabelAttribute') ? $model->status_label : ucwords(str_replace('_', ' ', $status));
-    $priorityLabel = $model && method_exists($model, 'getPriorityLabelAttribute') ? $model->priority_label : strtoupper($priority);
-    $queuePosture = $model && method_exists($model, 'getQueuePostureAttribute') ? $model->queue_posture : 'Workflow is active; keep assignment and next action explicit.';
-    $nextAction = $model && method_exists($model, 'getContinuityNextActionAttribute') ? $model->continuity_next_action : 'Keep the internal summary current for the next operator.';
-    $continuityTone = $model && method_exists($model, 'getContinuityToneAttribute') ? $model->continuity_tone : 'neutral';
-    $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Unassigned';
-    $email = $model && !empty($model->email) ? $model->email : 'No email provided';
-    $phone = $model && !empty($model->phone) ? $model->phone : 'No phone provided';
+    $priorityLabel = $model && method_exists($model, 'getPriorityLabelAttribute') ? $model->priority_label : ucwords(str_replace('_', ' ', $priority));
+    $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
+    $email = $model && !empty($model->email) ? $model->email : 'No email saved';
+    $phone = $model && !empty($model->phone) ? $model->phone : 'No phone saved';
     $focus = $model && method_exists($model, 'getServicesInlineAttribute') ? $model->services_inline : 'General planning';
     $arrival = $model && !empty($model->arrival_date) ? $model->arrival_date->format('Y-m-d') : 'Not set';
     $departure = $model && !empty($model->departure_date) ? $model->departure_date->format('Y-m-d') : 'Not set';
     $followUp = $model && !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
-    $lastContacted = $model && !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : 'Not contacted yet';
+    $lastContacted = $model && !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : 'No contact logged';
     $sourceType = $model && !empty($model->source_type) ? ucwords(str_replace(['_', '-'], ' ', $model->source_type)) : 'Direct / unspecified';
     $requestedMode = $model && !empty($model->requested_mode) ? ucwords(str_replace(['_', '-'], ' ', $model->requested_mode)) : 'Not specified';
     $guests = $model && !empty($model->guests) ? $model->guests : '—';
     $createdAt = $model && !empty($model->created_at) ? $model->created_at->format('Y-m-d H:i') : '—';
-    $closedAt = $model && !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : null;
+    $closedAt = $model && !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Still open';
 
-    $statusPalette = [
-        'new' => ['#0b5ed7', '#e7f1ff'],
-        'reviewed' => ['#6f42c1', '#f1e8ff'],
-        'contacted' => ['#198754', '#eaf7ef'],
-        'proposal_sent' => ['#0f766e', '#e6fffb'],
-        'awaiting_guest' => ['#fd7e14', '#fff3e8'],
-        'confirmed' => ['#157347', '#eaf7ef'],
-        'closed_won' => ['#198754', '#eaf7ef'],
-        'closed_lost' => ['#b02a37', '#fdebec'],
-        'spam' => ['#6c757d', '#f3f4f6'],
-        'triage' => ['#0d6efd', '#e7f1ff'],
-        'proposal' => ['#0f766e', '#e6fffb'],
-        'closed' => ['#6c757d', '#f3f4f6'],
+    $quickCards = [
+        ['label' => 'Guest', 'value' => $guest, 'note' => $email . ' · ' . $phone],
+        ['label' => 'Trip dates', 'value' => $arrival . ' → ' . $departure, 'note' => 'Guests: ' . $guests],
+        ['label' => 'Current stage', 'value' => $statusLabel, 'note' => 'Priority: ' . $priorityLabel],
+        ['label' => 'Next step', 'value' => $followUp, 'note' => 'Owner: ' . $owner],
     ];
-
-    $priorityPalette = [
-        'low' => ['#6c757d', '#f3f4f6'],
-        'normal' => ['#0d6efd', '#e7f1ff'],
-        'high' => ['#fd7e14', '#fff3e8'],
-        'vip' => ['#6f42c1', '#f1e8ff'],
-        'urgent' => ['#b02a37', '#fdebec'],
-    ];
-
-    $continuityPalette = [
-        'critical' => ['#b02a37', '#fdebec', '#f7c6cc'],
-        'warning' => ['#fd7e14', '#fff3e8', '#ffe0bf'],
-        'positive' => ['#198754', '#eaf7ef', '#cfe9d8'],
-        'neutral' => ['#475569', '#f8fafc', '#e2e8f0'],
-    ];
-
-    $statusColors = $statusPalette[$status] ?? ['#0d6efd', '#e7f1ff'];
-    $priorityColors = $priorityPalette[$priority] ?? ['#0d6efd', '#e7f1ff'];
-    $continuityColors = $continuityPalette[$continuityTone] ?? $continuityPalette['neutral'];
-
-    $badgeStyle = function ($colors) {
-        return sprintf(
-            'display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:%s;background:%s;',
-            $colors[0],
-            $colors[1]
-        );
-    };
-
-    $metricStyle = 'background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;box-shadow:0 1px 2px rgba(15,23,42,.04);height:100%;';
-    $labelStyle = 'display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;';
-    $valueStyle = 'display:block;font-size:15px;font-weight:600;color:#111827;line-height:1.4;';
-
-    $followUpState = $model && method_exists($model, 'getFollowUpQueueStateAttribute') ? $model->follow_up_queue_state : 'Unscheduled';
-    $followUpQueueTone = $model && method_exists($model, 'getFollowUpQueueToneAttribute') ? $model->follow_up_queue_tone : 'neutral';
-    $followUpQueueNote = $model && method_exists($model, 'getFollowUpQueueNoteAttribute') ? $model->follow_up_queue_note : 'No follow-up date is currently set.';
-    $followUpQueueAction = $model && method_exists($model, 'getFollowUpQueueActionAttribute') ? $model->follow_up_queue_action : 'Set the next follow-up date so queue ownership remains explicit.';
-    $followUpColors = $continuityPalette[$followUpQueueTone] ?? $continuityPalette['neutral'];
 ?>
 <div class="control-breadcrumb">
     <ul>
@@ -84,100 +36,72 @@
 </div>
 
 <div data-control="toolbar">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-update&return=' . rawurlencode($model && $model->id ? Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $model->id) : Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to inquiry record') . '&returnTitle=' . rawurlencode('Return to the inquiry record after checking record-screen guidance.') . '&returnSummary=' . rawurlencode('Inquiry screen help opened from a saved inquiry, so the primary action returns to the current record while keeping the queue one click away.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open Inquiry Queue') . '&sourceLabel=' . rawurlencode($model && !empty($model->request_reference) ? 'Inquiry record ' . $model->request_reference : ($model && $model->id ? 'Inquiry record #' . $model->id : 'Inquiry record screen')) . '&sourceSummary=' . rawurlencode('Opened from a saved inquiry record while editing workflow posture, summaries, and queue-side continuity cues.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
-        Inquiry screen help
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-update&return=' . rawurlencode($model && $model->id ? Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $model->id) : Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to inquiry record') . '&returnTitle=' . rawurlencode('Return to the inquiry record after checking simple guidance.') . '&returnSummary=' . rawurlencode('This help page was opened from a saved inquiry while someone was reviewing the request and planning the next step.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode($model && !empty($model->request_reference) ? 'Inquiry record ' . $model->request_reference : ($model && $model->id ? 'Inquiry record #' . $model->id : 'Inquiry record screen')) . '&sourceSummary=' . rawurlencode('Opened from a saved inquiry while editing status, notes, and the next follow-up plan.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
+        Simple help for this page
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">
-        Back to Inquiry Queue
+        Back to inquiry list
     </a>
     <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
-        Open Loyalty Continuity
+        Open repeat-guest list
     </a>
 </div>
 
 <div class="layout-row">
-    <div class="callout callout-info no-subheader" style="border-radius:16px;overflow:hidden;box-shadow:0 10px 24px rgba(15,23,42,.08);border:1px solid rgba(13,110,253,.12);">
-        <div class="content" style="padding:24px;">
-            <div class="row" style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;">
-                <div class="col-md-8" style="flex:1 1 460px;min-width:280px;">
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;">
-                        <span style="<?= $badgeStyle($statusColors) ?>">Status: <?= e($statusLabel) ?></span>
-                        <span style="<?= $badgeStyle($priorityColors) ?>">Priority: <?= e($priorityLabel) ?></span>
-                        <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:#334155;background:#f8fafc;border:1px solid #e2e8f0;">Owner: <?= e($owner) ?></span>
-                        <span style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:<?= e($followUpColors[0]) ?>;background:<?= e($followUpColors[1]) ?>;border:1px solid <?= e($followUpColors[2]) ?>;">Follow-up: <?= e($followUpState) ?></span>
-                    </div>
-
-                    <h2 style="margin:0 0 8px 0;font-size:28px;font-weight:700;line-height:1.2;"><?= e($guest) ?></h2>
-                    <div style="font-size:14px;color:#475569;margin-bottom:10px;">
-                        <strong><?= e($reference) ?></strong>
-                        <span style="margin:0 8px;color:#cbd5e1;">•</span>
-                        Created <?= e($createdAt) ?>
-                        <?php if ($closedAt): ?>
-                            <span style="margin:0 8px;color:#cbd5e1;">•</span>
-                            Closed <?= e($closedAt) ?>
-                        <?php endif; ?>
-                    </div>
-                    <p style="margin:0;font-size:15px;line-height:1.6;color:#334155;">
-                        <?= e($email) ?>
-                        <span style="margin:0 8px;color:#cbd5e1;">•</span>
-                        <?= e($phone) ?>
-                    </p>
-                </div>
-
-                <div class="col-md-4" style="flex:0 1 280px;min-width:260px;">
-                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:16px;">
-                        <div style="<?= $labelStyle ?>">Operator focus</div>
-                        <div style="<?= $valueStyle ?>"><?= e($focus) ?></div>
-                        <div style="margin-top:12px;border-radius:12px;padding:12px 13px;border:1px solid <?= e($followUpColors[2]) ?>;background:<?= e($followUpColors[1]) ?>;color:<?= e($followUpColors[0]) ?>;">
-                            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">Follow-up queue</div>
-                            <div style="font-size:13px;line-height:1.55;font-weight:700;"><?= e($followUpState) ?> · <?= e($followUp) ?></div>
-                            <div style="margin-top:8px;font-size:12px;line-height:1.6;">
-                                <?= e($followUpQueueNote) ?><br>
-                                <strong>Action:</strong> <?= e($followUpQueueAction) ?>
-                            </div>
-                        </div>
-                        <div style="margin-top:12px;border-radius:12px;padding:12px 13px;border:1px solid <?= e($continuityColors[2]) ?>;background:<?= e($continuityColors[1]) ?>;color:<?= e($continuityColors[0]) ?>;">
-                            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">Queue posture</div>
-                            <div style="font-size:13px;line-height:1.55;font-weight:600;"><?= e($queuePosture) ?></div>
-                            <div style="margin-top:8px;font-size:12px;line-height:1.6;">
-                                <strong>Next action:</strong> <?= e($nextAction) ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
+        <div class="content" style="padding:18px 20px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:8px;">Fast inquiry guide</div>
+            <h3 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#1f2937;"><?= e($guest) ?></h3>
+            <p style="margin:0 0 12px 0;font-size:14px;line-height:1.65;color:#475569;">
+                This page is for managing one guest request. Keep the record simple: what the guest wants, who owns the request, and what should happen next.
+            </p>
+            <div style="font-size:13px;color:#64748b;margin-bottom:14px;">
+                <strong><?= e($reference) ?></strong>
+                <span style="margin:0 8px;color:#cbd5e1;">•</span>
+                Created <?= e($createdAt) ?>
+                <span style="margin:0 8px;color:#cbd5e1;">•</span>
+                Last contact: <?= e($lastContacted) ?>
+                <span style="margin:0 8px;color:#cbd5e1;">•</span>
+                Closed: <?= e($closedAt) ?>
             </div>
 
-            <div class="row" style="display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;">
-                <div class="col-md-3" style="flex:1 1 220px;min-width:180px;">
-                    <div style="<?= $metricStyle ?>">
-                        <span style="<?= $labelStyle ?>">Stay window</span>
-                        <span style="<?= $valueStyle ?>"><?= e($arrival) ?> → <?= e($departure) ?></span>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
+                <?php foreach ($quickCards as $card): ?>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;"><?= e($card['label']) ?></div>
+                        <div style="font-size:15px;font-weight:700;color:#111827;line-height:1.4;"><?= e($card['value']) ?></div>
+                        <div style="margin-top:6px;font-size:12px;line-height:1.55;color:#475569;"><?= e($card['note']) ?></div>
                     </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layout-row">
+    <div class="callout callout-warning no-subheader" style="border-radius:14px;border:1px solid rgba(245,158,11,.22);box-shadow:0 6px 18px rgba(15,23,42,.04);margin-bottom:18px;">
+        <div class="content" style="padding:18px 20px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#b45309;margin-bottom:8px;">Plain-English labels</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Status</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">Where the request stands right now, like new, contacted, waiting, or closed.</div>
                 </div>
-                <div class="col-md-2" style="flex:1 1 160px;min-width:150px;">
-                    <div style="<?= $metricStyle ?>">
-                        <span style="<?= $labelStyle ?>">Guests</span>
-                        <span style="<?= $valueStyle ?>"><?= e((string) $guests) ?></span>
-                    </div>
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Priority</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">How urgent or important this request feels compared with the rest of the list.</div>
                 </div>
-                <div class="col-md-3" style="flex:1 1 220px;min-width:180px;">
-                    <div style="<?= $metricStyle ?>">
-                        <span style="<?= $labelStyle ?>">Source</span>
-                        <span style="<?= $valueStyle ?>"><?= e($sourceType) ?></span>
-                    </div>
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Follow-up date</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">The next day someone should check in, reply, or move this request forward.</div>
                 </div>
-                <div class="col-md-2" style="flex:1 1 180px;min-width:160px;">
-                    <div style="<?= $metricStyle ?>">
-                        <span style="<?= $labelStyle ?>">Mode</span>
-                        <span style="<?= $valueStyle ?>"><?= e($requestedMode) ?></span>
-                    </div>
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Repeat-guest list</div>
+                    <div style="font-size:13px;line-height:1.55;color:#374151;">A separate follow-up area for guests worth remembering after the main request is already handled.</div>
                 </div>
-                <div class="col-md-2" style="flex:1 1 220px;min-width:180px;">
-                    <div style="<?= $metricStyle ?>">
-                        <span style="<?= $labelStyle ?>">Last contacted</span>
-                        <span style="<?= $valueStyle ?>"><?= e($lastContacted) ?></span>
-                    </div>
-                </div>
+            </div>
+            <div style="margin-top:12px;font-size:13px;line-height:1.65;color:#475569;">
+                <strong>Quick reading order:</strong> read the guest summary, check the current stage, confirm the owner, and set the next follow-up date.
             </div>
         </div>
     </div>
