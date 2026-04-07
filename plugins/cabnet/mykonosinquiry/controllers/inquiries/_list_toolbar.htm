@@ -1,5 +1,49 @@
 <?= $this->makePartial('operator_list_ui_styles') ?>
 
+<style>
+.control-toolbar .toolbar-item.queue-toolbar-note,
+.control-toolbar .toolbar-item.queue-toolbar-pager-row {
+    flex: 1 0 100%;
+    width: 100%;
+}
+
+.control-toolbar .toolbar-item.queue-toolbar-note {
+    order: 90;
+    padding-top: 6px;
+}
+
+.control-toolbar .toolbar-item.queue-toolbar-pager-row {
+    order: 100;
+    padding-top: 2px;
+}
+
+#inquiryQueuePager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0 0;
+    color: #5f6b82;
+    font-size: 12px;
+}
+
+#inquiryQueuePager .queue-pager-label,
+#inquiryQueuePagerStatus {
+    font-weight: 700;
+    color: #44526b;
+}
+
+#inquiryQueuePager .queue-pager-separator {
+    width: 10px;
+}
+
+@media (max-width: 1200px) {
+    .control-toolbar .toolbar-item.queue-toolbar-note {
+        display: none;
+    }
+}
+</style>
+
 <div class="toolbar-item toolbar-primary">
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">
         New inquiry
@@ -24,22 +68,21 @@
     </a>
 </div>
 
-<div class="toolbar-item" style="padding-top: 8px; color: #61708a; font-size: 13px;">
+<div class="toolbar-item queue-toolbar-note" style="color:#61708a; font-size:13px;">
     Open a guest request, assign an owner, reply, and set the next step.
 </div>
 
-<div class="toolbar-item" style="width:100%; padding-top:8px;">
-    <div id="inquiryQueuePager" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 0 2px; color:#5f6b82; font-size:12px;">
-        <span style="font-weight:700; color:#44526b;">Show rows:</span>
+<div class="toolbar-item queue-toolbar-pager-row">
+    <div id="inquiryQueuePager">
+        <span class="queue-pager-label">Show rows:</span>
         <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="5">5</button>
         <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="10">10</button>
         <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="50">50</button>
         <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="all">All</button>
-        <span style="width:12px;"></span>
+        <span class="queue-pager-separator"></span>
         <button type="button" class="btn btn-default btn-sm" data-page-nav="prev">Previous</button>
         <button type="button" class="btn btn-default btn-sm" data-page-nav="next">Next</button>
-        <span id="inquiryQueuePagerStatus" style="font-weight:700; color:#44526b; min-width:120px;">Rows 1-10</span>
-        <span style="color:#74829b;">This keeps the queue easier to scan without changing the saved records.</span>
+        <span id="inquiryQueuePagerStatus">Rows 1-10</span>
     </div>
 </div>
 

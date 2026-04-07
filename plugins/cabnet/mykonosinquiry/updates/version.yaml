@@ -430,3 +430,6 @@
 
 2.4.16:
   - 'Add a compact Inquiry Queue row view and on-page 5/10/50/All row controls for faster scanning'
+
+2.4.17:
+  - 'Align the Inquiry Queue pager into a clean second-row toolbar layout so the faster row controls do not collide with search and list setup'
