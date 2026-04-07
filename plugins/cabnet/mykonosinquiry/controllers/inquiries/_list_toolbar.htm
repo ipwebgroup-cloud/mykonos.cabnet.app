@@ -1,5 +1,4 @@
 <?= $this->makePartial('operator_list_ui_styles') ?>
-<?= $this->makePartial('operator_list_workspace_styles') ?>
 
 <div class="toolbar-item toolbar-primary">
     <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">
@@ -9,82 +8,22 @@
 
 <div class="toolbar-item">
     <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
-        Simple queue help
+        Queue help
     </a>
 </div>
 
-<div id="myk-list-workspace-shell" class="myk-list-workspace-shell">
-    <div class="operator-list-workspace-note">
-        <div class="operator-list-workspace-note__title">Fast queue guide</div>
-        <p class="operator-list-workspace-note__body">
-            This page shows incoming guest requests. Keep it quick: pick who owns the request, reply to the guest,
-            set the next follow-up date, and only move a guest into the repeat-guest workspace when they are worth remembering after the trip.
-        </p>
-    </div>
-
-    <nav class="operator-list-workspace-nav" aria-label="Queue quick links">
-        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>">Queue help</a>
-        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>">Repeat-guest handoff help</a>
-        <a class="operator-list-workspace-nav__link" href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>">Open repeat-guest list</a>
-    </nav>
-
-    <div class="operator-list-workspace-section" style="padding:18px 20px;">
-        <div class="operator-list-workspace-section__body operator-list-workspace-stack">
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
-                <div style="border:1px solid #dbe3f0; border-radius:12px; background:#fff; padding:14px 16px;">
-                    <div style="font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#5b6b86; margin-bottom:8px;">What to do first</div>
-                    <div style="font-size:14px; color:#24324a; line-height:1.6;">
-                        Open the newest or most urgent request, confirm who owns it, and make sure the guest gets a reply or a next step.
-                    </div>
-                </div>
-                <div style="border:1px solid #dbe3f0; border-radius:12px; background:#fff; padding:14px 16px;">
-                    <div style="font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#5b6b86; margin-bottom:8px;">When to use the repeat-guest area</div>
-                    <div style="font-size:14px; color:#24324a; line-height:1.6;">
-                        Use the repeat-guest area only for people you may want to remember, re-contact, or welcome back later.
-                    </div>
-                </div>
-                <div style="border:1px solid #dbe3f0; border-radius:12px; background:#fff; padding:14px 16px;">
-                    <div style="font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#5b6b86; margin-bottom:8px;">Keep this page light</div>
-                    <div style="font-size:14px; color:#24324a; line-height:1.6;">
-                        Detailed process notes now live in the help page so this queue can open faster and stay easier to scan.
-                    </div>
-                </div>
-            </div>
-
-            <div style="border:1px dashed #cbd5e1; border-radius:12px; background:#f8fbff; padding:14px 16px; color:#30425f; line-height:1.6;">
-                <strong>Simple rule:</strong>
-                keep active guest work in the inquiry list,
-                keep future memory and return-value work in the repeat-guest list,
-                and use the help page only when you need definitions or step-by-step guidance.
-            </div>
-        </div>
-    </div>
+<div class="toolbar-item">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>" class="btn btn-default oc-icon-share-alt">
+        Repeat-guest help
+    </a>
 </div>
 
-<script>
-(function() {
-    function moveListWorkspaceShell() {
-        var shell = document.getElementById('myk-list-workspace-shell');
-        if (!shell || shell.getAttribute('data-shell-moved') === '1') {
-            return;
-        }
+<div class="toolbar-item">
+    <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
+        Repeat-guest list
+    </a>
+</div>
 
-        var toolbar = shell.closest('.control-toolbar');
-        if (!toolbar || !toolbar.parentNode) {
-            return;
-        }
-
-        toolbar.parentNode.insertBefore(shell, toolbar.nextSibling);
-        shell.setAttribute('data-shell-moved', '1');
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', moveListWorkspaceShell);
-    } else {
-        moveListWorkspaceShell();
-    }
-
-    setTimeout(moveListWorkspaceShell, 0);
-    setTimeout(moveListWorkspaceShell, 120);
-})();
-</script>
+<div class="toolbar-item" style="padding-top: 8px; color: #61708a; font-size: 13px;">
+    Open a guest request, assign an owner, reply, and set the next step. Use repeat-guest tools only for people worth remembering later.
+</div>

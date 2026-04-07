@@ -424,3 +424,6 @@
 
 2.4.14:
   - 'Simplify the inquiry create/update screens with plain-language guides, lighter record headers, and easier toolbar wording'
+
+2.4.15:
+  - 'Strip the Inquiry Queue toolbar back to a minimal button-first layout so the list paints faster and heavy guidance stays in the docs page'

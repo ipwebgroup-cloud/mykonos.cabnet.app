@@ -81,19 +81,19 @@ But the immediate operational priority is now explicit:
 - the Inquiry Queue already exposes loyalty link visibility, backlink summaries, direct queue actions, posture filtering, compact transfer-count framing, and filter-mirror guidance
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
-- the Inquiry Queue toolbar/workspace shell has now been intentionally simplified into a faster plain-language fast-start block so heavy queue guidance stays in the docs page instead of slowing the live queue screen
-- the newest safe UX step keeps that help system page-based while adding one compact copy-mailto-link helper so operators can capture the exact generated mailto URL for browser testing, support notes, and escalation troubleshooting without reconstructing the draft manually
+- the Inquiry Queue toolbar has now been reduced to a minimal button-first layout so the live queue page avoids rendering the heavier inline workspace shell before the list appears
+- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, and only reintroduce extra live-page guidance if it can be proven lightweight
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.46 inquiry-queue fast-start simplification patch`
-- plugin tracking `2.4.13`
+- `v6.41.48 inquiry-queue minimal-toolbar render hotfix`
+- plugin tracking `2.4.15`
 
 This patch does not change schema and does not touch `/plan`.
-It adds a plain-English guide block on the loyalty create and update screens, simplifies several loyalty help button labels, and rewrites the docs-page loyalty wording and glossary in more everyday language so the workflow is easier to understand at a glance.
+It strips the Inquiry Queue toolbar back to a minimal button-first layout, removes the heavier inline queue workspace shell from the live list page, and keeps deeper guidance in the docs page so the queue can paint faster and feel lighter in day-to-day use.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
