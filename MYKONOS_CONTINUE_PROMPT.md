@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.53 inquiry-queue view-mode column toggle patch`
+- `v6.41.52 inquiry-queue compact row density patch`
 
 This is a continuity hint only.
 
@@ -77,7 +77,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - preserve inquiry-detail prefilled draft transfer behavior
 - keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
 - keep the Inquiry Queue itself lightweight and faster to open by using a minimal button-first toolbar on the live page while leaving deeper workflow explanation in the docs page
-- keep the Inquiry Queue scan-friendly by using lighter repeat-guest summary rendering on each row, simple 5 / 10 / 50 / All row controls when operators only need a smaller visible slice of the list, a clean second toolbar row that does not fight the native search/setup controls, and denser single-line table rendering so more inquiries fit on screen at once, while optional `Core scan`, `Extended`, and `Full` queue views keep less-important columns hideable during faster scan passes
+- keep the Inquiry Queue scan-friendly by using lighter repeat-guest summary rendering on each row, simple 5 / 10 / 50 / All row controls when operators only need a smaller visible slice of the list, a clean second toolbar row that does not fight the native search/setup controls, and denser single-line table rendering so more inquiries fit on screen at once
 - keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
 - keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
 - keep the button labels operator-readable so queue, bridge, continuity, and record-screen help are distinguishable before the page opens

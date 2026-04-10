@@ -82,7 +82,7 @@ But the immediate operational priority is now explicit:
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
 - the Inquiry Queue toolbar has now been reduced to a minimal button-first layout so the live queue page avoids rendering the heavier inline workspace shell before the list appears
-- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, keep the row-count controls visually aligned and easy to use, compress the live queue table into a denser single-line scan mode where safe, add optional queue view modes so lower-priority columns can be hidden during faster scan passes, and only move into deeper list-controller work if the page still feels slow after these lighter rendering fixes
+- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, keep the row-count controls visually aligned and easy to use, compress the live queue table into a denser single-line scan mode where safe, and only move into deeper list-controller work if the page still feels slow after these lighter rendering fixes
 
 ---
 
@@ -93,7 +93,7 @@ Latest known rooted patch prepared for deployment:
 - plugin tracking `2.4.20`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the lighter Inquiry Queue toolbar and row controls, and now adds optional `Core scan`, `Extended`, and `Full` queue views so lower-priority columns can be hidden without changing workflow or touching `/plan`.
+It keeps the lighter Inquiry Queue toolbar and row controls, preserves the denser queue rendering, and adds safe queue view presets so operators can hide lower-priority columns during faster scan passes without changing the workflow or touching `/plan`.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
@@ -123,10 +123,6 @@ Then verify:
 - confirm loyalty create/update `Loyalty screen help` buttons also open the docs page at the `Record screens` section
 - confirm the landing section receives a visible target highlight without reintroducing a right-side rail
 - confirm the queue toolbar now includes `Queue docs`
-- confirm the queue toolbar now also includes `Queue view` controls with `Core scan`, `Extended`, and `Full`
-- confirm `Extended` loads as the default queue view
-- confirm `Core scan` hides lower-priority queue columns cleanly while keeping core queue handling visible
-- confirm `Full` restores the wider column set when deeper review is needed
 - open that button and confirm the dedicated docs page loads
 - confirm the docs page includes search, quick section jumps, queue guidance, loyalty guidance, and glossary terms
 - confirm the backend side menu now includes `Workspace Docs`
@@ -204,5 +200,11 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.53 inquiry-queue view-mode column toggle patch`
-- plugin version line: `2.4.20`
+- `v6.41.52 inquiry-queue compact row density patch`
+- plugin version line: `2.4.19`
+
+- open Backend -> `Mykonos Inquiries` -> `Inquiry Queue`
+- confirm the toolbar now shows `Queue view` with `Core scan`, `Extended`, and `Full`
+- confirm `Extended` loads by default
+- confirm `Core scan` hides lower-priority queue columns cleanly
+- confirm `Full` restores the wider queue column set

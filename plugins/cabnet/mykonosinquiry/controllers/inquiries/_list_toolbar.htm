@@ -1,43 +1,17 @@
 <?= $this->makePartial('operator_list_ui_styles') ?>
 
 <style>
-.control-toolbar .toolbar-item.queue-toolbar-utility-row {
+.control-toolbar .toolbar-item.queue-toolbar-pager-row {
     flex: 1 0 100%;
     width: 100%;
     order: 100;
     padding-top: 6px;
 }
 
-#inquiryQueueUtilityBar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    padding-top: 2px;
-}
-
-#inquiryQueueViewWrap,
 #inquiryQueuePagerWrap {
     display: flex;
-    align-items: center;
-}
-
-#inquiryQueueView {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    color: #5f6b82;
-    font-size: 12px;
-}
-
-#inquiryQueueView .queue-view-label,
-#inquiryQueuePager .queue-pager-label,
-#inquiryQueuePagerStatus {
-    font-weight: 700;
-    color: #44526b;
+    justify-content: flex-end;
+    width: 100%;
 }
 
 #inquiryQueuePager {
@@ -46,9 +20,16 @@
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
+    padding: 8px 0 0;
     color: #5f6b82;
     font-size: 12px;
     text-align: right;
+}
+
+#inquiryQueuePager .queue-pager-label,
+#inquiryQueuePagerStatus {
+    font-weight: 700;
+    color: #44526b;
 }
 
 #inquiryQueuePagerStatus {
@@ -58,6 +39,30 @@
 #inquiryQueuePager .queue-pager-separator {
     width: 8px;
 }
+
+
+#inquiryQueueViewModes {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+#inquiryQueueViewModes .queue-view-label {
+    font-weight: 700;
+    color: #44526b;
+    margin-right: 2px;
+}
+
+body.cabnet-queue-view-core .control-list .queue-col-extended,
+body.cabnet-queue-view-core .control-list .queue-col-full {
+    display: none !important;
+}
+
+body.cabnet-queue-view-extended .control-list .queue-col-full {
+    display: none !important;
+}
+
 
 .control-list table thead th,
 .control-list table tbody td {
@@ -86,23 +91,8 @@
     overflow-x: auto;
 }
 
-body.queue-view-core .control-list .queue-col-extended,
-body.queue-view-core .control-list .queue-col-full {
-    display: none !important;
-}
-
-body.queue-view-extended .control-list .queue-col-full {
-    display: none !important;
-}
-
 @media (max-width: 1200px) {
-    #inquiryQueueUtilityBar {
-        justify-content: flex-start;
-    }
-
-    #inquiryQueueViewWrap,
     #inquiryQueuePagerWrap {
-        width: 100%;
         justify-content: flex-start;
     }
 
@@ -137,29 +127,29 @@ body.queue-view-extended .control-list .queue-col-full {
     </a>
 </div>
 
-<div class="toolbar-item queue-toolbar-utility-row">
-    <div id="inquiryQueueUtilityBar">
-        <div id="inquiryQueueViewWrap">
-            <div id="inquiryQueueView">
-                <span class="queue-view-label">Queue view</span>
-                <button type="button" class="btn btn-default btn-sm queue-view-mode" data-view-mode="core">Core scan</button>
-                <button type="button" class="btn btn-default btn-sm queue-view-mode" data-view-mode="extended">Extended</button>
-                <button type="button" class="btn btn-default btn-sm queue-view-mode" data-view-mode="full">Full</button>
-            </div>
-        </div>
 
-        <div id="inquiryQueuePagerWrap">
-            <div id="inquiryQueuePager">
-                <span class="queue-pager-label">Rows per page</span>
-                <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="5">5</button>
-                <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="10">10</button>
-                <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="50">50</button>
-                <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="all">All</button>
-                <span class="queue-pager-separator"></span>
-                <button type="button" class="btn btn-default btn-sm" data-page-nav="prev">Previous</button>
-                <button type="button" class="btn btn-default btn-sm" data-page-nav="next">Next</button>
-                <span id="inquiryQueuePagerStatus">Rows 1-10</span>
-            </div>
+
+<div class="toolbar-item">
+    <div id="inquiryQueueViewModes">
+        <span class="queue-view-label">Queue view</span>
+        <button type="button" class="btn btn-default btn-sm queue-view-mode" data-queue-view="core">Core scan</button>
+        <button type="button" class="btn btn-default btn-sm queue-view-mode" data-queue-view="extended">Extended</button>
+        <button type="button" class="btn btn-default btn-sm queue-view-mode" data-queue-view="full">Full</button>
+    </div>
+</div>
+
+<div class="toolbar-item queue-toolbar-pager-row">
+    <div id="inquiryQueuePagerWrap">
+        <div id="inquiryQueuePager">
+            <span class="queue-pager-label">Rows per page</span>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="5">5</button>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="10">10</button>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="50">50</button>
+            <button type="button" class="btn btn-default btn-sm queue-page-size" data-page-size="all">All</button>
+            <span class="queue-pager-separator"></span>
+            <button type="button" class="btn btn-default btn-sm" data-page-nav="prev">Previous</button>
+            <button type="button" class="btn btn-default btn-sm" data-page-nav="next">Next</button>
+            <span id="inquiryQueuePagerStatus">Rows 1-10</span>
         </div>
     </div>
 </div>
@@ -174,14 +164,9 @@ body.queue-view-extended .control-list .queue-col-full {
     var STORAGE_KEY_SIZE = 'cabnetInquiryQueuePageSize';
     var STORAGE_KEY_PAGE = 'cabnetInquiryQueuePage';
     var STORAGE_KEY_VIEW = 'cabnetInquiryQueueViewMode';
-    var VIEW_MODES = ['core', 'extended', 'full'];
 
     function getPagerRoot() {
         return document.getElementById('inquiryQueuePager');
-    }
-
-    function getViewRoot() {
-        return document.getElementById('inquiryQueueView');
     }
 
     function getListRows() {
@@ -216,19 +201,6 @@ body.queue-view-extended .control-list .queue-col-full {
         applyQueuePaging();
     }
 
-    function getViewMode() {
-        var mode = localStorage.getItem(STORAGE_KEY_VIEW) || 'extended';
-        return VIEW_MODES.indexOf(mode) !== -1 ? mode : 'extended';
-    }
-
-    function setViewMode(mode) {
-        if (VIEW_MODES.indexOf(mode) === -1) {
-            mode = 'extended';
-        }
-        localStorage.setItem(STORAGE_KEY_VIEW, mode);
-        applyQueueViewMode();
-    }
-
     function updateButtonState(size) {
         var root = getPagerRoot();
         if (!root) {
@@ -241,28 +213,34 @@ body.queue-view-extended .control-list .queue-col-full {
         });
     }
 
-    function updateViewButtonState(mode) {
-        var root = getViewRoot();
+
+    function getQueueView() {
+        var view = localStorage.getItem(STORAGE_KEY_VIEW) || 'extended';
+        return ['core', 'extended', 'full'].indexOf(view) === -1 ? 'extended' : view;
+    }
+
+    function updateViewButtons(view) {
+        var root = document.getElementById('inquiryQueueViewModes');
         if (!root) {
             return;
         }
         Array.prototype.forEach.call(root.querySelectorAll('.queue-view-mode'), function(button) {
-            var active = String(button.getAttribute('data-view-mode')) === String(mode);
+            var active = String(button.getAttribute('data-queue-view')) === String(view);
             button.classList.toggle('btn-primary', active);
             button.classList.toggle('btn-default', !active);
         });
     }
 
-    function applyQueueViewMode() {
-        var mode = getViewMode();
-        var body = document.body;
-        if (!body) {
-            return;
-        }
+    function applyQueueView() {
+        var view = getQueueView();
+        document.body.classList.remove('cabnet-queue-view-core', 'cabnet-queue-view-extended', 'cabnet-queue-view-full');
+        document.body.classList.add('cabnet-queue-view-' + view);
+        updateViewButtons(view);
+    }
 
-        body.classList.remove('queue-view-core', 'queue-view-extended', 'queue-view-full');
-        body.classList.add('queue-view-' + mode);
-        updateViewButtonState(mode);
+    function setQueueView(view) {
+        localStorage.setItem(STORAGE_KEY_VIEW, view);
+        applyQueueView();
     }
 
     function applyQueuePaging() {
@@ -313,29 +291,31 @@ body.queue-view-extended .control-list .queue-col-full {
     }
 
     function bindPagerEvents() {
-        var pagerRoot = getPagerRoot();
-        if (pagerRoot && pagerRoot.getAttribute('data-bound') !== '1') {
-            pagerRoot.setAttribute('data-bound', '1');
-            pagerRoot.addEventListener('click', function(event) {
-                var sizeButton = event.target.closest('.queue-page-size');
-                if (sizeButton) {
-                    event.preventDefault();
-                    setPageSize(sizeButton.getAttribute('data-page-size'));
-                    return;
-                }
-
-                var navButton = event.target.closest('[data-page-nav]');
-                if (navButton) {
-                    event.preventDefault();
-                    var direction = navButton.getAttribute('data-page-nav');
-                    var currentPage = getCurrentPage();
-                    setCurrentPage(direction === 'next' ? currentPage + 1 : currentPage - 1);
-                    applyQueuePaging();
-                }
-            });
+        var root = getPagerRoot();
+        if (!root || root.getAttribute('data-bound') === '1') {
+            return;
         }
+        root.setAttribute('data-bound', '1');
 
-        var viewRoot = getViewRoot();
+        root.addEventListener('click', function(event) {
+            var sizeButton = event.target.closest('.queue-page-size');
+            if (sizeButton) {
+                event.preventDefault();
+                setPageSize(sizeButton.getAttribute('data-page-size'));
+                return;
+            }
+
+            var navButton = event.target.closest('[data-page-nav]');
+            if (navButton) {
+                event.preventDefault();
+                var direction = navButton.getAttribute('data-page-nav');
+                var currentPage = getCurrentPage();
+                setCurrentPage(direction === 'next' ? currentPage + 1 : currentPage - 1);
+                applyQueuePaging();
+            }
+        });
+
+        var viewRoot = document.getElementById('inquiryQueueViewModes');
         if (viewRoot && viewRoot.getAttribute('data-bound') !== '1') {
             viewRoot.setAttribute('data-bound', '1');
             viewRoot.addEventListener('click', function(event) {
@@ -344,17 +324,32 @@ body.queue-view-extended .control-list .queue-col-full {
                     return;
                 }
                 event.preventDefault();
-                setViewMode(viewButton.getAttribute('data-view-mode'));
+                setQueueView(viewButton.getAttribute('data-queue-view'));
             });
         }
     }
 
     function initQueuePaging() {
         bindPagerEvents();
-        applyQueueViewMode();
+        applyQueueView();
         applyQueuePaging();
     }
 
     document.addEventListener('DOMContentLoaded', initQueuePaging);
+    document.addEventListener('render', initQueuePaging, true);
+    document.addEventListener('ajaxUpdateComplete', initQueuePaging, true);
+    window.setTimeout(initQueuePaging, 50);
+    window.setTimeout(initQueuePaging, 300);
+
+    var observer = new MutationObserver(function() {
+        initQueuePaging();
+    });
+
+    window.setTimeout(function() {
+        var listRoot = document.querySelector('.control-list');
+        if (listRoot) {
+            observer.observe(listRoot, {childList: true, subtree: true});
+        }
+    }, 200);
 })();
 </script>
