@@ -442,3 +442,6 @@
 
 2.4.20:
   - 'Add Inquiry Queue view-mode presets so lower-value columns can be hidden for faster scanning without changing the workflow'
+
+2.4.21:
+  - 'Compact the Inquiry Queue loyalty summary and action row partials so linked repeat-guest cues scan faster without widening the queue'
