@@ -12,6 +12,8 @@ columns:
     email:
         label: Email
         searchable: true
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
     guests:
         label: Guests
     arrival_date:
@@ -21,6 +23,8 @@ columns:
         label: Focus
     source_display:
         label: Source
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
     owner_display:
         label: Owner
     follow_up_queue_summary:
@@ -33,8 +37,12 @@ columns:
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_backlink_summary.htm
         sortable: false
         searchable: false
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
     loyalty_transfer_cue_label:
         label: Loyalty Cue
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
     loyalty_queue_actions:
         label: Loyalty Actions
         type: partial
@@ -44,9 +52,15 @@ columns:
     last_contacted_at:
         label: Last Contacted
         type: datetime
+        cssClass: queue-col-full
+        headCssClass: queue-col-full
     closed_at:
         label: Closed
         type: datetime
+        cssClass: queue-col-full
+        headCssClass: queue-col-full
     created_at:
         label: Created
         type: datetime
+        cssClass: queue-col-full
+        headCssClass: queue-col-full

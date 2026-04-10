@@ -82,25 +82,25 @@ But the immediate operational priority is now explicit:
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
 - the Inquiry Queue toolbar has now been reduced to a minimal button-first layout so the live queue page avoids rendering the heavier inline workspace shell before the list appears
-- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, keep the row-count controls visually aligned and easy to use, compress the live queue table into a denser single-line scan mode where safe, and only move into deeper list-controller work if the page still feels slow after these lighter rendering fixes
+- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, keep the row-count controls visually aligned and easy to use, keep safe queue view presets available so lower-value columns can be hidden during faster scan passes, and only move into deeper list-controller work if the page still feels slow after these lighter rendering fixes
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.52 inquiry-queue compact row density patch`
-- plugin tracking `2.4.19`
+- `v6.41.53 inquiry-queue view-mode column toggle patch`
+- plugin tracking `2.4.20`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the lighter Inquiry Queue toolbar and row controls, and now compresses the queue table into a denser single-line scan mode so more inquiries fit on screen without changing the workflow or touching /plan.
+It keeps the lighter Inquiry Queue toolbar and row controls, and now adds safe Queue view presets so operators can switch between `Core scan`, `Extended`, and `Full` without changing data, filters, or workflow.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
 
 - `php artisan cache:clear`
 
-This docs-page patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
+This queue-view patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 
@@ -122,7 +122,7 @@ Then verify:
 - confirm inquiry create/update `Inquiry screen help` buttons open the docs page at the `Record screens` section
 - confirm loyalty create/update `Loyalty screen help` buttons also open the docs page at the `Record screens` section
 - confirm the landing section receives a visible target highlight without reintroducing a right-side rail
-- confirm the queue toolbar now includes `Queue docs`
+- confirm the queue toolbar now includes `Queue help`
 - open that button and confirm the dedicated docs page loads
 - confirm the docs page includes search, quick section jumps, queue guidance, loyalty guidance, and glossary terms
 - confirm the backend side menu now includes `Workspace Docs`
@@ -136,7 +136,11 @@ Then verify:
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
-- confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
+- confirm the queue toolbar now shows `Queue view` presets for `Core scan`, `Extended`, and `Full`
+- confirm the default saved mode opens in `Extended` until an operator changes it
+- switch to `Core scan` and confirm lower-value columns such as email, source, loyalty backlink, loyalty cue, and closed/contacted timestamps hide cleanly without breaking row links or paging
+- switch to `Full` and confirm all queue columns return
+- confirm the list still shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions` in `Full` mode
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
 - confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
 - confirm linked inquiries now also show an always-visible `Packet` badge on the queue-side loyalty card
@@ -200,5 +204,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.52 inquiry-queue compact row density patch`
-- plugin version line: `2.4.19`
+- `v6.41.53 inquiry-queue view-mode column toggle patch`
+- plugin version line: `2.4.20`
