@@ -2,12 +2,10 @@ columns:
     request_reference:
         label: Reference
         searchable: true
-    queue_state_summary:
-        label: Queue State
-        type: partial
-        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_queue_state_summary.htm
-        sortable: false
-        searchable: false
+    status_label:
+        label: Status
+    priority_label:
+        label: Priority
     full_name:
         label: Guest
         searchable: true
@@ -27,12 +25,12 @@ columns:
         label: Source
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
-    owner_follow_up_summary:
-        label: Owner / Follow Up
-        type: partial
-        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_follow_up_summary.htm
-        sortable: false
-        searchable: false
+    owner_display:
+        label: Owner
+    follow_up_queue_summary:
+        label: Queue / Follow Up
+    loyalty_record_link_state_label:
+        label: Loyalty Link
     loyalty_backlink_summary:
         label: Loyalty Backlink
         type: partial
@@ -51,6 +49,8 @@ columns:
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
         sortable: false
         searchable: false
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
     last_contacted_at:
         label: Last Contacted
         type: datetime

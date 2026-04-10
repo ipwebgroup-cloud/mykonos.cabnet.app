@@ -439,12 +439,5 @@
 
 2.4.19:
   - 'Make Inquiry Queue rows more compact with denser single-line table rendering for faster scanning'
-
 2.4.20:
-  - 'Add Inquiry Queue view-mode presets so lower-value columns can be hidden for faster scanning without changing the workflow'
-
-2.4.21:
-  - 'Compact the Inquiry Queue loyalty summary and action row partials so linked repeat-guest cues scan faster without widening the queue'
-
-2.4.22:
-  - 'Merge Inquiry Queue state and owner/follow-up details into tighter summary columns for faster scan reading without changing workflow'
+  - 'Add Inquiry Queue view-mode column toggles for core scan, extended, and full list reading'
