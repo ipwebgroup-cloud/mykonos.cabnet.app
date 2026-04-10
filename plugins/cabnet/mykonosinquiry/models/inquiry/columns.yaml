@@ -49,8 +49,6 @@ columns:
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
         sortable: false
         searchable: false
-        cssClass: queue-col-extended
-        headCssClass: queue-col-extended
     last_contacted_at:
         label: Last Contacted
         type: datetime

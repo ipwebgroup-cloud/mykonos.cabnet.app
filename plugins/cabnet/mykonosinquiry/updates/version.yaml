@@ -439,5 +439,6 @@
 
 2.4.19:
   - 'Make Inquiry Queue rows more compact with denser single-line table rendering for faster scanning'
+
 2.4.20:
-  - 'Add Inquiry Queue view-mode column toggles for core scan, extended, and full list reading'
+  - 'Add core / extended / full Inquiry Queue view presets so lower-priority columns can be hidden during faster scan passes'

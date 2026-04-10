@@ -93,14 +93,14 @@ Latest known rooted patch prepared for deployment:
 - plugin tracking `2.4.20`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the lighter Inquiry Queue toolbar and row controls, and now adds safe `Core scan`, `Extended`, and `Full` queue views so lower-priority columns can be hidden during faster operator scanning without removing access to the full list when needed.
+It keeps the lighter Inquiry Queue toolbar and row controls, and now adds core / extended / full queue-view presets so lower-priority columns can be hidden during faster scan passes without changing the workflow or touching /plan.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
 
 - `php artisan cache:clear`
 
-This docs-page patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
+This queue-view patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 
@@ -116,10 +116,6 @@ Then verify:
 - open the same loyalty record on the `History` tab and confirm a matching `History source-context digest` appears above the history-side outcome and packet fields
 - confirm the History digest shows source anchor, source posture, continuity posture, latest outcome, latest packet, latest touchpoint, and next-review framing without switching tabs
 - confirm Backend -> `Mykonos Inquiries` -> `Inquiry Queue` no longer shows the old right-side help rail
-- confirm the Inquiry Queue now shows `Queue view` buttons for `Core scan`, `Extended`, and `Full`
-- confirm `Extended` loads as the default queue view
-- confirm `Core scan` hides lower-priority columns such as email, source, loyalty backlink, loyalty cue, loyalty actions, and the date-heavy trailing columns
-- confirm `Full` restores the complete queue column set without breaking row paging, filters, or record links
 - confirm the Inquiry Queue toolbar `Queue docs` button opens the docs page at the `Queue docs` section
 - confirm the Queue workspace-shell `Bridge docs` link opens the docs page at the `Queue-to-loyalty bridge` section
 - confirm the Loyalty Continuity toolbar `Continuity docs` button opens the docs page at the `Loyalty continuity` section
@@ -140,6 +136,8 @@ Then verify:
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
+- confirm the toolbar now includes `Queue view` with `Core scan`, `Extended`, and `Full`
+- confirm `Extended` is the default view and switching modes hides or reveals lower-priority columns without breaking the list
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
 - confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
@@ -205,4 +203,4 @@ So patch zips must place files under:
 
 ## Latest applied patch line
 - `v6.41.53 inquiry-queue view-mode column toggle patch`
-- plugin version line: `2.4.19`
+- plugin version line: `2.4.20`
