@@ -93,7 +93,7 @@ Latest known rooted patch prepared for deployment:
 - plugin tracking `2.4.20`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the lighter Inquiry Queue toolbar and row controls, and now adds core / extended / full queue-view presets so lower-priority columns can be hidden during faster scan passes without changing the workflow or touching /plan.
+It keeps the lighter Inquiry Queue toolbar and row controls, and now adds safe `Core scan`, `Extended`, and `Full` queue views so less-important columns can be hidden during faster operator scan passes without changing the workflow or touching `/plan`.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
@@ -136,8 +136,6 @@ Then verify:
 - confirm the Inquiry Queue loyalty card no longer includes an inline expandable glossary block
 - confirm the Loyalty Continuity list source card no longer includes an inline expandable glossary block
 - open backend → `Mykonos Inquiries`
-- confirm the toolbar now includes `Queue view` with `Core scan`, `Extended`, and `Full`
-- confirm `Extended` is the default view and switching modes hides or reveals lower-priority columns without breaking the list
 - confirm the list shows `Loyalty Link`, `Loyalty Backlink`, `Loyalty Cue`, and `Loyalty Actions`
 - confirm linked inquiries show the linked loyalty request reference and continuity posture directly on the queue row
 - confirm linked inquiries now also show a compact `Queue-to-history cue` with the latest loyalty outcome, touchpoint/packet framing, and review timing directly on the queue row
@@ -156,6 +154,10 @@ Then verify:
 - confirm the queue still provides direct links to simple queue help, repeat-guest handoff help, and the repeat-guest list
 - confirm Loyalty Continuity shows a first-record guidance panel when the live loyalty list is empty
 - confirm the guidance panel points operators back to Inquiry Queue or manual draft creation as appropriate
+- confirm the Inquiry Queue now shows `Queue view` controls for `Core scan`, `Extended`, and `Full`
+- confirm `Extended` loads as the default queue view
+- confirm `Core scan` hides lower-priority columns cleanly while preserving the main workflow columns
+- confirm `Full` restores the wider queue columns including the later timestamp columns
 - confirm the list workspace overview still shows `Linked to loyalty` and `Ready for loyalty`
 - open an inquiry detail screen and use `Open prefilled loyalty draft`
 - confirm request reference, guest basics, and summaries seed from the inquiry before first save
@@ -203,4 +205,4 @@ So patch zips must place files under:
 
 ## Latest applied patch line
 - `v6.41.53 inquiry-queue view-mode column toggle patch`
-- plugin version line: `2.4.20`
+- plugin version line: `2.4.19`

@@ -441,4 +441,4 @@
   - 'Make Inquiry Queue rows more compact with denser single-line table rendering for faster scanning'
 
 2.4.20:
-  - 'Add core / extended / full Inquiry Queue view presets so lower-priority columns can be hidden during faster scan passes'
+  - 'Add Inquiry Queue core/extended/full view modes so lower-priority columns can be hidden during faster scan passes'
