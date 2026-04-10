@@ -1,0 +1,34 @@
+<?php
+$inquiry = $record ?? $model ?? null;
+
+if (!$inquiry) {
+    return;
+}
+
+$owner = $inquiry->owner_display ?: 'Unassigned';
+$queueState = $inquiry->follow_up_queue_state ?: 'Unscheduled';
+$queueSummary = $inquiry->follow_up_queue_summary ?: $queueState;
+$hint = $inquiry->follow_up_queue_note ?: $queueSummary;
+
+$toneMap = [
+    'positive' => ['#0f5132', '#ecfdf3', '#b7ebc6'],
+    'warning' => ['#7c4a03', '#fff7e6', '#f5d08a'],
+    'critical' => ['#842029', '#f8d7da', '#f1aeb5'],
+    'neutral' => ['#084298', '#eef5ff', '#cfe2ff'],
+];
+
+[$stateText, $stateBg, $stateBorder] = $toneMap[$inquiry->follow_up_queue_tone ?? 'neutral'] ?? $toneMap['neutral'];
+?>
+<div style="min-width:165px; max-width:220px; line-height:1.2;">
+    <div style="font-size:12px; font-weight:700; color:#44526b; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($owner) ?>">
+        <?= e($owner) ?>
+    </div>
+    <div style="margin-bottom:5px;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($stateBorder) ?>; background:<?= e($stateBg) ?>; color:<?= e($stateText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="<?= e($queueSummary) ?>">
+            <?= e($queueState) ?>
+        </span>
+    </div>
+    <div style="font-size:11px; color:#667085; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
+        <?= e($queueSummary) ?>
+    </div>
+</div>

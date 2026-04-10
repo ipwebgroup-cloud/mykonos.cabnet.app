@@ -61,7 +61,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The current known rooted patch line to verify is approximately:
 
-- `v6.41.54 inquiry-queue compact loyalty row cards patch`
+- `v6.41.55 inquiry-queue compact state summary columns patch`
 
 This is a continuity hint only.
 
@@ -77,7 +77,7 @@ The loyalty workspace is now live and schema-ready, so the next real production-
 - preserve inquiry-detail prefilled draft transfer behavior
 - keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
 - keep the Inquiry Queue itself lightweight and faster to open by using a minimal button-first toolbar on the live page while leaving deeper workflow explanation in the docs page
-- keep the Inquiry Queue scan-friendly by using lighter repeat-guest summary rendering on each row, simple 5 / 10 / 50 / All row controls when operators only need a smaller visible slice of the list, a clean second toolbar row that does not fight the native search/setup controls, denser single-line table rendering so more inquiries fit on screen at once, and safe queue view presets so lower-value columns can be hidden without touching the actual list setup or workflow
+- keep the Inquiry Queue scan-friendly by using lighter repeat-guest summary rendering on each row, simple 5 / 10 / 50 / All row controls when operators only need a smaller visible slice of the list, a clean second toolbar row that does not fight the native search/setup controls, denser single-line table rendering so more inquiries fit on screen at once, safe queue view presets so lower-value columns can be hidden without touching the actual list setup or workflow, and tighter row summary columns that merge status / priority / loyalty state plus owner / follow-up details into easier scan blocks
 - keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
 - keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
 - keep the button labels operator-readable so queue, bridge, continuity, and record-screen help are distinguishable before the page opens

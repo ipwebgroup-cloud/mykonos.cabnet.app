@@ -1,0 +1,53 @@
+<?php
+$inquiry = $record ?? $model ?? null;
+
+if (!$inquiry) {
+    return;
+}
+
+$statusLabel = $inquiry->status_label ?: 'Unknown';
+$priorityLabel = $inquiry->priority_label ?: 'Normal';
+$loyaltyLabel = $inquiry->loyalty_record_link_state_label ?: 'Queue only';
+
+$statusKey = strtolower((string) $inquiry->status);
+$priorityKey = strtolower((string) $inquiry->priority);
+
+$statusToneMap = [
+    'new' => ['#0b4f99', '#eef5ff', '#cfe2ff'],
+    'reviewed' => ['#5b4a00', '#fff8db', '#f0d98c'],
+    'contacted' => ['#4a3f93', '#f3efff', '#d9d0ff'],
+    'proposal_sent' => ['#6a3a10', '#fff1e8', '#f5c8a8'],
+    'awaiting_guest' => ['#7a4a00', '#fff5e6', '#f4d39b'],
+    'confirmed' => ['#0f5132', '#ecfdf3', '#b7ebc6'],
+    'closed_won' => ['#0f5132', '#ecfdf3', '#b7ebc6'],
+    'closed_lost' => ['#842029', '#f8d7da', '#f1aeb5'],
+    'spam' => ['#6b7280', '#f3f4f6', '#d1d5db'],
+    'triage' => ['#5b4a00', '#fff8db', '#f0d98c'],
+    'proposal' => ['#6a3a10', '#fff1e8', '#f5c8a8'],
+    'closed' => ['#6b7280', '#f3f4f6', '#d1d5db'],
+];
+
+$priorityToneMap = [
+    'low' => ['#5c6370', '#f3f4f6', '#d7dce2'],
+    'normal' => ['#084298', '#eef5ff', '#cfe2ff'],
+    'high' => ['#7c4a03', '#fff7e6', '#f5d08a'],
+    'vip' => ['#5b21b6', '#f5f3ff', '#ddd6fe'],
+    'urgent' => ['#842029', '#f8d7da', '#f1aeb5'],
+];
+
+[$statusText, $statusBg, $statusBorder] = $statusToneMap[$statusKey] ?? ['#084298', '#eef5ff', '#cfe2ff'];
+[$priorityText, $priorityBg, $priorityBorder] = $priorityToneMap[$priorityKey] ?? ['#084298', '#eef5ff', '#cfe2ff'];
+?>
+<div style="min-width:170px; max-width:210px; line-height:1.2;">
+    <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:5px;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($statusBorder) ?>; background:<?= e($statusBg) ?>; color:<?= e($statusText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Current inquiry workflow state.">
+            <?= e($statusLabel) ?>
+        </span>
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($priorityBorder) ?>; background:<?= e($priorityBg) ?>; color:<?= e($priorityText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Current inquiry priority.">
+            <?= e($priorityLabel) ?>
+        </span>
+    </div>
+    <div style="font-size:11px; color:#667085; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyaltyLabel) ?>">
+        <?= e($loyaltyLabel) ?>
+    </div>
+</div>

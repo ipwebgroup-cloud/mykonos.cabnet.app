@@ -82,25 +82,25 @@ But the immediate operational priority is now explicit:
 - the live loyalty list now shows empty-state guidance when no records exist
 - the plugin has been carrying a centralized docs/help/glossary system for queue and loyalty terminology
 - the Inquiry Queue toolbar has now been reduced to a minimal button-first layout so the live queue page avoids rendering the heavier inline workspace shell before the list appears
-- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, keep the row-count controls visually aligned and easy to use, keep safe queue view presets available so lower-value columns can be hidden during faster scan passes, tighten the queue-side loyalty summary and action cards so linked repeat-guest cues take less space per row, and only move into deeper list-controller work if the page still feels slow after these lighter rendering fixes
+- the newest safe UX step is to keep the queue fast first, keep deeper guidance in the docs page, keep the row-count controls visually aligned and easy to use, keep safe queue view presets available so lower-value columns can be hidden during faster scan passes, keep the compact loyalty row cards, merge state-heavy row details into tighter summary columns, and only move into deeper list-controller or model-calculation work if the page still feels slow after these lighter rendering fixes
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.54 inquiry-queue compact loyalty row cards patch`
-- plugin tracking `2.4.21`
+- `v6.41.55 inquiry-queue compact state summary columns patch`
+- plugin tracking `2.4.22`
 
 This patch does not change schema and does not touch `/plan`.
-It keeps the lighter Inquiry Queue toolbar, row controls, and queue view presets, and now compacts the queue-side loyalty backlink summary and loyalty action blocks so linked repeat-guest cues scan faster without widening each row.
+It keeps the lighter Inquiry Queue toolbar, row controls, view presets, and compact loyalty row cards, and now merges status / priority / loyalty state plus owner / follow-up details into tighter queue summary columns so operators scan each row with less horizontal drift.
 
 ## Deployment note
 For this patch, upload the rooted files and then run:
 
 - `php artisan cache:clear`
 
-This queue-side loyalty-card patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
+This queue-summary-column patch is backend-only. No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 
@@ -206,5 +206,5 @@ So patch zips must place files under:
 
 
 ## Latest applied patch line
-- `v6.41.54 inquiry-queue compact loyalty row cards patch`
+- `v6.41.55 inquiry-queue compact state summary columns patch`
 - plugin version line: `2.4.21`
