@@ -2,18 +2,15 @@ columns:
     request_reference:
         label: Reference
         searchable: true
-    status_label:
-        label: Status
-    priority_label:
-        label: Priority
+    queue_state_summary:
+        label: Queue State
+        type: partial
+        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_queue_state_summary.htm
+        sortable: false
+        searchable: false
     full_name:
         label: Guest
         searchable: true
-    email:
-        label: Email
-        searchable: true
-        cssClass: queue-col-extended
-        headCssClass: queue-col-extended
     guests:
         label: Guests
     arrival_date:
@@ -21,30 +18,31 @@ columns:
         type: date
     services_inline:
         label: Focus
+    email:
+        label: Email
+        searchable: true
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
     source_display:
         label: Source
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
-    owner_display:
-        label: Owner
-    follow_up_queue_summary:
-        label: Queue / Follow Up
-    loyalty_record_link_state_label:
-        label: Loyalty Link
+    owner_follow_up_summary:
+        label: Owner / Follow Up
+        type: partial
+        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_follow_up_summary.htm
+        sortable: false
+        searchable: false
     loyalty_backlink_summary:
-        label: Loyalty Backlink
+        label: Repeat-guest Backlink
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_backlink_summary.htm
         sortable: false
         searchable: false
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
-    loyalty_transfer_cue_label:
-        label: Loyalty Cue
-        cssClass: queue-col-extended
-        headCssClass: queue-col-extended
     loyalty_queue_actions:
-        label: Loyalty Actions
+        label: Repeat-guest Actions
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
         sortable: false
