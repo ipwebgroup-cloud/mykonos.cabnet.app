@@ -1,66 +1,58 @@
 <?= $this->makePartial('operator_list_ui_styles') ?>
 
 <style>
-.control-toolbar .toolbar-item.queue-toolbar-pager-row {
+.control-toolbar .toolbar-item.queue-toolbar-utility-row {
     flex: 1 0 100%;
     width: 100%;
     order: 100;
     padding-top: 6px;
 }
 
-#inquiryQueueControlRow {
+#inquiryQueueUtilityBar {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
     width: 100%;
+    padding-top: 2px;
 }
 
-#inquiryQueueViewModeWrap,
+#inquiryQueueViewWrap,
 #inquiryQueuePagerWrap {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
 }
 
-#inquiryQueueViewMode,
-#inquiryQueuePager {
+#inquiryQueueView {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    padding: 8px 0 0;
     color: #5f6b82;
     font-size: 12px;
 }
 
-#inquiryQueueViewMode {
-    justify-content: flex-start;
-}
-
-#inquiryQueuePagerWrap {
-    width: auto;
-    margin-left: auto;
-}
-
-#inquiryQueuePager {
-    justify-content: flex-end;
-    text-align: right;
-}
-
-#inquiryQueueViewMode .queue-view-label,
+#inquiryQueueView .queue-view-label,
 #inquiryQueuePager .queue-pager-label,
 #inquiryQueuePagerStatus {
     font-weight: 700;
     color: #44526b;
 }
 
-#inquiryQueuePagerStatus {
-    white-space: nowrap;
+#inquiryQueuePager {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    color: #5f6b82;
+    font-size: 12px;
+    text-align: right;
 }
 
-#inquiryQueueViewMode .queue-view-hint {
-    color: #6f7c90;
+#inquiryQueuePagerStatus {
+    white-space: nowrap;
 }
 
 #inquiryQueuePager .queue-pager-separator {
@@ -80,15 +72,6 @@
     vertical-align: top;
 }
 
-.control-list.cabnet-queue-view-core .queue-col-extended,
-.control-list.cabnet-queue-view-core .queue-col-full {
-    display: none;
-}
-
-.control-list.cabnet-queue-view-extended .queue-col-full {
-    display: none;
-}
-
 .control-list table tbody td:nth-child(1),
 .control-list table tbody td:nth-child(4),
 .control-list table tbody td:nth-child(5),
@@ -103,13 +86,24 @@
     overflow-x: auto;
 }
 
+body.queue-view-core .control-list .queue-col-extended,
+body.queue-view-core .control-list .queue-col-full {
+    display: none !important;
+}
+
+body.queue-view-extended .control-list .queue-col-full {
+    display: none !important;
+}
+
 @media (max-width: 1200px) {
-    #inquiryQueueControlRow {
+    #inquiryQueueUtilityBar {
         justify-content: flex-start;
     }
 
+    #inquiryQueueViewWrap,
     #inquiryQueuePagerWrap {
-        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
     }
 
     #inquiryQueuePager {
@@ -143,16 +137,14 @@
     </a>
 </div>
 
-
-<div class="toolbar-item queue-toolbar-pager-row">
-    <div id="inquiryQueueControlRow">
-        <div id="inquiryQueueViewModeWrap">
-            <div id="inquiryQueueViewMode">
+<div class="toolbar-item queue-toolbar-utility-row">
+    <div id="inquiryQueueUtilityBar">
+        <div id="inquiryQueueViewWrap">
+            <div id="inquiryQueueView">
                 <span class="queue-view-label">Queue view</span>
                 <button type="button" class="btn btn-default btn-sm queue-view-mode" data-view-mode="core">Core scan</button>
                 <button type="button" class="btn btn-default btn-sm queue-view-mode" data-view-mode="extended">Extended</button>
                 <button type="button" class="btn btn-default btn-sm queue-view-mode" data-view-mode="full">Full</button>
-                <span class="queue-view-hint">Hide lower-value columns when you only need a faster scan.</span>
             </div>
         </div>
 
@@ -182,22 +174,14 @@
     var STORAGE_KEY_SIZE = 'cabnetInquiryQueuePageSize';
     var STORAGE_KEY_PAGE = 'cabnetInquiryQueuePage';
     var STORAGE_KEY_VIEW = 'cabnetInquiryQueueViewMode';
+    var VIEW_MODES = ['core', 'extended', 'full'];
 
     function getPagerRoot() {
         return document.getElementById('inquiryQueuePager');
     }
 
-    function getViewModeRoot() {
-        return document.getElementById('inquiryQueueViewMode');
-    }
-
-    function getListRoot() {
-        return document.querySelector('.control-list');
-    }
-
-    function getViewMode() {
-        var mode = localStorage.getItem(STORAGE_KEY_VIEW) || 'extended';
-        return ['core', 'extended', 'full'].indexOf(mode) !== -1 ? mode : 'extended';
+    function getViewRoot() {
+        return document.getElementById('inquiryQueueView');
     }
 
     function getListRows() {
@@ -232,8 +216,16 @@
         applyQueuePaging();
     }
 
+    function getViewMode() {
+        var mode = localStorage.getItem(STORAGE_KEY_VIEW) || 'extended';
+        return VIEW_MODES.indexOf(mode) !== -1 ? mode : 'extended';
+    }
+
     function setViewMode(mode) {
-        localStorage.setItem(STORAGE_KEY_VIEW, String(mode));
+        if (VIEW_MODES.indexOf(mode) === -1) {
+            mode = 'extended';
+        }
+        localStorage.setItem(STORAGE_KEY_VIEW, mode);
         applyQueueViewMode();
     }
 
@@ -249,8 +241,8 @@
         });
     }
 
-    function updateViewModeButtonState(mode) {
-        var root = getViewModeRoot();
+    function updateViewButtonState(mode) {
+        var root = getViewRoot();
         if (!root) {
             return;
         }
@@ -262,15 +254,15 @@
     }
 
     function applyQueueViewMode() {
-        var listRoot = getListRoot();
         var mode = getViewMode();
-
-        if (listRoot) {
-            listRoot.classList.remove('cabnet-queue-view-core', 'cabnet-queue-view-extended', 'cabnet-queue-view-full');
-            listRoot.classList.add('cabnet-queue-view-' + mode);
+        var body = document.body;
+        if (!body) {
+            return;
         }
 
-        updateViewModeButtonState(mode);
+        body.classList.remove('queue-view-core', 'queue-view-extended', 'queue-view-full');
+        body.classList.add('queue-view-' + mode);
+        updateViewButtonState(mode);
     }
 
     function applyQueuePaging() {
@@ -320,70 +312,49 @@
         }
     }
 
-    function bindViewModeEvents() {
-        var root = getViewModeRoot();
-        if (!root || root.getAttribute('data-bound') === '1') {
-            return;
-        }
-        root.setAttribute('data-bound', '1');
-
-        root.addEventListener('click', function(event) {
-            var modeButton = event.target.closest('.queue-view-mode');
-            if (modeButton) {
-                event.preventDefault();
-                setViewMode(modeButton.getAttribute('data-view-mode'));
-            }
-        });
-    }
-
     function bindPagerEvents() {
-        var root = getPagerRoot();
-        if (!root || root.getAttribute('data-bound') === '1') {
-            return;
+        var pagerRoot = getPagerRoot();
+        if (pagerRoot && pagerRoot.getAttribute('data-bound') !== '1') {
+            pagerRoot.setAttribute('data-bound', '1');
+            pagerRoot.addEventListener('click', function(event) {
+                var sizeButton = event.target.closest('.queue-page-size');
+                if (sizeButton) {
+                    event.preventDefault();
+                    setPageSize(sizeButton.getAttribute('data-page-size'));
+                    return;
+                }
+
+                var navButton = event.target.closest('[data-page-nav]');
+                if (navButton) {
+                    event.preventDefault();
+                    var direction = navButton.getAttribute('data-page-nav');
+                    var currentPage = getCurrentPage();
+                    setCurrentPage(direction === 'next' ? currentPage + 1 : currentPage - 1);
+                    applyQueuePaging();
+                }
+            });
         }
-        root.setAttribute('data-bound', '1');
 
-        root.addEventListener('click', function(event) {
-            var sizeButton = event.target.closest('.queue-page-size');
-            if (sizeButton) {
+        var viewRoot = getViewRoot();
+        if (viewRoot && viewRoot.getAttribute('data-bound') !== '1') {
+            viewRoot.setAttribute('data-bound', '1');
+            viewRoot.addEventListener('click', function(event) {
+                var viewButton = event.target.closest('.queue-view-mode');
+                if (!viewButton) {
+                    return;
+                }
                 event.preventDefault();
-                setPageSize(sizeButton.getAttribute('data-page-size'));
-                return;
-            }
-
-            var navButton = event.target.closest('[data-page-nav]');
-            if (navButton) {
-                event.preventDefault();
-                var direction = navButton.getAttribute('data-page-nav');
-                var currentPage = getCurrentPage();
-                setCurrentPage(direction === 'next' ? currentPage + 1 : currentPage - 1);
-                applyQueuePaging();
-            }
-        });
+                setViewMode(viewButton.getAttribute('data-view-mode'));
+            });
+        }
     }
 
-    function initQueueControls() {
-        bindViewModeEvents();
+    function initQueuePaging() {
         bindPagerEvents();
         applyQueueViewMode();
         applyQueuePaging();
     }
 
-    document.addEventListener('DOMContentLoaded', initQueueControls);
-    document.addEventListener('render', initQueueControls, true);
-    document.addEventListener('ajaxUpdateComplete', initQueueControls, true);
-    window.setTimeout(initQueueControls, 50);
-    window.setTimeout(initQueueControls, 300);
-
-    var observer = new MutationObserver(function() {
-        initQueueControls();
-    });
-
-    window.setTimeout(function() {
-        var listRoot = document.querySelector('.control-list');
-        if (listRoot) {
-            observer.observe(listRoot, {childList: true, subtree: true});
-        }
-    }, 200);
+    document.addEventListener('DOMContentLoaded', initQueuePaging);
 })();
 </script>
