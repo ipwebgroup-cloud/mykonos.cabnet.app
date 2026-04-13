@@ -59,7 +59,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.58 inquiry-queue server-side pagination and loyalty render cache patch`
+- `v6.41.59 inquiry-queue slimmer default first-load column set patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -115,6 +115,7 @@ Recent safe work has already established:
 - shorter loyalty row copy and fewer queue-side tooltip payloads
 - model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups
 - real server-side Inquiry Queue pagination with a 25-row default and setup-driven per-page options
+- a slimmer default visible queue column set, with lower-priority columns still available through List Setup
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -134,7 +135,7 @@ Keep these safe:
 The strongest next step after the last delivered patch is:
 - keep Inquiry Queue fast and clean
 - continue reducing render cost before adding more UI chrome
-- inspect whether the default first-load column set should slim down further now that server-side pagination is active
+- keep the new slimmer default first-load column set clean and conservative
 - keep operator language simple
 
 ---

@@ -445,4 +445,6 @@
 
 2.4.21:
   - 'Enable server-side Inquiry Queue pagination with 25-row default pages and setup-driven per-page options for lighter list rendering'
+2.4.22:
+  - 'Slim the default inquiry queue column set for cleaner first-load scan speed'
 
