@@ -441,16 +441,8 @@
   - 'Make Inquiry Queue rows more compact with denser single-line table rendering for faster scanning'
 
 2.4.20:
-  - 'Add Inquiry Queue view-mode presets so lower-value columns can be hidden for faster scanning without changing the workflow'
+  - 'Add model-side caching for loyalty workspace readiness and linked loyalty record lookups in Inquiry Queue rendering'
 
 2.4.21:
-  - 'Merge queue status, priority, owner, and follow-up posture into tighter summary columns for faster scanning'
+  - 'Enable server-side Inquiry Queue pagination with 25-row default pages and setup-driven per-page options for lighter list rendering'
 
-2.4.22:
-  - 'Tighten Inquiry Queue loyalty backlink and action cards so linked rows stay easier to scan'
-
-2.4.23:
-  - 'Trim Inquiry Queue loyalty-row copy and tooltip payload for lighter linked-row rendering'
-
-2.4.24:
-  - 'Cache loyalty workspace readiness checks and linked loyalty-record lookups so Inquiry Queue rows do less repeated model work during rendering'

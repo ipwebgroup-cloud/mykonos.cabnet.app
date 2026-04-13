@@ -87,11 +87,11 @@ Current safe priorities:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.57 inquiry-queue loyalty workspace readiness cache patch`
-- plugin tracking `2.4.24`
+- `v6.41.58 inquiry-queue server-side pagination and loyalty render cache patch`
+- plugin tracking `2.4.21`
 
 This patch stays backend-only and does not touch `/plan`.
-It adds model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups so Inquiry Queue rows do less repeated work while rendering queue-side loyalty state.
+It adds model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups, then turns on real server-side Inquiry Queue pagination with a 25-row default and setup-driven per-page options so the list renders less at once.
 
 ## Deployment note
 
@@ -104,16 +104,17 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Mykonos Inquiries -> Inquiry Queue
 - linked rows still show loyalty backlink, packet, review, and action buttons
-- queue view presets and row-count controls still work normally
-- no visible queue workflow regression appears after the model-side caching change
+- the list now pages server-side instead of rendering the whole queue at once
+- List Setup now offers 10 / 25 / 50 / 100 rows per page
+- no visible queue workflow regression appears after the caching and pagination changes
 
 ---
 
 ## Safest next step
 If the queue still feels heavy after this patch, the next real pass should inspect:
-- list/controller render weight
-- server-side pagination behavior
-- whether any remaining queue-side partials should be collapsed further
-- whether the live list should move to stricter server-side result reduction before any new UI work
+- whether the queue should default to a slimmer column set for first-load scan speed
+- whether loyalty backlink and action row partials can collapse further on smaller screens
+- whether the update/detail screen now becomes the next clearer render-weight target
+- whether any remaining queue-specific helper text should move fully into the docs page
 
 Keep future work plugin-only where possible.

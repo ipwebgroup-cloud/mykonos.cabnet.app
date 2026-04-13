@@ -13,9 +13,17 @@ use Flash;
 
 class Inquiries extends Controller
 {
+    protected ?bool $loyaltyWorkspaceReadyCache = null;
+
     protected function loyaltyWorkspaceReady(): bool
     {
-        return LoyaltyRecord::workspaceStorageReady();
+        if ($this->loyaltyWorkspaceReadyCache !== null) {
+            return $this->loyaltyWorkspaceReadyCache;
+        }
+
+        $this->loyaltyWorkspaceReadyCache = LoyaltyRecord::workspaceStorageReady();
+
+        return $this->loyaltyWorkspaceReadyCache;
     }
 
     protected function redirectAfterLoyaltySetupMissing($recordId)
@@ -298,7 +306,7 @@ class Inquiries extends Controller
             ]));
         }
 
-        $wasFirstLoyaltyRecord = LoyaltyRecord::workspaceStorageReady() && LoyaltyRecord::workspaceRecordCount() === 0;
+        $wasFirstLoyaltyRecord = $this->loyaltyWorkspaceReady() && LoyaltyRecord::workspaceRecordCount() === 0;
 
         $record = LoyaltyRecord::syncFromInquiry($inquiry, [
             'continuity_status' => 'active_retention',

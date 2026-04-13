@@ -32,31 +32,11 @@ class Inquiry extends Model
 
     protected array $workflowChanges = [];
 
-    protected static ?bool $loyaltyWorkspaceStorageReadyCache = null;
+    protected static ?bool $loyaltyWorkspaceReadyCache = null;
+
+    protected ?LoyaltyRecord $linkedLoyaltyRecordCache = null;
+
     protected bool $linkedLoyaltyRecordResolved = false;
-    protected $linkedLoyaltyRecordCache = null;
-
-    protected static function loyaltyWorkspaceStorageReady(): bool
-    {
-        if (static::$loyaltyWorkspaceStorageReadyCache !== null) {
-            return static::$loyaltyWorkspaceStorageReadyCache;
-        }
-
-        if (!class_exists(LoyaltyRecord::class)) {
-            static::$loyaltyWorkspaceStorageReadyCache = false;
-            return false;
-        }
-
-        static::$loyaltyWorkspaceStorageReadyCache = LoyaltyRecord::workspaceStorageReady();
-
-        return static::$loyaltyWorkspaceStorageReadyCache;
-    }
-
-    protected function loyaltyWorkspaceReady(): bool
-    {
-        return static::loyaltyWorkspaceStorageReady();
-    }
-
 
     public function getStatusOptions(): array
     {
@@ -660,6 +640,26 @@ class Inquiry extends Model
         return 'No linked loyalty continuity record yet.';
     }
 
+    protected static function loyaltyWorkspaceReadyStatic(): bool
+    {
+        if (!class_exists(LoyaltyRecord::class)) {
+            return false;
+        }
+
+        if (static::$loyaltyWorkspaceReadyCache !== null) {
+            return static::$loyaltyWorkspaceReadyCache;
+        }
+
+        static::$loyaltyWorkspaceReadyCache = LoyaltyRecord::workspaceStorageReady();
+
+        return static::$loyaltyWorkspaceReadyCache;
+    }
+
+    protected function loyaltyWorkspaceReady(): bool
+    {
+        return static::loyaltyWorkspaceReadyStatic();
+    }
+
     protected function getLinkedLoyaltyRecord(): ?LoyaltyRecord
     {
         if (!$this->loyaltyWorkspaceReady() || !$this->id) {
@@ -667,22 +667,19 @@ class Inquiry extends Model
         }
 
         if ($this->linkedLoyaltyRecordResolved) {
-            return $this->linkedLoyaltyRecordCache instanceof LoyaltyRecord
-                ? $this->linkedLoyaltyRecordCache
-                : null;
-        }
-
-        if ($this->relationLoaded('loyalty_record')) {
-            $this->linkedLoyaltyRecordCache = $this->getRelation('loyalty_record');
-        } else {
-            $this->linkedLoyaltyRecordCache = $this->loyalty_record;
+            return $this->linkedLoyaltyRecordCache;
         }
 
         $this->linkedLoyaltyRecordResolved = true;
 
-        return $this->linkedLoyaltyRecordCache instanceof LoyaltyRecord
-            ? $this->linkedLoyaltyRecordCache
-            : null;
+        if ($this->relationLoaded('loyalty_record')) {
+            $this->linkedLoyaltyRecordCache = $this->getRelation('loyalty_record');
+            return $this->linkedLoyaltyRecordCache;
+        }
+
+        $this->linkedLoyaltyRecordCache = $this->loyalty_record;
+
+        return $this->linkedLoyaltyRecordCache;
     }
 
     protected function loyaltyTransferReady(): bool
@@ -813,7 +810,7 @@ class Inquiry extends Model
             return null;
         }
 
-        if ($this->loyaltyWorkspaceReady()) {
+        if (static::loyaltyWorkspaceReadyStatic()) {
             if ($this->getLinkedLoyaltyRecord()) {
                 return \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $this->id);
             }
@@ -885,7 +882,7 @@ class Inquiry extends Model
     public static function getLoyaltyQueuePostureBadgeStrip(): array
     {
         $counts = static::getLoyaltyQueuePostureCounts();
-        $workspaceReady = static::loyaltyWorkspaceStorageReady();
+        $workspaceReady = static::loyaltyWorkspaceReadyStatic();
         $badges = [];
 
         foreach ($counts as $key => $bucket) {
@@ -936,7 +933,7 @@ class Inquiry extends Model
     public static function getLoyaltyQueueTransferSummary(): array
     {
         $counts = static::getLoyaltyQueuePostureCounts();
-        $workspaceReady = static::loyaltyWorkspaceStorageReady();
+        $workspaceReady = static::loyaltyWorkspaceReadyStatic();
         $largestBucketKey = 'queue_only';
         $largestBucketValue = $counts[$largestBucketKey]['value'] ?? 0;
 
@@ -1000,7 +997,7 @@ class Inquiry extends Model
             return;
         }
 
-        $workspaceReady = static::loyaltyWorkspaceStorageReady();
+        $workspaceReady = static::loyaltyWorkspaceReadyStatic();
 
         if (!$workspaceReady) {
             if (in_array('workspace_staged', $activeValues, true)) {

@@ -4,6 +4,8 @@ title: Mykonos Inquiries
 recordUrl: cabnet/mykonosinquiry/inquiries/update/:id
 noRecordsMessage: No inquiries found
 showSetup: true
+recordsPerPage: 25
+perPageOptions: [10, 25, 50, 100]
 showCheckboxes: false
 defaultSort:
     column: created_at
