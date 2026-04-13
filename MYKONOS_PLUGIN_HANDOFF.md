@@ -87,11 +87,11 @@ Current safe priorities:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.59 inquiry-queue slimmer default first-load column set patch`
+- `v6.41.60 inquiry-detail compact header and collapsed guide patch`
 - plugin tracking `2.4.22`
 
 This patch stays backend-only and does not touch `/plan`.
-It keeps the server-side queue pagination line in place, but makes the default first queue load visibly leaner by hiding lower-priority columns until an operator explicitly enables them in List Setup.
+It trims the inquiry update screen by replacing the two large top advisory callouts with one compact record summary and a collapsed plain-language guide, so operators land faster on the actual editable record.
 
 ## Deployment note
 
@@ -103,19 +103,18 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - Backend -> Mykonos Inquiries -> Inquiry Queue
-- linked rows still show loyalty backlink, packet, review, and action buttons
-- the list still pages server-side instead of rendering the whole queue at once
-- the first queue load now starts with a slimmer default visible column set
-- List Setup can still restore Email, Source, Repeat-guest Backlink, Last Contacted, Closed, and Created
-- no visible queue workflow regression appears after the default-column slimming change
+- Backend -> Mykonos Inquiries -> open any saved inquiry record
+- the update screen now opens with a compact summary instead of two large advisory blocks
+- the Quick screen guide stays collapsed by default and can be opened when needed
+- the editable form tabs and workflow actions still render normally
 
 ---
 
 ## Safest next step
 If the queue still feels heavy after this patch, the next real pass should inspect:
-- whether the update/detail screen now becomes the next clearer render-weight target
-- whether repeat-guest backlink and action row partials should collapse further on smaller screens
-- whether any remaining queue-specific helper text should move fully into the docs page
-- whether the loyalty workspace list should receive the same first-load slimming discipline
+- whether the inquiry update form tabs can reduce always-visible helper copy further
+- whether read-only operator guidance panels should be grouped more tightly by tab
+- whether any remaining update-screen helper text should move fully into the docs page
+- whether the Loyalty Continuity Workspace detail screen now becomes the next clearer render-weight target
 
 Keep future work plugin-only where possible.

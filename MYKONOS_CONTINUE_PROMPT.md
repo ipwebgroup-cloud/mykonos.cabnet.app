@@ -59,7 +59,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.59 inquiry-queue slimmer default first-load column set patch`
+- `v6.41.60 inquiry-detail compact header and collapsed guide patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -108,14 +108,9 @@ Continue preferring:
 ### 3. Inquiry Queue scan speed remains the latest priority
 Recent safe work has already established:
 - a lighter button-first toolbar
-- queue view presets
-- 5 / 10 / 50 / All row controls
-- tighter status / priority / owner / follow-up summary columns
-- tighter loyalty backlink and loyalty action row cards
-- shorter loyalty row copy and fewer queue-side tooltip payloads
-- model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups
-- real server-side Inquiry Queue pagination with a 25-row default and setup-driven per-page options
-- a slimmer default visible queue column set, with lower-priority columns still available through List Setup
+- queue-side scan-speed improvements remain in place
+- the inquiry update screen now opens with a compact record summary instead of two large top advisory blocks
+- the plain-language screen guide now stays collapsed by default and only opens when needed
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -133,9 +128,9 @@ Keep these safe:
 ## Most recent safe next step
 
 The strongest next step after the last delivered patch is:
-- keep Inquiry Queue fast and clean
-- continue reducing render cost before adding more UI chrome
-- keep the new slimmer default first-load column set clean and conservative
+- keep the inquiry update screen compact and readable
+- continue reducing always-visible helper copy before adding more UI chrome
+- inspect whether dense read-only guidance panels should group more tightly by tab
 - keep operator language simple
 
 ---

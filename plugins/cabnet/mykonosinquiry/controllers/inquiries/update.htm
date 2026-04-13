@@ -8,8 +8,8 @@
     $statusLabel = $model && method_exists($model, 'getStatusLabelAttribute') ? $model->status_label : ucwords(str_replace('_', ' ', $status));
     $priorityLabel = $model && method_exists($model, 'getPriorityLabelAttribute') ? $model->priority_label : ucwords(str_replace('_', ' ', $priority));
     $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
-    $email = $model && !empty($model->email) ? $model->email : 'No email saved';
-    $phone = $model && !empty($model->phone) ? $model->phone : 'No phone saved';
+    $email = $model && !empty($model->email) ? $model->email : null;
+    $phone = $model && !empty($model->phone) ? $model->phone : null;
     $focus = $model && method_exists($model, 'getServicesInlineAttribute') ? $model->services_inline : 'General planning';
     $arrival = $model && !empty($model->arrival_date) ? $model->arrival_date->format('Y-m-d') : 'Not set';
     $departure = $model && !empty($model->departure_date) ? $model->departure_date->format('Y-m-d') : 'Not set';
@@ -21,12 +21,10 @@
     $createdAt = $model && !empty($model->created_at) ? $model->created_at->format('Y-m-d H:i') : '—';
     $closedAt = $model && !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Still open';
 
-    $quickCards = [
-        ['label' => 'Guest', 'value' => $guest, 'note' => $email . ' · ' . $phone],
-        ['label' => 'Trip dates', 'value' => $arrival . ' → ' . $departure, 'note' => 'Guests: ' . $guests],
-        ['label' => 'Current stage', 'value' => $statusLabel, 'note' => 'Priority: ' . $priorityLabel],
-        ['label' => 'Next step', 'value' => $followUp, 'note' => 'Owner: ' . $owner],
-    ];
+    $contactParts = array_values(array_filter([$email, $phone]));
+    $contactLine = count($contactParts) ? implode(' · ', $contactParts) : 'No direct contact details saved yet';
+    $tripLine = sprintf('%s → %s · Guests: %s', $arrival, $departure, $guests);
+    $contextLine = sprintf('Focus: %s · Source: %s · Mode: %s', $focus, $sourceType, $requestedMode);
 ?>
 <div class="control-breadcrumb">
     <ul>
@@ -49,60 +47,48 @@
 
 <div class="layout-row">
     <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
-        <div class="content" style="padding:18px 20px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:8px;">Fast inquiry guide</div>
-            <h3 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#1f2937;"><?= e($guest) ?></h3>
-            <p style="margin:0 0 12px 0;font-size:14px;line-height:1.65;color:#475569;">
-                This page is for managing one guest request. Keep the record simple: what the guest wants, who owns the request, and what should happen next.
-            </p>
-            <div style="font-size:13px;color:#64748b;margin-bottom:14px;">
-                <strong><?= e($reference) ?></strong>
-                <span style="margin:0 8px;color:#cbd5e1;">•</span>
-                Created <?= e($createdAt) ?>
-                <span style="margin:0 8px;color:#cbd5e1;">•</span>
-                Last contact: <?= e($lastContacted) ?>
-                <span style="margin:0 8px;color:#cbd5e1;">•</span>
-                Closed: <?= e($closedAt) ?>
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;">
+                <div style="min-width:260px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:6px;">Inquiry record</div>
+                    <h3 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#1f2937;"><?= e($guest) ?></h3>
+                    <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($contactLine) ?></div>
+                    <div style="margin-top:4px;font-size:13px;line-height:1.65;color:#475569;"><?= e($tripLine) ?></div>
+                    <div style="margin-top:4px;font-size:13px;line-height:1.65;color:#64748b;"><?= e($contextLine) ?></div>
+                </div>
+                <div style="min-width:240px;flex:0 1 360px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Ref: <?= e($reference) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Status: <?= e($statusLabel) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Priority: <?= e($priorityLabel) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Owner: <?= e($owner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Follow-up: <?= e($followUp) ?></span>
+                </div>
             </div>
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
-                <?php foreach ($quickCards as $card): ?>
-                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px 14px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
-                        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;"><?= e($card['label']) ?></div>
-                        <div style="font-size:15px;font-weight:700;color:#111827;line-height:1.4;"><?= e($card['value']) ?></div>
-                        <div style="margin-top:6px;font-size:12px;line-height:1.55;color:#475569;"><?= e($card['note']) ?></div>
+            <details style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px;">
+                <summary style="cursor:pointer;font-size:13px;font-weight:700;color:#334155;list-style:none;">Quick screen guide</summary>
+                <div style="margin-top:10px;font-size:13px;line-height:1.65;color:#475569;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">What matters first</strong>
+                        Keep the record simple: what the guest wants, who owns the request, and what should happen next.
                     </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="layout-row">
-    <div class="callout callout-warning no-subheader" style="border-radius:14px;border:1px solid rgba(245,158,11,.22);box-shadow:0 6px 18px rgba(15,23,42,.04);margin-bottom:18px;">
-        <div class="content" style="padding:18px 20px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#b45309;margin-bottom:8px;">Plain-English labels</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
-                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
-                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Status</div>
-                    <div style="font-size:13px;line-height:1.55;color:#374151;">Where the request stands right now, like new, contacted, waiting, or closed.</div>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Status</strong>
+                        Where the request stands right now, like new, contacted, waiting, confirmed, or closed.
+                    </div>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Priority</strong>
+                        How urgent or important this request feels compared with the rest of the queue.
+                    </div>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Follow-up date</strong>
+                        The next day someone should check in, reply, or move this request forward.
+                    </div>
                 </div>
-                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
-                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Priority</div>
-                    <div style="font-size:13px;line-height:1.55;color:#374151;">How urgent or important this request feels compared with the rest of the list.</div>
+                <div style="margin-top:10px;font-size:12px;line-height:1.65;color:#64748b;">
+                    Created <?= e($createdAt) ?> · Last contact <?= e($lastContacted) ?> · Closed <?= e($closedAt) ?>
                 </div>
-                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
-                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Follow-up date</div>
-                    <div style="font-size:13px;line-height:1.55;color:#374151;">The next day someone should check in, reply, or move this request forward.</div>
-                </div>
-                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:13px 14px;">
-                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:6px;">Repeat-guest list</div>
-                    <div style="font-size:13px;line-height:1.55;color:#374151;">A separate follow-up area for guests worth remembering after the main request is already handled.</div>
-                </div>
-            </div>
-            <div style="margin-top:12px;font-size:13px;line-height:1.65;color:#475569;">
-                <strong>Quick reading order:</strong> read the guest summary, check the current stage, confirm the owner, and set the next follow-up date.
-            </div>
+            </details>
         </div>
     </div>
 </div>
