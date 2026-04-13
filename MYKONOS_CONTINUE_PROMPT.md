@@ -59,7 +59,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.56 inquiry-queue lighter loyalty row render patch`
+- `v6.41.57 inquiry-queue loyalty workspace readiness cache patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -113,6 +113,7 @@ Recent safe work has already established:
 - tighter status / priority / owner / follow-up summary columns
 - tighter loyalty backlink and loyalty action row cards
 - shorter loyalty row copy and fewer queue-side tooltip payloads
+- model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.

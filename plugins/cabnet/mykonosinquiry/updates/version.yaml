@@ -451,3 +451,6 @@
 
 2.4.23:
   - 'Trim Inquiry Queue loyalty-row copy and tooltip payload for lighter linked-row rendering'
+
+2.4.24:
+  - 'Cache loyalty workspace readiness checks and linked loyalty-record lookups so Inquiry Queue rows do less repeated model work during rendering'

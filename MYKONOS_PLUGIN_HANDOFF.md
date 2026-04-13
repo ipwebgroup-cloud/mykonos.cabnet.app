@@ -87,11 +87,11 @@ Current safe priorities:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.56 inquiry-queue lighter loyalty row render patch`
-- plugin tracking `2.4.23`
+- `v6.41.57 inquiry-queue loyalty workspace readiness cache patch`
+- plugin tracking `2.4.24`
 
 This patch stays backend-only and does not touch `/plan`.
-It keeps the lighter queue toolbar and state-summary columns, but trims queue-side loyalty card copy and removes heavier tooltip payload so linked rows render with less text and less per-row overhead.
+It adds model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups so Inquiry Queue rows do less repeated work while rendering queue-side loyalty state.
 
 ## Deployment note
 
@@ -104,17 +104,16 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Mykonos Inquiries -> Inquiry Queue
 - linked rows still show loyalty backlink, packet, review, and action buttons
-- loyalty backlink cards still render correctly with shorter copy
-- loyalty action blocks now show shorter state hints
 - queue view presets and row-count controls still work normally
+- no visible queue workflow regression appears after the model-side caching change
 
 ---
 
 ## Safest next step
 If the queue still feels heavy after this patch, the next real pass should inspect:
-- per-record model calculations in `Inquiry.php`
-- relation caching / repeated loyalty-record lookups
 - list/controller render weight
 - server-side pagination behavior
+- whether any remaining queue-side partials should be collapsed further
+- whether the live list should move to stricter server-side result reduction before any new UI work
 
 Keep future work plugin-only where possible.

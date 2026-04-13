@@ -32,6 +32,32 @@ class Inquiry extends Model
 
     protected array $workflowChanges = [];
 
+    protected static ?bool $loyaltyWorkspaceStorageReadyCache = null;
+    protected bool $linkedLoyaltyRecordResolved = false;
+    protected $linkedLoyaltyRecordCache = null;
+
+    protected static function loyaltyWorkspaceStorageReady(): bool
+    {
+        if (static::$loyaltyWorkspaceStorageReadyCache !== null) {
+            return static::$loyaltyWorkspaceStorageReadyCache;
+        }
+
+        if (!class_exists(LoyaltyRecord::class)) {
+            static::$loyaltyWorkspaceStorageReadyCache = false;
+            return false;
+        }
+
+        static::$loyaltyWorkspaceStorageReadyCache = LoyaltyRecord::workspaceStorageReady();
+
+        return static::$loyaltyWorkspaceStorageReadyCache;
+    }
+
+    protected function loyaltyWorkspaceReady(): bool
+    {
+        return static::loyaltyWorkspaceStorageReady();
+    }
+
+
     public function getStatusOptions(): array
     {
         return [
@@ -237,7 +263,7 @@ class Inquiry extends Model
 
     public function getLoyaltyRecordLinkStateLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Workspace staged';
         }
 
@@ -260,7 +286,7 @@ class Inquiry extends Model
 
     public function getLoyaltyTransferCueLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Schema not active';
         }
 
@@ -284,7 +310,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueBacklinkReferenceLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Workspace staged';
         }
 
@@ -309,7 +335,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueBacklinkPostureLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Activate loyalty storage first';
         }
 
@@ -347,7 +373,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueHistoryCueLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'History staged';
         }
 
@@ -382,7 +408,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueHistoryCueHintAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Activate the loyalty workspace before continuity history can be read from the queue.';
         }
 
@@ -427,7 +453,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueuePacketBadgeLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Staged';
         }
 
@@ -481,7 +507,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueuePacketBadgeTitleAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Packet readiness is still staged until the loyalty workspace is active.';
         }
 
@@ -511,7 +537,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueNextReviewPillLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Staged';
         }
 
@@ -574,7 +600,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueNextReviewPillTitleAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Review timing stays staged until the loyalty workspace is active.';
         }
 
@@ -607,7 +633,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueBacklinkHintAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'The loyalty workspace is not active yet on this install.';
         }
 
@@ -636,15 +662,27 @@ class Inquiry extends Model
 
     protected function getLinkedLoyaltyRecord(): ?LoyaltyRecord
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {
+        if (!$this->loyaltyWorkspaceReady() || !$this->id) {
             return null;
         }
 
-        if ($this->relationLoaded('loyalty_record')) {
-            return $this->getRelation('loyalty_record');
+        if ($this->linkedLoyaltyRecordResolved) {
+            return $this->linkedLoyaltyRecordCache instanceof LoyaltyRecord
+                ? $this->linkedLoyaltyRecordCache
+                : null;
         }
 
-        return $this->loyalty_record;
+        if ($this->relationLoaded('loyalty_record')) {
+            $this->linkedLoyaltyRecordCache = $this->getRelation('loyalty_record');
+        } else {
+            $this->linkedLoyaltyRecordCache = $this->loyalty_record;
+        }
+
+        $this->linkedLoyaltyRecordResolved = true;
+
+        return $this->linkedLoyaltyRecordCache instanceof LoyaltyRecord
+            ? $this->linkedLoyaltyRecordCache
+            : null;
     }
 
     protected function loyaltyTransferReady(): bool
@@ -678,7 +716,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueuePrimaryActionLabelAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Workspace staged';
         }
 
@@ -699,7 +737,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueuePrimaryActionUrlAttribute(): ?string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {
+        if (!$this->loyaltyWorkspaceReady() || !$this->id) {
             return null;
         }
 
@@ -735,7 +773,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueHistoryActionUrlAttribute(): ?string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady() || !$this->id) {
+        if (!$this->loyaltyWorkspaceReady() || !$this->id) {
             return null;
         }
 
@@ -775,7 +813,7 @@ class Inquiry extends Model
             return null;
         }
 
-        if (class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady()) {
+        if ($this->loyaltyWorkspaceReady()) {
             if ($this->getLinkedLoyaltyRecord()) {
                 return \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $this->id);
             }
@@ -791,7 +829,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueuePostureBucketAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'workspace_staged';
         }
 
@@ -847,7 +885,7 @@ class Inquiry extends Model
     public static function getLoyaltyQueuePostureBadgeStrip(): array
     {
         $counts = static::getLoyaltyQueuePostureCounts();
-        $workspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+        $workspaceReady = static::loyaltyWorkspaceStorageReady();
         $badges = [];
 
         foreach ($counts as $key => $bucket) {
@@ -898,7 +936,7 @@ class Inquiry extends Model
     public static function getLoyaltyQueueTransferSummary(): array
     {
         $counts = static::getLoyaltyQueuePostureCounts();
-        $workspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+        $workspaceReady = static::loyaltyWorkspaceStorageReady();
         $largestBucketKey = 'queue_only';
         $largestBucketValue = $counts[$largestBucketKey]['value'] ?? 0;
 
@@ -962,7 +1000,7 @@ class Inquiry extends Model
             return;
         }
 
-        $workspaceReady = class_exists(LoyaltyRecord::class) && LoyaltyRecord::workspaceStorageReady();
+        $workspaceReady = static::loyaltyWorkspaceStorageReady();
 
         if (!$workspaceReady) {
             if (in_array('workspace_staged', $activeValues, true)) {
@@ -1028,7 +1066,7 @@ class Inquiry extends Model
 
     public function getLoyaltyQueueActionHintAttribute(): string
     {
-        if (!class_exists(LoyaltyRecord::class) || !LoyaltyRecord::workspaceStorageReady()) {
+        if (!$this->loyaltyWorkspaceReady()) {
             return 'Activate the loyalty workspace before using queue transfer actions.';
         }
 
