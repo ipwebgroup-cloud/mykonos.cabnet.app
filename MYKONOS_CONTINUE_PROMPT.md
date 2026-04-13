@@ -2,7 +2,7 @@
 
 You are continuing development of the **Mykonos Cabnet OctoberCMS inquiry project**.
 
-I am uploading the **latest rooted patch zip / latest rooted project archive / latest plugin files / latest continuity files** from the current working line.
+I am uploading the **latest rooted patch zip / latest rooted project archive / latest continuity files** from the current working line.
 
 Treat the uploaded files as the **primary source of truth**.
 
@@ -26,7 +26,7 @@ If older notes conflict with:
 - `MYKONOS_PLUGIN_HANDOFF.md`
 - `MYKONOS_CONTINUE_PROMPT.md`
 
-then prefer in this order:
+prefer in this order:
 
 1. the latest real uploaded project state
 2. `MYKONOS_PLUGIN_HANDOFF.md`
@@ -48,10 +48,8 @@ Assume the active plugin is:
 Assume the live operational workspace remains:
 
 - **Inquiry Queue**
-
-Assume the project is already deep into the guarded:
-
 - **Loyalty Continuity Workspace**
+- **Workspace Docs**
 
 Do **not** rewind to the early v2.x workflow line unless the real uploaded files clearly show that state.
 
@@ -59,61 +57,88 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 ## Current known line to verify
 
-The current known rooted patch line to verify is approximately:
+The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.52 inquiry-queue compact row density patch`
+- `v6.41.55 inquiry-queue compact loyalty row cards patch`
 
 This is a continuity hint only.
-
 You must verify the real uploaded files before continuing.
 
 ---
 
-## Operational priority reminder
+## Current working posture
 
-The loyalty workspace is now live and schema-ready, so the next real production-safe goal is:
+The project is already well beyond the original inquiry-plugin activation phase.
 
-- keep create-mode render safety intact
-- preserve inquiry-detail prefilled draft transfer behavior
-- keep admin terminology readable with hover tooltips while exposing one centralized docs/help/glossary reference page with direct backend navigation from Inquiry Queue, Loyalty Continuity, inquiry create/update, and the backend side menu
-- keep the Inquiry Queue itself lightweight and faster to open by using a minimal button-first toolbar on the live page while leaving deeper workflow explanation in the docs page
-- keep the Inquiry Queue scan-friendly by using lighter repeat-guest summary rendering on each row, simple 5 / 10 / 50 / All row controls when operators only need a smaller visible slice of the list, a clean second toolbar row that does not fight the native search/setup controls, and denser single-line table rendering so more inquiries fit on screen at once
-- keep that docs page searchable, scannable, and stable so operators can open it on demand without shrinking the live working screens
-- keep the page-based docs system context-aware so queue, loyalty, and record-screen buttons open the most relevant docs section first
-- keep the button labels operator-readable so queue, bridge, continuity, and record-screen help are distinguishable before the page opens
-- keep the docs page arrival state explicit so the incoming anchor updates one visible focus badge and active section cue in the page header/navigation
-- keep one sticky docs-page action row available so operators can return to Inquiry Queue, Loyalty Continuity, or the originating inquiry/loyalty record screen family without relying on browser history
-- keep one compact docs-page route-status strip visible in the hero so focus, source route, and primary return target can be read in a single scan row
-- keep one compact docs-page copy utility available so operators can copy that route context into issue reports or operator-training notes without retyping it
-- keep one compact docs-page new-tab utility available so operators can open the current anchored help section in a separate tab for handoff, cross-checking, or operator support without losing the current docs view
-- keep one compact docs-page link-copy utility available so operators can copy the exact context-aware docs URL and send the matching anchored help section directly to another operator
-- keep one compact docs-page share-snippet utility available so operators can copy a ready-to-send support block with the exact docs link and current route summary for email, chat, or operator handoff notes
-- keep one compact docs-page email-draft utility available so operators can copy a ready-to-send escalation draft with subject, body, and the exact current docs context for operator email or support handoff
-- keep one compact docs-page open-mail-app helper available so operators can launch a one-click mailto draft using the same subject, body, and exact docs-link context already exposed by the email-draft utility
-- keep one compact docs-page mail-recipient preset layer available so operators can keep that email draft blank or pre-address it to the Mykonos inbox or a future route-provided escalation recipient before launch
-- keep one compact docs-page `Copy mailto link` helper available so operators can capture the exact generated mailto URL for browser tests, support notes, or escalation troubleshooting without reconstructing the draft manually
-- keep loyalty create/update screens readable for non-technical operators by pairing stable internal labels with one visible plain-English guide at the top of the form
-- expose loyalty-link state, backlink reference, continuity posture, transfer cues, queue-side loyalty-posture filtering, compact transfer-count framing, filter-mirror guidance, and a direct linked-row history jump directly in the Inquiry Queue overview
-- preserve the live loyalty-list empty-state guidance
-- keep queue-to-loyalty bridge confirmations narrow, explicit, and operator-visible before broader workflow expansion
-- make create-mode clearly distinguish valid inquiry-backed drafts from manual drafts or missing-id seed attempts
-- keep loyalty update-screen continuity partials render-safe when backend partial context arrives through different variable injection paths
-- keep the close-handoff / finish-review exit panels on saved loyalty records aligned to the normalized backend model context
-- expose one compact saved-record source-context digest above the loyalty overview so source inquiry posture and continuity posture can be compared before deeper review panels
-- keep the same source-context comparison visible at the top of the Workspace tab while operators edit live continuity fields
-- keep the same source-context comparison visible at the top of the History tab while operators review outcome, packet, and trace fields
-- expose one compact queue-side continuity history cue on linked inquiry rows so operators can read the latest loyalty outcome without opening the linked record
-- keep the Loyalty Continuity list itself scan-friendly by surfacing compact latest-outcome, latest-packet, and next-review cues directly on the existing source-inquiry backlink card, while using the dedicated workspace docs page as the deeper glossary source
-- keep the Inquiry Queue equally scan-friendly by surfacing one always-visible packet-state badge plus one always-visible next-review pill on linked loyalty queue rows before operators open the deeper continuity history cue
+The public `/plan` flow is expected to stay on the **plugin-backed bridge direction** established from the v41 integration line.
 
-Do **not** rewind back into activation-shell assumptions unless the real uploaded files clearly show that state again.
+That means:
+- `/plan` saves through the plugin, not a theme-only mail handler
+- email continuity to `mykonos@cabnet.app` remains part of the public process
+- do **not** introduce a separate theme-only internal inquiry system
+- do **not** casually modify the public flow unless the real uploaded files clearly require a public fix
+
+---
+
+## Current verified development direction
+
+The current backend line is focused on:
+- keeping the Inquiry Queue usable and faster to scan
+- keeping the Loyalty Continuity Workspace readable in plain language
+- keeping help/docs/glossary on the dedicated backend docs page
+- preserving render safety and business continuity
+- making changes plugin-only where possible
+- avoiding speculative architecture rewrites
+
+---
+
+## Important backend state to preserve
+
+### 1. Dedicated docs/help page exists
+The older side help rail has been replaced by a dedicated backend docs/help page.
+Keep this direction.
+
+### 2. Plain-language direction is active
+Continue preferring:
+- simple labels
+- operator-friendly text
+- less internal jargon
+- less visual clutter
+
+### 3. Inquiry Queue scan speed remains the latest priority
+Recent safe work has already established:
+- a lighter button-first toolbar
+- queue view presets
+- 5 / 10 / 50 / All row controls
+- tighter status / priority / owner / follow-up summary columns
+- tighter loyalty backlink and loyalty action row cards
+
+Keep the queue usable first.
+Do **not** expand the top area again with large advisory panels unless clearly requested.
+
+### 4. Loyalty workspace remains active and should stay intact
+Keep these safe:
+- create-mode render safety
+- inquiry-backed loyalty draft prefill behavior
+- source inquiry backlink / context digest behavior
+- saved loyalty record workflow
+- plain-language helper blocks on loyalty screens
+
+---
+
+## Most recent safe next step
+
+The strongest next step after the last delivered patch is:
+- keep Inquiry Queue fast and clean
+- continue reducing render cost before adding more UI chrome
+- inspect list configuration, row partials, and per-record model work if performance is still an issue
+- keep operator language simple
 
 ---
 
 ## Your role
 
 Act as a:
-
 - senior OctoberCMS architect
 - PHP/MySQL engineer
 - backend workflow specialist
@@ -144,37 +169,6 @@ You are **not** acting as a speculative rewriter.
 
 ---
 
-## Public flow guardrail
-
-The `/plan` flow must remain on the plugin-backed bridge direction established from the v41 integration line.
-
-That means:
-
-- `/plan` saves through the plugin, not a theme-only email handler
-- email continuity to `mykonos@cabnet.app` remains part of the public process
-- do **not** introduce a separate theme-only internal inquiry system
-- do **not** casually modify the public flow unless the real uploaded files clearly require a public fix
-
----
-
-## Current development posture
-
-Continue in this style:
-
-- plugin-only
-- render-safe
-- schema-safe when possible
-- focused first on real activation state, then on readability and direct operator routing
-- avoid campaign behavior
-- avoid automation
-- avoid speculative expansion
-
-If the loyalty workspace still shows missing tables / upgrade-needed state, prioritize activation verification and activation sync before more readability panels.
-
-Inquiry Queue now includes loyalty visibility cues, backlink summaries, direct queue-level continuity actions, loyalty-posture filtering, compact continuity-count framing, a filter-mirror badge strip, a queue-side continuity history cue, a direct linked-row history jump, an always-visible linked-row packet badge, and an always-visible linked-row next-review pill. Loyalty Continuity is now live, supports first-record guidance, queue-transfer confirmation, direct source-inquiry backlink visibility, compact source-context digests across Overview, Workspace, and History, and list-side source-history cue badges plus a direct `Open loyalty history` jump on the live loyalty row card. The plugin backend now centralizes docs/help/glossary content into one dedicated backend docs page reachable from the Inquiry Queue and Loyalty Continuity toolbars, so the live list screens can stay wider and cleaner. The current safe polish direction is simpler operator wording and lighter backend screens. Inquiry Queue now uses a lighter fast-start shell instead of the older heavy guidance block, and inquiry create/update now move in the same direction with simpler toolbar wording, a plain-language guide, and a lighter record header so the page is easier to scan before the full form renders. The dedicated docs page remains the deeper reference layer with context-aware buttons, focus badges, copy/share/email/chat helpers, `Open mail app`, recipient presets, `Copy mailto link`, and matching-section new-tab support. Prefer direct queue-to-loyalty clarity, readable admin terminology, and lighter working screens before broader workflow expansion.
-
----
-
 ## Rooted zip requirement
 
 Every patch zip must preserve the correct rooted structure.
@@ -188,7 +182,6 @@ So the zip must place files under:
 - `mykonos.cabnet.app/...`
 
 Rules:
-
 - do **not** send flat plugin-only zips unless explicitly requested
 - send **only** the changed files/folders
 - keep the zip deployment-safe
@@ -196,7 +189,7 @@ Rules:
 
 ---
 
-## Output requirements
+## Output requirements for the next chat
 
 When you deliver the next patch, always provide:
 
@@ -208,6 +201,5 @@ When you deliver the next patch, always provide:
 6. the **Strongest next step**
 
 You must also always include/update:
-
 - `mykonos.cabnet.app/MYKONOS_PLUGIN_HANDOFF.md`
 - `mykonos.cabnet.app/MYKONOS_CONTINUE_PROMPT.md`

@@ -441,4 +441,10 @@
   - 'Make Inquiry Queue rows more compact with denser single-line table rendering for faster scanning'
 
 2.4.20:
-  - 'Add inquiry queue view presets so lower-priority columns can be hidden during faster scan passes'
+  - 'Add Inquiry Queue view-mode presets so lower-value columns can be hidden for faster scanning without changing the workflow'
+
+2.4.21:
+  - 'Merge queue status, priority, owner, and follow-up posture into tighter summary columns for faster scanning'
+
+2.4.22:
+  - 'Tighten Inquiry Queue loyalty backlink and action cards so linked rows stay easier to scan'

@@ -18,25 +18,25 @@ if (strpos((string) $primaryLabel, 'Open loyalty') === 0 || strpos((string) $pri
     $primaryTone = 'default';
 }
 ?>
-<div style="min-width:180px; max-width:230px; line-height:1.2;">
-    <div style="display:flex; flex-wrap:wrap; gap:5px; align-items:center; margin-bottom:4px;">
+<div style="min-width:180px; max-width:220px; line-height:1.25;">
+    <div style="margin-bottom:4px; display:flex; flex-wrap:wrap; gap:4px;">
         <?php if ($primaryUrl): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>" style="padding:2px 8px; line-height:1.2;">
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
                 <?= e($primaryLabel) ?>
             </a>
         <?php else: ?>
-            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75; padding:2px 8px; line-height:1.2;">
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;">
                 <?= e($primaryLabel) ?>
             </span>
         <?php endif; ?>
 
         <?php if ($secondaryUrl): ?>
-            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="padding:2px 8px; line-height:1.2;">
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default">
                 <?= e($secondaryLabel) ?>
             </a>
         <?php endif; ?>
     </div>
-    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
+    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px;" title="<?= e($hint) ?>">
         <?= e($hint) ?>
     </div>
 </div>
