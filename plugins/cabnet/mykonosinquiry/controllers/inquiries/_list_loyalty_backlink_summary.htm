@@ -5,19 +5,15 @@ if (!$inquiry) {
     return;
 }
 
-$reference = $inquiry->loyalty_queue_backlink_reference_label;
-$posture = $inquiry->loyalty_queue_backlink_posture_label;
-$hint = $inquiry->loyalty_queue_backlink_hint;
-$historyCueLabel = $inquiry->loyalty_queue_history_cue_label;
-$linked = strpos((string) $inquiry->loyalty_record_link_state_label, 'Linked ·') === 0;
-$historyActionLabel = $inquiry->loyalty_queue_history_action_label;
-$historyActionUrl = $inquiry->loyalty_queue_history_action_url;
-$packetBadgeLabel = $inquiry->loyalty_queue_packet_badge_label;
-$packetBadgeTitle = $inquiry->loyalty_queue_packet_badge_title;
-$packetTone = $inquiry->loyalty_queue_packet_badge_tone;
-$nextReviewPillLabel = $inquiry->loyalty_queue_next_review_pill_label;
-$nextReviewPillTitle = $inquiry->loyalty_queue_next_review_pill_title;
-$nextReviewTone = $inquiry->loyalty_queue_next_review_pill_tone;
+$reference = (string) $inquiry->loyalty_queue_backlink_reference_label;
+$posture = (string) $inquiry->loyalty_queue_backlink_posture_label;
+$historyActionLabel = (string) $inquiry->loyalty_queue_history_action_label;
+$historyActionUrl = (string) $inquiry->loyalty_queue_history_action_url;
+$packetBadgeLabel = (string) $inquiry->loyalty_queue_packet_badge_label;
+$packetTone = (string) $inquiry->loyalty_queue_packet_badge_tone;
+$nextReviewPillLabel = (string) $inquiry->loyalty_queue_next_review_pill_label;
+$nextReviewTone = (string) $inquiry->loyalty_queue_next_review_pill_tone;
+$linked = $historyActionUrl !== '';
 
 $border = $linked ? '#d7e7ff' : '#e5e7eb';
 $bg = $linked ? '#fbfdff' : '#fafbfc';
@@ -34,28 +30,24 @@ $toneMap = [
 [$packetText, $packetBg, $packetBorder] = $toneMap[$packetTone] ?? $toneMap['muted'];
 [$reviewText, $reviewBg, $reviewBorder] = $toneMap[$nextReviewTone] ?? $toneMap['muted'];
 ?>
-<div style="min-width:190px; max-width:245px; line-height:1.2; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:9px; padding:6px 8px;">
+<div style="min-width:175px; max-width:230px; line-height:1.15; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:8px; padding:5px 7px;">
     <div style="font-size:11px; font-weight:700; color:<?= e($title) ?>; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($reference) ?>">
         <?= e($reference) ?>
     </div>
 
-    <div style="font-size:10px; color:<?= e($text) ?>; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($posture) ?>">
+    <div style="font-size:10px; color:<?= e($text) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($posture) ?>">
         <?= e($posture) ?>
     </div>
 
-    <div style="font-size:10px; color:<?= e($text) ?>; opacity:0.9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($historyCueLabel ?: $hint) ?>">
-        <?= e($historyCueLabel ?: $hint) ?>
-    </div>
-
-    <div style="margin-top:5px; display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetText) ?>; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:700;" title="<?= e($packetBadgeTitle) ?>">
+    <div style="margin-top:5px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetText) ?>; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:700;">
             Packet: <?= e($packetBadgeLabel) ?>
         </span>
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($reviewBorder) ?>; background:<?= e($reviewBg) ?>; color:<?= e($reviewText) ?>; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:700;" title="<?= e($nextReviewPillTitle) ?>">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($reviewBorder) ?>; background:<?= e($reviewBg) ?>; color:<?= e($reviewText) ?>; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:700;">
             Review: <?= e($nextReviewPillLabel) ?>
         </span>
-        <?php if ($linked && $historyActionLabel && $historyActionUrl): ?>
-            <a href="<?= e($historyActionUrl) ?>" style="font-size:9px; font-weight:700; color:#0b63ce; text-decoration:none; white-space:nowrap;" title="Open the linked repeat-guest record on its history tab.">
+        <?php if ($linked && $historyActionLabel !== '' && $historyActionUrl !== ''): ?>
+            <a href="<?= e($historyActionUrl) ?>" style="font-size:9px; font-weight:700; color:#0b63ce; text-decoration:none; white-space:nowrap;">
                 <?= e($historyActionLabel) ?>
             </a>
         <?php endif; ?>

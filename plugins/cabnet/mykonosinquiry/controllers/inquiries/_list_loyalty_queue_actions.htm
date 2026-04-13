@@ -5,22 +5,28 @@ if (!$inquiry) {
     return;
 }
 
-$primaryUrl = $inquiry->loyalty_queue_primary_action_url;
-$secondaryUrl = $inquiry->loyalty_queue_secondary_action_url;
-$primaryLabel = $inquiry->loyalty_queue_primary_action_label;
-$secondaryLabel = $inquiry->loyalty_queue_secondary_action_label;
-$hint = $inquiry->loyalty_queue_action_hint;
+$primaryUrl = (string) $inquiry->loyalty_queue_primary_action_url;
+$secondaryUrl = (string) $inquiry->loyalty_queue_secondary_action_url;
+$primaryLabel = (string) $inquiry->loyalty_queue_primary_action_label;
+$secondaryLabel = (string) $inquiry->loyalty_queue_secondary_action_label;
 $primaryTone = 'default';
+$hint = 'Queue-only';
 
-if (strpos((string) $primaryLabel, 'Open loyalty') === 0 || strpos((string) $primaryLabel, 'Create + open loyalty') === 0) {
+if (strpos($primaryLabel, 'Open loyalty') === 0) {
     $primaryTone = 'primary';
-} elseif (strpos((string) $primaryLabel, 'Open draft') === 0) {
-    $primaryTone = 'default';
+    $hint = 'Linked record';
+} elseif (strpos($primaryLabel, 'Create + open loyalty') === 0) {
+    $primaryTone = 'primary';
+    $hint = 'Transfer-ready';
+} elseif (strpos($primaryLabel, 'Open draft') === 0) {
+    $hint = 'Draft-ready';
+} elseif (strpos($primaryLabel, 'Workspace staged') === 0) {
+    $hint = 'Workspace staged';
 }
 ?>
-<div style="min-width:180px; max-width:220px; line-height:1.25;">
-    <div style="margin-bottom:4px; display:flex; flex-wrap:wrap; gap:4px;">
-        <?php if ($primaryUrl): ?>
+<div style="min-width:165px; max-width:210px; line-height:1.2;">
+    <div style="margin-bottom:3px; display:flex; flex-wrap:wrap; gap:4px;">
+        <?php if ($primaryUrl !== ''): ?>
             <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
                 <?= e($primaryLabel) ?>
             </a>
@@ -30,13 +36,13 @@ if (strpos((string) $primaryLabel, 'Open loyalty') === 0 || strpos((string) $pri
             </span>
         <?php endif; ?>
 
-        <?php if ($secondaryUrl): ?>
+        <?php if ($secondaryUrl !== ''): ?>
             <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default">
                 <?= e($secondaryLabel) ?>
             </a>
         <?php endif; ?>
     </div>
-    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px;" title="<?= e($hint) ?>">
+    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:210px;">
         <?= e($hint) ?>
     </div>
 </div>

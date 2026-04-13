@@ -448,3 +448,6 @@
 
 2.4.22:
   - 'Tighten Inquiry Queue loyalty backlink and action cards so linked rows stay easier to scan'
+
+2.4.23:
+  - 'Trim Inquiry Queue loyalty-row copy and tooltip payload for lighter linked-row rendering'

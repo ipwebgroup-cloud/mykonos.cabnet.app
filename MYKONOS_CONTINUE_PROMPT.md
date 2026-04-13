@@ -59,7 +59,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.55 inquiry-queue compact loyalty row cards patch`
+- `v6.41.56 inquiry-queue lighter loyalty row render patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -112,6 +112,7 @@ Recent safe work has already established:
 - 5 / 10 / 50 / All row controls
 - tighter status / priority / owner / follow-up summary columns
 - tighter loyalty backlink and loyalty action row cards
+- shorter loyalty row copy and fewer queue-side tooltip payloads
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -131,7 +132,7 @@ Keep these safe:
 The strongest next step after the last delivered patch is:
 - keep Inquiry Queue fast and clean
 - continue reducing render cost before adding more UI chrome
-- inspect list configuration, row partials, and per-record model work if performance is still an issue
+- inspect per-record model work and repeated loyalty relation lookups if performance is still an issue
 - keep operator language simple
 
 ---
