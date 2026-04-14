@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.89 shared cell-edge rounding and border polish patch`
+- `v6.41.90 shared chip-size normalization pass`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It lightly polishes corners, border softness, and card edges on the visible queue action cell and loyalty source-summary card so they feel more visually unified without changing layout or behavior.
+It normalizes the visible hint-chip and packet-chip sizing across Inquiry Queue and Loyalty Continuity so similar compact signals sit closer in visual scale.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- visible list cells feel a little more unified at the edges
+- hint chips and packet chips feel closer in size across both list pages
 - list behavior remains unchanged

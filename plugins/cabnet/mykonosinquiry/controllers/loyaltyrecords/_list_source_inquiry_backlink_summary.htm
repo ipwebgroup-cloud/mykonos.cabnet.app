@@ -98,13 +98,13 @@ if (stripos($shortHint, 'manual') !== false) {
         <span title="Source posture"><?= e($posture) ?></span>
     </div>
     <div style="margin-bottom:8px; display:flex; align-items:center;">
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; <?= e('padding:2px 8px; font-size:10px; font-weight:700;') ?> max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
             <?= e($shortHint) ?>
         </span>
     </div>
 
     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; align-items:center;">
-        <span style="display:inline-flex; align-items:center; gap:5px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetTone) ?>; border-radius:999px; padding:3px 9px; font-size:11px; font-weight:700;" title="Latest packet">
+        <span style="display:inline-flex; align-items:center; gap:5px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetTone) ?>; border-radius:999px; <?= e('padding:2px 8px; font-size:10px; font-weight:700;') ?>" title="Latest packet">
             <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Packet</span>
             <span><?= e($latestPacket) ?></span>
         </span>

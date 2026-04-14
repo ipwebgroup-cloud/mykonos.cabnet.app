@@ -58,15 +58,15 @@ if (stripos($loyaltyHint, 'linked') !== false) {
 ?>
 <div class="queue-state-summary" style="min-width:160px; max-width:210px; line-height:1.18; white-space:normal;">
     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px; align-items:center;">
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($statusBorder) ?>; background:<?= e($statusBg) ?>; color:<?= e($statusText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Status">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($statusBorder) ?>; background:<?= e($statusBg) ?>; color:<?= e($statusText) ?>; border-radius:999px; <?= e('padding:2px 8px; font-size:10px; font-weight:700;') ?>" title="Status">
             <?= e($status) ?>
         </span>
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($priorityBorder) ?>; background:<?= e($priorityBg) ?>; color:<?= e($priorityText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Priority">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($priorityBorder) ?>; background:<?= e($priorityBg) ?>; color:<?= e($priorityText) ?>; border-radius:999px; <?= e('padding:2px 8px; font-size:10px; font-weight:700;') ?>" title="Priority">
             <?= e($priority) ?>
         </span>
     </div>
     <div style="display:flex; align-items:center;">
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($loyaltyBorder) ?>; background:<?= e($loyaltyBg) ?>; color:<?= e($loyaltyText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyalty) ?>">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($loyaltyBorder) ?>; background:<?= e($loyaltyBg) ?>; color:<?= e($loyaltyText) ?>; border-radius:999px; <?= e('padding:2px 8px; font-size:10px; font-weight:700;') ?> max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyalty) ?>">
             <?= e($loyaltyHint) ?>
         </span>
     </div>

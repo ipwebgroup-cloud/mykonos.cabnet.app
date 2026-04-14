@@ -60,7 +60,7 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
         <?php endif; ?>
     </div>
     <div style="display:flex; align-items:center;">
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; <?= e('padding:2px 8px; font-size:10px; font-weight:700;') ?> max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
             <?= e($hint) ?>
         </span>
     </div>
