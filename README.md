@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.41.81 — Shared row-action label polish
+### v6.41.82 — Shared list microcopy polish
 Included in the current safe backend polish line:
-- shared List Setup help polish
 - shared row-action label polish
+- shared list microcopy polish
 
 ### Current plugin-tracked baseline
 - `2.4.23`

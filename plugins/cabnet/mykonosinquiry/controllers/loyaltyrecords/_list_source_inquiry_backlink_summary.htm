@@ -77,6 +77,13 @@ if (stripos($latestPacket, 'no packet') !== false) {
     $packetBg = '#eef5ff';
     $packetBorder = '#cfe2ff';
 }
+
+$shortHint = $hint;
+if (stripos($shortHint, 'manual') !== false) {
+    $shortHint = 'Manual record';
+} elseif (stripos($shortHint, 'queue') !== false) {
+    $shortHint = 'From queue';
+}
 ?>
 <div style="min-width:245px; line-height:1.28; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:9px 11px;">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -86,7 +93,7 @@ if (stripos($latestPacket, 'no packet') !== false) {
         <span title="Source posture"><?= e($posture) ?></span>
     </div>
     <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
-        <?= e($hint) ?>
+        <?= e($shortHint) ?>
     </div>
 
     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:7px; align-items:center;">

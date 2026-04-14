@@ -14,7 +14,7 @@ $hint = 'Queue-only';
 
 if (strpos($primaryLabel, 'Open loyalty') === 0) {
     $primaryTone = 'primary';
-    $hint = 'Linked record';
+    $hint = 'Linked';
     $primaryLabel = 'Open loyalty';
 } elseif (strpos($primaryLabel, 'Create + open loyalty') === 0) {
     $primaryTone = 'primary';
@@ -24,7 +24,7 @@ if (strpos($primaryLabel, 'Open loyalty') === 0) {
     $hint = 'Draft-ready';
     $primaryLabel = 'Open draft';
 } elseif (strpos($primaryLabel, 'Workspace staged') === 0) {
-    $hint = 'Workspace staged';
+    $hint = 'Staged';
     $primaryLabel = 'Workspace staged';
 }
 

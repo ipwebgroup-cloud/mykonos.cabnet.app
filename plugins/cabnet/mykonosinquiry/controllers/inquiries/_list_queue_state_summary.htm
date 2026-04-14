@@ -36,6 +36,17 @@ $priorityTones = [
 
 [$statusText, $statusBg, $statusBorder] = $statusTones[$statusKey] ?? ['#495057', '#f3f4f6', '#d7dce2'];
 [$priorityText, $priorityBg, $priorityBorder] = $priorityTones[$priorityKey] ?? ['#495057', '#f3f4f6', '#d7dce2'];
+
+$loyaltyHint = $loyalty;
+if (stripos($loyaltyHint, 'linked') !== false) {
+    $loyaltyHint = 'Linked';
+} elseif (stripos($loyaltyHint, 'transfer') !== false) {
+    $loyaltyHint = 'Transfer-ready';
+} elseif (stripos($loyaltyHint, 'draft') !== false) {
+    $loyaltyHint = 'Draft-ready';
+} elseif (stripos($loyaltyHint, 'staged') !== false) {
+    $loyaltyHint = 'Staged';
+}
 ?>
 <div class="queue-state-summary" style="min-width:160px; max-width:210px; line-height:1.15; white-space:normal;">
     <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:4px; align-items:center;">
@@ -47,6 +58,6 @@ $priorityTones = [
         </span>
     </div>
     <div style="font-size:11px; color:#5f6b82; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyalty) ?>">
-        <?= e($loyalty) ?>
+        <?= e($loyaltyHint) ?>
     </div>
 </div>

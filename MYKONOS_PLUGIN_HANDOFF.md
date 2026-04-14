@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.81 shared row-action label polish patch`
+- `v6.41.82 shared list microcopy polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It shortens the visible row-action labels on Inquiry Queue and Loyalty Continuity so the buttons read faster while keeping the same actions and routes.
+It shortens tiny visible list hints and badge-adjacent microcopy on Inquiry Queue and Loyalty Continuity so operators get the same signals with slightly less noise.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- row action buttons read shorter and more consistently
-- action behavior remains unchanged
+- tiny visible hint text reads a bit cleaner
+- list behavior remains unchanged

@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.81 shared row-action label polish patch`
+- `v6.41.82 shared list microcopy polish patch`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- keeping visible row actions short and consistent before adding more UI chrome
+- polishing tiny visible list hints before introducing more UI surface
