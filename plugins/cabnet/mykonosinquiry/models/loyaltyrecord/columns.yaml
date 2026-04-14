@@ -50,194 +50,242 @@ columns:
     continuity_loop_posture_label:
         label: Loop
         sortable: false
+        invisible: true
 
     stewardship_finish_posture_label:
         label: Finish
         sortable: false
+        invisible: true
 
     finish_lane_status_label:
-        label: Finish Lane
+        label: Lane
         sortable: false
+        invisible: true
 
     finish_dashboard_status_label:
         label: Dashboard
         sortable: false
+        invisible: true
 
     finish_triage_label:
         label: Triage
         sortable: false
+        invisible: true
 
     finish_triage_urgency_label:
         label: Triage Urgency
         sortable: false
+        invisible: true
 
     queue_compression_band_label:
         label: Queue Band
         sortable: false
+        invisible: true
 
     list_scan_aid_label:
         label: Scan Aid
         sortable: false
+        invisible: true
 
     finish_watch_signal_label:
         label: Finish Watch
         sortable: false
+        invisible: true
 
     reopen_queue_cue_label:
         label: Reopen Cue
         sortable: false
+        invisible: true
 
     finish_close_compression_label:
         label: Finish-Close
         sortable: false
+        invisible: true
 
     reopen_scan_order_label:
         label: Reopen Order
         sortable: false
+        invisible: true
 
     close_handoff_group_label:
         label: Close Handoff
         sortable: false
+        invisible: true
 
     finish_review_exit_label:
         label: Review Exit
         sortable: false
+        invisible: true
 
     finish_lane_handback_label:
         label: Handback
         sortable: false
+        invisible: true
 
     post_close_hold_label:
         label: Post-Close Hold
         sortable: false
+        invisible: true
 
     hold_release_cue_label:
         label: Hold Release
         sortable: false
+        invisible: true
 
     quiet_lane_return_label:
         label: Quiet Return
         sortable: false
+        invisible: true
 
     hold_aging_label:
         label: Hold Aging
         sortable: false
+        invisible: true
 
     quiet_return_review_timing_label:
         label: Return Timing
         sortable: false
+        invisible: true
 
     hold_aging_compression_label:
         label: Hold Compression
         sortable: false
+        invisible: true
 
     quiet_lane_reentry_readiness_label:
         label: Re-Entry Ready
         sortable: false
+        invisible: true
 
     hold_expiry_group_label:
         label: Hold Expiry
         sortable: false
+        invisible: true
 
     quiet_lane_reentry_order_label:
         label: Re-Entry Order
         sortable: false
+        invisible: true
 
     hold_expiry_compression_label:
         label: Expiry Compression
         sortable: false
+        invisible: true
 
     quiet_lane_cadence_label:
         label: Quiet Cadence
         sortable: false
+        invisible: true
 
     queue_scan_prioritization_cue_label:
         label: Queue Priority
         sortable: false
+        invisible: true
 
     human_review_timing_clarity_label:
         label: Review Timing
         sortable: false
+        invisible: true
 
     owner_review_slot_sequence_label:
         label: Review Sequence
         sortable: false
+        invisible: true
 
     queue_backlog_visibility_label:
         label: Backlog
         sortable: false
+        invisible: true
 
     same_shift_handoff_sequence_label:
         label: Shift Handoff
         sortable: false
+        invisible: true
 
     queue_backlog_compression_label:
         label: Backlog Compression
         sortable: false
+        invisible: true
 
     front_of_queue_parked_lane_separation_label:
         label: Queue Separation
         sortable: false
+        invisible: true
 
     owner_state_handoff_compression_label:
         label: Owner Handoff
         sortable: false
+        invisible: true
 
     reopen_timing_discipline_label:
         label: Reopen Timing
         sortable: false
+        invisible: true
 
     same_shift_review_checkpoint_confirmation_label:
         label: Checkpoint
         sortable: false
+        invisible: true
 
     parked_lane_owner_reassignment_visibility_label:
-        label: Owner Reassign
+        label: Owner Reassignment
         sortable: false
+        invisible: true
 
     front_of_list_quiet_return_confirmation_label:
         label: Front Return
         sortable: false
+        invisible: true
 
     owner_visible_deferred_review_slot_alignment_label:
         label: Deferred Slot
         sortable: false
+        invisible: true
 
     current_shift_next_shift_quiet_return_separation_label:
         label: Shift Split
         sortable: false
+        invisible: true
 
     parked_lane_handback_sequencing_visibility_label:
         label: Handback Sequence
         sortable: false
+        invisible: true
 
     near_front_quiet_return_review_slot_compression_label:
         label: Near-Front Slot
         sortable: false
+        invisible: true
 
     owner_held_next_shift_handback_confirmation_label:
         label: Next-Shift Handback
         sortable: false
+        invisible: true
 
     current_lane_deferred_lane_return_compression_label:
-        label: Lane Return
+        label: Lane Compression
         sortable: false
+        invisible: true
 
     parked_lane_watch_label:
         label: Parked Watch
         sortable: false
+        invisible: true
 
     closure_readiness_label:
         label: Closure Ready
         sortable: false
+        invisible: true
 
     next_execution_move_label:
         label: Next Move
         sortable: false
+        invisible: true
 
     next_review_window_label:
         label: Review Window
         sortable: false
+        invisible: true
 
     next_review_at:
         label: Next Review
