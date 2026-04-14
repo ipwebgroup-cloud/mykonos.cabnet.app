@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.46.00 — Record save-discipline cues on inquiry and loyalty update screens
+### v6.47.00 — Inquiry status transition caution cues
 Included in the current safe backend polish line:
-- compact save-discipline strips above both record forms
-- plain-language field accountability for owner, follow-up / next review, source context, and history evidence
-- plugin-only operator discipline upgrade without changing live workflow logic
+- compact caution strip on the inquiry record screen
+- closure and reopen discipline cues using live current record values
+- plugin-only operator guidance upgrade without changing workflow logic
 
 ### Current plugin-tracked baseline
 - `2.4.23`

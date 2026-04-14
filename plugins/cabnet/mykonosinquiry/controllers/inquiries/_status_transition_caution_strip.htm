@@ -1,0 +1,132 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    $status = $model && !empty($model->status) ? (string) $model->status : 'new';
+    $statusLabel = $model && method_exists($model, 'getStatusLabelAttribute') ? $model->status_label : ucwords(str_replace('_', ' ', $status));
+    $priority = $model && !empty($model->priority) ? (string) $model->priority : 'normal';
+    $priorityLabel = $model && method_exists($model, 'getPriorityLabelAttribute') ? $model->priority_label : ucwords(str_replace('_', ' ', $priority));
+    $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
+    $followUp = $model && !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : null;
+    $closedAt = $model && !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : null;
+    $closedReason = $model && !empty($model->closed_reason) ? trim((string) $model->closed_reason) : '';
+    $lastContacted = $model && !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : null;
+    $workingSummary = $model && !empty($model->working_summary) ? trim(strip_tags((string) $model->working_summary)) : '';
+
+    $closedStatuses = ['closed', 'closed_won', 'closed_lost', 'spam'];
+    $isClosed = in_array($status, $closedStatuses, true);
+    $hasOwner = $owner !== 'Not assigned yet';
+    $hasFollowUp = !empty($followUp);
+    $hasWorkingSummary = $workingSummary !== '';
+    $hasClosedReason = $closedReason !== '';
+
+    if ($isClosed) {
+        $headline = 'Closure and reopen caution cues';
+        $summary = 'This inquiry is currently in a closed posture. Before keeping it closed or reopening it, confirm that the record tells a clean story for the next operator.';
+    } else {
+        $headline = 'Status transition caution cues';
+        $summary = 'Use this strip when the record is about to move meaningfully forward, pause, or close. It keeps major status changes deliberate instead of rushed.';
+    }
+
+    $cards = [];
+
+    $cards[] = [
+        'label' => 'Owner before transition',
+        'state' => $hasOwner ? 'Ready' : 'Needs attention',
+        'note' => $hasOwner
+            ? 'Owner is currently ' . $owner . '. Keep accountability clear before changing stage.'
+            : 'Assign an owner before major status changes so the next move is clearly owned.',
+    ];
+
+    if ($isClosed) {
+        $cards[] = [
+            'label' => 'Closure evidence',
+            'state' => $hasClosedReason ? 'Ready' : 'Needs attention',
+            'note' => $hasClosedReason
+                ? 'Closed reason is present. Keep it aligned with the real outcome before leaving the record closed.'
+                : 'Add a closed reason so the queue and later reopen decisions have real context.',
+        ];
+
+        $cards[] = [
+            'label' => 'Reopen discipline',
+            'state' => $hasFollowUp ? 'Prepared' : 'Plan next step',
+            'note' => $hasFollowUp
+                ? 'A follow-up date already exists for a clean reopen path: ' . $followUp . '.'
+                : 'If you reopen this inquiry, set the next follow-up immediately so it does not drift back into the queue.',
+        ];
+
+        $cards[] = [
+            'label' => 'Closure timestamp',
+            'state' => $closedAt ? 'Recorded' : 'Missing',
+            'note' => $closedAt
+                ? 'Closed at ' . $closedAt . '. Reopening should only happen when there is a real service reason.'
+                : 'The record is in a closed posture without a visible closed timestamp. Recheck the closure fields before saving.',
+        ];
+    } else {
+        $cards[] = [
+            'label' => 'Next checkpoint',
+            'state' => $hasFollowUp ? 'Ready' : 'Needs attention',
+            'note' => $hasFollowUp
+                ? 'A follow-up date is set for ' . $followUp . ', which supports a clean next move.'
+                : 'Set a follow-up date before moving status deeper into the workflow so the request remains visible.',
+        ];
+
+        $cards[] = [
+            'label' => 'Working summary',
+            'state' => $hasWorkingSummary ? 'Ready' : 'Needs attention',
+            'note' => $hasWorkingSummary
+                ? 'A working summary exists. Refresh it if the stage is about to change materially.'
+                : 'Add or refresh the working summary before proposal, approval, confirmation, or closure changes.',
+        ];
+
+        $cards[] = [
+            'label' => 'Contact continuity',
+            'state' => $lastContacted ? 'Logged' : 'Missing',
+            'note' => $lastContacted
+                ? 'Last contact is logged at ' . $lastContacted . '. Keep the timeline aligned with the new stage.'
+                : 'No last-contact signal is visible. If the guest was just contacted, record that before changing stage.',
+        ];
+    }
+
+    $statusTone = $isClosed ? ['border' => '#f5d0fe', 'bg' => '#faf5ff', 'text' => '#7e22ce'] : ['border' => '#dbeafe', 'bg' => '#eff6ff', 'text' => '#1d4ed8'];
+?>
+
+<div class="callout no-subheader" style="border-radius:14px;border:1px solid rgba(15,23,42,.08);background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.05);margin-bottom:18px;">
+    <div class="content" style="padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;">
+            <div style="min-width:260px;flex:1 1 500px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Inquiry record caution layer</div>
+                <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#111827;line-height:1.3;"><?= e($headline) ?></h4>
+                <div style="font-size:13px;line-height:1.65;color:#475569;max-width:920px;"><?= e($summary) ?></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:220px;flex:0 1 340px;justify-content:flex-start;">
+                <span style="display:inline-flex;align-items:center;border:1px solid <?= e($statusTone['border']) ?>;background:<?= e($statusTone['bg']) ?>;color:<?= e($statusTone['text']) ?>;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;">Status: <?= e($statusLabel) ?></span>
+                <span style="display:inline-flex;align-items:center;border:1px solid #ede9fe;background:#f5f3ff;color:#6d28d9;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;">Priority: <?= e($priorityLabel) ?></span>
+                <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#334155;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;">Owner: <?= e($owner) ?></span>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+            <?php foreach ($cards as $card): ?>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;"><?= e($card['label']) ?></div>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#f8fafc;color:#334155;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700;white-space:nowrap;"><?= e($card['state']) ?></span>
+                    </div>
+                    <div style="font-size:12px;line-height:1.65;color:#475569;"><?= e($card['note']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-update-transition&return=' . rawurlencode($model && $model->id ? Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $model->id) : Backend::url('cabnet/mykonosinquiry/inquiries')) . '&returnLabel=' . rawurlencode('Back to inquiry record') . '&returnTitle=' . rawurlencode('Return to the inquiry record after checking transition guidance.') . '&returnSummary=' . rawurlencode('This help page was opened while reviewing a major status change on a saved inquiry.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode($model && !empty($model->request_reference) ? 'Inquiry transition for ' . $model->request_reference : 'Inquiry transition screen') . '&sourceSummary=' . rawurlencode('Opened while checking closure, reopen, or major workflow transition discipline on the inquiry record.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book" style="border-radius:999px;">
+                Transition help
+            </a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul" style="border-radius:999px;">
+                Open inquiry queue
+            </a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh" style="border-radius:999px;">
+                Open loyalty continuity
+            </a>
+        </div>
+    </div>
+</div>
