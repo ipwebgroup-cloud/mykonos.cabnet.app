@@ -2,18 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.44.00 — Workspace Docs operator playbook dashboard
-
-- upgrades the Workspace Docs page into a fuller operator playbook dashboard
-- adds live queue, continuity, and bridge posture summary cards at the top of the docs page
-- adds direct route cards for Inquiry Queue, Loyalty Continuity, Queue-to-loyalty bridge, and record-screen help
-- keeps the update backend-only and render-safe
-
-### v6.42.00 — Operator quick-start major backend docs upgrade
+### v6.45.00 — Record-screen operator checklist strips
 Included in the current safe backend polish line:
-- shared title-line truncation polish
-- larger operator quick-start guidance strips on Inquiry Queue and Loyalty Continuity
-- plugin-only operator onboarding upgrade without changing live workflow logic
+- compact operator checklist strips added to Inquiry update and Loyalty update screens
+- record-level orientation upgraded without touching list logic or the live /plan bridge
+- plugin-only operator guidance improvement with no schema or workflow change
 
 ### Current plugin-tracked baseline
 - `2.4.23`

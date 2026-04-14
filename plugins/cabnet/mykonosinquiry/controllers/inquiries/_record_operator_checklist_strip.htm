@@ -1,0 +1,165 @@
+<?php
+$record = $model ?? $this->formGetModel();
+
+$ownerReady = $record && !empty($record->owner_name);
+$followUpReady = $record && !empty($record->follow_up_date);
+$summaryReady = $record && !empty($record->working_summary);
+$historyReady = $record && method_exists($record, 'notes') ? $record->notes()->count() > 0 : false;
+$statusValue = $record && !empty($record->status) ? $record->status : 'new';
+$statusGroup = in_array($statusValue, ['confirmed', 'closed_won', 'closed_lost', 'spam', 'closed'], true) ? 'resolved' : 'active';
+
+$checklist = [
+    [
+        'label' => 'Owner',
+        'state' => $ownerReady ? 'Ready' : 'Needs owner',
+        'summary' => $ownerReady ? 'Someone clearly owns the next move on this request.' : 'Assign an owner so the inquiry does not float between reviews.',
+        'tone' => $ownerReady ? 'ok' : 'warn',
+    ],
+    [
+        'label' => 'Follow-up',
+        'state' => $followUpReady ? 'Scheduled' : 'Not scheduled',
+        'summary' => $followUpReady ? 'A visible next checkpoint exists for this inquiry.' : 'Add a follow-up date so the queue can surface this record again at the right time.',
+        'tone' => $followUpReady ? 'ok' : 'warn',
+    ],
+    [
+        'label' => 'Working summary',
+        'state' => $summaryReady ? 'Present' : 'Thin',
+        'summary' => $summaryReady ? 'The record already explains the current situation in plain language.' : 'Capture a short working summary so the next operator can re-enter quickly.',
+        'tone' => $summaryReady ? 'ok' : 'warn',
+    ],
+    [
+        'label' => 'History',
+        'state' => $historyReady ? 'Active' : 'Light',
+        'summary' => $historyReady ? 'Notes/history already show continuity for this request.' : 'Add a concise internal note when the latest operator decision is not obvious from the fields alone.',
+        'tone' => $historyReady ? 'ok' : 'neutral',
+    ],
+];
+
+$nextMoveSummary = $statusGroup === 'resolved'
+    ? 'This request is in a closed or resolved state. Reopen it only when a real guest-side continuation exists.'
+    : 'Keep the record grounded in one clear owner, one visible next checkpoint, and one plain-language summary of what happens next.';
+?>
+<style>
+.myk-record-strip {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid #d9e2f3;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+    box-shadow: 0 10px 24px rgba(29, 53, 87, 0.05);
+}
+.myk-record-strip__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 18px;
+    align-items: flex-start;
+}
+.myk-record-strip__eyebrow {
+    margin: 0 0 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #60708a;
+}
+.myk-record-strip__title {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.25;
+    color: #213047;
+}
+.myk-record-strip__summary {
+    margin: 6px 0 0;
+    max-width: 760px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5a6b7f;
+}
+.myk-record-strip__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.myk-record-strip__actions .btn {
+    border-radius: 999px;
+}
+.myk-record-strip__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+.myk-record-strip__card {
+    min-width: 0;
+    padding: 12px 13px;
+    border-radius: 14px;
+    border: 1px solid #e1e8f4;
+    background: rgba(255,255,255,0.92);
+}
+.myk-record-strip__card--ok {
+    border-color: #cfe7d9;
+    background: #f6fcf8;
+}
+.myk-record-strip__card--warn {
+    border-color: #f0dfb8;
+    background: #fffaf0;
+}
+.myk-record-strip__card--neutral {
+    border-color: #dde5f1;
+}
+.myk-record-strip__label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6c7c92;
+    margin-bottom: 5px;
+}
+.myk-record-strip__state {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22354d;
+    margin-bottom: 4px;
+}
+.myk-record-strip__card-summary {
+    font-size: 12px;
+    line-height: 1.58;
+    color: #607084;
+}
+@media (max-width: 860px) {
+    .myk-record-strip {
+        padding: 13px 14px;
+    }
+    .myk-record-strip__title {
+        font-size: 18px;
+    }
+}
+</style>
+
+<div class="myk-record-strip">
+    <div class="myk-record-strip__top">
+        <div>
+            <div class="myk-record-strip__eyebrow">Record checklist</div>
+            <h3 class="myk-record-strip__title">Operator checklist for this inquiry</h3>
+            <p class="myk-record-strip__summary"><?= e($nextMoveSummary) ?></p>
+        </div>
+        <div class="myk-record-strip__actions">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-form-routes" class="btn btn-default oc-icon-book">Record-screen help</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Open inquiry queue</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open loyalty continuity</a>
+        </div>
+    </div>
+    <div class="myk-record-strip__grid">
+        <?php foreach ($checklist as $item): ?>
+            <div class="myk-record-strip__card myk-record-strip__card--<?= e($item['tone']) ?>">
+                <span class="myk-record-strip__label"><?= e($item['label']) ?></span>
+                <span class="myk-record-strip__state"><?= e($item['state']) ?></span>
+                <div class="myk-record-strip__card-summary"><?= e($item['summary']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

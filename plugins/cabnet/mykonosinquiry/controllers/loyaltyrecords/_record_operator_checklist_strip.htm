@@ -1,0 +1,164 @@
+<?php
+$record = $model ?? ($formModel ?? $this->formGetModel());
+
+$ownerReady = $record && !empty($record->owner_name);
+$nextReviewReady = $record && !empty($record->next_review_at);
+$sourceBridgeReady = $record && !empty($record->source_inquiry_id);
+$lastRetentionReady = $record && !empty($record->last_retention_contact_at);
+$continuityStatus = $record && !empty($record->continuity_status) ? $record->continuity_status : 'draft';
+
+$checklist = [
+    [
+        'label' => 'Owner',
+        'state' => $ownerReady ? 'Ready' : 'Needs owner',
+        'summary' => $ownerReady ? 'A named owner exists for the next continuity move.' : 'Assign clear ownership so this record does not become passive storage.',
+        'tone' => $ownerReady ? 'ok' : 'warn',
+    ],
+    [
+        'label' => 'Next review',
+        'state' => $nextReviewReady ? 'Scheduled' : 'Not scheduled',
+        'summary' => $nextReviewReady ? 'A visible review point exists for this continuity record.' : 'Set the next review time so repeat-guest follow-through stays deliberate.',
+        'tone' => $nextReviewReady ? 'ok' : 'warn',
+    ],
+    [
+        'label' => 'Source bridge',
+        'state' => $sourceBridgeReady ? 'Linked' : 'Manual',
+        'summary' => $sourceBridgeReady ? 'This continuity record still points back to its source inquiry context.' : 'Manual continuity records should carry a plain-language reason for why they exist outside the normal bridge.',
+        'tone' => $sourceBridgeReady ? 'ok' : 'neutral',
+    ],
+    [
+        'label' => 'Retention evidence',
+        'state' => $lastRetentionReady ? 'Captured' : 'Light',
+        'summary' => $lastRetentionReady ? 'The record already shows a logged retention touchpoint.' : 'Use notes and retention timing fields when continuity is active, not just watched.',
+        'tone' => $lastRetentionReady ? 'ok' : ($continuityStatus === 'draft' ? 'neutral' : 'warn'),
+    ],
+];
+
+$screenSummary = in_array($continuityStatus, ['closed', 'archived'], true)
+    ? 'This continuity record is not in an active retention lane right now. Reopen it only when an intentional guest-return path exists.'
+    : 'Keep continuity records lightweight but explicit: one owner, one next review, one clear source context, and one visible reason this guest belongs in long-cycle follow-through.';
+?>
+<style>
+.myk-record-strip {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid #d9e2f3;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+    box-shadow: 0 10px 24px rgba(29, 53, 87, 0.05);
+}
+.myk-record-strip__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 18px;
+    align-items: flex-start;
+}
+.myk-record-strip__eyebrow {
+    margin: 0 0 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #60708a;
+}
+.myk-record-strip__title {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.25;
+    color: #213047;
+}
+.myk-record-strip__summary {
+    margin: 6px 0 0;
+    max-width: 760px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5a6b7f;
+}
+.myk-record-strip__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.myk-record-strip__actions .btn {
+    border-radius: 999px;
+}
+.myk-record-strip__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+.myk-record-strip__card {
+    min-width: 0;
+    padding: 12px 13px;
+    border-radius: 14px;
+    border: 1px solid #e1e8f4;
+    background: rgba(255,255,255,0.92);
+}
+.myk-record-strip__card--ok {
+    border-color: #cfe7d9;
+    background: #f6fcf8;
+}
+.myk-record-strip__card--warn {
+    border-color: #f0dfb8;
+    background: #fffaf0;
+}
+.myk-record-strip__card--neutral {
+    border-color: #dde5f1;
+}
+.myk-record-strip__label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6c7c92;
+    margin-bottom: 5px;
+}
+.myk-record-strip__state {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22354d;
+    margin-bottom: 4px;
+}
+.myk-record-strip__card-summary {
+    font-size: 12px;
+    line-height: 1.58;
+    color: #607084;
+}
+@media (max-width: 860px) {
+    .myk-record-strip {
+        padding: 13px 14px;
+    }
+    .myk-record-strip__title {
+        font-size: 18px;
+    }
+}
+</style>
+
+<div class="myk-record-strip">
+    <div class="myk-record-strip__top">
+        <div>
+            <div class="myk-record-strip__eyebrow">Record checklist</div>
+            <h3 class="myk-record-strip__title">Operator checklist for this continuity record</h3>
+            <p class="myk-record-strip__summary"><?= e($screenSummary) ?></p>
+        </div>
+        <div class="myk-record-strip__actions">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-form-routes" class="btn btn-default oc-icon-book">Record-screen help</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open loyalty continuity</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Open inquiry queue</a>
+        </div>
+    </div>
+    <div class="myk-record-strip__grid">
+        <?php foreach ($checklist as $item): ?>
+            <div class="myk-record-strip__card myk-record-strip__card--<?= e($item['tone']) ?>">
+                <span class="myk-record-strip__label"><?= e($item['label']) ?></span>
+                <span class="myk-record-strip__state"><?= e($item['state']) ?></span>
+                <div class="myk-record-strip__card-summary"><?= e($item['summary']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

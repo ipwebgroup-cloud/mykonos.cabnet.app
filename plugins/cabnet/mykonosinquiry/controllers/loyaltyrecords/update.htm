@@ -103,6 +103,8 @@
         </div>
     </div>
 
+    <?= $this->makePartial('record_operator_checklist_strip', ['model' => $model]) ?>
+
     <?= Form::open(['class' => 'layout']) ?>
         <div class="layout-row">
             <?= $this->formRender() ?>

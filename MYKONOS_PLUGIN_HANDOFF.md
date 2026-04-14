@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.44.00 workspace docs operator playbook dashboard`
+- `v6.45.00 record-screen operator checklist strips`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades Workspace Docs from a simple reference page into a fuller operator playbook dashboard with live posture summary cards, direct route cards, and faster anchored navigation into queue, loyalty, bridge, and record-screen help.
+It upgrades the Inquiry and Loyalty record screens with compact operator checklist strips so record-level work inherits the same plain-language orientation already added to the list pages and Workspace Docs.
 
 ## Deployment note
 
@@ -19,23 +19,23 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Workspace Docs
-- the page now shows a compact operator playbook dashboard near the top
-- queue, continuity, transfer-ready, and draft-ready posture cards render without breaking the page
-- direct route cards open Inquiry Queue, Loyalty Continuity, and anchored docs sections correctly
+- Backend -> Inquiry Queue -> open any inquiry
+- Backend -> Loyalty Continuity -> open any loyalty record
+- both record screens now show a compact operator checklist strip above the form
+- record actions, tabs, notes, and workflow controls remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- strengthens backend self-guidance without widening the list views again
-- keeps docs, route posture, and anchored help in one page
-- keeps the live `/plan` bridge untouched
+- improves record-level orientation in plain language
+- reduces re-entry friction when reopening saved records
+- keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this Workspace Docs dashboard step, the next strong move should be one of:
-- add one compact operator checklist strip to inquiry and loyalty update screens
-- improve record-screen orientation cues around source posture and next-action framing
-- add safe copy/share presets for operator handoff from record-level screens
+After this record-screen guidance pass, the next strong step should be one of:
+- add compact save-discipline cues around note and summary fields on the inquiry record
+- add a lightweight continuity readiness strip on loyalty create so transfer versus manual draft posture stays clearer
+- tighten Workspace Docs anchors so each record strip can deep-link into the exact matching playbook section
