@@ -1,0 +1,116 @@
+<?php
+    $model = isset($model) && $model ? $model : $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $bucket = trim((string) ($model->loyalty_queue_posture_bucket ?? 'queue_only'));
+    $linkState = trim((string) ($model->loyalty_record_link_state_label ?? 'Live queue only'));
+    $primaryLabel = trim((string) ($model->loyalty_queue_primary_action_label ?? 'Keep in queue'));
+    $primaryUrl = $model->loyalty_queue_primary_action_url ?? null;
+    $historyLabel = trim((string) ($model->loyalty_queue_history_action_label ?? ''));
+    $historyUrl = $model->loyalty_queue_history_action_url ?? null;
+    $secondaryLabel = trim((string) ($model->loyalty_queue_secondary_action_label ?? 'Review inquiry'));
+    $secondaryUrl = $model->loyalty_queue_secondary_action_url ?? Backend::url('cabnet/mykonosinquiry/inquiries');
+    $backlinkReference = trim((string) ($model->loyalty_queue_backlink_reference_label ?? 'Queue-only inquiry'));
+    $backlinkPosture = trim((string) ($model->loyalty_queue_backlink_posture_label ?? 'No loyalty backlink yet'));
+    $historyCue = trim((string) ($model->loyalty_queue_history_cue_label ?? 'Queue-only history'));
+    $historyHint = trim((string) ($model->loyalty_queue_history_cue_hint ?? ''));
+    $nextReview = trim((string) ($model->loyalty_queue_next_review_pill_label ?? 'Queue-only'));
+    $packet = trim((string) ($model->loyalty_queue_packet_badge_label ?? 'Queue-only'));
+    $queuePosture = trim((string) ($model->queue_posture ?? 'Workflow is active; keep assignment and next action explicit.'));
+    $nextAction = trim((string) ($model->continuity_next_action ?? 'Keep the next move explicit.'));
+
+    $title = 'Queue-owned request';
+    $summary = 'Keep this request in the live inquiry queue until the active work is truly finished.';
+    $toneBorder = '#e5e7eb';
+    $toneBg = '#ffffff';
+    $toneTagBg = '#f8fafc';
+    $toneTagColor = '#334155';
+
+    switch ($bucket) {
+        case 'linked':
+            $title = 'Linked to continuity';
+            $summary = 'A loyalty record already exists. Keep the inquiry as history and use the linked continuity record for repeat-guest follow-through.';
+            $toneBorder = '#dbeafe';
+            $toneBg = '#f8fbff';
+            $toneTagBg = '#eff6ff';
+            $toneTagColor = '#1d4ed8';
+            break;
+        case 'transfer_ready':
+            $title = 'Ready to transfer';
+            $summary = 'The queue-side request looks complete enough to move into Loyalty Continuity and become a follow-through record.';
+            $toneBorder = '#fef3c7';
+            $toneBg = '#fffdf6';
+            $toneTagBg = '#fffbeb';
+            $toneTagColor = '#b45309';
+            break;
+        case 'draft_ready':
+            $title = 'Draft continuity posture';
+            $summary = 'This inquiry can seed a continuity draft, but the live request still needs a human decision on whether to transfer now or stay queue-owned.';
+            $toneBorder = '#e9d5ff';
+            $toneBg = '#fcfaff';
+            $toneTagBg = '#f5f3ff';
+            $toneTagColor = '#7c3aed';
+            break;
+        default:
+            $title = 'Queue-owned request';
+            $summary = 'This inquiry still belongs to the live queue. Use continuity later only if the guest relationship needs ongoing follow-through after the request is handled.';
+            $toneBorder = '#e5e7eb';
+            $toneBg = '#ffffff';
+            $toneTagBg = '#f8fafc';
+            $toneTagColor = '#334155';
+            break;
+    }
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="border-radius:14px;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneBg) ?>;box-shadow:0 4px 14px rgba(15,23,42,.04);margin-bottom:18px;">
+        <div class="content" style="padding:14px 16px;">
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;">
+                <div style="min-width:280px;flex:1 1 440px;">
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px;">
+                        <span style="display:inline-flex;align-items:center;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneTagBg) ?>;color:<?= e($toneTagColor) ?>;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">Queue ↔ Loyalty relationship</span>
+                        <span style="font-size:12px;color:#64748b;"><?= e($linkState) ?></span>
+                    </div>
+                    <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#111827;"><?= e($title) ?></h4>
+                    <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($summary) ?></div>
+                </div>
+                <div style="min-width:240px;flex:0 1 360px;display:flex;flex-wrap:wrap;gap:8px;">
+                    <?php if ($primaryUrl): ?>
+                        <a href="<?= e($primaryUrl) ?>" class="btn btn-default oc-icon-random"><?= e($primaryLabel) ?></a>
+                    <?php else: ?>
+                        <span class="btn btn-default disabled oc-icon-random"><?= e($primaryLabel) ?></span>
+                    <?php endif; ?>
+                    <a href="<?= e($secondaryUrl) ?>" class="btn btn-default oc-icon-list-ul"><?= e($secondaryLabel) ?></a>
+                    <?php if ($historyUrl && $historyLabel !== ''): ?>
+                        <a href="<?= e($historyUrl) ?>" class="btn btn-default oc-icon-history"><?= e($historyLabel) ?></a>
+                    <?php endif; ?>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-queue-to-loyalty-bridge" class="btn btn-default oc-icon-book">Bridge help</a>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Queue posture now</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($queuePosture) ?></div>
+                    <div style="margin-top:5px;font-size:12px;line-height:1.55;color:#475569;">Next move: <?= e($nextAction) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Continuity posture</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($backlinkPosture) ?></div>
+                    <div style="margin-top:5px;font-size:12px;line-height:1.55;color:#475569;"><?= e($backlinkReference) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">History and review</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($historyCue) ?></div>
+                    <div style="margin-top:5px;font-size:12px;line-height:1.55;color:#475569;"><?= e($nextReview) ?> · <?= e($packet) ?></div>
+                </div>
+            </div>
+
+            <div style="margin-top:10px;font-size:12px;line-height:1.65;color:#64748b;">
+                <?= e($historyHint) ?>
+            </div>
+        </div>
+    </div>
+</div>

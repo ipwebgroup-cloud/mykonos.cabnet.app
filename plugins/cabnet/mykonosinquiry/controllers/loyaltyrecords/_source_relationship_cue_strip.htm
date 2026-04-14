@@ -1,0 +1,97 @@
+<?php
+    $model = isset($model) && $model ? $model : (isset($formModel) ? $formModel : null);
+
+    if (!$model) {
+        return;
+    }
+
+    $source = $model->source_inquiry;
+    $sourceLabel = trim((string) ($model->source_inquiry_backlink_reference_label ?? 'No source inquiry linked'));
+    $sourcePosture = trim((string) ($model->source_inquiry_backlink_posture_label ?? 'Manual loyalty record'));
+    $sourceHint = trim((string) ($model->source_inquiry_backlink_hint ?? ''));
+    $sourceUrl = $model->source_inquiry_backlink_url ?? null;
+    $sourceAction = trim((string) ($model->source_inquiry_backlink_action_label ?? 'Open inquiry'));
+    $queueReturnUrl = trim((string) ($model->source_inquiry_queue_return_url ?? Backend::url('cabnet/mykonosinquiry/inquiries')));
+    $queueReturnLabel = trim((string) ($model->source_inquiry_queue_return_label ?? 'Open Inquiry Queue'));
+    $continuityStatus = trim((string) ($model->continuity_status_label ?? 'Continuity active'));
+    $loyaltyStage = trim((string) ($model->loyalty_stage_label ?? 'Review'));
+    $latestOutcome = trim((string) ($model->latest_touchpoint_outcome_label ?? 'No outcome recorded yet.'));
+    $latestTouch = trim((string) ($model->latest_touchpoint_summary ?? 'No touchpoint logged yet.'));
+    $nextReview = $model->next_review_at instanceof DateTimeInterface ? $model->next_review_at->format('Y-m-d H:i') . ' (' . trim((string) $model->next_review_window_label) . ')' : trim((string) ($model->next_review_window_label ?? 'Not scheduled'));
+    $owner = trim((string) ($model->owner_name ?: 'Not assigned yet'));
+
+    $title = 'Continuity-led follow-through';
+    $summary = 'This loyalty record now carries the guest relationship beyond the original request.';
+    $toneBorder = '#dbeafe';
+    $toneBg = '#f8fbff';
+    $toneTagBg = '#eff6ff';
+    $toneTagColor = '#1d4ed8';
+
+    if (!$source) {
+        $title = 'Standalone continuity record';
+        $summary = 'This record was created directly in Loyalty Continuity, so there is no originating inquiry to hand off from.';
+        $toneBorder = '#e5e7eb';
+        $toneBg = '#ffffff';
+        $toneTagBg = '#f8fafc';
+        $toneTagColor = '#334155';
+    } elseif (!empty($source->status) && !in_array((string) $source->status, ['closed_won', 'closed_lost', 'closed', 'spam'], true)) {
+        $title = 'Queue still owns the live request';
+        $summary = 'The source inquiry is not closed yet. Keep the live request managed in the queue while this continuity record acts as support or early memory only.';
+        $toneBorder = '#fef3c7';
+        $toneBg = '#fffdf6';
+        $toneTagBg = '#fffbeb';
+        $toneTagColor = '#b45309';
+    } else {
+        $title = 'Continuity-led follow-through';
+        $summary = 'The source inquiry is closed or resolved enough that this loyalty record can carry the relationship forward as the main follow-through surface.';
+        $toneBorder = '#dbeafe';
+        $toneBg = '#f8fbff';
+        $toneTagBg = '#eff6ff';
+        $toneTagColor = '#1d4ed8';
+    }
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="border-radius:14px;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneBg) ?>;box-shadow:0 4px 14px rgba(15,23,42,.04);margin-bottom:18px;">
+        <div class="content" style="padding:14px 16px;">
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;">
+                <div style="min-width:280px;flex:1 1 440px;">
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px;">
+                        <span style="display:inline-flex;align-items:center;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneTagBg) ?>;color:<?= e($toneTagColor) ?>;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">Source inquiry ↔ continuity</span>
+                        <span style="font-size:12px;color:#64748b;"><?= e($continuityStatus) ?> · <?= e($loyaltyStage) ?></span>
+                    </div>
+                    <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#111827;"><?= e($title) ?></h4>
+                    <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($summary) ?></div>
+                </div>
+                <div style="min-width:240px;flex:0 1 360px;display:flex;flex-wrap:wrap;gap:8px;">
+                    <?php if ($sourceUrl): ?>
+                        <a href="<?= e($sourceUrl) ?>" class="btn btn-default oc-icon-random"><?= e($sourceAction) ?></a>
+                    <?php endif; ?>
+                    <a href="<?= e($queueReturnUrl) ?>" class="btn btn-default oc-icon-list-ul"><?= e($queueReturnLabel) ?></a>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-queue-to-loyalty-bridge" class="btn btn-default oc-icon-book">Bridge help</a>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Source inquiry posture</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($sourcePosture) ?></div>
+                    <div style="margin-top:5px;font-size:12px;line-height:1.55;color:#475569;"><?= e($sourceLabel) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Continuity follow-through now</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($latestOutcome) ?></div>
+                    <div style="margin-top:5px;font-size:12px;line-height:1.55;color:#475569;"><?= e($latestTouch) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Owner and review</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($owner) ?></div>
+                    <div style="margin-top:5px;font-size:12px;line-height:1.55;color:#475569;">Next review: <?= e($nextReview) ?></div>
+                </div>
+            </div>
+
+            <div style="margin-top:10px;font-size:12px;line-height:1.65;color:#64748b;">
+                <?= e($sourceHint) ?>
+            </div>
+        </div>
+    </div>
+</div>

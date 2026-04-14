@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.49.00 — Last major operator move memory strips
-Included in the current safe backend guidance line:
-- compact memory strips above inquiry and loyalty update screens
-- latest note / latest touchpoint context visible without opening deeper history
-- plugin-only operator continuity polish without changing live workflow logic
+### v6.50.00 — Queue-to-loyalty relationship cues on inquiry and loyalty record screens
+Included in the current safe backend polish line:
+- relationship cue strip on the inquiry record showing whether the request should stay queue-owned, transfer into continuity, or stay as reference history
+- matching source-inquiry relationship cue strip on the loyalty record showing whether the queue is still live or continuity should lead follow-through
+- plugin-only operator guidance upgrade without changing live workflow logic
 
 ### Current plugin-tracked baseline
 - `2.4.23`
