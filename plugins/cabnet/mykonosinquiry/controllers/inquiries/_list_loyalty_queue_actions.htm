@@ -44,7 +44,7 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
 <div style="min-width:160px; max-width:205px; line-height:1.2;">
     <div style="margin-bottom:6px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
         <?php if ($primaryUrl !== ''): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff;') ?>">
                 <?= e($primaryLabel) ?>
             </a>
         <?php else: ?>

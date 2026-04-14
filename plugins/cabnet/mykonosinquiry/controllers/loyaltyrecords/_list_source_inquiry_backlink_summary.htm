@@ -133,7 +133,7 @@ if (stripos($shortHint, 'manual') !== false) {
 
     <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
         <?php if ($primaryUrl): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" title="Open source inquiry"><?= e($primaryLabel) ?></a>
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff;') ?>" title="Open source inquiry"><?= e($primaryLabel) ?></a>
         <?php else: ?>
             <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;" title="No source inquiry available"><?= e($primaryLabel) ?></span>
         <?php endif; ?>
