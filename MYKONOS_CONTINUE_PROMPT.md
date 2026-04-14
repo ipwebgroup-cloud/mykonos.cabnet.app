@@ -6,9 +6,7 @@ I am uploading the **latest rooted patch zip / latest rooted project archive / l
 
 Treat the uploaded files as the **primary source of truth**.
 
-Use the GitHub repo only as a **secondary comparison reference**:
-
-- `https://github.com/ipwebgroup-cloud/mykonos.cabnet.app`
+Use the GitHub repo only as a **secondary comparison reference**.
 
 ---
 
@@ -59,7 +57,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.68 inquiry-queue filter wrap polish patch`
+- `v6.41.69 shared list toolbar layout consistency patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -89,6 +87,7 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
+- keeping queue and loyalty list-page top rows visually consistent
 
 ---
 
@@ -112,8 +111,8 @@ Recent safe work has already established:
 - the inquiry update screen now opens with a compact record summary instead of two large top advisory blocks
 - the loyalty continuity update screen now follows the same compact-header and collapsed-guide direction
 - the plain-language screen guides now stay collapsed by default and only open when needed
-- the queue helper note now sits on its own row and should wrap cleanly
-- the top filter row should wrap cleanly on narrower widths instead of colliding or clipping
+- the Inquiry Queue toolbar/helper row and list filter row are being stabilized for narrower widths
+- the Loyalty Continuity list toolbar is now expected to follow the same stable top-row layout posture
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -131,11 +130,11 @@ Keep these safe:
 ## Most recent safe next step
 
 The strongest next step after the last delivered patch is:
-- keep both inquiry and loyalty update screens compact and readable
+- keep both Inquiry Queue and Loyalty Continuity list-page top rows visually stable
+- keep helper notes on their own readable rows where needed
+- reduce toolbar-specific CSS duplication if a safe shared partial becomes obvious
 - continue reducing always-visible helper copy before adding more UI chrome
-- inspect whether dense read-only guidance panels should group more tightly by tab
 - keep operator language simple
-- keep top queue controls visually stable on narrower widths
 
 ---
 

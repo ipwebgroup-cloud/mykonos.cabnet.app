@@ -1,27 +1,75 @@
 <?php
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 ?>
-<div data-control="toolbar">
-    <?php if ($loyaltyTableReady): ?>
-        <a
-            href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
-            class="btn btn-primary oc-icon-plus">
-            New loyalty record
-        </a>
-    <?php else: ?>
-        <button type="button" class="btn btn-default disabled" disabled>
-            Touchpoint outcome planning active
-        </button>
-        <a
-            href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>"
-            class="btn btn-default oc-icon-list-ul">
-            Open inquiry list
-        </a>
-    <?php endif ?>
+<style>
+.myk-loyalty-toolbar-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
 
-    <a
-        href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty list') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Loyalty help opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, packet posture, and next-review timing.') . '#help-loyalty' ?>"
-        class="btn btn-default oc-icon-book">
-        Loyalty help
-    </a>
+.myk-loyalty-toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+}
+
+.myk-loyalty-toolbar-note {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f6f8fb;
+    color: #50627d;
+    font-size: 12px;
+    line-height: 1.45;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.myk-loyalty-toolbar-note strong {
+    color: #334155;
+    font-weight: 700;
+    margin-right: 6px;
+}
+</style>
+<div data-control="toolbar">
+    <div class="myk-loyalty-toolbar-shell">
+        <div class="myk-loyalty-toolbar-row">
+            <?php if ($loyaltyTableReady): ?>
+                <a
+                    href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
+                    class="btn btn-primary oc-icon-plus">
+                    New loyalty record
+                </a>
+            <?php else: ?>
+                <button type="button" class="btn btn-default disabled" disabled>
+                    Touchpoint outcome planning active
+                </button>
+                <a
+                    href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>"
+                    class="btn btn-default oc-icon-list-ul">
+                    Open inquiry list
+                </a>
+            <?php endif ?>
+
+            <a
+                href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty list') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Loyalty help opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, packet posture, and next-review timing.') . '#help-loyalty' ?>"
+                class="btn btn-default oc-icon-book">
+                Loyalty help
+            </a>
+        </div>
+
+        <div class="myk-loyalty-toolbar-row">
+            <span class="myk-loyalty-toolbar-note">
+                <strong>Stable loyalty workspace layout</strong>
+                This list now follows the same compact top-row pattern as the Inquiry Queue so buttons, help, and list controls stay easier to scan on narrower widths.
+            </span>
+        </div>
+    </div>
 </div>

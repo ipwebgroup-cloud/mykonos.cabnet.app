@@ -19,9 +19,6 @@ In any new chat:
 4. use the GitHub repo only as a secondary comparison reference
 5. if older notes conflict with the real uploaded files, prefer the real uploaded files
 
-Repo reference:
-- `https://github.com/ipwebgroup-cloud/mykonos.cabnet.app`
-
 ---
 
 ## Core operating rule
@@ -40,9 +37,9 @@ Stable direction:
 - public luxury frontend
 - mobile-first `/plan` inquiry flow
 - DB-backed inquiry persistence through the plugin
-- backend Inquiry Queue and operator workflow
+- backend inquiry queue and operator workflow
 - guarded Loyalty Continuity Workspace
-- Workspace Docs help surface
+- dedicated Workspace Docs page
 - safe plugin/theme integration
 - safe incremental development without breaking live operations
 
@@ -82,18 +79,18 @@ Current safe priorities:
 - keep operator wording plain and readable
 - keep loyalty transfer / backlink visibility stable
 - keep row-level scan speed improving through smaller, clearer queue summaries
-- keep queue toolbar, helper-note, and filter wrapping stable on narrower widths
+- keep Inquiry Queue and Loyalty Continuity top-row layout behavior visually consistent
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.68 inquiry-queue filter wrap polish patch`
+- `v6.41.69 shared list toolbar layout consistency patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It keeps the Inquiry Queue toolbar and helper-note stable while also making the top filter row wrap more cleanly on narrower widths.
+It aligns the Loyalty Continuity list toolbar to the same compact, wrap-safe top-row pattern already being stabilized on the Inquiry Queue line, so both list pages keep buttons, help actions, and helper copy readable on narrower widths.
 
 ## Deployment note
 
@@ -104,19 +101,18 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue
-- toolbar buttons remain visible
-- helper note stays on its own row and wraps normally
-- search stays separate from helper copy
-- top filter controls wrap cleanly instead of colliding or clipping
+- Backend -> Inquiry Queue toolbar remains wrapped cleanly
+- Backend -> Loyalty Continuity toolbar now follows the same stable top-row spacing pattern
+- helper notes wrap normally on both list pages
+- list controls still render normally
 
 ---
 
 ## Safest next step
-If the Inquiry Queue still feels visually heavy after this patch, the next real pass should inspect:
-- whether the filter row can use slightly tighter spacing and clearer grouping labels
-- whether the queue summary note can shorten further without losing meaning
-- whether any first-visible queue labels still mix older wording
-- whether loyalty list and inquiry queue top rows now need one shared layout pattern
+If the list pages feel stable after this patch, the next real pass should inspect:
+- whether the filter-row spacing on Loyalty Continuity should mirror Inquiry Queue more closely
+- whether helper-note copy can be shortened further without losing operator clarity
+- whether any remaining toolbar-specific CSS should be moved into a single shared backend partial
+- whether the first visible list-page copy is now consistent enough to pause layout work and return to deeper usability polish
 
 Keep future work plugin-only where possible.

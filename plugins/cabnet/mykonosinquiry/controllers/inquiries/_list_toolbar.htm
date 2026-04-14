@@ -29,41 +29,57 @@
 }
 
 .control-toolbar,
-.toolbar {
+.control-filter {
+    overflow: visible;
+}
+
+.control-toolbar .toolbar,
+.control-filter .filter-scope-container,
+.control-filter .filter-search {
+    min-width: 0;
+}
+
+.myk-toolbar-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.myk-toolbar-row {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
     gap: 10px;
-}
-
-.control-toolbar .toolbar-item,
-.toolbar .toolbar-item {
-    flex: 0 0 auto;
-}
-
-.control-toolbar .toolbar-item.toolbar-primary,
-.toolbar .toolbar-item.toolbar-primary {
-    margin-right: 0;
-}
-
-.control-toolbar .toolbar-item.search,
-.toolbar .toolbar-item.search,
-.control-toolbar .toolbar-item[data-control="toolbar-search"],
-.toolbar .toolbar-item[data-control="toolbar-search"] {
-    flex: 1 1 280px;
-    min-width: 220px;
-}
-
-.control-toolbar .toolbar-item.search input,
-.toolbar .toolbar-item.search input,
-.control-toolbar .toolbar-item[data-control="toolbar-search"] input,
-.toolbar .toolbar-item[data-control="toolbar-search"] input {
+    align-items: center;
     width: 100%;
+    min-width: 0;
 }
 
-.queue-render-note-row {
+.myk-toolbar-row--actions {
+    align-items: flex-start;
+}
+
+.myk-toolbar-row--note {
+    align-items: stretch;
+}
+
+.myk-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.myk-toolbar-search-slot {
+    flex: 1 1 260px;
+    min-width: 240px;
+}
+
+.myk-toolbar-note-slot {
     flex: 1 1 100%;
-    width: 100%;
+    min-width: 0;
 }
 
 .queue-render-note {
@@ -86,96 +102,73 @@
     margin-right: 6px;
 }
 
-/* Filter-row wrapping polish */
-.control-list .control-filter,
-.control-list .list-filter,
-.control-list .filter-scopes {
-    width: 100%;
-}
-
-.control-list .filter-scopes,
-.control-list .control-filter .filter-scopes,
-.control-list .list-filter .filter-scopes {
+.control-filter .filter-scopes {
     display: flex;
     flex-wrap: wrap;
+    gap: 8px 10px;
     align-items: center;
-    gap: 8px 12px;
 }
 
-.control-list .filter-scopes > li,
-.control-list .control-filter .filter-scopes > li,
-.control-list .list-filter .filter-scopes > li,
-.control-list .filter-scopes .filter-scope,
-.control-list .control-filter .filter-scopes .filter-scope,
-.control-list .list-filter .filter-scopes .filter-scope {
+.control-filter .filter-scope {
     flex: 0 1 auto;
-    max-width: 100%;
 }
 
-.control-list .filter-scopes a,
-.control-list .control-filter .filter-scopes a,
-.control-list .list-filter .filter-scopes a,
-.control-list .filter-scopes .filter-label,
-.control-list .control-filter .filter-scopes .filter-label,
-.control-list .list-filter .filter-scopes .filter-label {
-    white-space: nowrap;
-}
-
-@media (max-width: 1200px) {
-    .control-toolbar .toolbar-item.search,
-    .toolbar .toolbar-item.search,
-    .control-toolbar .toolbar-item[data-control="toolbar-search"],
-    .toolbar .toolbar-item[data-control="toolbar-search"] {
+@media (max-width: 1100px) {
+    .myk-toolbar-search-slot {
         flex: 1 1 100%;
         min-width: 0;
     }
 }
 
-@media (max-width: 900px) {
-    .control-list .filter-scopes,
-    .control-list .control-filter .filter-scopes,
-    .control-list .list-filter .filter-scopes {
-        gap: 8px;
+@media (max-width: 820px) {
+    .myk-toolbar-actions {
+        width: 100%;
     }
 
-    .control-list .filter-scopes > li,
-    .control-list .control-filter .filter-scopes > li,
-    .control-list .list-filter .filter-scopes > li,
-    .control-list .filter-scopes .filter-scope,
-    .control-list .control-filter .filter-scopes .filter-scope,
-    .control-list .list-filter .filter-scopes .filter-scope {
+    .myk-toolbar-actions .toolbar-item {
         flex: 1 1 220px;
+        min-width: 180px;
     }
 }
 </style>
 
-<div class="toolbar-item toolbar-primary">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">
-        New inquiry
-    </a>
-</div>
+<div class="myk-toolbar-shell">
+    <div class="myk-toolbar-row myk-toolbar-row--actions">
+        <div class="myk-toolbar-actions">
+            <div class="toolbar-item toolbar-primary">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/create') ?>" class="btn btn-primary oc-icon-plus">
+                    New inquiry
+                </a>
+            </div>
 
-<div class="toolbar-item">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
-        Queue help
-    </a>
-</div>
+            <div class="toolbar-item">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default oc-icon-book">
+                    Queue help
+                </a>
+            </div>
 
-<div class="toolbar-item">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-loyalty' ?>" class="btn btn-default oc-icon-bookmark">
-        Loyalty help
-    </a>
-</div>
+            <div class="toolbar-item">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-loyalty' ?>" class="btn btn-default oc-icon-bookmark">
+                    Loyalty help
+                </a>
+            </div>
 
-<div class="toolbar-item">
-    <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
-        Loyalty list
-    </a>
-</div>
+            <div class="toolbar-item">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">
+                    Loyalty list
+                </a>
+            </div>
+        </div>
 
-<div class="toolbar-item queue-render-note-row">
-    <div class="queue-render-note">
-        <strong>Slimmer default queue load</strong>
-        The first queue view now starts leaner. Use the page controls below the list, and use List Setup to add Email, Source, Loyalty Backlink, and history columns back when needed.
+        <div class="myk-toolbar-search-slot"></div>
+    </div>
+
+    <div class="myk-toolbar-row myk-toolbar-row--note">
+        <div class="myk-toolbar-note-slot">
+            <span class="queue-render-note">
+                <strong>Slimmer default queue load</strong>
+                The first queue view now starts leaner. Use the page controls below the list, and use List Setup to add Email, Source, Loyalty Backlink, and history columns back when needed.
+            </span>
+        </div>
     </div>
 </div>
