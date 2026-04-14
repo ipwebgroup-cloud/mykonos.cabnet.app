@@ -87,11 +87,11 @@ Current safe priorities:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.59 inquiry-detail compact header and lighter helper copy patch`
-- plugin tracking `2.4.22`
+- `v6.41.61 loyalty-detail compact header and collapsed guide patch`
+- plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It replaces the heavy two-callout top area on the inquiry update screen with one compact record summary and a collapsed quick guide, then strips long helper comments from read-only partial tabs so saved inquiry screens feel lighter to scan.
+It gives the Loyalty Continuity update screen the same lighter landing posture already used on the inquiry record: one compact record summary and a collapsed plain-language guide, so operators land faster on the actual editable continuity workspace.
 
 ## Deployment note
 
@@ -102,19 +102,18 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Mykonos Inquiries -> open any saved inquiry
-- the update screen opens with one compact summary block instead of two large advisory callouts
-- Quick screen guide stays collapsed by default
-- heavy read-only helper comments are gone from most partial-based tabs
-- the editable form, quick actions, history notes, and save flow still work normally
+- Backend -> Loyalty Continuity -> open any saved loyalty record
+- the update screen now opens with a compact summary instead of the large plain-English guide block
+- the Quick screen guide stays collapsed by default and can be opened when needed
+- the editable form tabs and workflow actions still render normally
 
 ---
 
 ## Safest next step
 If the queue still feels heavy after this patch, the next real pass should inspect:
-- whether the saved inquiry detail tabs should keep only a few essential helper comments on editable fields
-- whether loyalty workspace detail screens now deserve the same compact-header treatment
-- whether any remaining heavy helper copy should move fully into the docs page
-- whether create-mode should mirror the lighter saved-record header language without adding more chrome
+- whether the Loyalty Continuity form tabs can reduce always-visible helper copy further
+- whether read-only continuity guidance panels should group more tightly by tab
+- whether any remaining loyalty update-screen helper text should move fully into the docs page
+- whether inquiry and loyalty detail screens now need one shared compact-header pattern
 
 Keep future work plugin-only where possible.

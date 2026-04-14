@@ -6,6 +6,42 @@
 <?php Block::endPut() ?>
 
 <?php if (!$this->fatalError): ?>
+    <?php
+        $model = $formModel ?? $this->formGetModel();
+
+        $reference = $model && !empty($model->request_reference) ? $model->request_reference : 'Loyalty record';
+        $guest = $model && !empty($model->guest_name) ? $model->guest_name : 'Guest not set';
+        $email = $model && !empty($model->guest_email) ? $model->guest_email : null;
+        $phone = $model && !empty($model->guest_phone) ? $model->guest_phone : null;
+        $country = $model && !empty($model->country) ? $model->country : null;
+        $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
+        $sourceInquiryId = $model && !empty($model->source_inquiry_id) ? $model->source_inquiry_id : 'Manual / none';
+
+        $continuityStatus = $model && !empty($model->continuity_status_label)
+            ? $model->continuity_status_label
+            : ($model && !empty($model->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $model->continuity_status)) : 'Draft');
+
+        $loyaltyStage = $model && !empty($model->loyalty_stage_label)
+            ? $model->loyalty_stage_label
+            : ($model && !empty($model->loyalty_stage) ? ucwords(str_replace(['_', '-'], ' ', $model->loyalty_stage)) : 'Review');
+
+        $returnTier = $model && !empty($model->return_value_tier_label)
+            ? $model->return_value_tier_label
+            : ($model && !empty($model->return_value_tier) ? ucwords(str_replace(['_', '-'], ' ', $model->return_value_tier)) : 'Watch');
+
+        $nextReview = $model && !empty($model->next_review_at) ? $model->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+        $lastRetentionContact = $model && !empty($model->last_retention_contact_at) ? $model->last_retention_contact_at->format('Y-m-d H:i') : 'No retention contact logged';
+        $lastVisit = $model && !empty($model->last_visit_at) ? $model->last_visit_at->format('Y-m-d') : 'No visit recorded';
+        $preferredSeason = $model && !empty($model->preferred_season) ? $model->preferred_season : 'Not set';
+        $revisitWindow = $model && !empty($model->revisit_window) ? $model->revisit_window : 'Not set';
+        $createdAt = $model && !empty($model->created_at) ? $model->created_at->format('Y-m-d H:i') : '—';
+
+        $contactParts = array_values(array_filter([$email, $phone, $country]));
+        $contactLine = count($contactParts) ? implode(' · ', $contactParts) : 'No direct guest contact details saved yet';
+        $continuityLine = sprintf('Continuity: %s · Stage: %s · Return value: %s', $continuityStatus, $loyaltyStage, $returnTier);
+        $reviewLine = sprintf('Next review: %s · Last retention contact: %s', $nextReview, $lastRetentionContact);
+    ?>
+
     <div data-control="toolbar">
         <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-update&return=' . rawurlencode(isset($formModel) && $formModel && $formModel->id ? Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $formModel->id) : Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty record') . '&returnTitle=' . rawurlencode('Return to the loyalty record after checking record-screen guidance.') . '&returnSummary=' . rawurlencode('Simple help for this page opened from a saved continuity record, so the primary action returns to the current record while keeping the live list one click away.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity') . '&sourceLabel=' . rawurlencode(isset($formModel) && $formModel && !empty($formModel->request_reference) ? 'Loyalty record ' . $formModel->request_reference : (isset($formModel) && $formModel && $formModel->id ? 'Loyalty record #' . $formModel->id : 'Loyalty record screen')) . '&sourceSummary=' . rawurlencode('Opened from a saved loyalty record while reviewing continuity posture, packet readiness, and revisit timing.') . '#help-form-routes' ?>" class="btn btn-default oc-icon-book">
             Simple help for this page
@@ -18,98 +54,54 @@
         </a>
     </div>
 
-<style>
-    .myk-plain-guide {
-        margin: 14px 0 16px;
-        border: 1px solid #d9e2f3;
-        border-radius: 16px;
-        background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
-        padding: 16px 18px;
-        box-shadow: 0 12px 26px rgba(28, 53, 112, 0.05);
-    }
-    .myk-plain-guide__eyebrow {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        color: #5b66e3;
-        margin-bottom: 6px;
-    }
-    .myk-plain-guide h3 {
-        margin: 0 0 8px;
-        font-size: 22px;
-        line-height: 1.25;
-        color: #24364b;
-    }
-    .myk-plain-guide p {
-        margin: 0 0 10px;
-        font-size: 14px;
-        line-height: 1.7;
-        color: #536274;
-    }
-    .myk-plain-guide__grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px 12px;
-    }
-    .myk-plain-guide__item {
-        border: 1px solid #e0e8f4;
-        border-radius: 14px;
-        background: rgba(255,255,255,.92);
-        padding: 10px 12px;
-    }
-    .myk-plain-guide__item strong {
-        display: block;
-        margin-bottom: 4px;
-        color: #24364b;
-    }
-    .myk-plain-guide__item span {
-        display: block;
-        color: #5a6a7d;
-        line-height: 1.6;
-        font-size: 13px;
-    }
-    @media (max-width: 900px) {
-        .myk-plain-guide__grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    </style>
-    
-    <div class="myk-plain-guide">
-        <div class="myk-plain-guide__eyebrow">Plain-English guide</div>
-        <h3>Simple meaning of the main terms on this page</h3>
-        <p>
-            This screen is for <strong>repeat-guest follow-up</strong>. The labels are staying stable for now, but this guide explains them in everyday language so the page is easier to read.
-        </p>
-        <div class="myk-plain-guide__grid">
-            <div class="myk-plain-guide__item">
-                <strong>Continuity Status</strong>
-                <span>The overall follow-up status for this guest.</span>
-            </div>
-            <div class="myk-plain-guide__item">
-                <strong>Loyalty Stage</strong>
-                <span>Where this guest stands right now in the repeat-guest journey.</span>
-            </div>
-            <div class="myk-plain-guide__item">
-                <strong>Return-Value Tier</strong>
-                <span>How strong the repeat-booking potential looks.</span>
-            </div>
-            <div class="myk-plain-guide__item">
-                <strong>Packet Recommendation</strong>
-                <span>The kind of next-step brief, reminder, or follow-up pack to prepare.</span>
-            </div>
-            <div class="myk-plain-guide__item">
-                <strong>Source Inquiry ID</strong>
-                <span>The original guest request this record came from.</span>
-            </div>
-            <div class="myk-plain-guide__item">
-                <strong>Workspace Source-Context Digest</strong>
-                <span>A quick summary of the original request and the current repeat-guest follow-up position.</span>
+    <div class="layout-row">
+        <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
+            <div class="content" style="padding:16px 18px;">
+                <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;">
+                    <div style="min-width:260px;flex:1 1 420px;">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:6px;">Loyalty continuity record</div>
+                        <h3 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#1f2937;"><?= e($guest) ?></h3>
+                        <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($contactLine) ?></div>
+                        <div style="margin-top:4px;font-size:13px;line-height:1.65;color:#475569;"><?= e($continuityLine) ?></div>
+                        <div style="margin-top:4px;font-size:13px;line-height:1.65;color:#64748b;"><?= e($reviewLine) ?></div>
+                    </div>
+                    <div style="min-width:240px;flex:0 1 360px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;">
+                        <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Ref: <?= e($reference) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Status: <?= e($continuityStatus) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Stage: <?= e($loyaltyStage) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Tier: <?= e($returnTier) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Owner: <?= e($owner) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Next review: <?= e($nextReview) ?></span>
+                    </div>
+                </div>
+
+                <details style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px;">
+                    <summary style="cursor:pointer;font-size:13px;font-weight:700;color:#334155;list-style:none;">Quick screen guide</summary>
+                    <div style="margin-top:10px;font-size:13px;line-height:1.65;color:#475569;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+                        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                            <strong style="display:block;color:#111827;margin-bottom:4px;">What matters first</strong>
+                            Keep this record simple: why the guest belongs in long-cycle continuity, who owns it, and what the next review point is.
+                        </div>
+                        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                            <strong style="display:block;color:#111827;margin-bottom:4px;">Continuity status</strong>
+                            The overall follow-up posture for this guest, like draft, active retention, watch, or referral-ready.
+                        </div>
+                        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                            <strong style="display:block;color:#111827;margin-bottom:4px;">Loyalty stage</strong>
+                            Where the guest stands in the repeat-guest cycle right now.
+                        </div>
+                        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                            <strong style="display:block;color:#111827;margin-bottom:4px;">Next review</strong>
+                            The next day and time this record should surface for a human review or follow-up decision.
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;font-size:12px;line-height:1.65;color:#64748b;">
+                        Source inquiry <?= e($sourceInquiryId) ?> · Preferred season <?= e($preferredSeason) ?> · Revisit window <?= e($revisitWindow) ?> · Last visit <?= e($lastVisit) ?> · Created <?= e($createdAt) ?>
+                    </div>
+                </details>
             </div>
         </div>
     </div>
-    
 
     <?= Form::open(['class' => 'layout']) ?>
         <div class="layout-row">
