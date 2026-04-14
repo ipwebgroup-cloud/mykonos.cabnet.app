@@ -3,7 +3,7 @@ columns:
         label: Reference
         searchable: true
     queue_state_summary:
-        label: Queue State
+        label: Queue
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_queue_state_summary.htm
         sortable: false
@@ -30,13 +30,13 @@ columns:
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
     owner_follow_up_summary:
-        label: Owner / Follow Up
+        label: Owner / Follow-up
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_follow_up_summary.htm
         sortable: false
         searchable: false
     loyalty_backlink_summary:
-        label: Repeat-guest Backlink
+        label: Loyalty Link
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_backlink_summary.htm
         sortable: false
@@ -45,7 +45,7 @@ columns:
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
     loyalty_queue_actions:
-        label: Repeat-guest Actions
+        label: Loyalty Actions
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
         sortable: false

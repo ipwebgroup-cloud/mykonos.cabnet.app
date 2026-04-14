@@ -4,7 +4,7 @@ columns:
         searchable: true
 
     source_inquiry_backlink_summary:
-        label: Source Inquiry
+        label: Source
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/loyaltyrecords/_list_source_inquiry_backlink_summary.htm
         sortable: false
@@ -19,7 +19,7 @@ columns:
         sortable: false
 
     decision_focus_label:
-        label: Decision Focus
+        label: Decision
         sortable: false
 
     continuity_evidence_strength_label:
@@ -27,11 +27,11 @@ columns:
         sortable: false
 
     referral_ready:
-        label: Referral Ready
+        label: Referral
         type: switch
 
     return_value_tier_label:
-        label: Return Value
+        label: Value
         sortable: false
 
     last_retention_contact_at:
@@ -40,7 +40,7 @@ columns:
         format: Y-m-d H:i
 
     latest_touchpoint_summary:
-        label: Latest Touchpoint
+        label: Latest Touch
         sortable: false
 
     packet_execution_status_label:
@@ -52,7 +52,7 @@ columns:
         sortable: false
 
     stewardship_finish_posture_label:
-        label: Finish Posture
+        label: Finish
         sortable: false
 
     finish_lane_status_label:
@@ -60,11 +60,11 @@ columns:
         sortable: false
 
     finish_dashboard_status_label:
-        label: Finish Dashboard
+        label: Dashboard
         sortable: false
 
     finish_triage_label:
-        label: Finish Triage
+        label: Triage
         sortable: false
 
     finish_triage_urgency_label:
@@ -164,7 +164,7 @@ columns:
         sortable: false
 
     queue_backlog_visibility_label:
-        label: Backlog Visibility
+        label: Backlog
         sortable: false
 
     same_shift_handoff_sequence_label:
@@ -180,7 +180,7 @@ columns:
         sortable: false
 
     owner_state_handoff_compression_label:
-        label: Owner-State Handoff
+        label: Owner Handoff
         sortable: false
 
     reopen_timing_discipline_label:
@@ -188,23 +188,23 @@ columns:
         sortable: false
 
     same_shift_review_checkpoint_confirmation_label:
-        label: Checkpoint Confirmation
+        label: Checkpoint
         sortable: false
 
     parked_lane_owner_reassignment_visibility_label:
-        label: Owner Reassignment
+        label: Owner Reassign
         sortable: false
 
     front_of_list_quiet_return_confirmation_label:
-        label: Front-of-List Return
+        label: Front Return
         sortable: false
 
     owner_visible_deferred_review_slot_alignment_label:
-        label: Deferred Slot Alignment
+        label: Deferred Slot
         sortable: false
 
     current_shift_next_shift_quiet_return_separation_label:
-        label: Quiet-Return Shift Split
+        label: Shift Split
         sortable: false
 
     parked_lane_handback_sequencing_visibility_label:
@@ -220,7 +220,7 @@ columns:
         sortable: false
 
     current_lane_deferred_lane_return_compression_label:
-        label: Lane Return Compression
+        label: Lane Return
         sortable: false
 
     parked_lane_watch_label:
@@ -228,7 +228,7 @@ columns:
         sortable: false
 
     closure_readiness_label:
-        label: Closure Readiness
+        label: Closure Ready
         sortable: false
 
     next_execution_move_label:
