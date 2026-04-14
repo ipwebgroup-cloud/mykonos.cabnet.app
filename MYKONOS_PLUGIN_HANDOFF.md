@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.76 loyalty list row wording compression patch`
+- `v6.41.77 shared list-setup guidance polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It compresses the visible Loyalty Continuity source summary card so operators can scan source, outcome, packet, and review timing faster without losing the same signals.
+It aligns the helper guidance on Inquiry Queue and Loyalty Continuity so both list pages explain the same scan-first default rule and point operators toward List Setup for denser diagnostics.
 
 ## Deployment note
 
@@ -19,7 +19,7 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
+- Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- source summary cards read a little tighter
-- the same source, outcome, packet, and review signals still appear
+- both list pages show matching scan-first guidance
 - list behavior remains unchanged

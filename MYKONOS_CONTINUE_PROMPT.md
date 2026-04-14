@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.76 loyalty list row wording compression patch`
+- `v6.41.77 shared list-setup guidance polish patch`
 
 ## Current verified development direction
 
@@ -16,4 +16,4 @@ The current backend line is focused on:
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
 - keeping default visible list columns focused on the best scan fields first
-- compressing repeated visible list wording before adding more UI chrome
+- using matching list-setup guidance across both list pages

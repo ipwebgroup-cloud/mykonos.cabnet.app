@@ -2,12 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.41.76 — Loyalty list row wording compression
+### v6.41.77 — Shared list-setup guidance polish
 Included in the current safe backend polish line:
-- loyalty list default visibility polish
-- inquiry queue default visibility polish
 - inquiry queue row wording compression
 - loyalty list row wording compression
+- shared list-setup guidance polish
 
 ### Current plugin-tracked baseline
 - `2.4.23`

@@ -44,17 +44,6 @@
     white-space: nowrap;
 }
 
-.control-list .toolbar .toolbar-item.toolbar-search {
-    flex: 1 1 320px;
-    min-width: 260px;
-}
-
-.control-list .toolbar .toolbar-item.toolbar-search .form-control,
-.control-list .toolbar .toolbar-item.toolbar-search .search-input,
-.control-list .toolbar .toolbar-item.toolbar-search input[type="text"] {
-    width: 100%;
-}
-
 .control-list .toolbar .queue-render-note-row {
     flex: 1 1 100%;
     width: 100%;
@@ -103,11 +92,6 @@
 }
 
 @media (max-width: 1280px) {
-    .control-list .toolbar .toolbar-item.toolbar-search {
-        flex: 1 1 100%;
-        min-width: 0;
-    }
-
     .control-list .filter-scope,
     .control-list .filter-scope-item,
     .control-list .filter-item {
@@ -142,7 +126,7 @@
 
 <div class="toolbar-item queue-render-note-row">
     <span class="queue-render-note">
-        <strong>Slimmer default queue load</strong>
-        The first queue view now starts leaner. Use the page controls below the list, and use List Setup to add Email, Source, Loyalty Backlink, and history columns back when needed.
+        <strong>Scan-first default view</strong>
+        The daily queue starts with the strongest scan columns visible first. Use List Setup to bring back denser fields like Email, Source, Loyalty Link, Guests, and history details when you need a deeper review.
     </span>
 </div>
