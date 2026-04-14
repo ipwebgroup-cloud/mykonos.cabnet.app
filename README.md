@@ -9,7 +9,8 @@ This repository tracks the production-safe source for:
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
 - backend inquiry queue and operator workflow
-- guarded loyalty continuity workspace
+- loyalty continuity workspace
+- workspace docs/help routing
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -23,6 +24,13 @@ This repository tracks the production-safe source for:
 - Backend label: **Mykonos Inquiries**
 - Public bridge component: `mykonosPlanBridge`
 
+## Live operational workspace
+
+The current backend workspace is centered on:
+- **Inquiry Queue**
+- **Loyalty Continuity**
+- **Workspace Docs**
+
 ## Stable workflow direction
 
 The working production line preserves:
@@ -32,27 +40,44 @@ The working production line preserves:
 - generated request reference shown after successful submit
 - safe email notification handling
 - operator workflow actions, notes, and continuity improvements
-- loyalty continuity transfer, staging, and review surfaces
-- dedicated Workspace Docs routing for help and glossary content
+- guarded loyalty continuity follow-through from the inquiry queue
 
-## Current safe continuity hint
+## Current stable continuity hint
 
-### v6.41.66 — Inquiry Queue toolbar layout hotfix
-Included in the current safe operator workflow line:
-- queue toolbar wrap and spacing hardening
-- search box collision prevention
-- helper note width and overflow cleanup
-- no public `/plan` change
-- no schema change
+### v6.41.67 — Inquiry Queue helper-note wrapping hotfix
+Included in the current safe backend polish line:
+- queue toolbar wrapping hardening
+- helper note block isolation on its own row
+- safer note text wrapping beside the search area
 
-## Plugin tracking baseline
+### Plugin tracking baseline
+- `2.4.23`
 
-### 2.4.23
-Current continuity tracking remains aligned to the guarded loyalty-workspace line through:
-- compact inquiry update header
-- compact loyalty update header
-- queue scan-speed and pagination work
-- loyalty continuity workspace and docs-page posture
+## Repository rules
+
+### Commit
+Commit source code and documentation for:
+- `app/`
+- `bootstrap/`
+- `config/`
+- `modules/`
+- `plugins/`
+- `themes/`
+- `tests/`
+- root project files such as `artisan`, `composer.json`, `composer.lock`, `.htaccess`
+
+### Do not commit
+Do not commit live/server-local artifacts such as:
+- `.env`
+- `auth.json`
+- `vendor/`
+- `node_modules/`
+- runtime `storage` contents
+- `php.ini`
+- `.user.ini`
+- SQL dumps
+- zip exports
+- cPanel-local files
 
 ## Deployment philosophy
 
