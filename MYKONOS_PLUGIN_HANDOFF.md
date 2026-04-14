@@ -19,31 +19,27 @@ In any new chat:
 4. use the GitHub repo only as a secondary comparison reference
 5. if older notes conflict with the real uploaded files, prefer the real uploaded files
 
-Repo reference:
-- `https://github.com/ipwebgroup-cloud/mykonos.cabnet.app`
-
 ---
 
 ## Core operating rule
 Treat the latest real uploaded rooted project state as the source of truth.
 
 Do **not** restart from older patch notes alone.
-Do **not** rewind to older v2.x assumptions unless the uploaded files clearly show that state.
+Do **not** rewind to older inquiry-only assumptions unless the uploaded files clearly show that state.
 Do **not** invent new architecture that is not present in the real files.
 
 ---
 
 ## Stable project direction
-This is a real OctoberCMS inquiry platform, not just a theme.
+This is a real OctoberCMS inquiry platform with a guarded loyalty-workspace line.
 
 Stable direction:
 - public luxury frontend
 - mobile-first `/plan` inquiry flow
 - DB-backed inquiry persistence through the plugin
 - backend Inquiry Queue and operator workflow
-- guarded Loyalty Continuity workspace
-- dedicated Workspace Docs route
-- safe plugin/theme integration
+- guarded Loyalty Continuity Workspace
+- dedicated Workspace Docs page
 - safe incremental development without breaking live operations
 
 ---
@@ -61,7 +57,7 @@ That means:
 
 ## Live operational workspace
 - **Inquiry Queue**
-- **Loyalty Continuity**
+- **Loyalty Continuity Workspace**
 - **Workspace Docs**
 
 Preserve first:
@@ -82,18 +78,18 @@ Current safe priorities:
 - keep operator wording plain and readable
 - keep loyalty transfer / backlink visibility stable
 - keep row-level scan speed improving through smaller, clearer queue summaries
-- keep top-of-screen record summaries compact and easy to read
+- keep top-of-screen snapshot wording short and easy to scan
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.63 detail-screen snapshot wording polish patch`
+- `v6.41.64 detail-screen snapshot wording polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It lightly refines small read-only summary surfaces so Inquiry Queue and Loyalty Continuity record screens use simpler top-of-screen wording without changing the deeper workspace panels.
+It keeps the compact inquiry and loyalty detail posture intact while simplifying the wording in the small top summary blocks operators see first.
 
 ## Deployment note
 
@@ -104,18 +100,19 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue toolbar uses Loyalty wording consistently
-- Backend -> Inquiry Queue -> open any inquiry and confirm the top summary reads more plainly
-- Backend -> Loyalty Continuity -> open any saved record and confirm the top digest reads more plainly
-- deeper workflow tabs and actions still render normally
+- Backend -> Inquiry Queue -> open any inquiry
+- the top read-only summary block uses shorter queue wording
+- Backend -> Loyalty Continuity -> open any saved loyalty record
+- the top digest uses shorter source/continuity wording
+- the editable form tabs and workflow actions still render normally
 
 ---
 
 ## Safest next step
-If the record screens still feel heavy after this patch, the next real pass should inspect:
-- whether the inquiry update page title and loyalty update page title should be tightened further
-- whether top-level field comments on the two record screens can be shortened safely
-- whether any remaining mixed wording between "continuity", "loyalty", and "repeat guest" should be normalized on read-only labels
-- whether additional always-visible helper copy should move fully into the docs page
+If the detail screens still feel heavy after this patch, the next real pass should inspect:
+- whether top-level field comments can be shortened further without losing meaning
+- whether page titles should be tightened for faster operator recognition
+- whether any remaining always-visible helper copy should move fully into the docs page
+- whether inquiry and loyalty detail screens now need one shared compact title pattern
 
 Keep future work plugin-only where possible.

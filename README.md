@@ -1,6 +1,6 @@
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 
-Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow, an operator-focused queue, and a guarded loyalty continuity workspace.
+Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow and operator-focused backend handling.
 
 ## Project purpose
 
@@ -8,9 +8,9 @@ This repository tracks the production-safe source for:
 - luxury public frontend
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
-- backend Inquiry Queue and operator workflow
-- guarded Loyalty Continuity workspace
-- dedicated Workspace Docs route
+- backend inquiry queue and operator workflow
+- guarded Loyalty Continuity Workspace
+- dedicated Workspace Docs page
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -21,35 +21,30 @@ This repository tracks the production-safe source for:
 
 ### Plugin
 - Plugin: `plugins/cabnet/mykonosinquiry`
+- Backend label: **Mykonos Inquiries**
 - Public bridge component: `mykonosPlanBridge`
-
-### Backend workspaces
-- **Inquiry Queue**
-- **Loyalty Continuity**
-- **Workspace Docs**
 
 ## Stable workflow direction
 
 The working production line preserves:
 - `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
 - inquiry persistence into `cabnet_mykonos_inquiries`
-- backend inquiry list and detail handling
-- loyalty continuity rendering and inquiry-backed transfer support
+- backend Inquiry Queue and inquiry detail handling
+- Loyalty Continuity rendering and transfer flow
+- Workspace Docs routing for help/glossary content
 - generated request reference shown after successful submit
 - safe email notification handling
-- compact record headers and collapsed plain-language guides
-- queue-first operator workflow improvements
+- operator workflow actions, notes, and continuity improvements
 
 ## Current safe continuity hint
 
-### v6.41.63 — Detail-Screen Snapshot Wording Polish
-Included in the current safe line:
-- continuity alignment through `v6.41.62`
-- queue and loyalty toolbar wording consistency
-- lighter top-of-screen wording on inquiry and loyalty read-only summary blocks
-
-### Plugin tracking baseline
-- `2.4.23`
+### v6.41.64 — Detail Snapshot Wording Polish
+Current safe line includes:
+- `2.4.23` compact inquiry and loyalty update headers with collapsed guides
+- queue-first scan-speed posture
+- dedicated Workspace Docs help routing
+- loyalty-aware queue and transfer flow
+- detail-screen snapshot wording polish on the top read-only summary blocks
 
 ## Repository rules
 
@@ -86,7 +81,7 @@ This project follows:
 - avoid schema drift unless clearly justified
 - keep public theme flow stable
 - improve operator workflow incrementally
-- prefer plugin-only backend work where possible
+- keep future work plugin-only where possible
 
 ## Release documentation
 

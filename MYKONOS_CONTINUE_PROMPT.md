@@ -6,9 +6,7 @@ I am uploading the **latest rooted patch zip / latest rooted project archive / l
 
 Treat the uploaded files as the **primary source of truth**.
 
-Use the GitHub repo only as a **secondary comparison reference**:
-
-- `https://github.com/ipwebgroup-cloud/mykonos.cabnet.app`
+Use the GitHub repo only as a **secondary comparison reference**.
 
 ---
 
@@ -48,10 +46,10 @@ Assume the active plugin is:
 Assume the live operational workspace remains:
 
 - **Inquiry Queue**
-- **Loyalty Continuity**
+- **Loyalty Continuity Workspace**
 - **Workspace Docs**
 
-Do **not** rewind to the early v2.x workflow line unless the real uploaded files clearly show that state.
+Do **not** rewind to the early inquiry-only workflow line unless the real uploaded files clearly show that state.
 
 ---
 
@@ -59,7 +57,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.63 detail-screen snapshot wording polish patch`
+- `v6.41.64 detail-screen snapshot wording polish patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -109,11 +107,10 @@ Continue preferring:
 Recent safe work has already established:
 - a lighter button-first toolbar
 - queue-side scan-speed improvements remain in place
-- the inquiry update screen now opens with a compact record summary instead of two large top advisory blocks
-- the loyalty continuity update screen now follows the same compact-header and collapsed-guide direction
-- the plain-language screen guides now stay collapsed by default and only open when needed
-- queue and loyalty toolbar wording now use loyalty language more consistently
-- the small read-only summary blocks at the top of record screens are being simplified before touching deeper workspace panels
+- the inquiry update screen opens with a compact top summary instead of large advisory blocks
+- the loyalty continuity update screen follows the same compact-header and collapsed-guide direction
+- the top read-only summary blocks now use shorter wording for faster first-scan recognition
+- the plain-language screen guides stay collapsed by default and only open when needed
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -131,10 +128,9 @@ Keep these safe:
 ## Most recent safe next step
 
 The strongest next step after the last delivered patch is:
-- keep both inquiry and loyalty update screens compact and readable
+- keep both inquiry and loyalty detail screens compact and readable
 - continue reducing always-visible helper copy before adding more UI chrome
-- inspect whether top-level field comments can be shortened safely
-- inspect whether page titles can be tightened without losing clarity
+- inspect whether top-level field comments should be shortened next
 - keep operator language simple
 
 ---
