@@ -28,41 +28,42 @@
     overflow-x: auto;
 }
 
+.control-toolbar,
 .toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
-    gap: 10px 8px;
+    gap: 10px;
 }
 
-.toolbar::after {
-    content: '';
-    display: block;
-    clear: both;
-}
-
-.toolbar > .toolbar-item {
-    float: none !important;
-    margin: 0 !important;
-}
-
-.toolbar > .toolbar-item.toolbar-primary,
-.toolbar > .toolbar-item.myk-queue-note-row {
+.control-toolbar .toolbar-item,
+.toolbar .toolbar-item {
     flex: 0 0 auto;
 }
 
-.toolbar > .toolbar-item.myk-queue-note-row {
-    flex-basis: 100%;
+.control-toolbar .toolbar-item.toolbar-primary,
+.toolbar .toolbar-item.toolbar-primary {
+    margin-right: 0;
+}
+
+.control-toolbar .toolbar-item.search,
+.toolbar .toolbar-item.search,
+.control-toolbar .toolbar-item[data-control="toolbar-search"],
+.toolbar .toolbar-item[data-control="toolbar-search"] {
+    flex: 1 1 280px;
+    min-width: 220px;
+}
+
+.control-toolbar .toolbar-item.search input,
+.toolbar .toolbar-item.search input,
+.control-toolbar .toolbar-item[data-control="toolbar-search"] input,
+.toolbar .toolbar-item[data-control="toolbar-search"] input {
     width: 100%;
 }
 
-.toolbar .toolbar-search,
-.toolbar [data-control="toolbar-search"],
-.toolbar .search-input,
-.toolbar .control-search,
-.toolbar .toolbar-text,
-.toolbar .toolbar-divider {
-    float: none !important;
+.queue-render-note-row {
+    flex: 1 1 100%;
+    width: 100%;
 }
 
 .queue-render-note {
@@ -74,7 +75,7 @@
     color: #50627d;
     font-size: 12px;
     line-height: 1.45;
-    white-space: normal !important;
+    white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -85,9 +86,65 @@
     margin-right: 6px;
 }
 
+/* Filter-row wrapping polish */
+.control-list .control-filter,
+.control-list .list-filter,
+.control-list .filter-scopes {
+    width: 100%;
+}
+
+.control-list .filter-scopes,
+.control-list .control-filter .filter-scopes,
+.control-list .list-filter .filter-scopes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+}
+
+.control-list .filter-scopes > li,
+.control-list .control-filter .filter-scopes > li,
+.control-list .list-filter .filter-scopes > li,
+.control-list .filter-scopes .filter-scope,
+.control-list .control-filter .filter-scopes .filter-scope,
+.control-list .list-filter .filter-scopes .filter-scope {
+    flex: 0 1 auto;
+    max-width: 100%;
+}
+
+.control-list .filter-scopes a,
+.control-list .control-filter .filter-scopes a,
+.control-list .list-filter .filter-scopes a,
+.control-list .filter-scopes .filter-label,
+.control-list .control-filter .filter-scopes .filter-label,
+.control-list .list-filter .filter-scopes .filter-label {
+    white-space: nowrap;
+}
+
 @media (max-width: 1200px) {
-    .toolbar > .toolbar-item.myk-queue-note-row {
-        order: 10;
+    .control-toolbar .toolbar-item.search,
+    .toolbar .toolbar-item.search,
+    .control-toolbar .toolbar-item[data-control="toolbar-search"],
+    .toolbar .toolbar-item[data-control="toolbar-search"] {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .control-list .filter-scopes,
+    .control-list .control-filter .filter-scopes,
+    .control-list .list-filter .filter-scopes {
+        gap: 8px;
+    }
+
+    .control-list .filter-scopes > li,
+    .control-list .control-filter .filter-scopes > li,
+    .control-list .list-filter .filter-scopes > li,
+    .control-list .filter-scopes .filter-scope,
+    .control-list .control-filter .filter-scopes .filter-scope,
+    .control-list .list-filter .filter-scopes .filter-scope {
+        flex: 1 1 220px;
     }
 }
 </style>
@@ -116,7 +173,7 @@
     </a>
 </div>
 
-<div class="toolbar-item myk-queue-note-row">
+<div class="toolbar-item queue-render-note-row">
     <div class="queue-render-note">
         <strong>Slimmer default queue load</strong>
         The first queue view now starts leaner. Use the page controls below the list, and use List Setup to add Email, Source, Loyalty Backlink, and history columns back when needed.
