@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.92 shared grid-gap normalization pass`
+- `v6.41.93 shared title-line truncation polish patch`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- smoothing the inner compact-panel rhythm before adding more UI surface
+- improving graceful clipping of long first-line strings before adding more UI surface

@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.92 shared grid-gap normalization pass`
+- `v6.41.93 shared title-line truncation polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It slightly normalizes the gap and inner padding of the compact outcome/packet/review panels inside the loyalty source-summary card so the inner sections read more evenly.
+It makes the first-line reference/posture text and a few compact inline chip values inside the loyalty source-summary card clip more gracefully when strings run long.
 
 ## Deployment note
 
@@ -20,5 +20,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - Backend -> Loyalty Continuity
-- the compact inner panels inside the source-summary card feel a bit more even
+- long source references and similar first-line strings clip more gracefully
 - list behavior remains unchanged
