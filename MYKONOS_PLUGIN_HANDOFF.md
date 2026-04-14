@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.87 shared compact button sizing pass`
+- `v6.41.88 shared card-width consistency pass`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It makes the visible row-action buttons across Inquiry Queue and Loyalty Continuity a bit more compact and uniform without changing their routes, labels, or emphasis hierarchy.
+It brings the Inquiry Queue action cell and the Loyalty Continuity source-summary card a little closer in horizontal balance by nudging their min/max widths without changing content or behavior.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- visible row-action buttons feel slightly more compact and uniform
+- the queue action cell and loyalty source-summary card feel a bit more balanced horizontally
 - list behavior remains unchanged

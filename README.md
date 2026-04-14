@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.41.87 — Shared compact button sizing pass
+### v6.41.88 — Shared card-width consistency pass
 Included in the current safe backend polish line:
-- shared primary button consistency pass
 - shared compact button sizing pass
+- shared card-width consistency pass
 
 ### Current plugin-tracked baseline
 - `2.4.23`

@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.87 shared compact button sizing pass`
+- `v6.41.88 shared card-width consistency pass`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- tightening visible row-action button size before adding more UI surface
+- smoothing horizontal balance across visible list cells before adding more UI surface
