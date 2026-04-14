@@ -18,7 +18,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
     white-space: nowrap;
 }
 
-.control-list .toolbar .loyalty-render-note-row {
+.control-list .toolbar .loyalty-render-note-row,
+.control-list .toolbar .loyalty-quickstart-row {
     flex: 1 1 100%;
     width: 100%;
 }
@@ -40,6 +41,95 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
 .loyalty-render-note strong {
     color: #334155;
     font-weight: 700;
+}
+
+.loyalty-quickstart {
+    width: 100%;
+    border: 1px solid #dbe4f2;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fbfcff 0%, #ffffff 100%);
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.loyalty-quickstart__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.loyalty-quickstart__eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #6b7a90;
+}
+
+.loyalty-quickstart__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #22364f;
+}
+
+.loyalty-quickstart__summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5d6d7e;
+}
+
+.loyalty-quickstart__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.loyalty-quickstart__card {
+    min-width: 0;
+    border: 1px solid #e1e7f0;
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 12px 13px;
+}
+
+.loyalty-quickstart__card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #22364f;
+    margin-bottom: 6px;
+}
+
+.loyalty-quickstart__card-copy {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5e6d7d;
+    margin-bottom: 8px;
+}
+
+.loyalty-quickstart__list {
+    margin: 0;
+    padding-left: 16px;
+    color: #516376;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.loyalty-quickstart__list li {
+    margin-bottom: 4px;
+}
+
+.loyalty-quickstart__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.loyalty-quickstart__links .btn {
+    border-radius: 999px;
 }
 
 .control-list .control-filter,
@@ -70,6 +160,12 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
     .control-list .filter-scope-item,
     .control-list .filter-item {
         flex: 1 1 180px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .loyalty-quickstart__grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -103,5 +199,54 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
             <strong>Scan-first default view</strong>
             Start with the visible daily scan columns. Use List Setup for deeper diagnostic columns like finish posture, queue watch, parked-lane signals, reopen timing, and related stewardship detail.
         </span>
+    </div>
+
+    <div class="toolbar-item loyalty-quickstart-row">
+        <div class="loyalty-quickstart">
+            <div class="loyalty-quickstart__head">
+                <div>
+                    <div class="loyalty-quickstart__eyebrow">Operator quick start</div>
+                    <div class="loyalty-quickstart__title">Loyalty Continuity daily workflow</div>
+                </div>
+                <div class="loyalty-quickstart__summary">Use this strip as the fast operator guide before widening the list, opening history, or stepping into deeper continuity diagnostics.</div>
+            </div>
+
+            <div class="loyalty-quickstart__grid">
+                <article class="loyalty-quickstart__card">
+                    <div class="loyalty-quickstart__card-title">1. Read the continuity lane first</div>
+                    <div class="loyalty-quickstart__card-copy">Start with source, continuity posture, latest outcome, packet state, next review, and ownership before opening the full workspace tabs.</div>
+                    <ul class="loyalty-quickstart__list">
+                        <li>Use the compact list for daily follow-up review.</li>
+                        <li>Keep latest outcome and timing visible.</li>
+                        <li>Open records only when the list signal says more context is needed.</li>
+                    </ul>
+                </article>
+
+                <article class="loyalty-quickstart__card">
+                    <div class="loyalty-quickstart__card-title">2. Compare source inquiry against current continuity</div>
+                    <div class="loyalty-quickstart__card-copy">Keep the source inquiry visible enough to explain why this guest sits in continuity, whether the lane came from queue work, or whether it was created manually.</div>
+                    <ul class="loyalty-quickstart__list">
+                        <li>Use source inquiry jumps when the original route matters.</li>
+                        <li>Keep manual records clearly distinct from inquiry-backed lanes.</li>
+                        <li>Use history only when the compact card suggests it.</li>
+                    </ul>
+                </article>
+
+                <article class="loyalty-quickstart__card">
+                    <div class="loyalty-quickstart__card-title">3. Widen the list only for deeper diagnostics</div>
+                    <div class="loyalty-quickstart__card-copy">The default list is for fast daily continuity review. Use List Setup and Workspace Docs when finish posture, reopen timing, queue watch, or stewardship detail needs a closer read.</div>
+                    <ul class="loyalty-quickstart__list">
+                        <li>Use List Setup for finish and reopen diagnostics.</li>
+                        <li>Use Loyalty Help for continuity wording and route meaning.</li>
+                        <li>Use Queue Help when a source inquiry decision still drives the lane.</li>
+                    </ul>
+                    <div class="loyalty-quickstart__links">
+                        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-loyalty' ?>" class="btn btn-default btn-xs">Continuity guide</a>
+                        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>" class="btn btn-default btn-xs">Bridge guide</a>
+                        <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-glossary' ?>" class="btn btn-default btn-xs">Glossary</a>
+                    </div>
+                </article>
+            </div>
+        </div>
     </div>
 </div>

@@ -44,7 +44,8 @@
     white-space: nowrap;
 }
 
-.control-list .toolbar .queue-render-note-row {
+.control-list .toolbar .queue-render-note-row,
+.control-list .toolbar .queue-quickstart-row {
     flex: 1 1 100%;
     width: 100%;
 }
@@ -66,6 +67,95 @@
 .queue-render-note strong {
     color: #334155;
     font-weight: 700;
+}
+
+.queue-quickstart {
+    width: 100%;
+    border: 1px solid #dbe4f2;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fbfcff 0%, #ffffff 100%);
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.queue-quickstart__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.queue-quickstart__eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #6b7a90;
+}
+
+.queue-quickstart__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #22364f;
+}
+
+.queue-quickstart__summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5d6d7e;
+}
+
+.queue-quickstart__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.queue-quickstart__card {
+    min-width: 0;
+    border: 1px solid #e1e7f0;
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 12px 13px;
+}
+
+.queue-quickstart__card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #22364f;
+    margin-bottom: 6px;
+}
+
+.queue-quickstart__card-copy {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5e6d7d;
+    margin-bottom: 8px;
+}
+
+.queue-quickstart__list {
+    margin: 0;
+    padding-left: 16px;
+    color: #516376;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.queue-quickstart__list li {
+    margin-bottom: 4px;
+}
+
+.queue-quickstart__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.queue-quickstart__links .btn {
+    border-radius: 999px;
 }
 
 .control-list .control-filter,
@@ -96,6 +186,12 @@
     .control-list .filter-scope-item,
     .control-list .filter-item {
         flex: 1 1 180px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .queue-quickstart__grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -129,4 +225,53 @@
         <strong>Scan-first default view</strong>
         Start with the visible daily scan columns. Use List Setup for deeper review columns like guest contact details, source detail, loyalty link detail, and audit timing fields.
     </span>
+</div>
+
+<div class="toolbar-item queue-quickstart-row">
+    <div class="queue-quickstart">
+        <div class="queue-quickstart__head">
+            <div>
+                <div class="queue-quickstart__eyebrow">Operator quick start</div>
+                <div class="queue-quickstart__title">Inquiry Queue daily workflow</div>
+            </div>
+            <div class="queue-quickstart__summary">Use this strip as the fast operator guide before dropping into filters, List Setup, or record-level actions.</div>
+        </div>
+
+        <div class="queue-quickstart__grid">
+            <article class="queue-quickstart__card">
+                <div class="queue-quickstart__card-title">1. Run the live queue pass</div>
+                <div class="queue-quickstart__card-copy">Start with the compact default view so ownership, urgency, and next follow-up stay visible before opening deeper record detail.</div>
+                <ul class="queue-quickstart__list">
+                    <li>Scan owner and follow-up first.</li>
+                    <li>Separate urgent or overdue rows early.</li>
+                    <li>Keep list reading narrow before expanding history.</li>
+                </ul>
+            </article>
+
+            <article class="queue-quickstart__card">
+                <div class="queue-quickstart__card-title">2. Decide whether work stays in queue or bridges out</div>
+                <div class="queue-quickstart__card-copy">Use the visible loyalty cues to tell whether the row is still queue-only, ready to transfer, already linked, or sitting in a draft/staged continuity posture.</div>
+                <ul class="queue-quickstart__list">
+                    <li>Queue-only stays in active inquiry work.</li>
+                    <li>Transfer-ready moves into continuity when mature enough.</li>
+                    <li>Linked or draft rows can jump directly into loyalty review.</li>
+                </ul>
+            </article>
+
+            <article class="queue-quickstart__card">
+                <div class="queue-quickstart__card-title">3. Open deeper review only when needed</div>
+                <div class="queue-quickstart__card-copy">Keep the list lean for daily use. Add heavier columns and deeper history only when the row-level signal shows something needs investigation.</div>
+                <ul class="queue-quickstart__list">
+                    <li>Use List Setup for guest detail, source, and audit timing.</li>
+                    <li>Use Queue Help for scan order and filter discipline.</li>
+                    <li>Use Loyalty Help when continuity or handoff meaning is unclear.</li>
+                </ul>
+                <div class="queue-quickstart__links">
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default btn-xs">Queue guide</a>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>" class="btn btn-default btn-xs">Bridge guide</a>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-form-routes' ?>" class="btn btn-default btn-xs">Record screens</a>
+                </div>
+            </article>
+        </div>
+    </div>
 </div>

@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.93 shared title-line truncation polish patch`
+- `v6.42.00 operator quick-start major backend docs upgrade`
 
 ## Current verified development direction
 
@@ -15,4 +15,5 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- improving graceful clipping of long first-line strings before adding more UI surface
+- improving operator self-guidance in larger safe steps when requested
+- keeping major updates away from the live /plan bridge unless a real public fix is needed
