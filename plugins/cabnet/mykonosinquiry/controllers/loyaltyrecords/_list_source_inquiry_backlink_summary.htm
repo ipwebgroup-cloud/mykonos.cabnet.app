@@ -13,7 +13,7 @@ $primaryUrl = $loyalty->source_inquiry_backlink_url;
 $primaryLabel = $loyalty->source_inquiry_backlink_action_label;
 $secondaryUrl = $loyalty->source_inquiry_queue_return_url;
 $secondaryLabel = $loyalty->source_inquiry_queue_return_label;
-$historyLabel = 'Open loyalty history';
+$historyLabel = 'Open history';
 $historyUrl = null;
 
 if (!empty($loyalty->id)) {
@@ -68,46 +68,40 @@ if (stripos($latestPacket, 'no packet') !== false) {
     $packetBorder = '#cfe2ff';
 }
 ?>
-<div style="min-width:255px; line-height:1.35; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 12px;">
-    <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px;">
-        <span title="Source anchor: the originating inquiry reference and guest name this loyalty record ties back to."><?= e($reference) ?></span>
+<div style="min-width:245px; line-height:1.28; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:9px 11px;">
+    <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        <span title="Source reference"><?= e($reference) ?></span>
     </div>
-    <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:6px;">
-        <span title="Source posture: the queue or closing posture of the originating inquiry when it entered loyalty continuity."><?= e($posture) ?></span>
+    <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        <span title="Source posture"><?= e($posture) ?></span>
     </div>
-    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; margin-bottom:8px; white-space:normal;">
+    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
         <?= e($hint) ?>
     </div>
 
-    <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; align-items:center;">
-        <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetTone) ?>; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700;" title="Visible latest packet state so operators can scan packet readiness directly from the live loyalty list row.">
+    <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:7px; align-items:center;">
+        <span style="display:inline-flex; align-items:center; gap:5px; border:1px solid <?= e($packetBorder) ?>; background:<?= e($packetBg) ?>; color:<?= e($packetTone) ?>; border-radius:999px; padding:3px 9px; font-size:11px; font-weight:700;" title="Latest packet">
             <span style="text-transform:uppercase; letter-spacing:.04em; opacity:0.8;">Packet</span>
             <span><?= e($latestPacket) ?></span>
         </span>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-bottom:8px;">
-        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 8px;">
-            <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">
-                <span title="Latest outcome: the most recent recorded result from a loyalty touchpoint or operator follow-through step.">Latest outcome</span>
-            </div>
-            <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>;" title="<?= e($latestTouch) ?>">
+    <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-bottom:7px;">
+        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 7px;">
+            <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Outcome</div>
+            <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($latestTouch) ?>">
                 <?= e($latestOutcome) ?>
             </div>
         </div>
-        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 8px;">
-            <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">
-                <span title="Latest packet: the newest internal brief or packet prepared for the next human continuity move.">Latest packet</span>
-            </div>
-            <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>;">
+        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 7px;">
+            <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Packet</div>
+            <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 <?= e($latestPacket) ?>
             </div>
         </div>
-        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 8px;">
-            <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">
-                <span title="Next review: the next visible human revisit time for this loyalty record.">Next review</span>
-            </div>
-            <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>;">
+        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 7px;">
+            <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Review</div>
+            <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 <?= e($nextReview) ?>
             </div>
         </div>
@@ -115,15 +109,15 @@ if (stripos($latestPacket, 'no packet') !== false) {
 
     <div style="display:flex; flex-wrap:wrap; gap:6px;">
         <?php if ($primaryUrl): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" title="Open the originating inquiry record."><?= e($primaryLabel) ?></a>
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" title="Open source inquiry"><?= e($primaryLabel) ?></a>
         <?php else: ?>
-            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;" title="No originating inquiry link is available for this loyalty record."><?= e($primaryLabel) ?></span>
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;" title="No source inquiry available"><?= e($primaryLabel) ?></span>
         <?php endif; ?>
         <?php if ($historyUrl): ?>
-            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" title="Open this saved loyalty record directly on the History tab."><?= e($historyLabel) ?></a>
+            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" title="Open loyalty history"><?= e($historyLabel) ?></a>
         <?php endif; ?>
         <?php if ($secondaryUrl): ?>
-            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" title="Return to the queue filtered around the originating inquiry context."><?= e($secondaryLabel) ?></a>
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" title="Return to queue"><?= e($secondaryLabel) ?></a>
         <?php endif; ?>
     </div>
 </div>
