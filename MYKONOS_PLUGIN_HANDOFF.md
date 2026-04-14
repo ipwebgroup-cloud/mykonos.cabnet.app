@@ -28,7 +28,7 @@ Repo reference:
 Treat the latest real uploaded rooted project state as the source of truth.
 
 Do **not** restart from older patch notes alone.
-Do **not** rewind to older v2.x assumptions unless the uploaded files clearly show that state.
+Do **not** rewind to older inquiry-only assumptions unless the uploaded files clearly show that state.
 Do **not** invent new architecture that is not present in the real files.
 
 ---
@@ -42,6 +42,7 @@ Stable direction:
 - DB-backed inquiry persistence through the plugin
 - backend inquiry queue and operator workflow
 - guarded Loyalty Continuity Workspace
+- dedicated Workspace Docs page
 - safe plugin/theme integration
 - safe incremental development without breaking live operations
 
@@ -72,48 +73,46 @@ Preserve first:
 
 ---
 
-## Current development line
+## Current verified development line
 The project is deep into the guarded loyalty-workspace line.
 
-Current safe priorities:
+Verified baseline from the plugin history and continuity files:
+- queue-to-loyalty transfer actions are active
+- loyalty backlink and posture visibility are active
+- the dedicated docs/help page is active
+- server-side Inquiry Queue pagination is active
+- the inquiry update screen uses a compact header and collapsed guide
+- the loyalty continuity update screen uses a compact header and collapsed guide
+
+Current continuity hint to preserve:
+- `v6.41.61 loyalty-detail compact header and collapsed guide patch`
+- plugin tracking `2.4.23`
+
+---
+
+## Safe priorities now
 - keep the Inquiry Queue fast first
 - keep docs/help on the dedicated docs page instead of re-expanding live screens
 - keep operator wording plain and readable
 - keep loyalty transfer / backlink visibility stable
 - keep row-level scan speed improving through smaller, clearer queue summaries
+- prefer plugin-only updates where possible
 
 ---
 
-## Latest applied patch line
-Latest known rooted patch prepared for deployment:
-
-- `v6.41.61 loyalty-detail compact header and collapsed guide patch`
-- plugin tracking `2.4.23`
-
-This patch stays backend-only and does not touch `/plan`.
-It gives the Loyalty Continuity update screen the same lighter landing posture already used on the inquiry record: one compact record summary and a collapsed plain-language guide, so operators land faster on the actual editable continuity workspace.
-
 ## Deployment note
-
-For this patch, upload the rooted files and then run:
-
-- `php artisan cache:clear`
-
-No schema change is introduced and no plugin refresh is required for this step.
-
-Then verify:
-- Backend -> Loyalty Continuity -> open any saved loyalty record
-- the update screen now opens with a compact summary instead of the large plain-English guide block
-- the Quick screen guide stays collapsed by default and can be opened when needed
-- the editable form tabs and workflow actions still render normally
+For the current continuity-alignment patch:
+- no schema change is introduced
+- no plugin refresh is required
+- no cache clear is strictly required, though `php artisan cache:clear` is safe after deployment if documentation routing labels appear stale
 
 ---
 
 ## Safest next step
-If the queue still feels heavy after this patch, the next real pass should inspect:
-- whether the Loyalty Continuity form tabs can reduce always-visible helper copy further
-- whether read-only continuity guidance panels should group more tightly by tab
-- whether any remaining loyalty update-screen helper text should move fully into the docs page
-- whether inquiry and loyalty detail screens now need one shared compact-header pattern
+After this continuity alignment, the next real pass should inspect:
+- whether inquiry and loyalty detail screens still contain any overly large always-visible helper copy
+- whether dense read-only guidance blocks should group more tightly by tab
+- whether queue / loyalty / docs wording should standardize around one operator language set
+- whether any remaining helper text should move fully into the docs page
 
 Keep future work plugin-only where possible.
