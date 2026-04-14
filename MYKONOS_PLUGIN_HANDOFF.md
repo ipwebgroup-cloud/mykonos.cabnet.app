@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.91 shared muted-text tone polish patch`
+- `v6.41.92 shared grid-gap normalization pass`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It aligns the lighter helper/posture text tone in the visible loyalty summary card to a slightly cleaner muted shade so the quieter text reads more consistently with the compact queue-and-loyalty UI line.
+It slightly normalizes the gap and inner padding of the compact outcome/packet/review panels inside the loyalty source-summary card so the inner sections read more evenly.
 
 ## Deployment note
 
@@ -20,5 +20,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - Backend -> Loyalty Continuity
-- lighter helper/posture text reads a bit cleaner and more consistent
+- the compact inner panels inside the source-summary card feel a bit more even
 - list behavior remains unchanged
