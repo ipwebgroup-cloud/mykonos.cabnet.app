@@ -9,7 +9,7 @@ This repository tracks the production-safe source for:
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
 - backend inquiry queue and operator workflow
-- loyalty continuity workspace
+- guarded loyalty continuity workspace
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -23,25 +23,36 @@ This repository tracks the production-safe source for:
 - Backend label: **Mykonos Inquiries**
 - Public bridge component: `mykonosPlanBridge`
 
-## Current stable continuity hint
-
-### v6.41.65 — Detail screen title and top-comment polish
-Included in the current stable backend polish line:
-- compact inquiry header and collapsed guide direction preserved
-- compact loyalty header and collapsed guide direction preserved
-- queue and loyalty wording consistency preserved
-- record titles and first-seen field comments tightened for faster scan reading
-
 ## Stable workflow direction
 
 The working production line preserves:
 - `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
 - inquiry persistence into `cabnet_mykonos_inquiries`
 - backend inquiry list and detail handling
-- loyalty continuity workspace handling
-- dedicated Workspace Docs route
 - generated request reference shown after successful submit
 - safe email notification handling
+- operator workflow actions, notes, and continuity improvements
+- loyalty continuity transfer, staging, and review surfaces
+- dedicated Workspace Docs routing for help and glossary content
+
+## Current safe continuity hint
+
+### v6.41.66 — Inquiry Queue toolbar layout hotfix
+Included in the current safe operator workflow line:
+- queue toolbar wrap and spacing hardening
+- search box collision prevention
+- helper note width and overflow cleanup
+- no public `/plan` change
+- no schema change
+
+## Plugin tracking baseline
+
+### 2.4.23
+Current continuity tracking remains aligned to the guarded loyalty-workspace line through:
+- compact inquiry update header
+- compact loyalty update header
+- queue scan-speed and pagination work
+- loyalty continuity workspace and docs-page posture
 
 ## Deployment philosophy
 
@@ -52,4 +63,10 @@ This project follows:
 - avoid schema drift unless clearly justified
 - keep public theme flow stable
 - improve operator workflow incrementally
-- prefer plugin-only updates where possible
+
+## Release documentation
+
+See:
+- `CHANGELOG.md`
+- `MYKONOS_PLUGIN_HANDOFF.md`
+- `MYKONOS_CONTINUE_PROMPT.md`

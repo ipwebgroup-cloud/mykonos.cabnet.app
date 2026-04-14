@@ -28,21 +28,76 @@
     overflow-x: auto;
 }
 
-.queue-render-note {
-    display: inline-flex;
+.control-toolbar,
+.control-toolbar .toolbar {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 10px;
+    overflow: visible;
+}
+
+.control-toolbar .toolbar-item {
+    margin: 0 !important;
+    flex: 0 0 auto;
+}
+
+.control-toolbar .toolbar-item .btn {
+    white-space: nowrap;
+}
+
+.control-toolbar .toolbar-item.queue-render-note-item {
+    flex: 1 1 100%;
+    min-width: 280px;
+}
+
+.control-toolbar .toolbar-search,
+.control-toolbar .search,
+.control-toolbar .toolbar-text,
+.control-toolbar .relative.search-input,
+.control-toolbar .form-group {
+    margin-left: auto;
+    flex: 0 1 280px;
+    min-width: 220px;
+}
+
+.control-toolbar .toolbar-search input,
+.control-toolbar .search input,
+.control-toolbar input[type="text"] {
+    width: 100%;
+}
+
+.queue-render-note {
+    display: flex;
+    align-items: flex-start;
     gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 14px;
     background: #f6f8fb;
     color: #50627d;
     font-size: 12px;
-    line-height: 1.3;
+    line-height: 1.45;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .queue-render-note strong {
     color: #334155;
     font-weight: 700;
+    white-space: nowrap;
+}
+
+@media (max-width: 1200px) {
+    .control-toolbar .toolbar-search,
+    .control-toolbar .search,
+    .control-toolbar .toolbar-text,
+    .control-toolbar .relative.search-input,
+    .control-toolbar .form-group {
+        flex: 1 1 100%;
+        min-width: 0;
+        margin-left: 0;
+    }
 }
 </style>
 
@@ -70,7 +125,7 @@
     </a>
 </div>
 
-<div class="toolbar-item">
+<div class="toolbar-item queue-render-note-item">
     <span class="queue-render-note">
         <strong>Slimmer default queue load</strong>
         The first queue view now starts leaner. Use the page controls below the list, and use List Setup to add Email, Source, Loyalty Backlink, and history columns back when needed.
