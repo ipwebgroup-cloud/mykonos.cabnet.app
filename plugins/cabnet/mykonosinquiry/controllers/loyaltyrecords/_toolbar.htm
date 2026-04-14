@@ -6,7 +6,7 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
         <a
             href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
             class="btn btn-primary oc-icon-plus">
-            New repeat-guest record
+            New loyalty record
         </a>
     <?php else: ?>
         <button type="button" class="btn btn-default disabled" disabled>
@@ -20,8 +20,8 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
     <?php endif ?>
 
     <a
-        href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty list') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Simple loyalty help opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, packet posture, and next-review timing.') . '#help-loyalty' ?>"
+        href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty list') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Simple loyalty help opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, continuity packet posture, and next-review timing.') . '#help-loyalty' ?>"
         class="btn btn-default oc-icon-book">
-        Simple loyalty help
+        Loyalty help
     </a>
 </div>

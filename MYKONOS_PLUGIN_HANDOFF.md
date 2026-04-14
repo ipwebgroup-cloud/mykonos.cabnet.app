@@ -28,7 +28,7 @@ Repo reference:
 Treat the latest real uploaded rooted project state as the source of truth.
 
 Do **not** restart from older patch notes alone.
-Do **not** rewind to older inquiry-only assumptions unless the uploaded files clearly show that state.
+Do **not** rewind to older v2.x assumptions unless the uploaded files clearly show that state.
 Do **not** invent new architecture that is not present in the real files.
 
 ---
@@ -40,9 +40,9 @@ Stable direction:
 - public luxury frontend
 - mobile-first `/plan` inquiry flow
 - DB-backed inquiry persistence through the plugin
-- backend inquiry queue and operator workflow
+- backend Inquiry Queue and operator workflow
 - guarded Loyalty Continuity Workspace
-- dedicated Workspace Docs page
+- Workspace Docs / help page
 - safe plugin/theme integration
 - safe incremental development without breaking live operations
 
@@ -73,46 +73,47 @@ Preserve first:
 
 ---
 
-## Current verified development line
+## Current development line
 The project is deep into the guarded loyalty-workspace line.
 
-Verified baseline from the plugin history and continuity files:
-- queue-to-loyalty transfer actions are active
-- loyalty backlink and posture visibility are active
-- the dedicated docs/help page is active
-- server-side Inquiry Queue pagination is active
-- the inquiry update screen uses a compact header and collapsed guide
-- the loyalty continuity update screen uses a compact header and collapsed guide
-
-Current continuity hint to preserve:
-- `v6.41.61 loyalty-detail compact header and collapsed guide patch`
-- plugin tracking `2.4.23`
-
----
-
-## Safe priorities now
+Current safe priorities:
 - keep the Inquiry Queue fast first
 - keep docs/help on the dedicated docs page instead of re-expanding live screens
 - keep operator wording plain and readable
 - keep loyalty transfer / backlink visibility stable
 - keep row-level scan speed improving through smaller, clearer queue summaries
-- prefer plugin-only updates where possible
 
 ---
 
+## Latest applied patch line
+Latest known rooted patch prepared for deployment:
+
+- `v6.41.62 backend wording consistency and continuity alignment patch`
+- plugin tracking remains `2.4.23`
+
+This patch stays backend-only and does not touch `/plan`.
+It tightens wording across the queue/loyalty surface and keeps continuity files aligned to the real guarded loyalty-workspace line.
+
 ## Deployment note
-For the current continuity-alignment patch:
-- no schema change is introduced
-- no plugin refresh is required
-- no cache clear is strictly required, though `php artisan cache:clear` is safe after deployment if documentation routing labels appear stale
+
+For this patch, upload the rooted files and then run:
+
+- `php artisan cache:clear`
+
+No schema change is introduced and no plugin refresh is required for this step.
+
+Then verify:
+- Backend -> Inquiry Queue shows loyalty wording consistently in the toolbar
+- Backend -> Loyalty Continuity shows loyalty wording consistently in the toolbar
+- continuity files at project root reflect the current guarded loyalty-workspace baseline
 
 ---
 
 ## Safest next step
-After this continuity alignment, the next real pass should inspect:
-- whether inquiry and loyalty detail screens still contain any overly large always-visible helper copy
-- whether dense read-only guidance blocks should group more tightly by tab
-- whether queue / loyalty / docs wording should standardize around one operator language set
-- whether any remaining helper text should move fully into the docs page
+If the queue/detail experience still feels heavy after this patch, the next real pass should inspect:
+- whether inquiry and loyalty detail screen titles should align even more tightly
+- whether any remaining mixed “repeat-guest” wording should be normalized to “loyalty” or “loyalty continuity”
+- whether dense helper copy on update screens can reduce further without harming operator clarity
+- whether docs-page terminology should mirror queue/detail labels one-for-one
 
 Keep future work plugin-only where possible.

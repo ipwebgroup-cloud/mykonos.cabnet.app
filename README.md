@@ -1,6 +1,6 @@
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 
-Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow and operator-focused backend handling.
+Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow, operator-focused backend handling, and a guarded loyalty continuity workspace.
 
 ## Project purpose
 
@@ -8,8 +8,9 @@ This repository tracks the production-safe source for:
 - luxury public frontend
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
-- backend inquiry queue and operator workflow
-- guarded loyalty continuity workspace
+- backend Inquiry Queue and operator workflow
+- Loyalty Continuity workspace
+- Workspace Docs / help routing
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -20,45 +21,34 @@ This repository tracks the production-safe source for:
 
 ### Plugin
 - Plugin: `plugins/cabnet/mykonosinquiry`
-- Backend label: **Mykonos Inquiries**
+- Backend navigation:
+  - **Inquiry Queue**
+  - **Loyalty Continuity**
+  - **Workspace Docs**
 - Public bridge component: `mykonosPlanBridge`
 
-## Live workflow direction
+## Stable workflow direction
 
 The working production line preserves:
 - `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
 - inquiry persistence into `cabnet_mykonos_inquiries`
+- backend inquiry list and detail handling
 - generated request reference shown after successful submit
-- safe email notification handling to `mykonos@cabnet.app`
-- backend **Inquiry Queue** handling
-- backend **Loyalty Continuity** handling
-- dedicated backend **Workspace Docs** guidance
+- safe email notification handling
+- operator workflow actions, notes, and continuity improvements
+- loyalty transfer, backlink, and continuity record handling
+- queue-first scan-speed and compact record-screen posture
 
-## Current verified continuity baseline
+## Current safe continuity checkpoint
 
-### Plugin-tracked baseline
-The current verified plugin line continues through:
-- loyalty workspace activation and guarded create/update safety
-- queue-to-loyalty transfer actions and backlink visibility
-- dedicated docs/help page routing
-- queue scan-speed and pagination improvements
-- compact inquiry update header and collapsed guide
-- compact loyalty continuity update header and collapsed guide
-
-### Current safe continuity checkpoint
-Use the current continuity files and plugin history as the active baseline:
-- continuity hint: `v6.41.61 loyalty-detail compact header and collapsed guide patch`
-- plugin tracking: `2.4.23`
-
-## Stable workflow guardrails
-
-The stable production direction is:
-- keep `/plan` plugin-backed
-- do not reintroduce a theme-only inquiry system
-- keep the Inquiry Queue usable first
-- keep docs/help on the dedicated Workspace Docs page
-- keep the Loyalty Continuity workspace intact
-- prefer safe plugin-only updates unless theme work is clearly required
+### Backend continuity line
+Current verified safe continuity direction includes:
+- Inquiry Queue pagination / leaner default load
+- dedicated Workspace Docs page
+- compact inquiry update header
+- compact loyalty update header
+- collapsed plain-language guides
+- plugin tracking aligned to the latest verified continuity hint: **2.4.23**
 
 ## Repository rules
 
@@ -93,14 +83,13 @@ This project follows:
 - small production-safe patches
 - preserve working routes and business continuity
 - avoid schema drift unless clearly justified
-- keep the public theme flow stable
+- keep public theme flow stable
 - improve operator workflow incrementally
-- treat the latest rooted uploaded project state as the source of truth
+- prefer plugin-only backend work where possible
 
-## Release / continuity documentation
+## Release documentation
 
-Use these continuity-critical files first when continuing work:
-- `MYKONOS_PLUGIN_HANDOFF.md`
-- `MYKONOS_CONTINUE_PROMPT.md`
-
-Older patch notes remain useful as history, but future continuation should follow the real uploaded project state and the current continuity files before relying on older release labels alone.
+See:
+- `CHANGELOG.md`
+- continuity files at project root
+- patch note files delivered with each rooted patch zip

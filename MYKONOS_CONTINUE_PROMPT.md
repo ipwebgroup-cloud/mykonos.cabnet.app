@@ -51,19 +51,22 @@ Assume the live operational workspace remains:
 - **Loyalty Continuity Workspace**
 - **Workspace Docs**
 
-Do **not** rewind to the early inquiry-only workflow line unless the real uploaded files clearly show that state.
+Do **not** rewind to the early v2.x workflow line unless the real uploaded files clearly show that state.
 
 ---
 
 ## Current known line to verify
 
-The current verified continuity line is approximately:
+The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.61 loyalty-detail compact header and collapsed guide patch`
-- plugin tracking `2.4.23`
+- `v6.41.62 backend wording consistency and continuity alignment patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
+
+Plugin tracking remains approximately:
+
+- `2.4.23`
 
 ---
 
@@ -91,14 +94,6 @@ The current backend line is focused on:
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
 
-The current plugin-tracked continuity line includes:
-- queue-to-loyalty transfer actions and continuity backlinks
-- loyalty-aware queue filters and posture visibility
-- dedicated docs/help page routing
-- server-side Inquiry Queue pagination with leaner default rendering
-- compact inquiry update header with collapsed plain-language guide
-- compact loyalty continuity update header with collapsed plain-language guide
-
 ---
 
 ## Important backend state to preserve
@@ -118,10 +113,9 @@ Continue preferring:
 Recent safe work has already established:
 - a lighter button-first toolbar
 - queue-side scan-speed improvements remain in place
-- server-side queue pagination is active
-- the inquiry update screen opens with a compact record summary instead of large top advisory blocks
-- the loyalty continuity update screen follows the same compact-header and collapsed-guide direction
-- the plain-language screen guides stay collapsed by default and only open when needed
+- the inquiry update screen now opens with a compact record summary instead of two large top advisory blocks
+- the loyalty continuity update screen now follows the same compact-header and collapsed-guide direction
+- the plain-language screen guides now stay collapsed by default and only open when needed
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -134,15 +128,24 @@ Keep these safe:
 - saved loyalty record workflow
 - plain-language helper blocks on loyalty screens
 
+### 5. Terminology consistency is now part of the safe polish line
+Prefer consistent wording across queue, loyalty, and docs surfaces.
+Avoid mixing:
+- repeat guest
+- loyalty
+- loyalty continuity
+unless the real screen needs the distinction.
+
 ---
 
 ## Most recent safe next step
 
-The strongest next step after this continuity-alignment patch is:
+The strongest next step after the last delivered patch is:
 - keep both inquiry and loyalty update screens compact and readable
 - continue reducing always-visible helper copy before adding more UI chrome
 - inspect whether dense read-only guidance panels should group more tightly by tab
-- keep queue / loyalty / docs wording consistent in operator language
+- keep operator language simple
+- continue normalizing mixed wording across queue, loyalty, and docs surfaces
 
 ---
 
