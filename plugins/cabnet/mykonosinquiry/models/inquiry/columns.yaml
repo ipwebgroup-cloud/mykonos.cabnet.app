@@ -20,13 +20,13 @@ columns:
     services_inline:
         label: Focus
     email:
-        label: Email
+        label: Guest Email
         searchable: true
         invisible: true
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
     source_display:
-        label: Source
+        label: Source Detail
         invisible: true
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
@@ -37,7 +37,7 @@ columns:
         sortable: false
         searchable: false
     loyalty_backlink_summary:
-        label: Loyalty Link
+        label: Loyalty Link Detail
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_backlink_summary.htm
         sortable: false
@@ -52,19 +52,19 @@ columns:
         sortable: false
         searchable: false
     last_contacted_at:
-        label: Last Contacted
+        label: Last Contacted At
         type: datetime
         invisible: true
         cssClass: queue-col-full
         headCssClass: queue-col-full
     closed_at:
-        label: Closed
+        label: Closed At
         type: datetime
         invisible: true
         cssClass: queue-col-full
         headCssClass: queue-col-full
     created_at:
-        label: Created
+        label: Created At
         type: datetime
         invisible: true
         cssClass: queue-col-full

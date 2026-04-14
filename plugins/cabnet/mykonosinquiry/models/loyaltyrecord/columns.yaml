@@ -48,7 +48,7 @@ columns:
         sortable: false
 
     continuity_loop_posture_label:
-        label: Loop
+        label: Loop Detail
         sortable: false
         invisible: true
 
@@ -58,7 +58,7 @@ columns:
         invisible: true
 
     finish_lane_status_label:
-        label: Lane
+        label: Finish Lane Detail
         sortable: false
         invisible: true
 
@@ -68,7 +68,7 @@ columns:
         invisible: true
 
     finish_triage_label:
-        label: Triage
+        label: Finish Triage
         sortable: false
         invisible: true
 
@@ -296,6 +296,6 @@ columns:
         label: Owner
 
     updated_at:
-        label: Updated
+        label: Updated At
         type: datetime
         format: Y-m-d H:i

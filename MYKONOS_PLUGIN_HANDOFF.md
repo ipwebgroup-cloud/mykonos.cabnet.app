@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.77 shared list-setup guidance polish patch`
+- `v6.41.78 shared list-setup naming polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It aligns the helper guidance on Inquiry Queue and Loyalty Continuity so both list pages explain the same scan-first default rule and point operators toward List Setup for denser diagnostics.
+It makes the heavier optional columns read more clearly inside List Setup while keeping the lighter default daily scan view unchanged.
 
 ## Deployment note
 
@@ -19,7 +19,7 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue
-- Backend -> Loyalty Continuity
-- both list pages show matching scan-first guidance
-- list behavior remains unchanged
+- Backend -> Inquiry Queue -> List Setup
+- Backend -> Loyalty Continuity -> List Setup
+- heavier optional column names read more clearly
+- default list behavior remains unchanged
