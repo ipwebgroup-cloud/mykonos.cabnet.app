@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.50.00 queue-to-loyalty relationship cues on inquiry and loyalty record screens`
+- `v6.51.00 loyalty create source relationship breadcrumbs`
 
 ## Current verified development direction
 
@@ -17,4 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- making queue-to-loyalty transfer posture easier to understand directly on the record screens
+- making inquiry-backed loyalty creation clearer before the first save when source context is present

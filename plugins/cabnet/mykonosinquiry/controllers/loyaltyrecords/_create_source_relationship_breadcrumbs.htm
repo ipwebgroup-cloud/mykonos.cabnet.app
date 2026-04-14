@@ -1,0 +1,80 @@
+<?php
+$seedInquiryId = (int) input('source_inquiry_id', 0);
+$seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find($seedInquiryId) : null;
+
+if ($seedInquiryId <= 0) {
+    return;
+}
+
+$queueUrl = Backend::url('cabnet/mykonosinquiry/inquiries');
+$docsUrl = Backend::url('cabnet/mykonosinquiry/helpcenter')
+    . '?from=loyalty-create-bridge'
+    . '&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') . '?source_inquiry_id=' . $seedInquiryId)
+    . '&returnLabel=' . rawurlencode('Back to seeded loyalty draft')
+    . '&returnTitle=' . rawurlencode('Return to the seeded loyalty create screen after checking bridge guidance.')
+    . '&returnSummary=' . rawurlencode('This help route was opened while creating a continuity record from a live inquiry.')
+    . '&secondary=' . rawurlencode($queueUrl)
+    . '&secondaryLabel=' . rawurlencode('Open Inquiry Queue')
+    . '&sourceLabel=' . rawurlencode('Seeded loyalty create screen')
+    . '&sourceSummary=' . rawurlencode('Opened from the loyalty create route with a source inquiry id so the first save keeps continuity tied to queue context.')
+    . '#help-transfer-routes';
+
+if ($seedInquiry) {
+    $ref = trim((string) $seedInquiry->request_reference);
+    $guest = trim((string) $seedInquiry->full_name);
+    $status = trim((string) ($seedInquiry->status_label ?? $seedInquiry->status ?? ''));
+    $priority = trim((string) ($seedInquiry->priority_label ?? $seedInquiry->priority ?? ''));
+    $owner = trim((string) ($seedInquiry->owner_display ?? 'Unassigned'));
+    $queueSummary = trim((string) ($seedInquiry->follow_up_queue_summary ?? 'No follow-up posture recorded yet'));
+    $headline = $ref !== '' ? $ref : ('Inquiry #' . $seedInquiry->id);
+    if ($guest !== '') {
+        $headline .= ' · ' . $guest;
+    }
+    $queueSearchUrl = $ref !== ''
+        ? $queueUrl . '?' . http_build_query(['search' => $ref])
+        : $queueUrl;
+    $recordUrl = Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $seedInquiry->id);
+}
+?>
+<div class="form-group span-full">
+    <div style="border:1px solid #d7e4ff;border-radius:16px;background:linear-gradient(135deg,#f8fbff 0%,#ffffff 100%);padding:16px 18px;box-shadow:0 12px 28px rgba(39,74,152,.06);margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5b66e3;margin-bottom:7px;">Create route relationship cues</div>
+        <?php if ($seedInquiry): ?>
+            <h3 style="margin:0 0 7px;font-size:22px;line-height:1.25;color:#24364b;">This loyalty draft is being created from a live inquiry</h3>
+            <p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#536274;">
+                The first save on this page will keep the continuity record attached to the originating queue request. Confirm the source posture now so the new loyalty record starts from the right relationship lane.
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
+                <div style="background:#fff;border:1px solid #e2eaf7;border-radius:14px;padding:12px 13px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Source inquiry</div>
+                    <div style="font-weight:700;color:#24364b;margin-bottom:4px;"><?= e($headline) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#5a6a7d;"><?= e($status !== '' || $priority !== '' ? trim($status . ($status !== '' && $priority !== '' ? ' · ' : '') . $priority) : 'Queue posture not labeled yet') ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e2eaf7;border-radius:14px;padding:12px 13px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">Queue ownership now</div>
+                    <div style="font-weight:700;color:#24364b;margin-bottom:4px;"><?= e($owner) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#5a6a7d;"><?= e($queueSummary) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e2eaf7;border-radius:14px;padding:12px 13px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:6px;">First-save relationship</div>
+                    <div style="font-weight:700;color:#24364b;margin-bottom:4px;">Inquiry-backed continuity draft</div>
+                    <div style="font-size:13px;line-height:1.55;color:#5a6a7d;">Save this draft from here when continuity should follow the same guest story instead of starting as a manual loyalty-only record.</div>
+                </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+                <a href="<?= e($recordUrl) ?>" class="btn btn-primary btn-sm">Open source inquiry</a>
+                <a href="<?= e($queueSearchUrl) ?>" class="btn btn-default btn-sm">Back to queue search</a>
+                <a href="<?= e($docsUrl) ?>" class="btn btn-default btn-sm">Bridge help</a>
+            </div>
+        <?php else: ?>
+            <h3 style="margin:0 0 7px;font-size:22px;line-height:1.25;color:#7a4a00;">Source inquiry id was supplied, but the live inquiry was not found</h3>
+            <p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#6b4a00;">
+                The create route is carrying <code>?source_inquiry_id=<?= e((string) $seedInquiryId) ?></code>, but no current inquiry matched it. Reopen this screen from a real queue or inquiry record so the first save keeps the right source relationship.
+            </p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <a href="<?= e($queueUrl) ?>" class="btn btn-default btn-sm">Open Inquiry Queue</a>
+                <a href="<?= e($docsUrl) ?>" class="btn btn-default btn-sm">Bridge help</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.50.00 — Queue-to-loyalty relationship cues on inquiry and loyalty record screens
+### v6.51.00 — Loyalty create source relationship breadcrumbs
 Included in the current safe backend polish line:
-- relationship cue strip on the inquiry record showing whether the request should stay queue-owned, transfer into continuity, or stay as reference history
-- matching source-inquiry relationship cue strip on the loyalty record showing whether the queue is still live or continuity should lead follow-through
-- plugin-only operator guidance upgrade without changing live workflow logic
+- source-relationship breadcrumbs on the loyalty create route when `?source_inquiry_id=` is present
+- bridge-safe create guidance before the first save
+- plugin-only operator orientation upgrade without changing live workflow logic
 
 ### Current plugin-tracked baseline
 - `2.4.23`
