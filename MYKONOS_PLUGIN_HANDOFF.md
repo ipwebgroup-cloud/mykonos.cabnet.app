@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.82 shared list microcopy polish patch`
+- `v6.41.83 shared badge-tone consistency pass`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It shortens tiny visible list hints and badge-adjacent microcopy on Inquiry Queue and Loyalty Continuity so operators get the same signals with slightly less noise.
+It gives similar visible queue and loyalty hint signals more consistent badge/chip treatment so operators can scan linked, transfer-ready, queue-origin, and related states with more uniform visual emphasis.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- tiny visible hint text reads a bit cleaner
+- similar visible hint states use more consistent chip treatment
 - list behavior remains unchanged

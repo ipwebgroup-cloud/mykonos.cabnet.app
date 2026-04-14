@@ -38,15 +38,23 @@ $priorityTones = [
 [$priorityText, $priorityBg, $priorityBorder] = $priorityTones[$priorityKey] ?? ['#495057', '#f3f4f6', '#d7dce2'];
 
 $loyaltyHint = $loyalty;
+$loyaltyTone = ['#5c6370', '#f3f4f6', '#d7dce2'];
+
 if (stripos($loyaltyHint, 'linked') !== false) {
     $loyaltyHint = 'Linked';
+    $loyaltyTone = ['#0b63ce', '#eef5ff', '#cfe2ff'];
 } elseif (stripos($loyaltyHint, 'transfer') !== false) {
     $loyaltyHint = 'Transfer-ready';
+    $loyaltyTone = ['#7c4a03', '#fff7e6', '#f5d08a'];
 } elseif (stripos($loyaltyHint, 'draft') !== false) {
     $loyaltyHint = 'Draft-ready';
+    $loyaltyTone = ['#495057', '#f3f4f6', '#d7dce2'];
 } elseif (stripos($loyaltyHint, 'staged') !== false) {
     $loyaltyHint = 'Staged';
+    $loyaltyTone = ['#495057', '#f3f4f6', '#d7dce2'];
 }
+
+[$loyaltyText, $loyaltyBg, $loyaltyBorder] = $loyaltyTone;
 ?>
 <div class="queue-state-summary" style="min-width:160px; max-width:210px; line-height:1.15; white-space:normal;">
     <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:4px; align-items:center;">
@@ -57,7 +65,9 @@ if (stripos($loyaltyHint, 'linked') !== false) {
             <?= e($priority) ?>
         </span>
     </div>
-    <div style="font-size:11px; color:#5f6b82; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyalty) ?>">
-        <?= e($loyaltyHint) ?>
+    <div>
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($loyaltyBorder) ?>; background:<?= e($loyaltyBg) ?>; color:<?= e($loyaltyText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyalty) ?>">
+            <?= e($loyaltyHint) ?>
+        </span>
     </div>
 </div>

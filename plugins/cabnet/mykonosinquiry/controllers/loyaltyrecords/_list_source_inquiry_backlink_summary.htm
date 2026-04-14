@@ -79,11 +79,16 @@ if (stripos($latestPacket, 'no packet') !== false) {
 }
 
 $shortHint = $hint;
+$hintTone = ['#5c6370', '#f3f4f6', '#d7dce2'];
 if (stripos($shortHint, 'manual') !== false) {
     $shortHint = 'Manual record';
+    $hintTone = ['#495057', '#f3f4f6', '#d7dce2'];
 } elseif (stripos($shortHint, 'queue') !== false) {
     $shortHint = 'From queue';
+    $hintTone = ['#0b63ce', '#eef5ff', '#cfe2ff'];
 }
+
+[$hintText, $hintBg, $hintBorder] = $hintTone;
 ?>
 <div style="min-width:245px; line-height:1.28; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:9px 11px;">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -92,8 +97,10 @@ if (stripos($shortHint, 'manual') !== false) {
     <div style="font-size:12px; color:<?= e($text) ?>; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
         <span title="Source posture"><?= e($posture) ?></span>
     </div>
-    <div style="font-size:11px; color:<?= e($text) ?>; opacity:0.9; margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
-        <?= e($shortHint) ?>
+    <div style="margin-bottom:7px;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($hint) ?>">
+            <?= e($shortHint) ?>
+        </span>
     </div>
 
     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:7px; align-items:center;">

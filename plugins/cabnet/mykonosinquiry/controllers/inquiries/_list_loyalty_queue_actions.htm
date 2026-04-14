@@ -11,20 +11,25 @@ $primaryLabel = (string) $inquiry->loyalty_queue_primary_action_label;
 $secondaryLabel = (string) $inquiry->loyalty_queue_secondary_action_label;
 $primaryTone = 'default';
 $hint = 'Queue-only';
+$hintTone = ['#5c6370', '#f3f4f6', '#d7dce2'];
 
 if (strpos($primaryLabel, 'Open loyalty') === 0) {
     $primaryTone = 'primary';
     $hint = 'Linked';
+    $hintTone = ['#0b63ce', '#eef5ff', '#cfe2ff'];
     $primaryLabel = 'Open loyalty';
 } elseif (strpos($primaryLabel, 'Create + open loyalty') === 0) {
     $primaryTone = 'primary';
     $hint = 'Transfer-ready';
+    $hintTone = ['#7c4a03', '#fff7e6', '#f5d08a'];
     $primaryLabel = 'Create loyalty';
 } elseif (strpos($primaryLabel, 'Open draft') === 0) {
     $hint = 'Draft-ready';
+    $hintTone = ['#495057', '#f3f4f6', '#d7dce2'];
     $primaryLabel = 'Open draft';
 } elseif (strpos($primaryLabel, 'Workspace staged') === 0) {
     $hint = 'Staged';
+    $hintTone = ['#495057', '#f3f4f6', '#d7dce2'];
     $primaryLabel = 'Workspace staged';
 }
 
@@ -33,9 +38,11 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
 } elseif (stripos($secondaryLabel, 'Return to inquiry') !== False) {
     $secondaryLabel = 'Open inquiry';
 }
+
+[$hintText, $hintBg, $hintBorder] = $hintTone;
 ?>
 <div style="min-width:160px; max-width:205px; line-height:1.2;">
-    <div style="margin-bottom:3px; display:flex; flex-wrap:wrap; gap:4px;">
+    <div style="margin-bottom:4px; display:flex; flex-wrap:wrap; gap:4px;">
         <?php if ($primaryUrl !== ''): ?>
             <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
                 <?= e($primaryLabel) ?>
@@ -52,7 +59,9 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
             </a>
         <?php endif; ?>
     </div>
-    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:205px;">
-        <?= e($hint) ?>
+    <div>
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            <?= e($hint) ?>
+        </span>
     </div>
 </div>
