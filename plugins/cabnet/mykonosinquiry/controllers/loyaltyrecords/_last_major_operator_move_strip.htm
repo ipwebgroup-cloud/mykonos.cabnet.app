@@ -1,0 +1,73 @@
+<?php
+    $record = $model ?? ($formModel ?? $this->formGetModel());
+
+    $reference = $record && !empty($record->request_reference) ? $record->request_reference : 'Loyalty record';
+    $latestOutcome = $record && !empty($record->latest_touchpoint_outcome_label)
+        ? $record->latest_touchpoint_outcome_label
+        : 'No touchpoint outcome logged yet';
+
+    $latestSummary = $record && !empty($record->latest_touchpoint_summary)
+        ? trim((string) $record->latest_touchpoint_summary)
+        : 'No loyalty touchpoint summary is visible yet. Keep the next decisive continuity move clear so the next operator can understand what changed and why.';
+
+    $latestSummary = mb_substr(preg_replace('/\s+/', ' ', $latestSummary), 0, 240);
+
+    $latestNarrative = $record && !empty($record->latest_touchpoint_body_preview)
+        ? trim((string) $record->latest_touchpoint_body_preview)
+        : '';
+    $latestNarrative = $latestNarrative !== '' ? mb_substr(preg_replace('/\s+/', ' ', $latestNarrative), 0, 180) : '';
+
+    $touchpointAt = $record && !empty($record->last_retention_contact_at) && $record->last_retention_contact_at instanceof \DateTimeInterface
+        ? $record->last_retention_contact_at->format('Y-m-d H:i')
+        : 'No retention contact logged';
+
+    $owner = $record && !empty($record->owner_name) ? $record->owner_name : 'Not assigned yet';
+    $nextReview = $record && !empty($record->next_review_at) && $record->next_review_at instanceof \DateTimeInterface
+        ? $record->next_review_at->format('Y-m-d H:i')
+        : 'No next review scheduled';
+
+    $toneLabel = $record && !empty($record->latest_touchpoint_summary) ? 'Latest continuity move is visible' : 'Continuity memory needs a clearer touchpoint';
+    $toneBorder = $record && !empty($record->latest_touchpoint_summary) ? '#d1fae5' : '#dbeafe';
+    $toneBg = $record && !empty($record->latest_touchpoint_summary) ? '#f0fdf4' : '#f8fbff';
+    $toneText = $record && !empty($record->latest_touchpoint_summary) ? '#047857' : '#1d4ed8';
+?>
+<div class="callout no-subheader" style="margin:0 0 14px 0;border-radius:14px;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneBg) ?>;box-shadow:0 6px 18px rgba(15,23,42,.04);">
+    <div class="content" style="padding:14px 16px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;">
+            <div style="min-width:260px;flex:1 1 420px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Last major operator move</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid <?= e($toneBorder) ?>;background:#fff;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;color:<?= e($toneText) ?>;"><?= e($toneLabel) ?></span>
+                    <span style="font-size:12px;color:#475569;font-weight:700;"><?= e($reference) ?></span>
+                </div>
+                <div style="font-size:14px;line-height:1.65;color:#1f2937;">
+                    <strong><?= e($latestOutcome) ?></strong>
+                    <span style="color:#64748b;"> · <?= e($touchpointAt) ?></span>
+                </div>
+                <div style="margin-top:6px;font-size:13px;line-height:1.7;color:#475569;">
+                    <?= e($latestSummary) ?>
+                </div>
+                <?php if ($latestNarrative !== ''): ?>
+                    <div style="margin-top:6px;font-size:12px;line-height:1.65;color:#64748b;">
+                        Narrative cue: <?= e($latestNarrative) ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div style="min-width:220px;flex:0 1 280px;display:grid;gap:8px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Owner now</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.45;"><?= e($owner) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Next review</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.45;"><?= e($nextReview) ?></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-form-routes" class="btn btn-default oc-icon-book">Memory help</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Loyalty Continuity</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Inquiry Queue</a>
+        </div>
+    </div>
+</div>

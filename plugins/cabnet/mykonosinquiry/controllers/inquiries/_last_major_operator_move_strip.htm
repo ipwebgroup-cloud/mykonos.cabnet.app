@@ -1,0 +1,89 @@
+<?php
+    $record = $model ?? $this->formGetModel();
+
+    $reference = $record && !empty($record->request_reference) ? $record->request_reference : 'Inquiry';
+    $latestNote = null;
+
+    if ($record && method_exists($record, 'notes')) {
+        try {
+            $latestNote = $record->notes()->orderBy('created_at', 'desc')->first();
+        } catch (\Throwable $e) {
+            $latestNote = null;
+        }
+    }
+
+    $noteStamp = $latestNote && !empty($latestNote->created_at)
+        ? $latestNote->created_at->format('Y-m-d H:i')
+        : 'No major move logged yet';
+
+    $noteType = $latestNote && !empty($latestNote->note_type)
+        ? ucwords(str_replace(['_', '-'], ' ', $latestNote->note_type))
+        : 'Queue memory';
+
+    $noteAuthor = $latestNote && !empty($latestNote->author_name)
+        ? $latestNote->author_name
+        : 'System';
+
+    $noteBody = $latestNote && !empty($latestNote->body)
+        ? trim((string) $latestNote->body)
+        : 'No saved operator note is visible yet. Keep the next decisive move explicit in the internal note so the next person can understand what changed and why.';
+
+    $noteBody = mb_substr(preg_replace('/\s+/', ' ', $noteBody), 0, 240);
+
+    $tone = 'neutral';
+    $toneLabel = 'Memory needs a clearer note';
+    $toneBorder = '#dbeafe';
+    $toneBg = '#f8fbff';
+    $toneText = '#1d4ed8';
+
+    if ($latestNote) {
+        $tone = 'positive';
+        $toneLabel = 'Latest decisive move is visible';
+        $toneBorder = '#d1fae5';
+        $toneBg = '#f0fdf4';
+        $toneText = '#047857';
+    }
+
+    if ($record && !empty($record->follow_up_date) && $record->follow_up_date instanceof \DateTimeInterface) {
+        $nextCheckpoint = $record->follow_up_date->format('Y-m-d');
+    } else {
+        $nextCheckpoint = 'No follow-up scheduled';
+    }
+
+    $owner = $record && !empty($record->owner_name) ? $record->owner_name : 'Not assigned yet';
+?>
+<div class="callout no-subheader" style="margin:0 0 14px 0;border-radius:14px;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneBg) ?>;box-shadow:0 6px 18px rgba(15,23,42,.04);">
+    <div class="content" style="padding:14px 16px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;">
+            <div style="min-width:260px;flex:1 1 420px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Last major operator move</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid <?= e($toneBorder) ?>;background:#fff;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;color:<?= e($toneText) ?>;"><?= e($toneLabel) ?></span>
+                    <span style="font-size:12px;color:#475569;font-weight:700;"><?= e($reference) ?></span>
+                </div>
+                <div style="font-size:14px;line-height:1.65;color:#1f2937;">
+                    <strong><?= e($noteType) ?></strong>
+                    <span style="color:#64748b;"> · <?= e($noteAuthor) ?> · <?= e($noteStamp) ?></span>
+                </div>
+                <div style="margin-top:6px;font-size:13px;line-height:1.7;color:#475569;">
+                    <?= e($noteBody) ?>
+                </div>
+            </div>
+            <div style="min-width:220px;flex:0 1 280px;display:grid;gap:8px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Owner now</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.45;"><?= e($owner) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Next checkpoint</div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.45;"><?= e($nextCheckpoint) ?></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-form-routes" class="btn btn-default oc-icon-book">Memory help</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Inquiry Queue</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Loyalty Continuity</a>
+        </div>
+    </div>
+</div>
