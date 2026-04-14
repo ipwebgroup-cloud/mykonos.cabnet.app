@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.43.00 route-state summary strips for queue and loyalty`
+- `v6.44.00 workspace docs operator playbook dashboard`
 
 ## Current verified development direction
 
@@ -17,4 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- using compact route-state orientation layers before widening row UI again
+- turning Workspace Docs into a stronger operator playbook instead of pushing more doc weight back into list toolbars
