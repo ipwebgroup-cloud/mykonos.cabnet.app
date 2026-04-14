@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.84 shared list-cell spacing polish patch`
+- `v6.41.85 shared secondary button-tone consistency pass`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- smoothing compact list-cell spacing before adding more UI surface
+- aligning non-primary visible row-action emphasis before adding more UI surface

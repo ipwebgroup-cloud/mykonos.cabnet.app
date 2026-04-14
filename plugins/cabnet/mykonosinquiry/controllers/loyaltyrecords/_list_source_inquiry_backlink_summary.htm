@@ -138,10 +138,10 @@ if (stripos($shortHint, 'manual') !== false) {
             <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;" title="No source inquiry available"><?= e($primaryLabel) ?></span>
         <?php endif; ?>
         <?php if ($historyUrl): ?>
-            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" title="Open loyalty history"><?= e($historyLabel) ?></a>
+            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" style="border-color:#d7dce2; background:#f8f9fa; color:#495057;" title="Open loyalty history"><?= e($historyLabel) ?></a>
         <?php endif; ?>
         <?php if ($secondaryUrl): ?>
-            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" title="Return to queue"><?= e($secondaryLabel) ?></a>
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="border-color:#d7dce2; background:#f8f9fa; color:#495057;" title="Return to queue"><?= e($secondaryLabel) ?></a>
         <?php endif; ?>
     </div>
 </div>
