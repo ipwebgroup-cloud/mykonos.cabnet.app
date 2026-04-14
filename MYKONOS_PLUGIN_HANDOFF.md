@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.42.00 operator quick-start major backend docs upgrade`
+- `v6.43.00 route-state summary strips for queue and loyalty`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades both list pages from simple helper notes into larger operator quick-start surfaces that explain the daily scan workflow, queue-to-loyalty bridge posture, and when to widen the view with List Setup or deeper docs.
+It adds one compact route-state summary strip above both list pages so operators can immediately see current view posture, active filter/search context, and queue-to-loyalty routing state before widening the list or opening records.
 
 ## Deployment note
 
@@ -21,21 +21,23 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- both list pages now show a larger quick-start guidance block under the toolbar note
-- queue and loyalty actions, filters, and list behavior remain unchanged
+- both list pages now show a compact route-state strip above the list area
+- search, filters, and row actions still behave as before
+- `/plan` remains untouched
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves backend self-guidance
-- reduces the need to open docs blindly
-- keeps the live /plan bridge untouched
+- improves list-to-record orientation without changing queue logic
+- makes current filter/search posture easier to confirm at a glance
+- surfaces queue-to-loyalty routing state in a safer compact layer
+- keeps the live `/plan` bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this larger operator-docs pass, the next strong step should be one of:
-- upgrade the Workspace Docs page itself into a fuller operator playbook dashboard
-- add one compact route-state summary strip above both list pages using real current filter context
-- improve list-to-record orientation cues without widening the row UI again
+After this route-state pass, the next strong step should be one of:
+- upgrade the Workspace Docs page into a fuller operator playbook dashboard
+- add one compact record-opening orientation strip inside both update forms
+- refine queue and loyalty list empty/default states with the same operator language system

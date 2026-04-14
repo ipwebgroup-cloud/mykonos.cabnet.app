@@ -1,0 +1,316 @@
+<?php
+use Backend;
+use Cabnet\MykonosInquiry\Models\Inquiry;
+
+$query = request()->query();
+$search = trim((string) ($query['search'] ?? $query['q'] ?? ''));
+$rawFilter = $query['filter'] ?? $query['Filter'] ?? [];
+
+$findScopeValue = function ($bag, $key) use (&$findScopeValue) {
+    if (!is_array($bag)) {
+        return null;
+    }
+
+    if (array_key_exists($key, $bag)) {
+        return $bag[$key];
+    }
+
+    foreach ($bag as $value) {
+        if (is_array($value)) {
+            $found = $findScopeValue($value, $key);
+            if ($found !== null) {
+                return $found;
+            }
+        }
+    }
+
+    return null;
+};
+
+$normalizeValues = function ($value) use (&$normalizeValues) {
+    if ($value === null || $value === '' || $value === false) {
+        return [];
+    }
+
+    if (is_scalar($value)) {
+        return [(string) $value];
+    }
+
+    $values = [];
+
+    foreach ((array) $value as $item) {
+        foreach ($normalizeValues($item) as $normalized) {
+            if ($normalized !== '') {
+                $values[] = $normalized;
+            }
+        }
+    }
+
+    return array_values(array_unique($values));
+};
+
+$scopeOptions = [
+    'status' => [
+        'label' => 'Status',
+        'options' => [
+            'new' => 'New brief',
+            'reviewed' => 'Reviewed',
+            'contacted' => 'Contacted',
+            'proposal_sent' => 'Proposal sent',
+            'awaiting_guest' => 'Awaiting guest',
+            'confirmed' => 'Confirmed',
+            'closed_won' => 'Closed won',
+            'closed_lost' => 'Closed lost',
+            'spam' => 'Spam',
+            'triage' => 'Triage (legacy)',
+            'proposal' => 'Proposal shaping (legacy)',
+            'closed' => 'Closed (legacy)',
+        ],
+    ],
+    'priority' => [
+        'label' => 'Priority',
+        'options' => [
+            'low' => 'Low',
+            'normal' => 'Normal',
+            'high' => 'High',
+            'vip' => 'VIP',
+            'urgent' => 'Urgent',
+        ],
+    ],
+    'urgency_hint' => [
+        'label' => 'Urgency',
+        'options' => [
+            'urgent' => 'Urgent',
+            'near-term' => 'Near term',
+        ],
+    ],
+    'source_type' => [
+        'label' => 'Source',
+        'options' => [
+            'service' => 'Service',
+            'experience' => 'Experience',
+            'pathway' => 'Pathway',
+            'guest_pathway' => 'Guest pathway',
+            'stay_design' => 'Stay design',
+        ],
+    ],
+    'requested_mode' => [
+        'label' => 'Mode',
+        'options' => [
+            'quick' => 'Quick',
+            'detailed' => 'Detailed',
+            'executive' => 'Executive',
+            'celebration' => 'Celebration',
+        ],
+    ],
+    'loyalty_queue_posture' => [
+        'label' => 'Loyalty posture',
+        'options' => Inquiry::getLoyaltyQueuePostureOptionMap(),
+    ],
+];
+
+$activeFilters = [];
+
+foreach ($scopeOptions as $scopeKey => $scopeMeta) {
+    $values = $normalizeValues($findScopeValue($rawFilter, $scopeKey));
+
+    if (empty($values)) {
+        continue;
+    }
+
+    $labels = [];
+    foreach ($values as $value) {
+        $labels[] = $scopeMeta['options'][$value] ?? ucwords(str_replace(['_', '-'], ' ', $value));
+    }
+
+    $activeFilters[] = [
+        'label' => $scopeMeta['label'],
+        'summary' => implode(', ', $labels),
+    ];
+}
+
+$badges = Inquiry::getLoyaltyQueuePostureBadgeStrip();
+$transferSummary = Inquiry::getLoyaltyQueueTransferSummary();
+$recordsPerPage = 25;
+$currentPage = max(1, (int) ($query['page'] ?? 1));
+?>
+
+<style>
+.queue-route-strip {
+    margin: 0 0 16px;
+    border: 1px solid #dbe4f2;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fbfcff 0%, #ffffff 100%);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+.queue-route-strip__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid #e6edf7;
+}
+.queue-route-strip__eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #6b7a90;
+    margin-bottom: 4px;
+}
+.queue-route-strip__title {
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #22364f;
+    margin: 0 0 4px;
+}
+.queue-route-strip__summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5d6d7e;
+    max-width: 760px;
+}
+.queue-route-strip__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.queue-route-strip__actions .btn {
+    border-radius: 999px;
+}
+.queue-route-strip__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    padding: 14px 16px;
+}
+.queue-route-strip__card {
+    min-width: 0;
+    border: 1px solid #e3eaf3;
+    border-radius: 14px;
+    background: #fff;
+    padding: 12px 13px;
+}
+.queue-route-strip__card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #728197;
+    margin-bottom: 6px;
+}
+.queue-route-strip__card-value {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #2d415c;
+}
+.queue-route-strip__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.queue-route-strip__filter-pill,
+.queue-route-strip__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 30px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f5f8fc;
+    border: 1px solid #dde6f1;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #40546f;
+}
+.queue-route-strip__filter-pill strong,
+.queue-route-strip__badge strong {
+    color: #22364f;
+}
+.queue-route-strip__badge--positive { background: #ecfdf3; border-color: #cdeed8; }
+.queue-route-strip__badge--warning { background: #fff7ed; border-color: #fed7aa; }
+.queue-route-strip__badge--primary { background: #eef2ff; border-color: #d7defd; }
+.queue-route-strip__badge--critical { background: #fef2f2; border-color: #fecaca; }
+.queue-route-strip__footer {
+    padding: 0 16px 14px;
+}
+.queue-route-strip__footer-note {
+    padding: 12px 13px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #e3ebf4;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #556578;
+}
+.queue-route-strip__footer-note strong { color: #22364f; }
+@media (max-width: 1080px) {
+    .queue-route-strip__grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="queue-route-strip">
+    <div class="queue-route-strip__top">
+        <div>
+            <div class="queue-route-strip__eyebrow">Route-state summary</div>
+            <h3 class="queue-route-strip__title">Inquiry Queue current operator posture</h3>
+            <div class="queue-route-strip__summary">
+                This strip reflects the live queue route, current search and filter posture, and continuity routing counts so operators can confirm where they are before widening the list or opening records.
+            </div>
+        </div>
+        <div class="queue-route-strip__actions">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue' ?>" class="btn btn-default oc-icon-book">Queue docs</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open loyalty list</a>
+        </div>
+    </div>
+
+    <div class="queue-route-strip__grid">
+        <div class="queue-route-strip__card">
+            <div class="queue-route-strip__card-label">Current view</div>
+            <div class="queue-route-strip__card-value">
+                Page <?= $currentPage ?> · default page size <?= $recordsPerPage ?> · <?= $search !== '' ? 'search active for “' . e($search) . '”' : 'no search term active' ?>.
+            </div>
+        </div>
+
+        <div class="queue-route-strip__card">
+            <div class="queue-route-strip__card-label">Active filters</div>
+            <div class="queue-route-strip__card-value">
+                <?php if (!empty($activeFilters)): ?>
+                    <div class="queue-route-strip__filters">
+                        <?php foreach ($activeFilters as $filter): ?>
+                            <span class="queue-route-strip__filter-pill"><strong><?= e($filter['label']) ?>:</strong> <?= e($filter['summary']) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    Default scan-first queue view. No filter scopes are currently active.
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="queue-route-strip__card">
+            <div class="queue-route-strip__card-label">Loyalty routing snapshot</div>
+            <div class="queue-route-strip__card-value">
+                <div class="queue-route-strip__filters">
+                    <?php foreach ($badges as $badge): ?>
+                        <span class="queue-route-strip__badge queue-route-strip__badge--<?= e($badge['tone']) ?>" title="<?= e($badge['hint']) ?>">
+                            <strong><?= e($badge['label']) ?></strong> <?= e((string) $badge['value']) ?>
+                        </span>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="queue-route-strip__footer">
+        <div class="queue-route-strip__footer-note">
+            <strong><?= e($transferSummary['headline'] ?? 'Queue transfer posture is available.') ?></strong>
+            <?= e($transferSummary['body'] ?? 'Use the visible counts and active filters as the quick orientation layer before moving into record-level work.') ?>
+        </div>
+    </div>
+</div>

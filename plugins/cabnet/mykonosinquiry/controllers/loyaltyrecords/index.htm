@@ -126,6 +126,9 @@ foreach ($guardedPartials as $partialName) {
             </div>
         </div>
     <?php else: ?>
+        <div class="layout-row">
+            <?= $this->makePartial('route_state_strip') ?>
+        </div>
         <?php if (!empty($emptyStateGuidance)): ?>
             <div class="layout-row">
                 <?= $this->makePartial('workspace_empty_state_guidance_panel', ['guidance' => $emptyStateGuidance]) ?>
