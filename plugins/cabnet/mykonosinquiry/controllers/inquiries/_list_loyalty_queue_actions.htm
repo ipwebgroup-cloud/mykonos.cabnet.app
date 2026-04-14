@@ -15,16 +15,26 @@ $hint = 'Queue-only';
 if (strpos($primaryLabel, 'Open loyalty') === 0) {
     $primaryTone = 'primary';
     $hint = 'Linked record';
+    $primaryLabel = 'Open loyalty';
 } elseif (strpos($primaryLabel, 'Create + open loyalty') === 0) {
     $primaryTone = 'primary';
     $hint = 'Transfer-ready';
+    $primaryLabel = 'Create loyalty';
 } elseif (strpos($primaryLabel, 'Open draft') === 0) {
     $hint = 'Draft-ready';
+    $primaryLabel = 'Open draft';
 } elseif (strpos($primaryLabel, 'Workspace staged') === 0) {
     $hint = 'Workspace staged';
+    $primaryLabel = 'Workspace staged';
+}
+
+if (stripos($secondaryLabel, 'Open inquiry') !== False) {
+    $secondaryLabel = 'Open inquiry';
+} elseif (stripos($secondaryLabel, 'Return to inquiry') !== False) {
+    $secondaryLabel = 'Open inquiry';
 }
 ?>
-<div style="min-width:165px; max-width:210px; line-height:1.2;">
+<div style="min-width:160px; max-width:205px; line-height:1.2;">
     <div style="margin-bottom:3px; display:flex; flex-wrap:wrap; gap:4px;">
         <?php if ($primaryUrl !== ''): ?>
             <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
@@ -42,7 +52,7 @@ if (strpos($primaryLabel, 'Open loyalty') === 0) {
             </a>
         <?php endif; ?>
     </div>
-    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:210px;">
+    <div style="font-size:10px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:205px;">
         <?= e($hint) ?>
     </div>
 </div>

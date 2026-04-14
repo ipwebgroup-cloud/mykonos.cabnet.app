@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.80 shared List Setup help polish patch`
+- `v6.41.81 shared row-action label polish patch`
 
 ## Current verified development direction
 
@@ -15,5 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- keeping default visible list columns focused on the best scan fields first
-- keeping shared helper text short and practical on both list pages
+- keeping visible row actions short and consistent before adding more UI chrome

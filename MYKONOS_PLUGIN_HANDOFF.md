@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.80 shared List Setup help polish patch`
+- `v6.41.81 shared row-action label polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It sharpens the shared helper note on both list pages so operators get one short explanation of which visible columns are best for daily scan work and which deeper columns belong in List Setup.
+It shortens the visible row-action labels on Inquiry Queue and Loyalty Continuity so the buttons read faster while keeping the same actions and routes.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- both helper notes explain the daily-scan-versus-deeper-review rule clearly
-- list behavior remains unchanged
+- row action buttons read shorter and more consistently
+- action behavior remains unchanged

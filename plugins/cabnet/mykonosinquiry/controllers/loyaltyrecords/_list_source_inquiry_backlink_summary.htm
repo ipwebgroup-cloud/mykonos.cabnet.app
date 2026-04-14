@@ -13,7 +13,7 @@ $primaryUrl = $loyalty->source_inquiry_backlink_url;
 $primaryLabel = $loyalty->source_inquiry_backlink_action_label;
 $secondaryUrl = $loyalty->source_inquiry_queue_return_url;
 $secondaryLabel = $loyalty->source_inquiry_queue_return_label;
-$historyLabel = 'Open history';
+$historyLabel = 'History';
 $historyUrl = null;
 
 if (!empty($loyalty->id)) {
@@ -40,6 +40,16 @@ if (($loyalty->next_review_at ?? null) instanceof \DateTimeInterface) {
     if (trim((string) ($loyalty->next_review_window_label ?? '')) !== '') {
         $nextReview .= ' · ' . trim((string) $loyalty->next_review_window_label);
     }
+}
+
+if (stripos((string) $primaryLabel, 'Open source inquiry') !== False) {
+    $primaryLabel = 'Source inquiry';
+} elseif (stripos((string) $primaryLabel, 'Open inquiry') !== False) {
+    $primaryLabel = 'Source inquiry';
+}
+
+if (stripos((string) $secondaryLabel, 'Return to queue') !== False || stripos((string) $secondaryLabel, 'Open inquiry list') !== False) {
+    $secondaryLabel = 'Queue';
 }
 
 $linked = $primaryUrl !== null;
