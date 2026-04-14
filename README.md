@@ -1,15 +1,7 @@
-### v6.52.00 — Loyalty create seeded transfer checklist strip
+## Latest backend continuity hint
 
-Latest known backend-only continuity step:
-
-- loyalty create now shows a seeded transfer checklist when `?source_inquiry_id=` is present
-- first-save continuity posture is explained in plain language before saving the new record
-- plugin-only posture preserved
-- no `/plan` bridge change
-
-Current plugin-tracked baseline:
-
-- `2.4.23`
+- `v6.53.00 loyalty create seeded transfer field cues`
+- plugin tracking `2.4.23`
 
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 

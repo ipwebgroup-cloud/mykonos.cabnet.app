@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.52.00 loyalty create seeded transfer checklist strip`
+- `v6.53.00 loyalty create seeded transfer field cues`
 
 ## Current verified development direction
 
@@ -17,4 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- extending guidance into seeded create and record routes before changing workflow logic
+- making seeded loyalty create flows easier to verify before the first save

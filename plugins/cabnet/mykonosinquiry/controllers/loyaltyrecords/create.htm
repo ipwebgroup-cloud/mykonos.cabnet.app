@@ -109,7 +109,10 @@
     </div>
 </div>
 
-<?= $this->makePartial('seeded_transfer_checklist_strip') ?>
+
+<?php if ((int) input('source_inquiry_id', 0) > 0): ?>
+    <?= $this->makePartial('seeded_transfer_field_cues_strip') ?>
+<?php endif; ?>
 
 <?= Form::open(['class' => 'layout']) ?>
     <div class="layout-row">

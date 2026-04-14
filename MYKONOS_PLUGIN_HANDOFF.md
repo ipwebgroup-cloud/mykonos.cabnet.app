@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.52.00 loyalty create seeded transfer checklist strip`
+- `v6.53.00 loyalty create seeded transfer field cues`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades the loyalty create route so inquiry-backed drafts show a compact seeded transfer checklist before the first save.
+It adds a compact seeded transfer checklist strip to the loyalty create route when `?source_inquiry_id=` is present so operators can confirm owner clarity, next review timing, and first-touchpoint framing before the first continuity save.
 
 ## Deployment note
 
@@ -19,23 +19,22 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Loyalty Continuity -> New
-- open the create route with a real `?source_inquiry_id=...`
-- confirm the seeded transfer checklist appears above the plain-language guide
-- confirm source inquiry, queue search, and bridge help links open correctly
-- create form fields and save behavior remain unchanged
+- Backend -> Loyalty Continuity -> New with a real `?source_inquiry_id=`
+- the seeded transfer checklist strip appears above the form
+- source inquiry, queue search, and bridge help links open correctly
+- create rendering without `source_inquiry_id` remains unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves first-save transfer clarity
+- improves create-route transfer discipline
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this seeded create guidance step, the next strong step should be one of:
-- add a compact first-save readiness score strip on loyalty create when a source inquiry is present
-- add conservative seeded-transfer field cues near owner, next review, and first-touchpoint fields
-- improve create-to-update continuity so the first saved loyalty record reflects the bridge intent more visibly
+After this create-route guidance pass, the next strong step should be one of:
+- add conservative first-save breadcrumbs after loyalty create redirects into update
+- improve source-inquiry backlinks on seeded continuity records
+- add a compact create-route bridge state summary without widening the form shell
