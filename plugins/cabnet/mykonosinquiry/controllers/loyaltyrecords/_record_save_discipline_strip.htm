@@ -1,0 +1,96 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    $owner = $model && !empty($model->owner_name) ? trim((string) $model->owner_name) : '';
+    $nextReview = $model && !empty($model->next_review_at) ? $model->next_review_at->format('Y-m-d H:i') : '';
+    $continuityStatus = $model && !empty($model->continuity_status_label) ? $model->continuity_status_label : 'Draft';
+    $loyaltyStage = $model && !empty($model->loyalty_stage_label) ? $model->loyalty_stage_label : 'Pending';
+    $sourceInquiryId = $model && !empty($model->source_inquiry_id) ? (string) $model->source_inquiry_id : '';
+    $touchpointCount = 0;
+    if ($model && $model->id) {
+        try {
+            $touchpointCount = (int) $model->touchpoints()->count();
+        } catch (\Throwable $e) {
+            $touchpointCount = 0;
+        }
+    }
+
+    $latestTouchpoint = $model && !empty($model->latest_touchpoint_summary) ? trim((string) $model->latest_touchpoint_summary) : '';
+    $latestOutcome = $model && !empty($model->latest_touchpoint_outcome_label) ? trim((string) $model->latest_touchpoint_outcome_label) : '';
+    $storageReady = $model && method_exists($model, 'touchpointStorageReady') ? (bool) $model::touchpointStorageReady() : false;
+
+    $ownerHeadline = $owner !== '' ? 'Owner is clear' : 'Owner still needs a name';
+    $ownerNote = $owner !== ''
+        ? 'Assigned to ' . $owner . '. Keep stewardship visible before changing continuity stage or next review timing.'
+        : 'Set the owner before saving continuity status changes so long-cycle follow-up does not become anonymous.';
+
+    $reviewHeadline = $nextReview !== '' ? 'Next review timing is explicit' : 'Next review timing still needs a slot';
+    $reviewNote = $nextReview !== ''
+        ? 'Current review checkpoint: ' . $nextReview . '. Move it only when the real revisit cadence changed.'
+        : 'Add the next review date and time before saving so this record resurfaces on purpose.';
+
+    $bridgeHeadline = $sourceInquiryId !== '' ? 'Source bridge is still visible' : 'Source bridge is not attached';
+    $bridgeNote = $sourceInquiryId !== ''
+        ? 'Linked to inquiry #' . $sourceInquiryId . '. Keep the continuity record anchored to the source request when context matters.'
+        : 'Attach the source inquiry whenever possible so the continuity lane does not drift away from the original guest story.';
+
+    $evidenceHeadline = $touchpointCount > 0 ? 'Retention evidence is present' : 'Retention evidence still needs a touchpoint';
+    if ($touchpointCount > 0) {
+        $evidenceNote = $touchpointCount . ' touchpoint' . ($touchpointCount === 1 ? '' : 's') . ' logged';
+        if ($latestOutcome !== '') {
+            $evidenceNote .= ' · latest outcome: ' . $latestOutcome;
+        }
+        if ($latestTouchpoint !== '') {
+            $evidenceNote .= ' · ' . preg_replace('/\s+/', ' ', mb_substr($latestTouchpoint, 0, 120));
+        }
+    } else {
+        $evidenceNote = $storageReady
+            ? 'Log a real touchpoint when the guest signal, cadence decision, or retention reasoning changed.'
+            : 'Touchpoint storage is not ready yet, so keep manual context especially clear before saving stage changes.';
+    }
+?>
+
+<div class="layout-row">
+    <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(59,130,246,.16);background:linear-gradient(180deg,#eff6ff 0%,#fff 100%);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
+        <div class="content" style="padding:15px 18px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;">
+                <div style="min-width:260px;flex:1 1 340px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#2563eb;margin-bottom:6px;">Record save discipline</div>
+                    <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#1f2937;line-height:1.3;">Before saving, confirm the continuity record still explains why this guest should surface again.</h4>
+                    <div style="font-size:13px;line-height:1.65;color:#475569;max-width:780px;">
+                        Continuity status <strong><?= e($continuityStatus) ?></strong> and loyalty stage <strong><?= e($loyaltyStage) ?></strong> only stay useful when owner, next review timing, source bridge, and retention evidence move with them.
+                    </div>
+                </div>
+                <div style="min-width:220px;flex:0 1 290px;font-size:12px;line-height:1.65;color:#475569;">
+                    <div><strong>Owner:</strong> <?= e($owner !== '' ? $owner : 'Not assigned') ?></div>
+                    <div><strong>Next review:</strong> <?= e($nextReview !== '' ? $nextReview : 'Not scheduled') ?></div>
+                    <div><strong>Source bridge:</strong> <?= e($sourceInquiryId !== '' ? ('Inquiry #' . $sourceInquiryId) : 'Not linked') ?></div>
+                    <div><strong>Evidence posture:</strong> <?= e($touchpointCount > 0 ? ($touchpointCount . ' touchpoints') : ($storageReady ? 'No touchpoint logged yet' : 'Touchpoint storage not ready')) ?></div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px;">
+                <div style="background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#1d4ed8;margin-bottom:4px;">1. Stewardship</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($ownerHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;"><?= e($ownerNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#1d4ed8;margin-bottom:4px;">2. Review timing</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($reviewHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;"><?= e($reviewNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#1d4ed8;margin-bottom:4px;">3. Source bridge</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($bridgeHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;"><?= e($bridgeNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#1d4ed8;margin-bottom:4px;">4. Retention evidence</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($evidenceHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;"><?= e($evidenceNote) ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

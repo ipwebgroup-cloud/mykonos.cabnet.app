@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.45.00 record-screen operator checklist strips`
+- `v6.46.00 record save-discipline cues on inquiry and loyalty update screens`
 
 ## Current verified development direction
 
@@ -17,4 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- extending guidance from list pages and docs into record screens without disturbing workflow logic
+- reinforcing disciplined record edits before workflow fields are saved

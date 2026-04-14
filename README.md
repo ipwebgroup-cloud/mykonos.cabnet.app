@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.45.00 — Record-screen operator checklist strips
+### v6.46.00 — Record save-discipline cues on inquiry and loyalty update screens
 Included in the current safe backend polish line:
-- compact operator checklist strips added to Inquiry update and Loyalty update screens
-- record-level orientation upgraded without touching list logic or the live /plan bridge
-- plugin-only operator guidance improvement with no schema or workflow change
+- compact save-discipline strips above both record forms
+- plain-language field accountability for owner, follow-up / next review, source context, and history evidence
+- plugin-only operator discipline upgrade without changing live workflow logic
 
 ### Current plugin-tracked baseline
 - `2.4.23`

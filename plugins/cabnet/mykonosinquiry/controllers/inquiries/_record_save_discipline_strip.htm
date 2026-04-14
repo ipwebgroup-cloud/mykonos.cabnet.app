@@ -1,0 +1,84 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    $owner = $model && !empty($model->owner_name) ? trim((string) $model->owner_name) : '';
+    $followUp = $model && !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : '';
+    $status = $model && !empty($model->status_label) ? $model->status_label : 'New brief';
+    $priority = $model && !empty($model->priority_label) ? $model->priority_label : 'Normal';
+    $briefBody = $model ? trim((string) ($model->details ?? '')) : '';
+    $briefLine = $briefBody !== '' ? preg_replace('/\s+/', ' ', mb_substr($briefBody, 0, 160)) : '';
+
+    $notesCount = 0;
+    if ($model && $model->id) {
+        try {
+            $notesCount = (int) $model->notes()->count();
+        } catch (\Throwable $e) {
+            $notesCount = 0;
+        }
+    }
+
+    $ownerHeadline = $owner !== '' ? 'Owner is clear' : 'Owner still needs a name';
+    $ownerNote = $owner !== ''
+        ? 'Assigned to ' . $owner . '. Keep ownership explicit before saving workflow changes.'
+        : 'Set the assignee before saving status or follow-up changes so queue accountability stays visible.';
+
+    $followUpHeadline = $followUp !== '' ? 'Next checkpoint is scheduled' : 'No follow-up date is set';
+    $followUpNote = $followUp !== ''
+        ? 'The next review is parked for ' . $followUp . '. Adjust it if the real next move changed.'
+        : 'Add the next review date before leaving the record so the request does not drift out of the live queue.';
+
+    $briefHeadline = $briefBody !== '' ? 'Guest brief has live context' : 'Guest brief needs a working summary';
+    $briefNote = $briefBody !== ''
+        ? 'First line: ' . $briefLine
+        : 'Capture the current request shape, timing, and service intent in plain language before saving.';
+
+    $historyHeadline = $notesCount > 0 ? 'History continuity is visible' : 'History still needs an operator note';
+    $historyNote = $notesCount > 0
+        ? $notesCount . ' history entr' . ($notesCount === 1 ? 'y is' : 'ies are') . ' already stored. Add a note when the reasoning changed, not only the fields.'
+        : 'Use the internal note area when the reason behind the change matters, not just the field values.';
+?>
+
+<div class="layout-row">
+    <div class="callout callout-warning no-subheader" style="border-radius:14px;border:1px solid rgba(245,158,11,.18);background:linear-gradient(180deg,#fffbeb 0%,#fff 100%);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
+        <div class="content" style="padding:15px 18px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;">
+                <div style="min-width:260px;flex:1 1 340px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#b45309;margin-bottom:6px;">Save discipline</div>
+                    <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#1f2937;line-height:1.3;">Before saving, confirm the record still tells the next operator what is happening now.</h4>
+                    <div style="font-size:13px;line-height:1.65;color:#57534e;max-width:780px;">
+                        Keep save actions anchored to the real live posture of the request. Status <strong><?= e($status) ?></strong> and priority <strong><?= e($priority) ?></strong> only stay meaningful when owner, follow-up date, guest brief, and note framing move with them.
+                    </div>
+                </div>
+                <div style="min-width:220px;flex:0 1 280px;font-size:12px;line-height:1.65;color:#57534e;">
+                    <div><strong>Owner:</strong> <?= e($owner !== '' ? $owner : 'Not assigned') ?></div>
+                    <div><strong>Follow-up:</strong> <?= e($followUp !== '' ? $followUp : 'Not scheduled') ?></div>
+                    <div><strong>Brief posture:</strong> <?= e($briefBody !== '' ? 'Captured' : 'Needs summary') ?></div>
+                    <div><strong>History posture:</strong> <?= e($notesCount > 0 ? ($notesCount . ' entries logged') : 'No operator note yet') ?></div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px;">
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:4px;">1. Ownership</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($ownerHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#57534e;"><?= e($ownerNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:4px;">2. Follow-up</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($followUpHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#57534e;"><?= e($followUpNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:4px;">3. Working brief</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($briefHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#57534e;"><?= e($briefNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #fde68a;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:4px;">4. Note framing</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($historyHeadline) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#57534e;"><?= e($historyNote) ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

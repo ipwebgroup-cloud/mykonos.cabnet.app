@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.45.00 record-screen operator checklist strips`
+- `v6.46.00 record save-discipline cues on inquiry and loyalty update screens`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades the Inquiry and Loyalty record screens with compact operator checklist strips so record-level work inherits the same plain-language orientation already added to the list pages and Workspace Docs.
+It adds compact save-discipline strips above the inquiry and loyalty update forms so operators confirm owner clarity, follow-up timing, source bridge posture, and narrative continuity before saving important field changes.
 
 ## Deployment note
 
@@ -19,23 +19,22 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue -> open any inquiry
-- Backend -> Loyalty Continuity -> open any loyalty record
-- both record screens now show a compact operator checklist strip above the form
-- record actions, tabs, notes, and workflow controls remain unchanged
+- Backend -> Inquiry Queue -> open an inquiry
+- Backend -> Loyalty Continuity -> open a loyalty record
+- both record pages now show a compact save-discipline strip above the main form
+- existing form tabs, actions, and workflow controls remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves record-level orientation in plain language
-- reduces re-entry friction when reopening saved records
+- improves record-level save discipline
 - keeps the live /plan bridge untouched
-- keeps database and workflow behavior untouched
+- keeps queue and continuity workflow logic untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this record-screen guidance pass, the next strong step should be one of:
-- add compact save-discipline cues around note and summary fields on the inquiry record
-- add a lightweight continuity readiness strip on loyalty create so transfer versus manual draft posture stays clearer
-- tighten Workspace Docs anchors so each record strip can deep-link into the exact matching playbook section
+After this record save-discipline pass, the next strong step should be one of:
+- add compact field framing around the most important create-mode handoff screens
+- improve helpcenter route cards so list, record, and docs workflows feel more unified
+- add lightweight reopen / close caution cues where workflow stage changes have the most business impact
