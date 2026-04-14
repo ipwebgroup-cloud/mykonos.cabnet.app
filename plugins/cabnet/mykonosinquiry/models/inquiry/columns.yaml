@@ -13,6 +13,7 @@ columns:
         searchable: true
     guests:
         label: Guests
+        invisible: true
     arrival_date:
         label: Arrival
         type: date

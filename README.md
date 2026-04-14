@@ -1,6 +1,6 @@
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 
-Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow and operator-focused backend handling.
+Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow, guarded loyalty continuity workspace, and operator-focused backend handling.
 
 ## Project purpose
 
@@ -8,8 +8,9 @@ This repository tracks the production-safe source for:
 - luxury public frontend
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
-- backend inquiry queue and operator workflow
-- guarded loyalty continuity workspace
+- backend Inquiry Queue and operator workflow
+- guarded Loyalty Continuity workspace
+- dedicated Workspace Docs/help route
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -28,24 +29,24 @@ This repository tracks the production-safe source for:
 The working production line preserves:
 - `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
 - inquiry persistence into `cabnet_mykonos_inquiries`
-- backend inquiry list and detail handling
+- backend inquiry queue and detail handling
+- loyalty continuity workspace handling and queue transfer actions
 - generated request reference shown after successful submit
 - safe email notification handling
-- operator workflow actions, notes, and continuity improvements
-- loyalty continuity handling and queue-to-loyalty transfer tools
-- dedicated Workspace Docs routing for heavier operator guidance
+- compact backend list/detail layouts with scan-first defaults
 
-## Current stable continuity hint
+## Current safe continuity hint
 
-### v6.41.73 — Loyalty List Default Visibility Polish
-Included in the current safe backend line:
-- shared toolbar layout consistency
-- shared filter row consistency
-- shared filter label shortening
+### v6.41.74 — Inquiry Queue default visibility polish
+Included in the current safe backend polish line:
+- shared list toolbar layout consistency
+- shared filter-row consistency
+- shared filter-label shortening
 - shared list heading polish
 - loyalty list default visibility polish
+- inquiry queue default visibility polish
 
-Plugin tracking remains on the safe continuity baseline:
+### Current plugin-tracked baseline
 - `2.4.23`
 
 ## Repository rules
@@ -83,10 +84,11 @@ This project follows:
 - avoid schema drift unless clearly justified
 - keep public theme flow stable
 - improve operator workflow incrementally
+- prefer plugin-only backend polish where possible
 
 ## Release documentation
 
 See:
 - `CHANGELOG.md`
-- continuity files at project root
-- patch note files delivered with each rooted patch zip
+- `MYKONOS_PLUGIN_HANDOFF.md`
+- `MYKONOS_CONTINUE_PROMPT.md`
