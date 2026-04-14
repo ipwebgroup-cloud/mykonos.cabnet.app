@@ -65,7 +65,7 @@ class Inquiries extends Controller
 
     public function create()
     {
-        $this->pageTitle = 'Create Inquiry';
+        $this->pageTitle = 'New Inquiry';
 
         $this->asExtension('FormController')->create();
     }
@@ -84,9 +84,9 @@ class Inquiries extends Controller
         }
 
         $inquiry = $recordId ? Inquiry::find($recordId) : null;
-        $reference = $inquiry && $inquiry->request_reference ? $inquiry->request_reference : 'Update Inquiry';
+        $reference = $inquiry && $inquiry->request_reference ? $inquiry->request_reference : 'Inquiry Record';
 
-        $this->pageTitle = 'Inquiry · ' . $reference;
+        $this->pageTitle = 'Inquiry Record · ' . $reference;
     }
 
     public function formExtendFields($form): void
@@ -340,37 +340,26 @@ class Inquiries extends Controller
         switch ($action) {
             case 'assign_to_me':
                 return $this->assignToMe($recordId);
-
             case 'mark_contacted':
                 return $this->markContacted($recordId);
-
             case 'follow_up_tomorrow':
                 return $this->scheduleTomorrow($recordId);
-
             case 'follow_up_plus_three':
                 return $this->scheduleInThreeDays($recordId);
-
             case 'reopen_inquiry':
                 return $this->reopenInquiry($recordId);
-
             case 'close_won':
                 return $this->closeWon($recordId);
-
             case 'close_lost':
                 return $this->closeLost($recordId);
-
             case 'send_to_loyalty':
                 return $this->sendToLoyalty($recordId);
-
             case 'mark_referral_ready':
                 return $this->markReferralReady($recordId);
-
             case 'mark_return_value_candidate':
                 return $this->markReturnValueCandidate($recordId);
-
             case 'open_loyalty_transfer':
                 return $this->openLoyaltyTransfer($recordId);
-
             default:
                 Flash::warning('Unknown quick action.');
                 return redirect(\Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $recordId));

@@ -9,8 +9,7 @@ This repository tracks the production-safe source for:
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
 - backend inquiry queue and operator workflow
-- guarded Loyalty Continuity Workspace
-- dedicated Workspace Docs page
+- loyalty continuity workspace
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -24,53 +23,25 @@ This repository tracks the production-safe source for:
 - Backend label: **Mykonos Inquiries**
 - Public bridge component: `mykonosPlanBridge`
 
+## Current stable continuity hint
+
+### v6.41.65 — Detail screen title and top-comment polish
+Included in the current stable backend polish line:
+- compact inquiry header and collapsed guide direction preserved
+- compact loyalty header and collapsed guide direction preserved
+- queue and loyalty wording consistency preserved
+- record titles and first-seen field comments tightened for faster scan reading
+
 ## Stable workflow direction
 
 The working production line preserves:
 - `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
 - inquiry persistence into `cabnet_mykonos_inquiries`
-- backend Inquiry Queue and inquiry detail handling
-- Loyalty Continuity rendering and transfer flow
-- Workspace Docs routing for help/glossary content
+- backend inquiry list and detail handling
+- loyalty continuity workspace handling
+- dedicated Workspace Docs route
 - generated request reference shown after successful submit
 - safe email notification handling
-- operator workflow actions, notes, and continuity improvements
-
-## Current safe continuity hint
-
-### v6.41.64 — Detail Snapshot Wording Polish
-Current safe line includes:
-- `2.4.23` compact inquiry and loyalty update headers with collapsed guides
-- queue-first scan-speed posture
-- dedicated Workspace Docs help routing
-- loyalty-aware queue and transfer flow
-- detail-screen snapshot wording polish on the top read-only summary blocks
-
-## Repository rules
-
-### Commit
-Commit source code and documentation for:
-- `app/`
-- `bootstrap/`
-- `config/`
-- `modules/`
-- `plugins/`
-- `themes/`
-- `tests/`
-- root project files such as `artisan`, `composer.json`, `composer.lock`, `.htaccess`
-
-### Do not commit
-Do not commit live/server-local artifacts such as:
-- `.env`
-- `auth.json`
-- `vendor/`
-- `node_modules/`
-- runtime `storage` contents
-- `php.ini`
-- `.user.ini`
-- SQL dumps
-- zip exports
-- cPanel-local files
 
 ## Deployment philosophy
 
@@ -81,11 +52,4 @@ This project follows:
 - avoid schema drift unless clearly justified
 - keep public theme flow stable
 - improve operator workflow incrementally
-- keep future work plugin-only where possible
-
-## Release documentation
-
-See:
-- `CHANGELOG.md`
-- `MYKONOS_PLUGIN_HANDOFF.md`
-- `MYKONOS_CONTINUE_PROMPT.md`
+- prefer plugin-only updates where possible
