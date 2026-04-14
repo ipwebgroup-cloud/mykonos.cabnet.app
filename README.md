@@ -2,11 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.41.79 — Shared List Setup ordering polish
+### v6.41.80 — Shared List Setup help polish
 Included in the current safe backend polish line:
-- shared list-setup guidance polish
-- shared list-setup naming polish
 - shared List Setup ordering polish
+- shared List Setup help polish
 
 ### Current plugin-tracked baseline
 - `2.4.23`
