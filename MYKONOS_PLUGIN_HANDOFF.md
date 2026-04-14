@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.47.00 inquiry status transition caution cues`
+- `v6.48.00 loyalty finish hold reopen caution cues`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It adds a compact caution layer to the inquiry record screen so closure, reopen, and major status changes carry clearer operator discipline before save.
+It upgrades the loyalty record screen with a compact caution strip that frames high-impact continuity decisions in plain language before the operator changes finish, hold, or reopen posture.
 
 ## Deployment note
 
@@ -19,22 +19,22 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue -> open any inquiry
-- the inquiry record now shows a compact transition caution strip above the main summary shell
-- closure and reopen cues render in plain language using live record values
-- save flow, notes, tabs, and quick actions remain unchanged
+- Backend -> Loyalty Continuity
+- open a saved loyalty record
+- the new caution strip appears above the record summary shell
+- existing tabs, record controls, and touchpoint tools remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves discipline around the highest-impact status changes
+- improves record-level decision discipline
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this transition-cues pass, the next strong step should be one of:
-- mirror the same caution discipline on the loyalty record for finish, hold, and reopen posture changes
-- enrich Workspace Docs with a dedicated transition and closure playbook section
-- add small record-header route reminders without widening the form UI further
+After this loyalty transition guidance step, the next strong step should be one of:
+- add compact queue-to-record save summaries on the inquiry screen using real current workflow posture
+- add a small record-header action memory strip showing the last major operator move
+- extend Workspace Docs with a dedicated record transition playbook section

@@ -1,0 +1,84 @@
+<?php
+    $model = $model ?? ($formModel ?? ($this->formGetModel()));
+
+    $reference = $model && !empty($model->request_reference) ? $model->request_reference : 'Loyalty record';
+    $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
+    $continuityStatus = $model && !empty($model->continuity_status_label)
+        ? $model->continuity_status_label
+        : ($model && !empty($model->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $model->continuity_status)) : 'Draft / staged');
+    $loyaltyStage = $model && !empty($model->loyalty_stage_label)
+        ? $model->loyalty_stage_label
+        : ($model && !empty($model->loyalty_stage) ? ucwords(str_replace(['_', '-'], ' ', $model->loyalty_stage)) : 'Review');
+    $nextReview = $model && !empty($model->next_review_at) ? $model->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+    $lastRetentionContact = $model && !empty($model->last_retention_contact_at) ? $model->last_retention_contact_at->format('Y-m-d H:i') : 'No retention contact logged';
+    $sourceInquiryId = $model && !empty($model->source_inquiry_id) ? $model->source_inquiry_id : null;
+    $latestTouchpoint = $model && !empty($model->latest_touchpoint_summary) ? $model->latest_touchpoint_summary : 'No touchpoint logged yet.';
+    $evidenceStrength = $model && !empty($model->continuity_evidence_strength_label) ? $model->continuity_evidence_strength_label : 'Evidence still thin';
+    $finishStatus = $model && !empty($model->finish_lane_status_label) ? $model->finish_lane_status_label : 'Finish lane not active';
+    $parkedWatch = $model && !empty($model->parked_lane_watch_label) ? $model->parked_lane_watch_label : 'No quiet-lane watch framing yet';
+    $reopenCue = $model && !empty($model->parked_lane_reopen_trigger_label) ? $model->parked_lane_reopen_trigger_label : 'No reopen trigger captured yet';
+    $holdCue = $model && !empty($model->post_close_hold_label) ? $model->post_close_hold_label : 'No hold cue captured yet';
+
+    $isFinished = $model && in_array((string) $model->loyalty_stage, ['completed'], true);
+    $isDormant = $model && in_array((string) $model->continuity_status, ['dormant', 'archived'], true);
+
+    if ($isFinished) {
+        $headline = 'Finish / reopen caution strip';
+        $summary = 'This record is already sitting in a closed or finish-facing posture. Before reopening it, confirm who owns the next move, what evidence justifies reopening, and whether the quiet-lane watch logic still makes sense.';
+        $cards = [
+            ['label' => 'Finish posture', 'value' => $finishStatus, 'note' => 'Make sure the finish state matches the actual guest outcome.'],
+            ['label' => 'Reopen trigger', 'value' => $reopenCue, 'note' => 'Only reopen when a real guest signal, revisit signal, or operator reason is visible.'],
+            ['label' => 'Quiet-lane watch', 'value' => $parkedWatch, 'note' => 'If the record stays parked, the watch window should still feel deliberate.'],
+            ['label' => 'Owner / next review', 'value' => $owner, 'note' => 'Next review: ' . $nextReview],
+        ];
+    } elseif ($isDormant) {
+        $headline = 'Hold / reopen caution strip';
+        $summary = 'This record is sitting in a lower-activity continuity posture. Before you push it back into active work, confirm that the reopen reason is real, the owner is visible, and the next review timing will not drift.';
+        $cards = [
+            ['label' => 'Current hold posture', 'value' => $continuityStatus, 'note' => 'Dormant and archived records should not reopen casually.'],
+            ['label' => 'Hold cue', 'value' => $holdCue, 'note' => 'Keep the hold logic readable for the next operator.'],
+            ['label' => 'Reopen discipline', 'value' => $reopenCue, 'note' => 'Tie the reopen to a real return signal or deliberate review move.'],
+            ['label' => 'Owner / next review', 'value' => $owner, 'note' => 'Next review: ' . $nextReview],
+        ];
+    } else {
+        $headline = 'Finish / hold caution strip';
+        $summary = 'This record is still active enough to move, pause, or finish. Before saving a major posture change, confirm that the current owner, next review, evidence strength, and touchpoint narrative support the decision.';
+        $cards = [
+            ['label' => 'Continuity posture', 'value' => $continuityStatus . ' · ' . $loyaltyStage, 'note' => 'The saved posture should match the actual guest relationship today.'],
+            ['label' => 'Evidence strength', 'value' => $evidenceStrength, 'note' => 'Do not finish or hold the record if the narrative evidence is still unclear.'],
+            ['label' => 'Latest touchpoint', 'value' => $latestTouchpoint, 'note' => 'Use the touchpoint trail to justify the next continuity move.'],
+            ['label' => 'Owner / next review', 'value' => $owner, 'note' => 'Next review: ' . $nextReview],
+        ];
+    }
+
+    $sourceLine = $sourceInquiryId ? ('Source inquiry #' . $sourceInquiryId) : 'No source inquiry bridge saved';
+?>
+<div class="layout-row">
+    <div class="callout callout-warning no-subheader" style="border-radius:14px;border:1px solid rgba(245,158,11,.28);box-shadow:0 8px 24px rgba(15,23,42,.06);margin-bottom:18px;background:linear-gradient(180deg,#fffdf8 0%,#ffffff 100%);">
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;">
+                <div style="min-width:280px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#b45309;margin-bottom:6px;">Loyalty record transition discipline</div>
+                    <h3 style="margin:0 0 8px 0;font-size:20px;font-weight:700;color:#1f2937;"><?= e($headline) ?></h3>
+                    <div style="font-size:13px;line-height:1.7;color:#475569;"><?= e($summary) ?></div>
+                    <div style="margin-top:8px;font-size:12px;line-height:1.65;color:#64748b;"><?= e($reference) ?> · <?= e($sourceLine) ?> · Last retention contact: <?= e($lastRetentionContact) ?></div>
+                </div>
+                <div style="min-width:240px;flex:0 1 340px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;">
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>#help-form-routes" class="btn btn-default oc-icon-book">Transition help</a>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Loyalty Continuity</a>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Inquiry Queue</a>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px;">
+                <?php foreach ($cards as $card): ?>
+                    <div style="background:#fff;border:1px solid #f3e8d0;border-radius:12px;padding:12px 13px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                        <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#92400e;margin-bottom:4px;"><?= e($card['label']) ?></div>
+                        <div style="font-size:13px;font-weight:700;line-height:1.45;color:#111827;"><?= e($card['value']) ?></div>
+                        <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;"><?= e($card['note']) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

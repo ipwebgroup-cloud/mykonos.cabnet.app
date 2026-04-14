@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.47.00 inquiry status transition caution cues`
+- `v6.48.00 loyalty finish hold reopen caution cues`
 
 ## Current verified development direction
 
@@ -17,4 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- reinforcing disciplined record transitions before changing high-impact workflow states
+- improving record-level decision discipline on inquiry and loyalty screens without changing underlying workflow logic
