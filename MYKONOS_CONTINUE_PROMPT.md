@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.90 shared chip-size normalization pass`
+- `v6.41.91 shared muted-text tone polish patch`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- normalizing compact chip scale before adding more UI surface
+- aligning the remaining muted helper text tones before adding more UI surface

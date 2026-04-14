@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.90 shared chip-size normalization pass`
+- `v6.41.91 shared muted-text tone polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It normalizes the visible hint-chip and packet-chip sizing across Inquiry Queue and Loyalty Continuity so similar compact signals sit closer in visual scale.
+It aligns the lighter helper/posture text tone in the visible loyalty summary card to a slightly cleaner muted shade so the quieter text reads more consistently with the compact queue-and-loyalty UI line.
 
 ## Deployment note
 
@@ -19,7 +19,6 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- hint chips and packet chips feel closer in size across both list pages
+- lighter helper/posture text reads a bit cleaner and more consistent
 - list behavior remains unchanged
