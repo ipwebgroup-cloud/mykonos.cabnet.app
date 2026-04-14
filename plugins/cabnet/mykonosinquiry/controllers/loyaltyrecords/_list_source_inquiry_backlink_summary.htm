@@ -133,15 +133,15 @@ if (stripos($shortHint, 'manual') !== false) {
 
     <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
         <?php if ($primaryUrl): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff;') ?>" title="Open source inquiry"><?= e($primaryLabel) ?></a>
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Open source inquiry"><?= e($primaryLabel) ?></a>
         <?php else: ?>
-            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75;" title="No source inquiry available"><?= e($primaryLabel) ?></span>
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75; <?= e('padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="No source inquiry available"><?= e($primaryLabel) ?></span>
         <?php endif; ?>
         <?php if ($historyUrl): ?>
-            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" style="border-color:#d7dce2; background:#f8f9fa; color:#495057;" title="Open loyalty history"><?= e($historyLabel) ?></a>
+            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Open loyalty history"><?= e($historyLabel) ?></a>
         <?php endif; ?>
         <?php if ($secondaryUrl): ?>
-            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="border-color:#d7dce2; background:#f8f9fa; color:#495057;" title="Return to queue"><?= e($secondaryLabel) ?></a>
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Return to queue"><?= e($secondaryLabel) ?></a>
         <?php endif; ?>
     </div>
 </div>

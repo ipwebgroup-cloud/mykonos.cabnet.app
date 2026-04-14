@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.86 shared primary button consistency pass`
+- `v6.41.87 shared compact button sizing pass`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It aligns the visible primary row-action buttons across Inquiry Queue and Loyalty Continuity so the main actions share a more consistent blue emphasis and spacing treatment.
+It makes the visible row-action buttons across Inquiry Queue and Loyalty Continuity a bit more compact and uniform without changing their routes, labels, or emphasis hierarchy.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- primary visible row-action buttons share more consistent emphasis
+- visible row-action buttons feel slightly more compact and uniform
 - list behavior remains unchanged
