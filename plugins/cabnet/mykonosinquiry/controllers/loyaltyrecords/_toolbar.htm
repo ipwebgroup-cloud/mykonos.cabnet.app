@@ -2,23 +2,28 @@
 $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_loyalty_records') : false;
 ?>
 <style>
-.myk-loyalty-toolbar-shell {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-}
-
-.myk-loyalty-toolbar-row {
+.control-list .toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    width: 100%;
+    align-items: flex-start;
+    gap: 10px 10px;
+}
+
+.control-list .toolbar > .toolbar-item {
+    flex: 0 0 auto;
     min-width: 0;
 }
 
-.myk-loyalty-toolbar-note {
+.control-list .toolbar > .toolbar-item .btn {
+    white-space: nowrap;
+}
+
+.control-list .toolbar .loyalty-render-note-row {
+    flex: 1 1 100%;
+    width: 100%;
+}
+
+.loyalty-render-note {
     display: block;
     width: 100%;
     padding: 10px 12px;
@@ -26,50 +31,77 @@ $loyaltyTableReady = class_exists('Schema') ? \Schema::hasTable('cabnet_mykonos_
     background: #f6f8fb;
     color: #50627d;
     font-size: 12px;
-    line-height: 1.45;
+    line-height: 1.5;
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
 
-.myk-loyalty-toolbar-note strong {
+.loyalty-render-note strong {
     color: #334155;
     font-weight: 700;
-    margin-right: 6px;
+}
+
+.control-list .control-filter,
+.control-list .filter-scopes,
+.control-list .filter-scope-items,
+.control-list .filter-items {
+    min-width: 0;
+}
+
+.control-list .filter-scopes,
+.control-list .filter-scope-items,
+.control-list .filter-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    align-items: center;
+}
+
+.control-list .filter-scope,
+.control-list .filter-scope-item,
+.control-list .filter-item {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+@media (max-width: 1280px) {
+    .control-list .filter-scope,
+    .control-list .filter-scope-item,
+    .control-list .filter-item {
+        flex: 1 1 180px;
+    }
 }
 </style>
+
 <div data-control="toolbar">
-    <div class="myk-loyalty-toolbar-shell">
-        <div class="myk-loyalty-toolbar-row">
-            <?php if ($loyaltyTableReady): ?>
-                <a
-                    href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
-                    class="btn btn-primary oc-icon-plus">
-                    New loyalty record
-                </a>
-            <?php else: ?>
-                <button type="button" class="btn btn-default disabled" disabled>
-                    Touchpoint outcome planning active
-                </button>
-                <a
-                    href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>"
-                    class="btn btn-default oc-icon-list-ul">
-                    Open inquiry list
-                </a>
-            <?php endif ?>
+    <?php if ($loyaltyTableReady): ?>
+        <a
+            href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') ?>"
+            class="btn btn-primary oc-icon-plus">
+            New loyalty record
+        </a>
+    <?php else: ?>
+        <button type="button" class="btn btn-default disabled" disabled>
+            Touchpoint outcome planning active
+        </button>
+        <a
+            href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>"
+            class="btn btn-default oc-icon-list-ul">
+            Open inquiry list
+        </a>
+    <?php endif ?>
 
-            <a
-                href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty list') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Loyalty help opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, packet posture, and next-review timing.') . '#help-loyalty' ?>"
-                class="btn btn-default oc-icon-book">
-                Loyalty help
-            </a>
-        </div>
+    <a
+        href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=continuity&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords')) . '&returnLabel=' . rawurlencode('Back to loyalty list') . '&returnTitle=' . rawurlencode('Return to Loyalty Continuity after reviewing continuity posture.') . '&returnSummary=' . rawurlencode('Loyalty help opened from the live loyalty list, so the primary action returns operators to Loyalty Continuity while keeping Inquiry Queue nearby.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries')) . '&secondaryLabel=' . rawurlencode('Open inquiry list') . '&sourceLabel=' . rawurlencode('Loyalty Continuity list') . '&sourceSummary=' . rawurlencode('Opened from the live Loyalty Continuity list while scanning latest outcome, packet posture, and next-review timing.') . '#help-loyalty' ?>"
+        class="btn btn-default oc-icon-book">
+        Loyalty help
+    </a>
 
-        <div class="myk-loyalty-toolbar-row">
-            <span class="myk-loyalty-toolbar-note">
-                <strong>Stable loyalty workspace layout</strong>
-                This list now follows the same compact top-row pattern as the Inquiry Queue so buttons, help, and list controls stay easier to scan on narrower widths.
-            </span>
-        </div>
+    <div class="toolbar-item loyalty-render-note-row">
+        <span class="loyalty-render-note">
+            <strong>Shared top-row layout</strong>
+            Loyalty filters now follow the same wrap-safe spacing posture as the Inquiry Queue so buttons, filters, and helper copy stay readable on narrower widths.
+        </span>
     </div>
 </div>
