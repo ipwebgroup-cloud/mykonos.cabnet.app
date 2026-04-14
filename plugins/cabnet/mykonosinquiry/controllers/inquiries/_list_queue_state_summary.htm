@@ -56,8 +56,8 @@ if (stripos($loyaltyHint, 'linked') !== false) {
 
 [$loyaltyText, $loyaltyBg, $loyaltyBorder] = $loyaltyTone;
 ?>
-<div class="queue-state-summary" style="min-width:160px; max-width:210px; line-height:1.15; white-space:normal;">
-    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:4px; align-items:center;">
+<div class="queue-state-summary" style="min-width:160px; max-width:210px; line-height:1.18; white-space:normal;">
+    <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px; align-items:center;">
         <span style="display:inline-flex; align-items:center; border:1px solid <?= e($statusBorder) ?>; background:<?= e($statusBg) ?>; color:<?= e($statusText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Status">
             <?= e($status) ?>
         </span>
@@ -65,7 +65,7 @@ if (stripos($loyaltyHint, 'linked') !== false) {
             <?= e($priority) ?>
         </span>
     </div>
-    <div>
+    <div style="display:flex; align-items:center;">
         <span style="display:inline-flex; align-items:center; border:1px solid <?= e($loyaltyBorder) ?>; background:<?= e($loyaltyBg) ?>; color:<?= e($loyaltyText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($loyalty) ?>">
             <?= e($loyaltyHint) ?>
         </span>

@@ -42,7 +42,7 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
 [$hintText, $hintBg, $hintBorder] = $hintTone;
 ?>
 <div style="min-width:160px; max-width:205px; line-height:1.2;">
-    <div style="margin-bottom:4px; display:flex; flex-wrap:wrap; gap:4px;">
+    <div style="margin-bottom:6px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
         <?php if ($primaryUrl !== ''): ?>
             <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>">
                 <?= e($primaryLabel) ?>
@@ -59,7 +59,7 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
             </a>
         <?php endif; ?>
     </div>
-    <div>
+    <div style="display:flex; align-items:center;">
         <span style="display:inline-flex; align-items:center; border:1px solid <?= e($hintBorder) ?>; background:<?= e($hintBg) ?>; color:<?= e($hintText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
             <?= e($hint) ?>
         </span>

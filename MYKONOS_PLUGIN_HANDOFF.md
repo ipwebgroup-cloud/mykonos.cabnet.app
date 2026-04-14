@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.83 shared badge-tone consistency pass`
+- `v6.41.84 shared list-cell spacing polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It gives similar visible queue and loyalty hint signals more consistent badge/chip treatment so operators can scan linked, transfer-ready, queue-origin, and related states with more uniform visual emphasis.
+It evens out the compact vertical rhythm in the visible Inquiry Queue and Loyalty Continuity list cells so chips, buttons, and card sections sit a little more consistently without changing the same signals.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- similar visible hint states use more consistent chip treatment
+- compact chips, buttons, and summary sections sit more evenly
 - list behavior remains unchanged

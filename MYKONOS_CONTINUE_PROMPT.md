@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.83 shared badge-tone consistency pass`
+- `v6.41.84 shared list-cell spacing polish patch`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- aligning similar visible queue and loyalty hint signals with more consistent visual emphasis
+- smoothing compact list-cell spacing before adding more UI surface

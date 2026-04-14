@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.41.83 — Shared badge-tone consistency pass
+### v6.41.84 — Shared list-cell spacing polish
 Included in the current safe backend polish line:
-- shared list microcopy polish
 - shared badge-tone consistency pass
+- shared list-cell spacing polish
 
 ### Current plugin-tracked baseline
 - `2.4.23`
