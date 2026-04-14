@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.78 shared list-setup naming polish patch`
+- `v6.41.79 shared List Setup ordering polish patch`
 
 ## Current verified development direction
 
@@ -16,4 +16,4 @@ The current backend line is focused on:
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
 - keeping default visible list columns focused on the best scan fields first
-- using matching list-setup guidance and naming across both list pages
+- keeping denser optional columns grouped more logically in List Setup

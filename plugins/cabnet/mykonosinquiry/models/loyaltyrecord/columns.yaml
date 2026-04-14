@@ -47,6 +47,19 @@ columns:
         label: Execution
         sortable: false
 
+    next_review_at:
+        label: Next Review
+        type: datetime
+        format: Y-m-d H:i
+
+    owner_name:
+        label: Owner
+
+    updated_at:
+        label: Updated At
+        type: datetime
+        format: Y-m-d H:i
+
     continuity_loop_posture_label:
         label: Loop Detail
         sortable: false
@@ -68,12 +81,27 @@ columns:
         invisible: true
 
     finish_triage_label:
-        label: Finish Triage
+        label: Triage
         sortable: false
         invisible: true
 
     finish_triage_urgency_label:
         label: Triage Urgency
+        sortable: false
+        invisible: true
+
+    closure_readiness_label:
+        label: Closure Ready
+        sortable: false
+        invisible: true
+
+    next_execution_move_label:
+        label: Next Move
+        sortable: false
+        invisible: true
+
+    next_review_window_label:
+        label: Review Window
         sortable: false
         invisible: true
 
@@ -271,31 +299,3 @@ columns:
         label: Parked Watch
         sortable: false
         invisible: true
-
-    closure_readiness_label:
-        label: Closure Ready
-        sortable: false
-        invisible: true
-
-    next_execution_move_label:
-        label: Next Move
-        sortable: false
-        invisible: true
-
-    next_review_window_label:
-        label: Review Window
-        sortable: false
-        invisible: true
-
-    next_review_at:
-        label: Next Review
-        type: datetime
-        format: Y-m-d H:i
-
-    owner_name:
-        label: Owner
-
-    updated_at:
-        label: Updated At
-        type: datetime
-        format: Y-m-d H:i

@@ -11,31 +11,41 @@ columns:
     full_name:
         label: Guest
         searchable: true
-    guests:
-        label: Guests
-        invisible: true
     arrival_date:
         label: Arrival
         type: date
     services_inline:
         label: Focus
-    email:
-        label: Guest Email
-        searchable: true
-        invisible: true
-        cssClass: queue-col-extended
-        headCssClass: queue-col-extended
-    source_display:
-        label: Source Detail
-        invisible: true
-        cssClass: queue-col-extended
-        headCssClass: queue-col-extended
     owner_follow_up_summary:
         label: Owner / Follow-up
         type: partial
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_follow_up_summary.htm
         sortable: false
         searchable: false
+    loyalty_queue_actions:
+        label: Loyalty Actions
+        type: partial
+        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
+        sortable: false
+        searchable: false
+
+    guests:
+        label: Guests
+        invisible: true
+
+    email:
+        label: Guest Email
+        searchable: true
+        invisible: true
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
+
+    source_display:
+        label: Source Detail
+        invisible: true
+        cssClass: queue-col-extended
+        headCssClass: queue-col-extended
+
     loyalty_backlink_summary:
         label: Loyalty Link Detail
         type: partial
@@ -45,24 +55,21 @@ columns:
         invisible: true
         cssClass: queue-col-extended
         headCssClass: queue-col-extended
-    loyalty_queue_actions:
-        label: Loyalty Actions
-        type: partial
-        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_loyalty_queue_actions.htm
-        sortable: false
-        searchable: false
+
     last_contacted_at:
         label: Last Contacted At
         type: datetime
         invisible: true
         cssClass: queue-col-full
         headCssClass: queue-col-full
+
     closed_at:
         label: Closed At
         type: datetime
         invisible: true
         cssClass: queue-col-full
         headCssClass: queue-col-full
+
     created_at:
         label: Created At
         type: datetime
