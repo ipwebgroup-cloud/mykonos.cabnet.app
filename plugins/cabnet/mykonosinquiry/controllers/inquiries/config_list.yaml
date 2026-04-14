@@ -33,6 +33,7 @@ filter:
                 triage: Triage (legacy)
                 proposal: Proposal shaping (legacy)
                 closed: Closed (legacy)
+
         priority:
             label: Priority
             type: group
@@ -43,6 +44,7 @@ filter:
                 high: High
                 vip: VIP
                 urgent: Urgent
+
         urgency_hint:
             label: Urgency Hint
             type: group
@@ -50,6 +52,7 @@ filter:
             options:
                 urgent: Urgent
                 near-term: Near Term
+
         source_type:
             label: Source Type
             type: group
@@ -60,6 +63,7 @@ filter:
                 pathway: Pathway
                 guest_pathway: Guest pathway
                 stay_design: Stay design
+
         requested_mode:
             label: Mode
             type: group
@@ -69,13 +73,3 @@ filter:
                 detailed: Detailed
                 executive: Executive
                 celebration: Celebration
-        loyalty_queue_posture:
-            label: Loyalty Posture
-            type: group
-            modelScope: applyLoyaltyQueuePosture
-            options:
-                linked: Linked to loyalty
-                transfer_ready: Transfer-ready
-                draft_ready: Draft-ready
-                queue_only: Queue-only
-                workspace_staged: Workspace staged
