@@ -18,11 +18,11 @@ $toneMap = [
 ];
 [$queueText, $queueBg, $queueBorder] = $toneMap[$tone] ?? $toneMap['neutral'];
 ?>
-<div class="queue-owner-followup-summary" style="min-width:190px; max-width:250px; line-height:1.25; white-space:normal;">
+<div class="queue-owner-followup-summary" style="min-width:180px; max-width:235px; line-height:1.2; white-space:normal;">
     <div style="font-size:12px; font-weight:700; color:#334155; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($owner) ?>">
         <?= e($owner) ?>
     </div>
-    <div style="display:inline-flex; align-items:center; border:1px solid <?= e($queueBorder) ?>; background:<?= e($queueBg) ?>; color:<?= e($queueText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; margin-bottom:5px;" title="Follow-up posture">
+    <div style="display:inline-flex; align-items:center; border:1px solid <?= e($queueBorder) ?>; background:<?= e($queueBg) ?>; color:<?= e($queueText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; margin-bottom:4px;" title="Follow-up">
         <?= e($queueSummary) ?>
     </div>
     <div style="font-size:11px; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($action) ?>">

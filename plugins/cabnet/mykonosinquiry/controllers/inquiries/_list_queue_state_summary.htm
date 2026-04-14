@@ -37,9 +37,9 @@ $priorityTones = [
 [$statusText, $statusBg, $statusBorder] = $statusTones[$statusKey] ?? ['#495057', '#f3f4f6', '#d7dce2'];
 [$priorityText, $priorityBg, $priorityBorder] = $priorityTones[$priorityKey] ?? ['#495057', '#f3f4f6', '#d7dce2'];
 ?>
-<div class="queue-state-summary" style="min-width:170px; max-width:220px; line-height:1.2; white-space:normal;">
-    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:5px; align-items:center;">
-        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($statusBorder) ?>; background:<?= e($statusBg) ?>; color:<?= e($statusText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Live inquiry status">
+<div class="queue-state-summary" style="min-width:160px; max-width:210px; line-height:1.15; white-space:normal;">
+    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:4px; align-items:center;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($statusBorder) ?>; background:<?= e($statusBg) ?>; color:<?= e($statusText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Status">
             <?= e($status) ?>
         </span>
         <span style="display:inline-flex; align-items:center; border:1px solid <?= e($priorityBorder) ?>; background:<?= e($priorityBg) ?>; color:<?= e($priorityText) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700;" title="Priority">
