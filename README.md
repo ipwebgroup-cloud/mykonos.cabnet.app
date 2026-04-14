@@ -1,6 +1,6 @@
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 
-Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow, operator-focused backend handling, and a guarded loyalty continuity workspace.
+Private project repository for the live **Mykonos Cabnet inquiry platform** built on **OctoberCMS**, with a plugin-backed luxury inquiry workflow, an operator-focused queue, and a guarded loyalty continuity workspace.
 
 ## Project purpose
 
@@ -9,8 +9,8 @@ This repository tracks the production-safe source for:
 - mobile-first `/plan` inquiry flow
 - DB-backed persistence through `Cabnet.MykonosInquiry`
 - backend Inquiry Queue and operator workflow
-- Loyalty Continuity workspace
-- Workspace Docs / help routing
+- guarded Loyalty Continuity workspace
+- dedicated Workspace Docs route
 - safe incremental plugin/theme integration
 
 ## Current active line
@@ -21,11 +21,12 @@ This repository tracks the production-safe source for:
 
 ### Plugin
 - Plugin: `plugins/cabnet/mykonosinquiry`
-- Backend navigation:
-  - **Inquiry Queue**
-  - **Loyalty Continuity**
-  - **Workspace Docs**
 - Public bridge component: `mykonosPlanBridge`
+
+### Backend workspaces
+- **Inquiry Queue**
+- **Loyalty Continuity**
+- **Workspace Docs**
 
 ## Stable workflow direction
 
@@ -33,22 +34,22 @@ The working production line preserves:
 - `/plan` submission through `mykonosPlanBridge::onSubmitInquiry`
 - inquiry persistence into `cabnet_mykonos_inquiries`
 - backend inquiry list and detail handling
+- loyalty continuity rendering and inquiry-backed transfer support
 - generated request reference shown after successful submit
 - safe email notification handling
-- operator workflow actions, notes, and continuity improvements
-- loyalty transfer, backlink, and continuity record handling
-- queue-first scan-speed and compact record-screen posture
+- compact record headers and collapsed plain-language guides
+- queue-first operator workflow improvements
 
-## Current safe continuity checkpoint
+## Current safe continuity hint
 
-### Backend continuity line
-Current verified safe continuity direction includes:
-- Inquiry Queue pagination / leaner default load
-- dedicated Workspace Docs page
-- compact inquiry update header
-- compact loyalty update header
-- collapsed plain-language guides
-- plugin tracking aligned to the latest verified continuity hint: **2.4.23**
+### v6.41.63 — Detail-Screen Snapshot Wording Polish
+Included in the current safe line:
+- continuity alignment through `v6.41.62`
+- queue and loyalty toolbar wording consistency
+- lighter top-of-screen wording on inquiry and loyalty read-only summary blocks
+
+### Plugin tracking baseline
+- `2.4.23`
 
 ## Repository rules
 
@@ -91,5 +92,5 @@ This project follows:
 
 See:
 - `CHANGELOG.md`
-- continuity files at project root
-- patch note files delivered with each rooted patch zip
+- `MYKONOS_PLUGIN_HANDOFF.md`
+- `MYKONOS_CONTINUE_PROMPT.md`

@@ -48,7 +48,7 @@ Assume the active plugin is:
 Assume the live operational workspace remains:
 
 - **Inquiry Queue**
-- **Loyalty Continuity Workspace**
+- **Loyalty Continuity**
 - **Workspace Docs**
 
 Do **not** rewind to the early v2.x workflow line unless the real uploaded files clearly show that state.
@@ -59,14 +59,10 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.62 backend wording consistency and continuity alignment patch`
+- `v6.41.63 detail-screen snapshot wording polish patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
-
-Plugin tracking remains approximately:
-
-- `2.4.23`
 
 ---
 
@@ -116,6 +112,8 @@ Recent safe work has already established:
 - the inquiry update screen now opens with a compact record summary instead of two large top advisory blocks
 - the loyalty continuity update screen now follows the same compact-header and collapsed-guide direction
 - the plain-language screen guides now stay collapsed by default and only open when needed
+- queue and loyalty toolbar wording now use loyalty language more consistently
+- the small read-only summary blocks at the top of record screens are being simplified before touching deeper workspace panels
 
 Keep the queue usable first.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
@@ -128,14 +126,6 @@ Keep these safe:
 - saved loyalty record workflow
 - plain-language helper blocks on loyalty screens
 
-### 5. Terminology consistency is now part of the safe polish line
-Prefer consistent wording across queue, loyalty, and docs surfaces.
-Avoid mixing:
-- repeat guest
-- loyalty
-- loyalty continuity
-unless the real screen needs the distinction.
-
 ---
 
 ## Most recent safe next step
@@ -143,9 +133,9 @@ unless the real screen needs the distinction.
 The strongest next step after the last delivered patch is:
 - keep both inquiry and loyalty update screens compact and readable
 - continue reducing always-visible helper copy before adding more UI chrome
-- inspect whether dense read-only guidance panels should group more tightly by tab
+- inspect whether top-level field comments can be shortened safely
+- inspect whether page titles can be tightened without losing clarity
 - keep operator language simple
-- continue normalizing mixed wording across queue, loyalty, and docs surfaces
 
 ---
 

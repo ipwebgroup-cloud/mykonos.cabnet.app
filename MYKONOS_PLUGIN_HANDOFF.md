@@ -41,8 +41,8 @@ Stable direction:
 - mobile-first `/plan` inquiry flow
 - DB-backed inquiry persistence through the plugin
 - backend Inquiry Queue and operator workflow
-- guarded Loyalty Continuity Workspace
-- Workspace Docs / help page
+- guarded Loyalty Continuity workspace
+- dedicated Workspace Docs route
 - safe plugin/theme integration
 - safe incremental development without breaking live operations
 
@@ -61,7 +61,7 @@ That means:
 
 ## Live operational workspace
 - **Inquiry Queue**
-- **Loyalty Continuity Workspace**
+- **Loyalty Continuity**
 - **Workspace Docs**
 
 Preserve first:
@@ -82,17 +82,18 @@ Current safe priorities:
 - keep operator wording plain and readable
 - keep loyalty transfer / backlink visibility stable
 - keep row-level scan speed improving through smaller, clearer queue summaries
+- keep top-of-screen record summaries compact and easy to read
 
 ---
 
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.62 backend wording consistency and continuity alignment patch`
-- plugin tracking remains `2.4.23`
+- `v6.41.63 detail-screen snapshot wording polish patch`
+- plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It tightens wording across the queue/loyalty surface and keeps continuity files aligned to the real guarded loyalty-workspace line.
+It lightly refines small read-only summary surfaces so Inquiry Queue and Loyalty Continuity record screens use simpler top-of-screen wording without changing the deeper workspace panels.
 
 ## Deployment note
 
@@ -103,17 +104,18 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue shows loyalty wording consistently in the toolbar
-- Backend -> Loyalty Continuity shows loyalty wording consistently in the toolbar
-- continuity files at project root reflect the current guarded loyalty-workspace baseline
+- Backend -> Inquiry Queue toolbar uses Loyalty wording consistently
+- Backend -> Inquiry Queue -> open any inquiry and confirm the top summary reads more plainly
+- Backend -> Loyalty Continuity -> open any saved record and confirm the top digest reads more plainly
+- deeper workflow tabs and actions still render normally
 
 ---
 
 ## Safest next step
-If the queue/detail experience still feels heavy after this patch, the next real pass should inspect:
-- whether inquiry and loyalty detail screen titles should align even more tightly
-- whether any remaining mixed “repeat-guest” wording should be normalized to “loyalty” or “loyalty continuity”
-- whether dense helper copy on update screens can reduce further without harming operator clarity
-- whether docs-page terminology should mirror queue/detail labels one-for-one
+If the record screens still feel heavy after this patch, the next real pass should inspect:
+- whether the inquiry update page title and loyalty update page title should be tightened further
+- whether top-level field comments on the two record screens can be shortened safely
+- whether any remaining mixed wording between "continuity", "loyalty", and "repeat guest" should be normalized on read-only labels
+- whether additional always-visible helper copy should move fully into the docs page
 
 Keep future work plugin-only where possible.
