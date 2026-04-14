@@ -1,0 +1,159 @@
+<?php
+$seedInquiryId = (int) input('source_inquiry_id', 0);
+$seedInquiry = $seedInquiryId > 0 ? \Cabnet\MykonosInquiry\Models\Inquiry::find($seedInquiryId) : null;
+$seedReference = $seedInquiry && $seedInquiry->request_reference ? trim((string) $seedInquiry->request_reference) : '';
+$seedGuestName = trim((string) ($seedInquiry->guest_name ?? ''));
+$seedOwner = trim((string) ($seedInquiry->owner_name ?? $seedInquiry->owner ?? ''));
+$seedSummary = trim((string) ($seedInquiry->working_summary ?? $seedInquiry->summary ?? ''));
+$seedFollowUp = trim((string) ($seedInquiry->follow_up_at ?? ''));
+$queueSearchUrl = Backend::url('cabnet/mykonosinquiry/inquiries');
+if ($seedReference !== '') {
+    $queueSearchUrl .= '?' . http_build_query(['search' => $seedReference]);
+}
+?>
+<style>
+.myk-transfer-checklist {
+    margin: 0 0 16px;
+    border: 1px solid #dce6f6;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f7fbff 0%, #ffffff 100%);
+    padding: 16px 18px;
+    box-shadow: 0 14px 30px rgba(30, 58, 126, 0.06);
+}
+.myk-transfer-checklist__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #4f63d8;
+    margin-bottom: 6px;
+}
+.myk-transfer-checklist__title {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.25;
+    color: #22354a;
+}
+.myk-transfer-checklist__lead {
+    margin: 0 0 12px;
+    color: #536274;
+    line-height: 1.7;
+    font-size: 14px;
+}
+.myk-transfer-checklist__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+.myk-transfer-checklist__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #edf3ff;
+    border: 1px solid #d6e3fb;
+    color: #2b4665;
+    font-size: 12px;
+    font-weight: 600;
+}
+.myk-transfer-checklist__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+.myk-transfer-checklist__card {
+    border: 1px solid #e2eaf6;
+    border-radius: 14px;
+    background: rgba(255,255,255,.95);
+    padding: 12px;
+}
+.myk-transfer-checklist__card strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #24364b;
+}
+.myk-transfer-checklist__card span {
+    display: block;
+    color: #5b6a7d;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.myk-transfer-checklist__actions {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+@media (max-width: 980px) {
+    .myk-transfer-checklist__grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="myk-transfer-checklist">
+    <?php if ($seedInquiry): ?>
+        <div class="myk-transfer-checklist__eyebrow">Seeded transfer checklist</div>
+        <h3 class="myk-transfer-checklist__title">Confirm the continuity draft before the first save</h3>
+        <p class="myk-transfer-checklist__lead">
+            This new loyalty record is opening from a real inquiry, so the safest first save is the one that preserves the queue context, confirms the owner, and makes the first follow-through intention readable.
+        </p>
+        <div class="myk-transfer-checklist__meta">
+            <span class="myk-transfer-checklist__pill">Inquiry #<?= e((string) $seedInquiry->id) ?></span>
+            <?php if ($seedReference !== ''): ?><span class="myk-transfer-checklist__pill">Reference <?= e($seedReference) ?></span><?php endif; ?>
+            <?php if ($seedGuestName !== ''): ?><span class="myk-transfer-checklist__pill">Guest <?= e($seedGuestName) ?></span><?php endif; ?>
+        </div>
+        <div class="myk-transfer-checklist__grid">
+            <div class="myk-transfer-checklist__card">
+                <strong>1. Keep the bridge visible</strong>
+                <span>
+                    Leave the source inquiry connection intact so this continuity draft still explains where it came from and why it moved out of the live queue.
+                </span>
+            </div>
+            <div class="myk-transfer-checklist__card">
+                <strong>2. Confirm owner and next move</strong>
+                <span>
+                    <?= $seedOwner !== '' ? 'The source inquiry currently points to ' . e($seedOwner) . '. Use that as your starting owner check.' : 'The source inquiry does not show a clear owner yet, so use the first save to make accountability explicit.' ?>
+                    <?= $seedFollowUp !== '' ? ' The queue already has a follow-up date on record.' : ' Add a next review or follow-through timing so the draft does not start life without a checkpoint.' ?>
+                </span>
+            </div>
+            <div class="myk-transfer-checklist__card">
+                <strong>3. Preserve the reason for transfer</strong>
+                <span>
+                    <?= $seedSummary !== '' ? 'The queue summary already gives you a starting narrative: “' . e(mb_strimwidth($seedSummary, 0, 140, '…')) . '”.' : 'No working summary is visible from the source inquiry, so write a short first-save continuity note that explains what happens next.' ?>
+                </span>
+            </div>
+        </div>
+        <div class="myk-transfer-checklist__actions">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $seedInquiry->id) ?>" class="btn btn-default oc-icon-external-link">Open source inquiry</a>
+            <a href="<?= $queueSearchUrl ?>" class="btn btn-default oc-icon-search">Back to queue search</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=loyalty-transfer-create&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/create') . '?source_inquiry_id=' . $seedInquiry->id) . '&returnLabel=' . rawurlencode('Back to seeded loyalty create') . '&sourceLabel=' . rawurlencode('Seeded loyalty create screen') . '#help-bridge-queue-loyalty' ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+        </div>
+    <?php elseif ($seedInquiryId > 0): ?>
+        <div class="myk-transfer-checklist__eyebrow">Seeded transfer checklist</div>
+        <h3 class="myk-transfer-checklist__title">Seed lookup did not resolve</h3>
+        <p class="myk-transfer-checklist__lead">
+            The create screen opened with <strong>source_inquiry_id=<?= e((string) $seedInquiryId) ?></strong>, but no live inquiry was found. That means this draft is currently opening without real queue context.
+        </p>
+        <div class="myk-transfer-checklist__grid">
+            <div class="myk-transfer-checklist__card">
+                <strong>1. Do not assume the bridge is active</strong>
+                <span>The URL alone is not enough. Reopen the create route from a real queue or inquiry action before treating this as an inquiry-backed continuity draft.</span>
+            </div>
+            <div class="myk-transfer-checklist__card">
+                <strong>2. Recheck the source</strong>
+                <span>Confirm the inquiry still exists and that the id was not copied from an old placeholder, docs example, or stale browser tab.</span>
+            </div>
+            <div class="myk-transfer-checklist__card">
+                <strong>3. Stay safe on first save</strong>
+                <span>Either return to the queue and reopen from a real source inquiry, or continue only if you intentionally want a manual continuity draft.</span>
+            </div>
+        </div>
+        <div class="myk-transfer-checklist__actions">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Open inquiry queue</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge-queue-loyalty' ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+        </div>
+    <?php endif; ?>
+</div>
