@@ -59,7 +59,7 @@ Do **not** rewind to the early v2.x workflow line unless the real uploaded files
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.60 inquiry-detail compact header and collapsed guide patch`
+- `v6.41.59 inquiry-detail compact header and lighter helper copy patch`
 
 This is a continuity hint only.
 You must verify the real uploaded files before continuing.
@@ -84,6 +84,7 @@ That means:
 
 The current backend line is focused on:
 - keeping the Inquiry Queue usable and faster to scan
+- making the inquiry update/detail screen lighter to read
 - keeping the Loyalty Continuity Workspace readable in plain language
 - keeping help/docs/glossary on the dedicated backend docs page
 - preserving render safety and business continuity
@@ -108,11 +109,14 @@ Continue preferring:
 ### 3. Inquiry Queue scan speed remains the latest priority
 Recent safe work has already established:
 - a lighter button-first toolbar
-- queue-side scan-speed improvements remain in place
-- the inquiry update screen now opens with a compact record summary instead of two large top advisory blocks
-- the plain-language screen guide now stays collapsed by default and only opens when needed
+- queue view presets
+- model-side caching for loyalty workspace readiness checks and linked loyalty-record lookups
+- real server-side Inquiry Queue pagination with a 25-row default and setup-driven per-page options
+- a compact saved-inquiry header with a collapsed quick guide
+- much lighter helper copy on read-only partial-based detail tabs
 
 Keep the queue usable first.
+Keep saved inquiry screens lighter than before.
 Do **not** expand the top area again with large advisory panels unless clearly requested.
 
 ### 4. Loyalty workspace remains active and should stay intact
@@ -128,9 +132,9 @@ Keep these safe:
 ## Most recent safe next step
 
 The strongest next step after the last delivered patch is:
-- keep the inquiry update screen compact and readable
-- continue reducing always-visible helper copy before adding more UI chrome
-- inspect whether dense read-only guidance panels should group more tightly by tab
+- keep Inquiry Queue fast and clean
+- keep the saved inquiry update screen compact and readable
+- reduce helper-copy noise before adding more UI chrome
 - keep operator language simple
 
 ---

@@ -87,11 +87,11 @@ Current safe priorities:
 ## Latest applied patch line
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.60 inquiry-detail compact header and collapsed guide patch`
+- `v6.41.59 inquiry-detail compact header and lighter helper copy patch`
 - plugin tracking `2.4.22`
 
 This patch stays backend-only and does not touch `/plan`.
-It trims the inquiry update screen by replacing the two large top advisory callouts with one compact record summary and a collapsed plain-language guide, so operators land faster on the actual editable record.
+It replaces the heavy two-callout top area on the inquiry update screen with one compact record summary and a collapsed quick guide, then strips long helper comments from read-only partial tabs so saved inquiry screens feel lighter to scan.
 
 ## Deployment note
 
@@ -102,19 +102,19 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Mykonos Inquiries -> Inquiry Queue
-- Backend -> Mykonos Inquiries -> open any saved inquiry record
-- the update screen now opens with a compact summary instead of two large advisory blocks
-- the Quick screen guide stays collapsed by default and can be opened when needed
-- the editable form tabs and workflow actions still render normally
+- Backend -> Mykonos Inquiries -> open any saved inquiry
+- the update screen opens with one compact summary block instead of two large advisory callouts
+- Quick screen guide stays collapsed by default
+- heavy read-only helper comments are gone from most partial-based tabs
+- the editable form, quick actions, history notes, and save flow still work normally
 
 ---
 
 ## Safest next step
 If the queue still feels heavy after this patch, the next real pass should inspect:
-- whether the inquiry update form tabs can reduce always-visible helper copy further
-- whether read-only operator guidance panels should be grouped more tightly by tab
-- whether any remaining update-screen helper text should move fully into the docs page
-- whether the Loyalty Continuity Workspace detail screen now becomes the next clearer render-weight target
+- whether the saved inquiry detail tabs should keep only a few essential helper comments on editable fields
+- whether loyalty workspace detail screens now deserve the same compact-header treatment
+- whether any remaining heavy helper copy should move fully into the docs page
+- whether create-mode should mirror the lighter saved-record header language without adding more chrome
 
 Keep future work plugin-only where possible.

@@ -8,8 +8,8 @@
     $statusLabel = $model && method_exists($model, 'getStatusLabelAttribute') ? $model->status_label : ucwords(str_replace('_', ' ', $status));
     $priorityLabel = $model && method_exists($model, 'getPriorityLabelAttribute') ? $model->priority_label : ucwords(str_replace('_', ' ', $priority));
     $owner = $model && !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
-    $email = $model && !empty($model->email) ? $model->email : null;
-    $phone = $model && !empty($model->phone) ? $model->phone : null;
+    $email = $model && !empty($model->email) ? $model->email : 'No email saved';
+    $phone = $model && !empty($model->phone) ? $model->phone : 'No phone saved';
     $focus = $model && method_exists($model, 'getServicesInlineAttribute') ? $model->services_inline : 'General planning';
     $arrival = $model && !empty($model->arrival_date) ? $model->arrival_date->format('Y-m-d') : 'Not set';
     $departure = $model && !empty($model->departure_date) ? $model->departure_date->format('Y-m-d') : 'Not set';
@@ -21,10 +21,12 @@
     $createdAt = $model && !empty($model->created_at) ? $model->created_at->format('Y-m-d H:i') : '—';
     $closedAt = $model && !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Still open';
 
-    $contactParts = array_values(array_filter([$email, $phone]));
-    $contactLine = count($contactParts) ? implode(' · ', $contactParts) : 'No direct contact details saved yet';
-    $tripLine = sprintf('%s → %s · Guests: %s', $arrival, $departure, $guests);
-    $contextLine = sprintf('Focus: %s · Source: %s · Mode: %s', $focus, $sourceType, $requestedMode);
+    $quickCards = [
+        ['label' => 'Guest', 'value' => $guest, 'note' => $email . ' · ' . $phone],
+        ['label' => 'Trip dates', 'value' => $arrival . ' → ' . $departure, 'note' => 'Guests: ' . $guests],
+        ['label' => 'Current stage', 'value' => $statusLabel, 'note' => 'Priority: ' . $priorityLabel],
+        ['label' => 'Next step', 'value' => $followUp, 'note' => 'Owner: ' . $owner],
+    ];
 ?>
 <div class="control-breadcrumb">
     <ul>
@@ -48,45 +50,57 @@
 <div class="layout-row">
     <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
         <div class="content" style="padding:16px 18px;">
-            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;">
-                <div style="min-width:260px;flex:1 1 420px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;">
+                <div style="min-width:260px;flex:1 1 320px;">
                     <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:6px;">Inquiry record</div>
-                    <h3 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#1f2937;"><?= e($guest) ?></h3>
-                    <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($contactLine) ?></div>
-                    <div style="margin-top:4px;font-size:13px;line-height:1.65;color:#475569;"><?= e($tripLine) ?></div>
-                    <div style="margin-top:4px;font-size:13px;line-height:1.65;color:#64748b;"><?= e($contextLine) ?></div>
+                    <h3 style="margin:0 0 6px 0;font-size:20px;font-weight:700;color:#1f2937;line-height:1.25;"><?= e($guest) ?></h3>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:#64748b;">
+                        <span style="font-weight:700;color:#334155;"><?= e($reference) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:3px 9px;font-weight:700;"><?= e($statusLabel) ?></span>
+                        <span style="display:inline-flex;align-items:center;border:1px solid #ede9fe;background:#f5f3ff;color:#6d28d9;border-radius:999px;padding:3px 9px;font-weight:700;"><?= e($priorityLabel) ?></span>
+                    </div>
                 </div>
-                <div style="min-width:240px;flex:0 1 360px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;">
-                    <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Ref: <?= e($reference) ?></span>
-                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Status: <?= e($statusLabel) ?></span>
-                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Priority: <?= e($priorityLabel) ?></span>
-                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Owner: <?= e($owner) ?></span>
-                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Follow-up: <?= e($followUp) ?></span>
+                <div style="min-width:220px;flex:0 1 280px;font-size:12px;line-height:1.65;color:#475569;">
+                    <div><strong>Owner:</strong> <?= e($owner) ?></div>
+                    <div><strong>Follow-up:</strong> <?= e($followUp) ?></div>
+                    <div><strong>Created:</strong> <?= e($createdAt) ?></div>
+                    <div><strong>Last contact:</strong> <?= e($lastContacted) ?></div>
                 </div>
             </div>
 
-            <details style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px;">
-                <summary style="cursor:pointer;font-size:13px;font-weight:700;color:#334155;list-style:none;">Quick screen guide</summary>
-                <div style="margin-top:10px;font-size:13px;line-height:1.65;color:#475569;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
-                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
-                        <strong style="display:block;color:#111827;margin-bottom:4px;">What matters first</strong>
-                        Keep the record simple: what the guest wants, who owns the request, and what should happen next.
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:14px;">
+                <?php foreach ($quickCards as $card): ?>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:11px 12px;box-shadow:0 1px 2px rgba(15,23,42,.04);">
+                        <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;"><?= e($card['label']) ?></div>
+                        <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($card['value']) ?></div>
+                        <div style="margin-top:4px;font-size:12px;line-height:1.45;color:#475569;"><?= e($card['note']) ?></div>
                     </div>
-                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
-                        <strong style="display:block;color:#111827;margin-bottom:4px;">Status</strong>
-                        Where the request stands right now, like new, contacted, waiting, confirmed, or closed.
-                    </div>
-                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
-                        <strong style="display:block;color:#111827;margin-bottom:4px;">Priority</strong>
-                        How urgent or important this request feels compared with the rest of the queue.
-                    </div>
-                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
-                        <strong style="display:block;color:#111827;margin-bottom:4px;">Follow-up date</strong>
-                        The next day someone should check in, reply, or move this request forward.
-                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <details style="margin-top:14px;border-top:1px solid #dbe3ee;padding-top:10px;">
+                <summary style="cursor:pointer;font-size:13px;font-weight:700;color:#334155;outline:none;">Quick screen guide</summary>
+                <div style="margin-top:10px;font-size:13px;line-height:1.7;color:#475569;">
+                    Keep this screen focused on four things: what the guest wants, where the request stands now, who owns it, and what should happen next.
+                    The large read-only tabs are there for structured thinking, but the live workflow still depends on status, owner, follow-up date, working summary, and clean history notes.
                 </div>
-                <div style="margin-top:10px;font-size:12px;line-height:1.65;color:#64748b;">
-                    Created <?= e($createdAt) ?> · Last contact <?= e($lastContacted) ?> · Closed <?= e($closedAt) ?>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px;">
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.55;color:#475569;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Status</strong>
+                        Keep this aligned with the real stage of the request.
+                    </div>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.55;color:#475569;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Priority</strong>
+                        Use VIP and urgent sparingly so the queue stays meaningful.
+                    </div>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.55;color:#475569;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Follow-up date</strong>
+                        Keep the next checkpoint explicit so the request does not drift.
+                    </div>
+                    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.55;color:#475569;">
+                        <strong style="display:block;color:#111827;margin-bottom:4px;">Repeat-guest list</strong>
+                        Use it after the live inquiry is handled and you want continuity memory to stay visible.
+                    </div>
                 </div>
             </details>
         </div>

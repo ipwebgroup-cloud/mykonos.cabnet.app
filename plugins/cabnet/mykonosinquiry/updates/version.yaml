@@ -446,6 +446,5 @@
 2.4.21:
   - 'Enable server-side Inquiry Queue pagination with 25-row default pages and setup-driven per-page options for lighter list rendering'
 
-
 2.4.22:
-  - 'Compact the inquiry update header and keep the plain-language guide collapsed until needed'
+  - 'Compact the inquiry update header and strip heavy helper comments from read-only detail tabs for faster operator scanning'

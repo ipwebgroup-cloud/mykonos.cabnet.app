@@ -39,7 +39,6 @@ fields:
     owner_name:
         label: Owner / Assignee
         span: right
-        comment: Use a real assignee name so hand-off continuity stays clear.
 
     quick_actions:
         label: Quick Actions
@@ -52,21 +51,18 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_workflow_continuity.htm
         span: full
-        comment: Read-only queue, assignment, and next-action summary for cleaner operator hand-off.
 
     follow_up_date:
         label: Follow Up Date
         type: datepicker
         mode: date
         span: left
-        comment: Next operator checkpoint. Keep this explicit so overdue and due-today inquiries stay visible.
 
     last_contacted_at:
         label: Last Contacted
         type: datepicker
         mode: datetime
         span: right
-        comment: Most recent successful outreach to the guest. Use this with Follow Up Date for continuity.
 
     full_name:
         label: Full Name
@@ -109,7 +105,6 @@ fields:
         label: Guest Brief
         type: textarea
         size: giant
-        comment: Primary free-text brief captured from the guest-facing inquiry flow.
 
 tabs:
     fields:
@@ -150,63 +145,54 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_command_deck_panel.htm
             tab: Command
-            comment: High-level scan-first control surface for live queue posture, guest readiness, commercial clarity, and safest next action before drilling into detailed tabs.
 
         next_guest_touch_blueprint_panel:
             label: Next Guest Touch Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_guest_touch_blueprint_panel.htm
             tab: Command
-            comment: Read-only operator blueprint for the safest next guest-facing touch, including route, tone, focus, and highest-value clarifications.
 
         handoff_packet_readiness_panel:
             label: Handoff Packet Readiness
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_packet_readiness_panel.htm
             tab: Command
-            comment: Read-only check of whether assignment, source, notes, timing, and closure context are strong enough for a clean internal hand-off or reopen later.
 
         operator_action_workspace_panel:
             label: Operator Action Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_action_workspace_panel.htm
             tab: Action
-            comment: Composite record-level next-move control board for queue control, guest coverage, continuity, and safest immediate operator action.
 
         next_move_execution_panel:
             label: Next Move Execution
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_move_execution_panel.htm
             tab: Action
-            comment: Read-only execution brief for the next guest-facing or operator-side move, including route, message goal, and what to avoid.
 
         record_transition_guardrails_panel:
             label: Record Transition Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_record_transition_guardrails_panel.htm
             tab: Action
-            comment: Read-only transition checks for clarification, proposal shaping, confirmation posture, and closure/reopen discipline before changing the record trajectory.
 
         communication_workspace_panel:
             label: Communication Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_communication_workspace_panel.htm
             tab: Communication
-            comment: High-level communication control surface for route, tone, readiness, and safest next guest-facing move before drafting the next reply.
 
         next_reply_blueprint_panel:
             label: Next Reply Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_reply_blueprint_panel.htm
             tab: Communication
-            comment: Read-only structure guidance for the next guest message so the response stays specific, continuity-led, and commercially disciplined.
 
         reply_risk_guardrails_panel:
             label: Reply Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_risk_guardrails_panel.htm
             tab: Communication
-            comment: Read-only guardrails that surface the communication mistakes most likely to break trust, blur ownership, or over-promise too early.
 
 
         proposal_workspace_panel:
@@ -214,231 +200,198 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_workspace_panel.htm
             tab: Proposal
-            comment: High-level commercial shaping surface for deciding whether the record is ready for a starter offer, a continuity-led proposal follow-up, or one more clarification pass.
 
         offer_shape_blueprint_panel:
             label: Offer Shape Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_offer_shape_blueprint_panel.htm
             tab: Proposal
-            comment: Read-only structure guidance for shaping the next premium offer so it stays anchored to the guest mission, visible timing, and commercial discipline.
 
         proposal_risk_guardrails_panel:
             label: Proposal Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_risk_guardrails_panel.htm
             tab: Proposal
-            comment: Read-only guardrails that surface the offer-shaping mistakes most likely to over-promise, blur continuity, or create avoidable commercial drift.
 
         fulfillment_workspace_panel:
             label: Fulfillment Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_workspace_panel.htm
             tab: Fulfillment
-            comment: High-level execution shaping surface for deciding whether the record is ready for operational sequencing, staged fulfillment planning, or one more continuity pass before delivery language tightens.
 
         execution_readiness_blueprint_panel:
             label: Execution Readiness Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_execution_readiness_blueprint_panel.htm
             tab: Fulfillment
-            comment: Read-only structure guidance for moving from commercial posture into operational readiness without letting timing, scale, or continuity assumptions go invisible.
 
         fulfillment_risk_guardrails_panel:
             label: Fulfillment Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_risk_guardrails_panel.htm
             tab: Fulfillment
-            comment: Read-only guardrails that surface the execution-shaping mistakes most likely to create supplier-like promises, weak hand-offs, or assumption-heavy operational drift.
 
         confirmation_workspace_panel:
             label: Confirmation Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confirmation_workspace_panel.htm
             tab: Confirmation
-            comment: High-level commitment-shaping surface for deciding whether the record is ready for confirmation-style language, a disciplined pre-confirmation move, or one more clarification pass before lock-in posture.
 
         commitment_lock_blueprint_panel:
             label: Commitment Lock Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_commitment_lock_blueprint_panel.htm
             tab: Confirmation
-            comment: Read-only structure guidance for moving toward commitment language without letting scope, timing, or operator continuity drift out of view.
 
         confirmation_risk_guardrails_panel:
             label: Confirmation Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confirmation_risk_guardrails_panel.htm
             tab: Confirmation
-            comment: Read-only guardrails that surface the commitment mistakes most likely to over-confirm, blur accountability, or create fragile reopen/hand-off conditions.
 
         closure_workspace_panel:
             label: Closure Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_workspace_panel.htm
             tab: Closure
-            comment: High-level closure shaping surface for deciding whether the record should stay open, close with an explicit outcome, or preserve a cleaner reopen path before momentum fades.
 
         closure_decision_blueprint_panel:
             label: Closure Decision Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_decision_blueprint_panel.htm
             tab: Closure
-            comment: Read-only structure guidance for turning close / lost / pause / reopen handling into an explicit operator decision with readable outcome context.
 
         closure_risk_guardrails_panel:
             label: Closure Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_risk_guardrails_panel.htm
             tab: Closure
-            comment: Read-only guardrails that surface the closure mistakes most likely to hide outcomes, weaken reopen continuity, or make future hand-off recovery harder.
 
         reopen_workspace_panel:
             label: Reopen Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_workspace_panel.htm
             tab: Reopen
-            comment: High-level reactivation shaping surface for deciding whether the record is truly ready to reopen, what continuity needs to be restored first, and whether the safest move is reactivation, pause, or one more internal rebuild pass.
 
         reactivation_blueprint_panel:
             label: Reactivation Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reactivation_blueprint_panel.htm
             tab: Reopen
-            comment: Read-only structure guidance for bringing a paused or closed record back into motion without losing source trail, owner clarity, timing anchors, or the current guest mission.
 
         reopen_risk_guardrails_panel:
             label: Reopen Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_risk_guardrails_panel.htm
             tab: Reopen
-            comment: Read-only guardrails that surface the reactivation mistakes most likely to revive stale assumptions, blur ownership, or create a fragile second-cycle hand-off.
 
         handoff_workspace_panel:
             label: Handoff Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_workspace_panel.htm
             tab: Handoff
-            comment: High-level transfer shaping surface for deciding whether the record is truly ready to be handed to another operator, what continuity still needs to be repaired, and whether the safest move is transfer, rebuild, or hold.
 
         handoff_packet_blueprint_panel:
             label: Handoff Packet Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_packet_blueprint_panel.htm
             tab: Handoff
-            comment: Read-only structure guidance for packaging owner clarity, current mission, timing cadence, and source memory into a clean transfer packet.
 
         handoff_risk_guardrails_panel:
             label: Handoff Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_risk_guardrails_panel.htm
             tab: Handoff
-            comment: Read-only guardrails that surface the transfer mistakes most likely to blur accountability, lose continuity, or force the receiving operator to reconstruct the case.
 
         recovery_workspace_panel:
             label: Recovery Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_workspace_panel.htm
             tab: Recovery
-            comment: High-level recovery shaping surface for rebuilding stalled, fragmented, or drifted records before pushing them back into communication, reopen, handoff, or commercial motion.
 
         continuity_rebuild_blueprint_panel:
             label: Continuity Rebuild Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_continuity_rebuild_blueprint_panel.htm
             tab: Recovery
-            comment: Read-only structure guidance for turning scattered notes, raw payload memory, and partial operator context into one readable recovery packet.
 
         recovery_risk_guardrails_panel:
             label: Recovery Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_risk_guardrails_panel.htm
             tab: Recovery
-            comment: Read-only guardrails that surface the rebuild mistakes most likely to restart ambiguity, hide scope drift, or push the record forward before continuity is repaired.
 
         planning_workspace_panel:
             label: Planning Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_planning_workspace_panel.htm
             tab: Planning
-            comment: High-level planning surface for sequencing the next operator phase after recovery, clarification, or continuity repair without jumping prematurely into execution language.
 
         next_stage_map_blueprint_panel:
             label: Next Stage Map Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_stage_map_blueprint_panel.htm
             tab: Planning
-            comment: Read-only structure guidance for turning the visible brief, services, timing, and continuity anchors into one explicit next-stage map.
 
         planning_risk_guardrails_panel:
             label: Planning Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_planning_risk_guardrails_panel.htm
             tab: Planning
-            comment: Read-only guardrails that surface the stage-mapping mistakes most likely to blur ownership, hide gaps, or push the record forward without a clean checkpoint.
 
         intake_normalization_workspace_panel:
             label: Intake Normalization Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_intake_normalization_workspace_panel.htm
             tab: Intake
-            comment: High-level intake cleanup surface for tightening structured identity, trip, source, and preference fields before deeper planning or execution tabs take over.
 
         field_normalization_blueprint_panel:
             label: Field Normalization Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_field_normalization_blueprint_panel.htm
             tab: Intake
-            comment: Read-only structure guidance for normalizing the record in a safe sequence so summary, services, source, and contact posture stay aligned.
 
         normalization_risk_guardrails_panel:
             label: Normalization Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_normalization_risk_guardrails_panel.htm
             tab: Intake
-            comment: Read-only guardrails that surface the cleanup mistakes most likely to hide original brief memory, weaken source continuity, or create new structured drift.
 
         pricing_workspace_panel:
             label: Pricing Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_pricing_workspace_panel.htm
             tab: Pricing
-            comment: High-level pricing surface for deciding whether the record is ready for directional ranges, disciplined commercial framing, or one more clarification pass before numbers become visible.
 
         pricing_range_blueprint_panel:
             label: Pricing Range Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_pricing_range_blueprint_panel.htm
             tab: Pricing
-            comment: Read-only structure guidance for framing premium ranges around visible scope, timing, group scale, and budget posture without false precision.
 
         pricing_risk_guardrails_panel:
             label: Pricing Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_pricing_risk_guardrails_panel.htm
             tab: Pricing
-            comment: Read-only guardrails that surface the pricing mistakes most likely to over-specify, blur scope, weaken continuity, or create fragile commercial expectations.
 
         supplier_readiness_workspace_panel:
             label: Supplier Readiness Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_supplier_readiness_workspace_panel.htm
             tab: Suppliers
-            comment: High-level supplier-readiness surface for deciding whether the record is ready for external coordination prep, internal supplier framing, or one more continuity pass before any vendor-facing motion.
 
         supplier_brief_blueprint_panel:
             label: Supplier Brief Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_supplier_brief_blueprint_panel.htm
             tab: Suppliers
-            comment: Read-only structure guidance for building a supplier-ready prep brief around scope, timing, guest scale, and continuity anchors without implying confirmation too early.
 
         supplier_risk_guardrails_panel:
             label: Supplier Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_supplier_risk_guardrails_panel.htm
             tab: Suppliers
-            comment: Read-only guardrails that surface the supplier-readiness mistakes most likely to overexpose private details, outrun internal continuity, or create fragile external expectations.
 
 
 
@@ -447,21 +400,18 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_scheduling_workspace_panel.htm
             tab: Scheduling
-            comment: High-level scheduling surface for deciding whether the record is ready for timing coordination, checkpoint-led cadence planning, or one more continuity pass before availability-style motion.
 
         timing_coordination_blueprint_panel:
             label: Timing Coordination Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_timing_coordination_blueprint_panel.htm
             tab: Scheduling
-            comment: Read-only structure guidance for aligning stay dates, follow-up checkpoints, service sequencing, and contact cadence before timing coordination expands.
 
         scheduling_risk_guardrails_panel:
             label: Scheduling Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_scheduling_risk_guardrails_panel.htm
             tab: Scheduling
-            comment: Read-only guardrails that surface the timing mistakes most likely to create cadence drift, checkpoint loss, or premature scheduling confidence.
 
 
         guest_journey_workspace_panel:
@@ -469,21 +419,18 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_journey_workspace_panel.htm
             tab: Journey
-            comment: High-level guest-journey surface for shaping the experience arc across arrival, stay, service rhythm, and operator checkpoints before guest-facing sequencing becomes too confident.
 
         journey_sequence_blueprint_panel:
             label: Journey Sequence Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_journey_sequence_blueprint_panel.htm
             tab: Journey
-            comment: Read-only structure guidance for sequencing arrival, experiences, pacing, and checkpoint visibility into one coherent journey map.
 
         journey_risk_guardrails_panel:
             label: Journey Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_journey_risk_guardrails_panel.htm
             tab: Journey
-            comment: Read-only guardrails that surface the guest-journey mistakes most likely to over-design, hide gaps, or turn provisional sequencing into implied commitments.
 
 
         partner_coordination_workspace_panel:
@@ -491,21 +438,18 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_coordination_workspace_panel.htm
             tab: Partners
-            comment: High-level partner-coordination surface for shaping cross-party motion, disclosure boundaries, and operator-controlled checkpoints before external coordination becomes too confident.
 
         partner_alignment_blueprint_panel:
             label: Partner Alignment Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_alignment_blueprint_panel.htm
             tab: Partners
-            comment: Read-only structure guidance for turning the live record into a partner-readable coordination brief without implying confirmed scope, timing, or commercial approval too early.
 
         partner_risk_guardrails_panel:
             label: Partner Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_risk_guardrails_panel.htm
             tab: Partners
-            comment: Read-only guardrails that surface the partner-coordination mistakes most likely to create disclosure drift, ownership blur, or fragile external expectations.
 
 
         financial_closure_workspace_panel:
@@ -513,189 +457,162 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_financial_closure_workspace_panel.htm
             tab: Financials
-            comment: High-level financial-closure surface for shaping deposit posture, payment checkpoints, and commercial lock discipline without blurring pricing posture and final confirmation.
 
         deposit_commitment_blueprint_panel:
             label: Deposit Commitment Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_deposit_commitment_blueprint_panel.htm
             tab: Financials
-            comment: Read-only structure guidance for moving from pricing posture into payment and deposit language without skipping scope, timing, or operator-controlled checkpoints.
 
         financial_risk_guardrails_panel:
             label: Financial Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_financial_risk_guardrails_panel.htm
             tab: Financials
-            comment: Read-only guardrails that surface the commercial mistakes most likely to overstate commitment, outrun visible scope, or create fragile payment expectations.
 
         documents_workspace_panel:
             label: Documents Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_documents_workspace_panel.htm
             tab: Documents
-            comment: High-level document-readiness surface for packaging quotes, confirmations, and supporting packets without letting paperwork outrun continuity, ownership, or visible scope.
 
         document_packet_blueprint_panel:
             label: Document Packet Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_document_packet_blueprint_panel.htm
             tab: Documents
-            comment: Read-only structure guidance for turning the live record into a portable document packet with clear reference, timing, ownership, and pending-item discipline.
 
         document_risk_guardrails_panel:
             label: Document Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_document_risk_guardrails_panel.htm
             tab: Documents
-            comment: Read-only guardrails that surface the document mistakes most likely to overstate certainty, blur accountability, or let attachments outrun the record.
 
         approvals_workspace_panel:
             label: Approvals Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_approvals_workspace_panel.htm
             tab: Approvals
-            comment: High-level approval-readiness surface for shaping sign-off posture, decision checkpoints, and owner-visible approval handling without letting commitment language outrun the live record.
 
         approval_decision_blueprint_panel:
             label: Approval Decision Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_approval_decision_blueprint_panel.htm
             tab: Approvals
-            comment: Read-only structure guidance for turning the live record into a clear approval packet with visible basis, decision scope, owner clarity, and next checkpoint discipline.
 
         approval_risk_guardrails_panel:
             label: Approval Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_approval_risk_guardrails_panel.htm
             tab: Approvals
-            comment: Read-only guardrails that surface the approval mistakes most likely to blur ownership, imply premature commitment, or hide why the decision path paused.
 
         post_approval_workspace_panel:
             label: Post-Approval Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_approval_workspace_panel.htm
             tab: Post-Approval
-            comment: High-level post-approval surface for turning sign-off into controlled lock, issue visibility, and final readiness checkpoints without letting the record drift into assumed completion.
 
         post_approval_lock_blueprint_panel:
             label: Post-Approval Lock Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_approval_lock_blueprint_panel.htm
             tab: Post-Approval
-            comment: Read-only structure guidance for converting an approved record into a locked, accountable next-stage packet with visible dependencies and explicit remaining actions.
 
         post_approval_risk_guardrails_panel:
             label: Post-Approval Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_approval_risk_guardrails_panel.htm
             tab: Post-Approval
-            comment: Read-only guardrails that surface the post-approval mistakes most likely to create false completion, hidden dependencies, or fragile final-readiness assumptions.
 
         final_readiness_workspace_panel:
             label: Final Readiness Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_readiness_workspace_panel.htm
             tab: Final Readiness
-            comment: High-level final-readiness surface for deciding whether the record can safely absorb execution pressure, operator change, and last-mile reality without losing clarity.
 
         go_live_readiness_blueprint_panel:
             label: Go-Live Readiness Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_go_live_readiness_blueprint_panel.htm
             tab: Final Readiness
-            comment: Read-only structure guidance for turning the post-approval record into a ready-to-execute packet with visible locked items, pending dependencies, and fallback clarity.
 
         final_readiness_risk_guardrails_panel:
             label: Final Readiness Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_readiness_risk_guardrails_panel.htm
             tab: Final Readiness
-            comment: Read-only guardrails that surface the final-readiness mistakes most likely to create false go-live confidence, checkpoint loss, or fragile execution posture.
 
         delivery_control_workspace_panel:
             label: Delivery Control Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_delivery_control_workspace_panel.htm
             tab: Delivery Control
-            comment: High-level live-operations control surface for deciding whether the record can absorb service pressure safely, where the visible control point sits, and what should be treated as the fallback operating brief.
 
         live_delivery_blueprint_panel:
             label: Live Delivery Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_live_delivery_blueprint_panel.htm
             tab: Delivery Control
-            comment: Read-only structure guidance for translating final readiness into one readable live-delivery spine with visible service sequence, checkpoint cadence, and fallback brief.
 
         delivery_risk_guardrails_panel:
             label: Delivery Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_delivery_risk_guardrails_panel.htm
             tab: Delivery Control
-            comment: Read-only guardrails that surface the live-delivery mistakes most likely to blur ownership, lose control checkpoints, or let execution pressure outrun the visible record.
 
         service_day_control_workspace_panel:
             label: Service-Day Control Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_day_control_workspace_panel.htm
             tab: Service Day
-            comment: Composite operator framing for same-day ownership, live sequence stability, and fallback control when execution pressure rises.
 
         service_day_execution_blueprint_panel:
             label: Service-Day Execution Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_day_execution_blueprint_panel.htm
             tab: Service Day
-            comment: Read-only operator blueprint for keeping the service day anchored to one visible sequence, one checkpoint, and one fallback brief.
 
         service_day_risk_guardrails_panel:
             label: Service-Day Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_day_risk_guardrails_panel.htm
             tab: Service Day
-            comment: Read-only operator guardrails for keeping same-day execution readable, accountable, and easy to stabilize under pressure.
 
         live_incident_workspace_panel:
             label: Live Incident Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_live_incident_workspace_panel.htm
             tab: Incidents
-            comment: Composite operator framing for live issue control, disruption containment, and incident ownership when service delivery breaks away from plan.
 
         incident_response_blueprint_panel:
             label: Incident Response Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_incident_response_blueprint_panel.htm
             tab: Incidents
-            comment: Read-only operator blueprint for containing the incident around one fallback brief, one control checkpoint, and one clean message path.
 
         incident_risk_guardrails_panel:
             label: Incident Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_incident_risk_guardrails_panel.htm
             tab: Incidents
-            comment: Read-only operator guardrails for keeping live incident handling readable, owned, and easy to stabilize under pressure.
 
         post_incident_recovery_workspace_panel:
             label: Post-Incident Recovery Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_incident_recovery_workspace_panel.htm
             tab: Incident Recovery
-            comment: Composite operator framing for stabilizing the record after disruption, rebuilding continuity, and preparing a safe hand-back into normal workflow.
 
         recovery_reentry_blueprint_panel:
             label: Recovery Re-entry Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_reentry_blueprint_panel.htm
             tab: Incident Recovery
-            comment: Read-only operator blueprint for converting incident containment into one stabilized brief, one re-entry checkpoint, and one readable continuity lift.
 
         post_incident_risk_guardrails_panel:
             label: Post-Incident Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_incident_risk_guardrails_panel.htm
             tab: Incident Recovery
-            comment: Read-only operator guardrails for keeping recovery visible, owned, and strong enough for normal workflow to resume safely.
 
 
         post_service_review_workspace_panel:
@@ -703,84 +620,72 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_service_review_workspace_panel.htm
             tab: Service Review
-            comment: Composite operator framing for turning completed or stabilized service delivery into one readable outcome review, one lesson path, and one future-useful continuity packet.
 
         service_review_blueprint_panel:
             label: Service Review Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_review_blueprint_panel.htm
             tab: Service Review
-            comment: Read-only operator blueprint for separating service outcome, internal lessons, and future-useful continuity without rewriting the live record from memory.
 
         service_review_risk_guardrails_panel:
             label: Service Review Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_review_risk_guardrails_panel.htm
             tab: Service Review
-            comment: Read-only operator guardrails for keeping retrospective review explicit, owned, and useful for future continuity rather than vague hindsight.
 
         repeat_guest_readiness_workspace_panel:
             label: Repeat Guest Readiness Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_readiness_workspace_panel.htm
             tab: Repeat Guest
-            comment: Composite operator framing for turning completed or stabilized service records into future-ready repeat-guest continuity instead of leaving repeat-value signals buried in retrospective memory.
 
         repeat_guest_blueprint_panel:
             label: Repeat Guest Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_blueprint_panel.htm
             tab: Repeat Guest
-            comment: Read-only operator blueprint for separating repeatable profile and service pattern memory from one-time service facts before future outreach or planning begins.
 
         repeat_guest_risk_guardrails_panel:
             label: Repeat Guest Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_repeat_guest_risk_guardrails_panel.htm
             tab: Repeat Guest
-            comment: Read-only operator guardrails for preventing generic repeat assumptions, buried preference memory, and future-service framing that outruns the visible record.
 
         vip_relationship_workspace_panel:
             label: VIP Relationship Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_vip_relationship_workspace_panel.htm
             tab: VIP Relationship
-            comment: Composite operator framing for turning repeat-ready service continuity into long-cycle premium relationship handling instead of leaving VIP value buried in retrospective memory.
 
         vip_relationship_blueprint_panel:
             label: VIP Relationship Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_vip_relationship_blueprint_panel.htm
             tab: VIP Relationship
-            comment: Read-only operator blueprint for separating reusable premium relationship memory from one-trip detail before future outreach or planning resumes.
 
         vip_relationship_risk_guardrails_panel:
             label: VIP Relationship Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_vip_relationship_risk_guardrails_panel.htm
             tab: VIP Relationship
-            comment: Read-only operator guardrails for preventing VIP over-assumption, hidden ownership, weak profile memory, and future-service framing that outruns the visible record.
 
         referral_readiness_workspace_panel:
             label: Referral Readiness Workspace
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_referral_readiness_workspace_panel.htm
             tab: Referrals
-            comment: Composite operator framing for turning trusted service continuity into readable referral readiness instead of leaving network-fit logic buried in retrospective memory.
 
         referral_path_blueprint_panel:
             label: Referral Path Blueprint
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_referral_path_blueprint_panel.htm
             tab: Referrals
-            comment: Read-only operator blueprint for shaping visible ownership, profile clarity, service memory, and timing before the record is treated as referral-ready.
 
         referral_risk_guardrails_panel:
             label: Referral Risk Guardrails
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_referral_risk_guardrails_panel.htm
             tab: Referrals
-            comment: Read-only operator guardrails for preventing referral over-assumption, hidden ownership, weak trust memory, and network motion that outruns the visible record.
 
 
         brief_readiness_panel:
@@ -788,7 +693,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_brief_readiness_panel.htm
             tab: Request
-            comment: Read-only operator scan of how complete the guest brief is before working through the detailed request fields.
 
         services_list:
             label: Requested Services
@@ -803,7 +707,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_source_continuity_panel.htm
             tab: Source
-            comment: Read-only operator framing for whether the source trail is clear enough for campaign traceability, hand-off continuity, and reopen review before editing source fields.
 
         source_type:
             label: Source Type
@@ -835,7 +738,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_preference_signal_panel.htm
             tab: Preferences
-            comment: Read-only operator scan of guest preferences, contact route, and experience signals before editing individual fields.
 
 
         arrival_window:
@@ -920,7 +822,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_workspace_summary.htm
             tab: Internal
-            comment: Consolidated read-only scan of workflow, brief quality, and preference depth before editing the detailed internal fields.
 
 
         handoff_focus_panel:
@@ -928,28 +829,24 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_handoff_focus_panel.htm
             tab: Internal
-            comment: Read-only hand-off cues for the next operator before editing the detailed internal fields.
 
         contact_posture_panel:
             label: Contact Posture
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_contact_posture_panel.htm
             tab: Internal
-            comment: Read-only operator scan of preferred route, live contact posture, and the next communication move before editing workflow fields.
 
         service_posture_panel:
             label: Service Posture
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_posture_panel.htm
             tab: Internal
-            comment: Read-only operator scan of service intent, experience-specific signals, and planning continuity before editing detailed request fields.
 
         stay_logistics_panel:
             label: Stay Logistics
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_stay_logistics_panel.htm
             tab: Internal
-            comment: Read-only operator scan of timing, arrival shape, accommodation posture, and on-island planning readiness before touching detailed stay fields.
 
 
         occasion_lifestyle_panel:
@@ -957,7 +854,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_occasion_lifestyle_panel.htm
             tab: Internal
-            comment: Read-only operator scan of celebration intent, dining posture, nightlife appetite, and special-moment signals before shaping the guest experience plan.
 
 
         risk_sensitivity_panel:
@@ -965,77 +861,66 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_risk_sensitivity_panel.htm
             tab: Internal
-            comment: Read-only operator scan of urgency, privacy, family, and dietary signals that should stay visible during hand-off and follow-up.
 
         source_entry_panel:
             label: Source & Entry Posture
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_source_entry_panel.htm
             tab: Internal
-            comment: Read-only operator scan of where the inquiry entered, how it was framed, and whether the source context is rich enough for the next hand-off.
 
         coverage_gaps_panel:
             label: Coverage & Gaps
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_coverage_gaps_panel.htm
             tab: Internal
-            comment: Read-only operator scan of missing brief and workflow coverage before the next hand-off or guest touch.
 
         next_step_framing_panel:
             label: Next-Step Framing
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_step_framing_panel.htm
             tab: Internal
-            comment: Read-only operator framing of the most appropriate next move based on live workflow, contact posture, and follow-up discipline.
 
         commercial_posture_panel:
             label: Commercial Posture
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_commercial_posture_panel.htm
             tab: Internal
-            comment: Read-only operator framing of budget, package depth, and commercial pacing before the next offer-shaping move.
 
         decision_posture_panel:
             label: Decision Posture
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_decision_posture_panel.htm
             tab: Internal
-            comment: Read-only operator framing of the safest next decision across assignment, contact, packaging, and pacing.
 
         proposal_readiness_panel:
             label: Proposal Readiness
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_readiness_panel.htm
             tab: Internal
-            comment: Read-only operator framing of whether the inquiry is ready for a starter package, deeper proposal shaping, or one more clarification pass.
 
         fulfillment_readiness_panel:
             label: Fulfillment Readiness
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fulfillment_readiness_panel.htm
             tab: Internal
-            comment: Read-only operator scan of whether the inquiry is ready to move from shaping into concrete sourcing and execution planning.
 
         response_packaging_panel:
             label: Response Packaging
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_response_packaging_panel.htm
             tab: Internal
-            comment: Read-only operator framing for what should go into the next guest-facing package or clarification response.
 
         guest_confidence_signals_panel:
             label: Guest Confidence Signals
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_confidence_signals_panel.htm
             tab: Internal
-            comment: Read-only operator scan of ownership clarity, continuity cueing, and the safest next confidence-building move before the next guest touch.
 
         reply_tone_guidance_panel:
             label: Reply Tone Guidance
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_tone_guidance_panel.htm
             tab: Internal
-            comment: Read-only operator framing for safest reply tone, pacing, route, and guest-facing response shape before the next touch.
 
 
         clarification_targets_panel:
@@ -1043,14 +928,12 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_clarification_targets_panel.htm
             tab: Internal
-            comment: Read-only operator framing of the highest-value missing facts and the safest continuity-first questions for the next guest touch.
 
         confirmation_blockers_panel:
             label: Confirmation Blockers
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confirmation_blockers_panel.htm
             tab: Internal
-            comment: Read-only operator scan of the concrete blockers that still stand between the current inquiry and a confident next confirmation-style move.
 
         urgency_hint:
             label: Urgency Hint
@@ -1067,21 +950,18 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_queue_panel.htm
             tab: Internal
-            comment: Read-only queue checkpoint summary for follow-up state, due date, and operator action.
 
         working_summary_framing_panel:
             label: Working Summary Framing
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_working_summary_framing_panel.htm
             tab: Internal
-            comment: Read-only operator framing of the safest anchors, write checks, and hand-off shape before updating the working summary.
 
         closure_posture_panel:
             label: Closure Posture
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_posture_panel.htm
             tab: Internal
-            comment: Read-only operator framing for when a record is truly ready to close, what closure context is still missing, and how to preserve a safe reopen path.
 
         guest_summary:
             label: Operator Working Summary
@@ -1110,7 +990,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_working_notes_posture_panel.htm
             tab: Internal
-            comment: Read-only operator framing for what the rolling note should preserve so the next assignee can continue without reconstructing the whole inquiry.
 
         internal_notes:
             label: Working Notes
@@ -1124,7 +1003,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_history_timeline.htm
             tab: History
-            comment: Latest entries appear first in a card-based timeline for faster operator scanning.
 
 
         history_note_framing_panel:
@@ -1132,7 +1010,6 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_history_note_framing_panel.htm
             tab: History
-            comment: Read-only operator guidance for what the next append-only history note should preserve so the timeline remains useful during hand-off, follow-up, and reopen review.
 
         new_internal_note:
             label: Add Internal Note
@@ -1146,28 +1023,24 @@ tabs:
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_raw_payload_framing_panel.htm
             tab: Raw
-            comment: Read-only operator guidance for using the saved payload as a continuity fallback, source check, and reopen reference without editing the raw record.
 
         payload_alignment_signals_panel:
             label: Payload Alignment Signals
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_payload_alignment_signals_panel.htm
             tab: Raw
-            comment: Read-only operator comparison of normalized inquiry fields against saved payload so reopen and hand-off review can spot drift before relying on raw JSON.
 
         payload_carryover_gaps_panel:
             label: Payload Carryover Gaps
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_payload_carryover_gaps_panel.htm
             tab: Raw
-            comment: Read-only operator scan of which planning cues still live only in payload and should be lifted into the structured record or continuity notes.
 
         reopen_recovery_cues_panel:
             label: Reopen Recovery Cues
             type: partial
             path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_recovery_cues_panel.htm
             tab: Raw
-            comment: Read-only operator check of whether the inquiry can be safely reopened or handed off later without depending too heavily on memory or raw JSON.
 
         payload_pretty_json:
             label: Raw Payload
