@@ -44,17 +44,17 @@ if (stripos($secondaryLabel, 'Open inquiry') !== False) {
 <div style="min-width:175px; max-width:220px; line-height:1.2;">
     <div style="margin-bottom:6px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
         <?php if ($primaryUrl !== ''): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff; padding:2px 7px; line-height:1.2; font-size:11px;') ?>">
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-<?= e($primaryTone) ?>" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff; border-radius:7px; padding:2px 7px; line-height:1.2; font-size:11px;') ?>">
                 <?= e($primaryLabel) ?>
             </a>
         <?php else: ?>
-            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75; <?= e('padding:2px 7px; line-height:1.2; font-size:11px;') ?>">
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75; border-radius:7px; <?= e('padding:2px 7px; line-height:1.2; font-size:11px;') ?>">
                 <?= e($primaryLabel) ?>
             </span>
         <?php endif; ?>
 
         <?php if ($secondaryUrl !== ''): ?>
-            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; padding:2px 7px; line-height:1.2; font-size:11px;') ?>">
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; border-radius:7px; padding:2px 7px; line-height:1.2; font-size:11px;') ?>">
                 <?= e($secondaryLabel) ?>
             </a>
         <?php endif; ?>

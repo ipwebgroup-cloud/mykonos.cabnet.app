@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.41.88 — Shared card-width consistency pass
+### v6.41.89 — Shared cell-edge rounding and border polish
 Included in the current safe backend polish line:
-- shared compact button sizing pass
 - shared card-width consistency pass
+- shared cell-edge rounding and border polish
 
 ### Current plugin-tracked baseline
 - `2.4.23`

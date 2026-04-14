@@ -53,11 +53,11 @@ if (stripos((string) $secondaryLabel, 'Return to queue') !== False || stripos((s
 }
 
 $linked = $primaryUrl !== null;
-$border = $linked ? '#cfe2ff' : '#e5e7eb';
-$bg = $linked ? '#f7fbff' : '#f8f9fa';
+$border = $linked ? '#d6e5fb' : '#e5e7eb';
+$bg = $linked ? '#f8fbff' : '#f8f9fa';
 $title = $linked ? '#084298' : '#495057';
 $text = $linked ? '#33577a' : '#6c757d';
-$cueBorder = $linked ? '#d8e6fb' : '#e9ecef';
+$cueBorder = $linked ? '#dce8fb' : '#e9ecef';
 $cueBg = '#ffffff';
 
 $packetTone = '#0f5132';
@@ -90,7 +90,7 @@ if (stripos($shortHint, 'manual') !== false) {
 
 [$hintText, $hintBg, $hintBorder] = $hintTone;
 ?>
-<div style="min-width:235px; max-width:295px; line-height:1.28; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:10px 11px;">
+<div style="min-width:235px; max-width:295px; line-height:1.28; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:12px; padding:10px 11px; box-shadow:0 1px 2px rgba(15,23,42,.03);">
     <div style="font-weight:700; color:<?= e($title) ?>; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
         <span title="Source reference"><?= e($reference) ?></span>
     </div>
@@ -111,19 +111,19 @@ if (stripos($shortHint, 'manual') !== false) {
     </div>
 
     <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-bottom:8px;">
-        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 7px;">
+        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:9px; padding:6px 7px;">
             <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Outcome</div>
             <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($latestTouch) ?>">
                 <?= e($latestOutcome) ?>
             </div>
         </div>
-        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 7px;">
+        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:9px; padding:6px 7px;">
             <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Packet</div>
             <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 <?= e($latestPacket) ?>
             </div>
         </div>
-        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:8px; padding:6px 7px;">
+        <div style="border:1px solid <?= e($cueBorder) ?>; background:<?= e($cueBg) ?>; border-radius:9px; padding:6px 7px;">
             <div style="font-size:10px; font-weight:700; color:<?= e($text) ?>; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Review</div>
             <div style="font-size:12px; font-weight:700; color:<?= e($title) ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 <?= e($nextReview) ?>
@@ -133,15 +133,15 @@ if (stripos($shortHint, 'manual') !== false) {
 
     <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
         <?php if ($primaryUrl): ?>
-            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Open source inquiry"><?= e($primaryLabel) ?></a>
+            <a href="<?= e($primaryUrl) ?>" class="btn btn-xs btn-primary" style="<?= e('border-color:#0b63ce; background:#0b63ce; color:#ffffff; border-radius:7px; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Open source inquiry"><?= e($primaryLabel) ?></a>
         <?php else: ?>
-            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75; <?= e('padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="No source inquiry available"><?= e($primaryLabel) ?></span>
+            <span class="btn btn-xs btn-default disabled" style="pointer-events:none; opacity:0.75; border-radius:7px; <?= e('padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="No source inquiry available"><?= e($primaryLabel) ?></span>
         <?php endif; ?>
         <?php if ($historyUrl): ?>
-            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Open loyalty history"><?= e($historyLabel) ?></a>
+            <a href="<?= e($historyUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; border-radius:7px; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Open loyalty history"><?= e($historyLabel) ?></a>
         <?php endif; ?>
         <?php if ($secondaryUrl): ?>
-            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Return to queue"><?= e($secondaryLabel) ?></a>
+            <a href="<?= e($secondaryUrl) ?>" class="btn btn-xs btn-default" style="<?= e('border-color:#d7dce2; background:#f8f9fa; color:#495057; border-radius:7px; padding:2px 7px; line-height:1.2; font-size:11px;') ?>" title="Return to queue"><?= e($secondaryLabel) ?></a>
         <?php endif; ?>
     </div>
 </div>

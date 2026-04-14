@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.41.88 shared card-width consistency pass`
+- `v6.41.89 shared cell-edge rounding and border polish patch`
 
 ## Current verified development direction
 
@@ -15,4 +15,4 @@ The current backend line is focused on:
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
-- smoothing horizontal balance across visible list cells before adding more UI surface
+- lightly unifying visible list-cell edges before adding more UI surface

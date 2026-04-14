@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.41.88 shared card-width consistency pass`
+- `v6.41.89 shared cell-edge rounding and border polish patch`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It brings the Inquiry Queue action cell and the Loyalty Continuity source-summary card a little closer in horizontal balance by nudging their min/max widths without changing content or behavior.
+It lightly polishes corners, border softness, and card edges on the visible queue action cell and loyalty source-summary card so they feel more visually unified without changing layout or behavior.
 
 ## Deployment note
 
@@ -21,5 +21,5 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- the queue action cell and loyalty source-summary card feel a bit more balanced horizontally
+- visible list cells feel a little more unified at the edges
 - list behavior remains unchanged
