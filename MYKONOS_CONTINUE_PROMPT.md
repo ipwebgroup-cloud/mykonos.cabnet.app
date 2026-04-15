@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.62.00 loyalty-side follow-through risk digest`
+- `v6.63.00 linked-lane action memory strips`
 
 ## Current verified development direction
 

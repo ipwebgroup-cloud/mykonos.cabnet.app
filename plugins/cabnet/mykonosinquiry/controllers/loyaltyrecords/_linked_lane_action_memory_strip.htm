@@ -1,0 +1,80 @@
+<?php
+    $record = $record ?? ($formModel ?? $this->formGetModel());
+    $sourceInquiry = null;
+    if ($record && !empty($record->source_inquiry_id)) {
+        $sourceInquiry = \Cabnet\MykonosInquiry\Models\Inquiry::find($record->source_inquiry_id);
+    }
+    if (!$record || !$sourceInquiry) {
+        return;
+    }
+
+    $queueStatus = $sourceInquiry->status_label ?? (trim((string) $sourceInquiry->status) !== '' ? ucwords(str_replace(['_', '-'], ' ', $sourceInquiry->status)) : 'Unknown');
+    $queuePriority = $sourceInquiry->priority_label ?? (trim((string) $sourceInquiry->priority) !== '' ? ucwords(str_replace(['_', '-'], ' ', $sourceInquiry->priority)) : 'Normal');
+    $queueOwner = trim((string) ($sourceInquiry->owner_name ?? '')) !== '' ? trim((string) $sourceInquiry->owner_name) : 'Unassigned';
+    $followUp = !empty($sourceInquiry->follow_up_date) && $sourceInquiry->follow_up_date instanceof \DateTimeInterface
+        ? $sourceInquiry->follow_up_date->format('Y-m-d')
+        : 'Not scheduled';
+    $lastContacted = !empty($sourceInquiry->last_contacted_at) && $sourceInquiry->last_contacted_at instanceof \DateTimeInterface
+        ? $sourceInquiry->last_contacted_at->format('Y-m-d H:i')
+        : 'No contact logged';
+    $closedAt = !empty($sourceInquiry->closed_at) && $sourceInquiry->closed_at instanceof \DateTimeInterface
+        ? $sourceInquiry->closed_at->format('Y-m-d H:i')
+        : null;
+
+    $latestNote = method_exists($sourceInquiry, 'notes') ? $sourceInquiry->notes()->orderBy('created_at', 'desc')->first() : null;
+    $noteType = $latestNote && !empty($latestNote->note_type) ? ucwords(str_replace(['_', '-'], ' ', $latestNote->note_type)) : 'No note yet';
+    $noteAuthor = $latestNote && !empty($latestNote->author_name) ? $latestNote->author_name : 'System';
+    $noteStamp = $latestNote && !empty($latestNote->created_at) ? $latestNote->created_at->format('Y-m-d H:i') : 'No note logged';
+    $noteBody = $latestNote && trim((string) $latestNote->body) !== '' ? trim((string) $latestNote->body) : 'No inquiry-side note body is visible yet.';
+    if (mb_strlen($noteBody) > 220) {
+        $noteBody = mb_substr($noteBody, 0, 217) . '...';
+    }
+
+    $headline = $latestNote ? 'Latest linked-lane action from the inquiry side' : 'Source inquiry is linked but no queue note memory is visible yet';
+    $cue = $latestNote
+        ? 'Use this strip to see the newest queue-side move before changing continuity posture, adding a touchpoint, or scheduling the next review.'
+        : 'The continuity record is linked to a real inquiry, but the queue side has not left visible note memory yet. Keep continuity framing conservative until the queue narrative is clearer.';
+
+    $sourceUrl = \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $sourceInquiry->id);
+    $listUrl = \Backend::url('cabnet/mykonosinquiry/inquiries');
+    $helpUrl = \Backend::url('cabnet/mykonosinquiry/helpcenter') . '#queue-loyalty-bridge';
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="margin-bottom:18px;border-radius:14px;border:1px solid rgba(15,23,42,.08);box-shadow:0 10px 24px rgba(15,23,42,.06);background:#ffffff;overflow:hidden;">
+        <div class="content" style="padding:0;">
+            <div style="padding:14px 18px;background:#f8fafc;border-bottom:1px solid rgba(15,23,42,.06);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+                <div style="min-width:260px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Linked-lane action memory</div>
+                    <h4 style="margin:0 0 6px 0;font-size:19px;font-weight:700;color:#0f172a;"><?= e($headline) ?></h4>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;"><?= e($cue) ?></div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Queue: <?= e($queueStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Priority: <?= e($queuePriority) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Last move: <?= e($noteStamp) ?></span>
+                </div>
+            </div>
+            <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Latest queue move</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><?= e($noteType) ?> / <?= e($noteAuthor) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;"><?= e($noteBody) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Queue posture now</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><?= e($queueOwner) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;">Follow-up <?= e($followUp) ?> · Last contact <?= e($lastContacted) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Closure memory</div>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;"><?= e($closedAt ? 'Inquiry closed at ' . $closedAt . '. Keep continuity follow-through explicit if the queue lane is already considered complete.' : 'Inquiry is not marked closed. Use this memory before assuming continuity now owns the full relationship.') ?></div>
+                </div>
+            </div>
+            <div style="padding:0 18px 16px 18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                <a href="<?= e($sourceUrl) ?>" class="btn btn-default oc-icon-external-link">Open source inquiry</a>
+                <a href="<?= e($listUrl) ?>" class="btn btn-default oc-icon-list-ul">Open inquiry list</a>
+                <a href="<?= e($helpUrl) ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>

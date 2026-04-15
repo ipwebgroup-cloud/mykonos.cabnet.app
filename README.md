@@ -2,9 +2,9 @@
 
 ## Current safe continuity hint
 
-### v6.62.00 — Loyalty-side follow-through risk digest
+### v6.63.00 — Linked-lane action memory strips
 Included in the current safe backend polish line:
-- loyalty record follow-through risk digest when source inquiry closure and continuity timing drift apart
+- inquiry and loyalty record screens now show the latest decisive move from the linked lane
 - plugin-only record-screen guidance upgrade without changing workflow logic
 
 ### Current plugin-tracked baseline

@@ -1,0 +1,83 @@
+<?php
+    $record = $record ?? ($formModel ?? $this->formGetModel());
+    if (!$record) {
+        return;
+    }
+
+    $linkedLoyalty = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $record->id)->first();
+    if (!$linkedLoyalty) {
+        return;
+    }
+
+    $continuityStatus = $linkedLoyalty->continuity_status_label ?? (trim((string) $linkedLoyalty->continuity_status) !== '' ? ucwords(str_replace(['_', '-'], ' ', $linkedLoyalty->continuity_status)) : 'Draft');
+    $loyaltyStage = $linkedLoyalty->loyalty_stage_label ?? (trim((string) $linkedLoyalty->loyalty_stage) !== '' ? ucwords(str_replace(['_', '-'], ' ', $linkedLoyalty->loyalty_stage)) : 'Review');
+    $continuityOwner = trim((string) ($linkedLoyalty->owner_name ?? '')) !== '' ? trim((string) $linkedLoyalty->owner_name) : 'Unassigned';
+    $nextReview = !empty($linkedLoyalty->next_review_at) && $linkedLoyalty->next_review_at instanceof \DateTimeInterface
+        ? $linkedLoyalty->next_review_at->format('Y-m-d H:i')
+        : 'Not scheduled';
+
+    $latestTouchpoint = method_exists($linkedLoyalty, 'getLatestTouchpointRecord') ? $linkedLoyalty->getLatestTouchpointRecord() : null;
+    $latestStamp = $latestTouchpoint
+        ? (($latestTouchpoint->touchpoint_at instanceof \DateTimeInterface) ? $latestTouchpoint->touchpoint_at->format('Y-m-d H:i') : (optional($latestTouchpoint->created_at)->format('Y-m-d H:i') ?: 'Pending'))
+        : 'No continuity move logged yet';
+    $latestOutcome = $latestTouchpoint && !empty($latestTouchpoint->touchpoint_outcome)
+        ? ucwords(str_replace(['_', '-'], ' ', $latestTouchpoint->touchpoint_outcome))
+        : 'No outcome recorded';
+    $latestChannel = $latestTouchpoint && !empty($latestTouchpoint->touchpoint_channel)
+        ? ucwords(str_replace(['_', '-'], ' ', $latestTouchpoint->touchpoint_channel))
+        : 'Internal / none';
+    $latestSummary = method_exists($linkedLoyalty, 'getLatestTouchpointSummaryAttribute')
+        ? $linkedLoyalty->latest_touchpoint_summary
+        : 'No continuity move logged yet.';
+    $latestNarrative = method_exists($linkedLoyalty, 'getLatestTouchpointBodyPreviewAttribute')
+        ? $linkedLoyalty->latest_touchpoint_body_preview
+        : 'No continuity narrative captured yet.';
+
+    $headline = $latestTouchpoint ? 'Latest linked-lane action from continuity' : 'Continuity exists but no action memory is visible yet';
+    $cue = $latestTouchpoint
+        ? 'Use this strip to see the newest continuity-side move before changing queue posture, closure reasoning, or follow-up timing on the inquiry.'
+        : 'A continuity record already exists for this inquiry, but no saved touchpoint is visible yet. Keep the queue side clear until the first continuity move is logged.';
+
+    $linkedUrl = \Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linkedLoyalty->id);
+    $listUrl = \Backend::url('cabnet/mykonosinquiry/loyaltyrecords');
+    $helpUrl = \Backend::url('cabnet/mykonosinquiry/helpcenter') . '#queue-loyalty-bridge';
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="margin-bottom:18px;border-radius:14px;border:1px solid rgba(15,23,42,.08);box-shadow:0 10px 24px rgba(15,23,42,.06);background:#ffffff;overflow:hidden;">
+        <div class="content" style="padding:0;">
+            <div style="padding:14px 18px;background:#f8fafc;border-bottom:1px solid rgba(15,23,42,.06);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+                <div style="min-width:260px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Linked-lane action memory</div>
+                    <h4 style="margin:0 0 6px 0;font-size:19px;font-weight:700;color:#0f172a;"><?= e($headline) ?></h4>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;"><?= e($cue) ?></div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Continuity: <?= e($continuityStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Stage: <?= e($loyaltyStage) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Move: <?= e($latestStamp) ?></span>
+                </div>
+            </div>
+            <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Latest continuity move</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><?= e($latestOutcome) ?> / <?= e($latestChannel) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;"><?= e($latestSummary) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Action narrative</div>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;"><?= e($latestNarrative) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Linked lane now</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><?= e($continuityOwner) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;">Next review <?= e($nextReview) ?> · Use this memory before closing, reopening, or rescheduling the queue side.</div>
+                </div>
+            </div>
+            <div style="padding:0 18px 16px 18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                <a href="<?= e($linkedUrl) ?>" class="btn btn-default oc-icon-external-link">Open linked loyalty record</a>
+                <a href="<?= e($listUrl) ?>" class="btn btn-default oc-icon-refresh">Open loyalty list</a>
+                <a href="<?= e($helpUrl) ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>

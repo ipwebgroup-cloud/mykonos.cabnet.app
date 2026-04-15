@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.62.00 loyalty-side follow-through risk digest`
+- `v6.63.00 linked-lane action memory strips`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades the loyalty record screen with a compact follow-through risk digest when a source inquiry exists, so continuity operators can see whether queue closure and continuity timing are aligned, stale, or missing a visible checkpoint.
+It upgrades both saved record screens with compact linked-lane action memory strips so operators can see the newest decisive move on the other side of the bridge without opening the linked record first.
 
 ## Deployment note
 
@@ -19,16 +19,17 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
+- Backend -> Inquiry Queue -> open a record with a linked loyalty record
 - Backend -> Loyalty Continuity -> open a record with `source_inquiry_id`
-- the new follow-through risk digest appears above the existing loyalty summary shell
-- records without source inquiry remain unchanged
+- the new linked-lane action memory strip appears above both existing record summary shells
+- records without a linked bridge remain unchanged
 - existing actions, tabs, and workflow behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves bridge visibility on the continuity side
-- exposes stale or unscheduled next-review risk without changing workflow logic
+- improves bridge visibility on both saved record screens
+- keeps the latest cross-lane move visible without changing workflow logic
 - keeps the live /plan bridge untouched
 - keeps database and queue behavior untouched
 - stays plugin-only and render-safe
@@ -36,6 +37,6 @@ This is a meaningful operator-facing upgrade because it:
 ## Safest next step
 
 After this continuity-risk pass, the next strong step should be one of:
-- add a compact linked-lane action memory strip on both record screens
-- add a small bridge-health digest on the queue and loyalty list rows
+- add a compact bridge-health digest on the queue and loyalty list rows
+- add a small closure-memory digest on linked list rows
 - upgrade Workspace Docs with a focused bridge-risk dashboard section

@@ -59,6 +59,10 @@
         <?= $this->makePartial('follow_through_risk_digest_strip', ['record' => $model]) ?>
     <?php endif; ?>
 
+    <?php if ($model && !empty($model->source_inquiry_id)): ?>
+        <?= $this->makePartial('linked_lane_action_memory_strip', ['record' => $model]) ?>
+    <?php endif; ?>
+
     <div class="layout-row">
         <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
             <div class="content" style="padding:16px 18px;">
