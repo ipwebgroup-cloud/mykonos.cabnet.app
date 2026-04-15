@@ -1,0 +1,121 @@
+<?php
+    use Carbon\Carbon;
+    use Cabnet\MykonosInquiry\Models\LoyaltyRecord;
+
+    $model = $this->formGetModel();
+    $linked = $model && method_exists($model, 'loyalty_record') ? $model->loyalty_record : null;
+
+    if (!$linked && $model && $model->id && class_exists(LoyaltyRecord::class)) {
+        $linked = LoyaltyRecord::where('source_inquiry_id', $model->id)->first();
+    }
+
+    if (!$model || !$linked) {
+        return;
+    }
+
+    $today = Carbon::now();
+    $queueDate = $model->follow_up_date instanceof \DateTimeInterface ? Carbon::instance($model->follow_up_date) : null;
+    $loyaltyDate = $linked->next_review_at instanceof \DateTimeInterface ? Carbon::instance($linked->next_review_at) : null;
+
+    $queueOwner = !empty($model->owner_name) ? $model->owner_name : 'Unassigned';
+    $loyaltyOwner = !empty($linked->owner_name) ? $linked->owner_name : 'Unassigned';
+    $reference = !empty($linked->request_reference) ? $linked->request_reference : ('Loyalty #' . $linked->id);
+
+    $queueTiming = $queueDate ? $queueDate->format('Y-m-d') : 'Not scheduled';
+    $loyaltyTiming = $loyaltyDate ? $loyaltyDate->format('Y-m-d H:i') : 'Not scheduled';
+
+    $queueState = 'Queue timing is open';
+    $queueNote = 'Set a clear follow-up date so the request does not drift.';
+    if ($queueDate) {
+        if ($queueDate->lt($today->copy()->startOfDay())) {
+            $queueState = 'Queue follow-up is stale';
+            $queueNote = 'The queue checkpoint is already overdue.';
+        } elseif ($queueDate->isSameDay($today)) {
+            $queueState = 'Queue follow-up is due today';
+            $queueNote = 'Handle the live queue checkpoint today.';
+        } else {
+            $queueState = 'Queue follow-up is current';
+            $queueNote = 'The queue checkpoint is scheduled ahead.';
+        }
+    }
+
+    $loyaltyState = 'Continuity review is open';
+    $loyaltyNote = 'Set a next review date so continuity posture stays visible.';
+    if ($loyaltyDate) {
+        if ($loyaltyDate->lt($today)) {
+            $loyaltyState = 'Continuity review is stale';
+            $loyaltyNote = 'The loyalty review point is already overdue.';
+        } elseif ($loyaltyDate->isSameDay($today)) {
+            $loyaltyState = 'Continuity review is due today';
+            $loyaltyNote = 'The continuity record should surface today.';
+        } else {
+            $loyaltyState = 'Continuity review is current';
+            $loyaltyNote = 'The continuity review point is scheduled ahead.';
+        }
+    }
+
+    $headline = 'Timing posture is current';
+    $summary = 'Queue and continuity timing are both still readable.';
+    $tone = ['bg' => '#ecfeff', 'border' => '#bae6fd', 'pill' => '#0f766e'];
+
+    if ((!$queueDate && !$loyaltyDate) || ($queueDate && $queueDate->lt($today->copy()->startOfDay())) || ($loyaltyDate && $loyaltyDate->lt($today))) {
+        $headline = 'Timing drift needs attention';
+        $summary = 'At least one side of the bridge has stale or missing timing. Clarify which side owns the next live checkpoint.';
+        $tone = ['bg' => '#fff7ed', 'border' => '#fed7aa', 'pill' => '#c2410c'];
+    }
+
+    if (($queueDate && $queueDate->lt($today->copy()->startOfDay())) && ($loyaltyDate && $loyaltyDate->lt($today))) {
+        $headline = 'Both timing lanes are stale';
+        $summary = 'The inquiry follow-up and the continuity review have both drifted. Choose one owner and reset both dates deliberately.';
+        $tone = ['bg' => '#fef2f2', 'border' => '#fecaca', 'pill' => '#b91c1c'];
+    }
+
+    $operatorCue = 'Keep queue-led handling when the live request still needs action; let continuity lead when the inquiry is already resolved and long-cycle stewardship is the main task.';
+    if (($queueDate && $queueDate->lt($today->copy()->startOfDay())) && (!$loyaltyDate || $loyaltyDate->gte($today))) {
+        $operatorCue = 'Queue timing is the active risk now. Reset the live inquiry checkpoint before widening continuity work.';
+    } elseif ((!$queueDate || $queueDate->gte($today->copy()->startOfDay())) && ($loyaltyDate && $loyaltyDate->lt($today))) {
+        $operatorCue = 'Continuity timing is the active risk now. The queue can stay stable while loyalty review is brought current.';
+    } elseif (!$queueDate && !$loyaltyDate) {
+        $operatorCue = 'Neither side has a scheduled checkpoint yet. Decide which lane owns the next touch and set both dates intentionally.';
+    }
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="background: <?= e($tone['bg']) ?>; border:1px solid <?= e($tone['border']) ?>; border-radius:14px; box-shadow:0 6px 18px rgba(15,23,42,.05); margin-bottom:18px;">
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;justify-content:space-between;">
+                <div style="min-width:260px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Queue / continuity timing posture</div>
+                    <h3 style="margin:0 0 6px 0;font-size:20px;font-weight:700;color:#111827;line-height:1.25;"><?= e($headline) ?></h3>
+                    <div style="font-size:13px;line-height:1.7;color:#475569;"><?= e($summary) ?></div>
+                </div>
+                <div style="min-width:220px;flex:0 1 320px;display:flex;flex-wrap:wrap;gap:8px;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.7);background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Queue owner: <?= e($queueOwner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.7);background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Continuity owner: <?= e($loyaltyOwner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.7);background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Linked record: <?= e($reference) ?></span>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px;">
+                <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Queue timing</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;"><?= e($queueState) ?></div>
+                    <div style="margin-top:4px;font-size:12px;color:#475569;line-height:1.55;">Follow-up: <?= e($queueTiming) ?><br><?= e($queueNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Continuity timing</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;"><?= e($loyaltyState) ?></div>
+                    <div style="margin-top:4px;font-size:12px;color:#475569;line-height:1.55;">Next review: <?= e($loyaltyTiming) ?><br><?= e($loyaltyNote) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Operator cue</div>
+                    <div style="font-size:14px;font-weight:700;color: <?= e($tone['pill']) ?>;">Choose the active lane deliberately</div>
+                    <div style="margin-top:4px;font-size:12px;color:#475569;line-height:1.55;"><?= e($operatorCue) ?></div>
+                </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linked->id) ?>" class="btn btn-default oc-icon-refresh">Open linked loyalty record</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-list-ul">Open loyalty list</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-bridge' ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>
