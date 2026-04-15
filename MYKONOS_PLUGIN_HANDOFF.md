@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.55.00 inquiry-side continuity source digest on linked records`
+- `v6.56.00 dual-owner posture cues across inquiry and loyalty records`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades the inquiry update screen so operators can immediately see when a saved loyalty continuity record already exists for that inquiry.
+It adds compact owner-alignment guidance strips to the inquiry and loyalty update screens so operators can immediately see whether queue ownership and continuity ownership are aligned, split, or still unclear.
 
 ## Deployment note
 
@@ -19,22 +19,23 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue -> open an inquiry with a linked loyalty record
-- the inquiry screen now shows a linked continuity digest strip above the main summary shell
-- queue and loyalty actions, filters, and form behavior remain unchanged
+- Backend -> Inquiry Queue -> open an inquiry that links to continuity
+- Backend -> Loyalty Continuity -> open a continuity record with a source inquiry
+- both record screens now show an owner-alignment strip above the main summary shell
+- existing form fields, actions, notes, and workflow behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves queue-to-continuity awareness on the inquiry record itself
-- reduces duplicate continuity handling
+- reduces handoff ambiguity
+- keeps queue and continuity ownership visible without opening deeper history
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this bridge-visibility pass, the next strong step should be one of:
-- add conservative relationship breadcrumbs on the inquiry create/new flow when a continuity record already exists for a return guest pattern
-- add a compact dual-owner posture strip when inquiry owner and continuity owner differ
-- improve continuity handoff wording inside Workspace Docs without widening the live queue UI
+After this ownership-visibility pass, the next strong step should be one of:
+- add lightweight stale-timing cues when queue follow-up and continuity review have both drifted
+- add compact owner mismatch cues on seeded create flows when a source inquiry is preloaded
+- improve bridge help anchors so record-screen guidance deep-links directly into the right docs section

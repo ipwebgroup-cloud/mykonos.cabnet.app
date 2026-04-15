@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.55.00 inquiry-side continuity source digest on linked records`
+- `v6.56.00 dual-owner posture cues across inquiry and loyalty records`
 
 ## Current verified development direction
 
@@ -17,3 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
+- making queue-to-continuity ownership posture visible before operators widen the workflow

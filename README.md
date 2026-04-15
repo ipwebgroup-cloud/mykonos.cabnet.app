@@ -2,11 +2,8 @@
 
 ## Current safe continuity hint
 
-### v6.55.00 — Inquiry-side continuity source digest on linked records
+### v6.56.00 — Dual-owner posture cues across inquiry and loyalty records
 Included in the current safe backend polish line:
-- saved continuity digest shown directly on the inquiry update screen when a linked loyalty record exists
-- queue-side bridge visibility without widening workflow logic
-- plugin-only operator guidance upgrade without changing live workflow behavior
-
-### Current plugin-tracked baseline
-- `2.4.23`
+- compact owner-alignment strips on inquiry and loyalty record screens
+- immediate visibility for queue owner versus continuity owner posture
+- plugin-only operator guidance without changing live workflow logic

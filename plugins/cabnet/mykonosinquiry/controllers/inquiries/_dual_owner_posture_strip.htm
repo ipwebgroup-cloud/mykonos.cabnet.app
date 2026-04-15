@@ -1,0 +1,102 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+    if (!$model || empty($model->id)) {
+        return;
+    }
+
+    $linked = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $model->id)
+        ->orderBy('id', 'desc')
+        ->first();
+
+    if (!$linked) {
+        return;
+    }
+
+    $queueOwner = !empty($model->owner_name) ? $model->owner_name : 'Unassigned';
+    $continuityOwner = !empty($linked->owner_name) ? $linked->owner_name : 'Unassigned';
+    $queueFollowUp = !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
+    $continuityReview = !empty($linked->next_review_at) ? $linked->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+    $continuityRef = !empty($linked->request_reference) ? $linked->request_reference : ('Loyalty #' . $linked->id);
+    $continuityStatus = !empty($linked->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $linked->continuity_status)) : 'Draft';
+    $continuityStage = !empty($linked->loyalty_stage) ? ucwords(str_replace(['_', '-'], ' ', $linked->loyalty_stage)) : 'Watch';
+
+    $queueAssigned = $queueOwner !== 'Unassigned';
+    $continuityAssigned = $continuityOwner !== 'Unassigned';
+
+    if ($queueAssigned && $continuityAssigned && strcasecmp($queueOwner, $continuityOwner) === 0) {
+        $alignment = 'Ownership aligned';
+        $alignmentNote = 'The same operator appears to own both the live inquiry and the continuity follow-through.';
+        $cue = 'Keep the workflow simple and let the same owner close the live request while continuity timing stays visible.';
+        $toneBg = '#ecfdf5';
+        $toneBorder = '#bbf7d0';
+        $toneText = '#166534';
+    } elseif ($queueAssigned && $continuityAssigned) {
+        $alignment = 'Split ownership';
+        $alignmentNote = 'The live inquiry owner and continuity owner differ, so handoff clarity matters before further status changes.';
+        $cue = 'Use the linked continuity record when deciding whether queue or continuity should lead the next guest-facing move.';
+        $toneBg = '#fff7ed';
+        $toneBorder = '#fdba74';
+        $toneText = '#9a3412';
+    } elseif ($queueAssigned) {
+        $alignment = 'Queue-led ownership';
+        $alignmentNote = 'The inquiry has an owner but the continuity side does not yet show a named operator.';
+        $cue = 'Keep the request queue-led until continuity ownership is explicit.';
+        $toneBg = '#eff6ff';
+        $toneBorder = '#bfdbfe';
+        $toneText = '#1d4ed8';
+    } elseif ($continuityAssigned) {
+        $alignment = 'Continuity-led ownership';
+        $alignmentNote = 'Continuity already has an owner but the live inquiry still looks unassigned.';
+        $cue = 'Clarify whether the queue should stay active or whether continuity now owns the relationship.';
+        $toneBg = '#f5f3ff';
+        $toneBorder = '#ddd6fe';
+        $toneText = '#6d28d9';
+    } else {
+        $alignment = 'Unassigned risk';
+        $alignmentNote = 'Neither side currently shows a clear named owner.';
+        $cue = 'Clarify ownership before further edits so the guest does not drift between queue and continuity.';
+        $toneBg = '#fef2f2';
+        $toneBorder = '#fecaca';
+        $toneText = '#b91c1c';
+    }
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="border-radius:14px;border:1px solid <?= e($toneBorder) ?>;background:<?= e($toneBg) ?>;box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;">
+                <div style="min-width:260px;flex:1 1 360px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Queue and continuity ownership posture</div>
+                    <h4 style="margin:0 0 6px 0;font-size:20px;font-weight:700;color:#1f2937;line-height:1.3;"><?= e($alignment) ?></h4>
+                    <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($alignmentNote) ?></div>
+                    <div style="margin-top:8px;font-size:13px;line-height:1.65;color:#334155;"><strong>Operator cue:</strong> <?= e($cue) ?></div>
+                </div>
+                <div style="min-width:220px;flex:0 1 320px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid <?= e($toneBorder) ?>;background:#fff;color:<?= e($toneText) ?>;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Queue owner: <?= e($queueOwner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid <?= e($toneBorder) ?>;background:#fff;color:<?= e($toneText) ?>;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Continuity owner: <?= e($continuityOwner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Linked record: <?= e($continuityRef) ?></span>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <strong style="display:block;color:#111827;margin-bottom:4px;">Ownership alignment</strong>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Queue owner: <?= e($queueOwner) ?><br>Continuity owner: <?= e($continuityOwner) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <strong style="display:block;color:#111827;margin-bottom:4px;">Timing posture</strong>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Queue follow-up: <?= e($queueFollowUp) ?><br>Continuity next review: <?= e($continuityReview) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <strong style="display:block;color:#111827;margin-bottom:4px;">Continuity posture</strong>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Status: <?= e($continuityStatus) ?><br>Stage: <?= e($continuityStage) ?></div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linked->id) ?>" class="btn btn-default oc-icon-external-link" style="border-radius:999px;">Open linked loyalty record</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh" style="border-radius:999px;">Open loyalty list</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-update&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $model->id)) . '&returnLabel=' . rawurlencode('Back to inquiry record') . '#help-bridge-and-transfer' ?>" class="btn btn-default oc-icon-book" style="border-radius:999px;">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>
