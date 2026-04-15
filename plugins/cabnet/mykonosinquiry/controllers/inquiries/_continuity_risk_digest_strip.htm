@@ -1,0 +1,98 @@
+<?php
+$record = $record ?? ($formModel ?? $this->formGetModel());
+if (!$record || empty($record->id)) {
+    return;
+}
+
+$linked = null;
+if (method_exists($record, 'getRelation')) {
+    $linked = $record->loyalty_record ?: null;
+}
+if (!$linked && class_exists(\Cabnet\MykonosInquiry\Models\LoyaltyRecord::class)) {
+    $linked = \Cabnet\MykonosInquiry\Models\LoyaltyRecord::where('source_inquiry_id', $record->id)->first();
+}
+if (!$linked) {
+    return;
+}
+
+$reference = trim((string) ($linked->request_reference ?: ('Loyalty #' . $linked->id)));
+$continuityStatus = trim((string) ($linked->continuity_status_label ?: ucwords(str_replace(['_', '-'], ' ', (string) $linked->continuity_status))));
+$loyaltyStage = trim((string) ($linked->loyalty_stage_label ?: ucwords(str_replace(['_', '-'], ' ', (string) $linked->loyalty_stage))));
+$continuityOwner = trim((string) ($linked->owner_name ?: 'Not assigned yet'));
+$nextReview = $linked->next_review_at ? $linked->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+$reviewWindow = trim((string) ($linked->next_review_window_label ?: 'Not scheduled'));
+$lastRetention = $linked->last_retention_contact_at ? $linked->last_retention_contact_at->format('Y-m-d H:i') : 'No retention contact logged';
+
+$queueStatus = trim((string) ($record->status_label ?: ucwords(str_replace('_', ' ', (string) $record->status))));
+$queueClosed = !empty($record->closed_at) || in_array((string) $record->status, ['closed_won', 'closed_lost', 'closed'], true);
+$followUp = !empty($record->follow_up_date) ? $record->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+$riskHeading = 'Continuity looks healthy enough to stay visible from the inquiry lane.';
+$riskTone = ['border' => 'rgba(59,130,246,.18)', 'bg1' => '#f8fbff', 'bg2' => '#ffffff', 'eyebrow' => '#2563eb', 'pillBg' => '#eff6ff', 'pillColor' => '#1d4ed8'];
+$riskSummary = 'Use this digest to confirm whether loyalty follow-through is current, drifting, or needs clarification before you close the queue side mentally.';
+
+if (in_array($reviewWindow, ['Overdue', 'Due today'], true)) {
+    $riskHeading = 'Continuity needs near-term attention from the queue side.';
+    $riskSummary = 'The linked loyalty record is still active but its next review window is already pressing, so make sure continuity ownership and timing are still real.';
+    $riskTone = ['border' => 'rgba(245,158,11,.22)', 'bg1' => '#fffaf0', 'bg2' => '#ffffff', 'eyebrow' => '#b45309', 'pillBg' => '#fef3c7', 'pillColor' => '#92400e'];
+}
+
+if ($queueClosed && in_array($reviewWindow, ['Overdue', 'Due today', 'Due soon'], true)) {
+    $riskHeading = 'Queue is closed, but continuity still needs a live checkpoint.';
+    $riskSummary = 'The inquiry lane is already closed while the linked loyalty review is still active or drifting, so continuity should own the next visible move or be clarified now.';
+    $riskTone = ['border' => 'rgba(239,68,68,.20)', 'bg1' => '#fff7f7', 'bg2' => '#ffffff', 'eyebrow' => '#b91c1c', 'pillBg' => '#fee2e2', 'pillColor' => '#b91c1c'];
+} elseif ($queueClosed && $reviewWindow === 'Not scheduled') {
+    $riskHeading = 'Queue is closed and continuity has no next review on the record.';
+    $riskSummary = 'This may be fine if the loyalty record is only reference memory, but if repeat-guest stewardship is still real, continuity needs an explicit next checkpoint.';
+    $riskTone = ['border' => 'rgba(245,158,11,.22)', 'bg1' => '#fffaf0', 'bg2' => '#ffffff', 'eyebrow' => '#b45309', 'pillBg' => '#fef3c7', 'pillColor' => '#92400e'];
+}
+
+$laneCue = 'Keep the queue as the visible working lane until continuity timing and ownership are clearly stronger than the inquiry follow-up posture.';
+if ($queueClosed) {
+    $laneCue = 'Queue can stay closed, but continuity should either own the next checkpoint clearly or settle into reference-only memory.';
+} elseif (in_array($reviewWindow, ['Overdue', 'Due today', 'Due soon'], true)) {
+    $laneCue = 'Continuity already has live timing pressure, so the queue lane should not assume the guest is safely covered without a real next review owner.';
+}
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="border-radius:14px;border:1px solid <?= e($riskTone['border']) ?>;background:linear-gradient(180deg,<?= e($riskTone['bg1']) ?> 0%,<?= e($riskTone['bg2']) ?> 100%);box-shadow:0 8px 24px rgba(15,23,42,.05);margin:0 0 18px 0;">
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;">
+                <div style="min-width:280px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:<?= e($riskTone['eyebrow']) ?>;margin-bottom:6px;">Continuity risk digest</div>
+                    <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#0f172a;line-height:1.3;"><?= e($riskHeading) ?></h4>
+                    <div style="font-size:13px;line-height:1.7;color:#475569;max-width:900px;"><?= e($riskSummary) ?></div>
+                </div>
+                <div style="min-width:240px;flex:0 1 320px;display:flex;flex-wrap:wrap;gap:8px;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;"><?= e($reference) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid <?= e($riskTone['pillBg']) ?>;background:<?= e($riskTone['pillBg']) ?>;color:<?= e($riskTone['pillColor']) ?>;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;">Review window: <?= e($reviewWindow) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;">Queue: <?= e($queueStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;">Continuity: <?= e($continuityStatus) ?></span>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:5px;">Continuity posture</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($continuityStatus) ?> / <?= e($loyaltyStage) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;">Owner <?= e($continuityOwner) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:5px;">Timing drift</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">Review <?= e($nextReview) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;">Queue follow-up <?= e($followUp) ?> · Last retention <?= e($lastRetention) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:5px;">Operator cue</div>
+                    <div style="font-size:13px;line-height:1.65;color:#334155;"><?= e($laneCue) ?></div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linked->id) ?>" class="btn btn-default oc-icon-external-link">Open linked loyalty</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open loyalty list</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=inquiry-update&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $record->id)) . '&returnLabel=' . rawurlencode('Back to inquiry record') . '&returnTitle=' . rawurlencode('Return to the inquiry record after checking continuity bridge guidance.') . '&returnSummary=' . rawurlencode('Opened from an inquiry while confirming whether linked continuity timing is healthy, drifting, or still active after queue closure.') . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linked->id)) . '&secondaryLabel=' . rawurlencode('Open linked loyalty') . '#help-bridge-posture' ?>" class="btn btn-default oc-icon-random">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>
