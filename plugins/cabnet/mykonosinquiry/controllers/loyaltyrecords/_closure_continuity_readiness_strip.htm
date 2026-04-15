@@ -1,0 +1,79 @@
+<?php
+    $model = $model ?? ($formModel ?? $this->formGetModel());
+    $source = $model && !empty($model->source_inquiry_id) ? $model->source_inquiry : null;
+
+    if (!$model || !$source) {
+        return;
+    }
+
+    $inquiryClosed = !empty($source->closed_at) || in_array((string) $source->status, ['closed_won', 'closed_lost', 'closed'], true);
+    $queueStatus = !empty($source->status_label) ? $source->status_label : (!empty($source->status) ? ucwords(str_replace('_', ' ', $source->status)) : 'New');
+    $queueFollowUp = !empty($source->follow_up_date) ? $source->follow_up_date->format('Y-m-d') : 'Not scheduled';
+    $continuityStatus = !empty($model->continuity_status_label) ? $model->continuity_status_label : (!empty($model->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $model->continuity_status)) : 'Draft');
+    $nextReview = !empty($model->next_review_at) ? $model->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+
+    $continuityOpen = !in_array((string) $model->continuity_status, ['completed', 'archived'], true);
+    $continuityScheduled = !empty($model->next_review_at);
+
+    if ($inquiryClosed && $continuityOpen && $continuityScheduled) {
+        $tone = ['bg' => '#eff6ff', 'border' => '#bfdbfe', 'eyebrow' => '#1d4ed8'];
+        $headline = 'Continuity is correctly carrying the live next step';
+        $summary = 'The source inquiry is already closed while this continuity record still has an active next-review date. That is a healthy handoff posture when the guest relationship is ongoing.';
+        $cue = 'Continuity owns the next visible move';
+    } elseif ($inquiryClosed && $continuityOpen && !$continuityScheduled) {
+        $tone = ['bg' => '#fff7ed', 'border' => '#fed7aa', 'eyebrow' => '#c2410c'];
+        $headline = 'Source inquiry is closed but continuity is not yet scheduled';
+        $summary = 'The queue lane has already finished, but the continuity lane has no next-review date. Add a clear next checkpoint or settle the record into a quieter completed posture.';
+        $cue = 'Set a continuity next step before leaving';
+    } elseif (!$inquiryClosed && $continuityOpen) {
+        $tone = ['bg' => '#f8fafc', 'border' => '#cbd5e1', 'eyebrow' => '#475569'];
+        $headline = 'Queue and continuity are both still active';
+        $summary = 'The source inquiry still looks live while continuity also has an active posture. Use this as a deliberate bridge moment so operators know which lane speaks next.';
+        $cue = 'Clarify lane ownership during overlap';
+    } else {
+        $tone = ['bg' => '#f8fafc', 'border' => '#e2e8f0', 'eyebrow' => '#64748b'];
+        $headline = 'Source and continuity posture are stable';
+        $summary = 'The linked inquiry and continuity record do not show a strong tension right now. Use the source record for context and keep continuity lightweight if no follow-through is needed.';
+        $cue = 'Reference posture';
+    }
+?>
+<div class="callout no-subheader" style="margin-bottom:16px;border-radius:14px;border:1px solid <?= e($tone['border']) ?>;background:<?= e($tone['bg']) ?>;box-shadow:0 4px 16px rgba(15,23,42,.04);">
+    <div class="content" style="padding:14px 16px;">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;align-items:flex-start;">
+            <div style="min-width:260px;flex:1 1 360px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:<?= e($tone['eyebrow']) ?>;margin-bottom:6px;">Closure vs continuity readiness</div>
+                <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#0f172a;line-height:1.3;"><?= e($headline) ?></h4>
+                <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($summary) ?></div>
+            </div>
+            <div style="min-width:220px;flex:0 1 280px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;">
+                <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#ffffff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:#1e293b;">Queue: <?= e($queueStatus) ?></span>
+                <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#ffffff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:#1e293b;">Continuity: <?= e($continuityStatus) ?></span>
+                <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#ffffff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:#1e293b;">Source ref: <?= e($source->request_reference ?: ('Inquiry #' . $source->id)) ?></span>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px;">
+            <div style="background:#fff;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:11px 12px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">Queue follow-up</div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;"><?= e($queueFollowUp) ?></div>
+                <div style="margin-top:4px;font-size:12px;line-height:1.5;color:#475569;">Once the inquiry is closed, this date should usually stop being the live guest-facing checkpoint.</div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:11px 12px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">Continuity next review</div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;"><?= e($nextReview) ?></div>
+                <div style="margin-top:4px;font-size:12px;line-height:1.5;color:#475569;">Keep this date deliberate when continuity is the real long-tail owner after the queue outcome is finished.</div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:11px 12px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">Operator cue</div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;"><?= e($cue) ?></div>
+                <div style="margin-top:4px;font-size:12px;line-height:1.5;color:#475569;">This is the quickest place to confirm whether continuity should actively continue or merely preserve reference history.</div>
+            </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $source->id) ?>" class="btn btn-default oc-icon-external-link">Open source inquiry</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default oc-icon-list-ul">Open inquiry list</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=closure-readiness&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $model->id)) . '&returnLabel=' . rawurlencode('Back to loyalty record') . '#help-queue-loyalty-bridge' ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.57.00 stale timing posture cues across inquiry and loyalty records`
+- `v6.58.00 closure versus continuity readiness cues across linked records`
 
 ## Current verified development direction
 
@@ -17,8 +17,3 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-
-
-The current backend line is also focused on:
-- making stale queue-versus-continuity timing visible on linked record screens
-- helping operators choose one active timing lane before adding more work

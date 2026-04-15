@@ -1,0 +1,85 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+    $linked = $model && method_exists($model, 'getLinkedLoyaltyRecord') ? $model->getLinkedLoyaltyRecord() : null;
+
+    if (!$model || !$linked) {
+        return;
+    }
+
+    $inquiryClosed = !empty($model->closed_at) || in_array((string) $model->status, ['closed_won', 'closed_lost', 'closed'], true);
+    $queueClosedLabel = $inquiryClosed ? 'Closed / archived queue lane' : 'Queue lane still active';
+    $loyaltyStatus = !empty($linked->continuity_status_label)
+        ? $linked->continuity_status_label
+        : (!empty($linked->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $linked->continuity_status)) : 'Draft');
+    $loyaltyStage = !empty($linked->loyalty_stage_label)
+        ? $linked->loyalty_stage_label
+        : (!empty($linked->loyalty_stage) ? ucwords(str_replace(['_', '-'], ' ', $linked->loyalty_stage)) : 'Review');
+
+    $nextReview = !empty($linked->next_review_at) ? $linked->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+    $queueFollowUp = !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+    $continuityOpen = !in_array((string) $linked->continuity_status, ['completed', 'archived'], true);
+    $continuityScheduled = !empty($linked->next_review_at);
+
+    if ($inquiryClosed && $continuityOpen && $continuityScheduled) {
+        $tone = ['bg' => '#eff6ff', 'border' => '#bfdbfe', 'eyebrow' => '#1d4ed8'];
+        $headline = 'Closed inquiry with active continuity next step';
+        $summary = 'The queue lane is closed, but continuity still has a live next-review date. Let loyalty own the next visible action unless the queue record needs a closure correction.';
+        $cue = 'Continuity-led after closure';
+    } elseif ($inquiryClosed && $continuityOpen && !$continuityScheduled) {
+        $tone = ['bg' => '#fff7ed', 'border' => '#fed7aa', 'eyebrow' => '#c2410c'];
+        $headline = 'Closed inquiry but continuity has no next-review date';
+        $summary = 'The queue lane is already closed, but the linked continuity record has no scheduled review. This is usually the point where continuity needs a clear next date or a quieter finished posture.';
+        $cue = 'Clarify continuity readiness before leaving the record';
+    } elseif (!$inquiryClosed && $continuityOpen) {
+        $tone = ['bg' => '#f8fafc', 'border' => '#cbd5e1', 'eyebrow' => '#475569'];
+        $headline = 'Queue and continuity are both still live';
+        $summary = 'Both lanes are active. Keep ownership and timing deliberate so the same guest does not receive duplicate follow-up or a split next-step story.';
+        $cue = 'Shared handoff posture';
+    } else {
+        $tone = ['bg' => '#f8fafc', 'border' => '#e2e8f0', 'eyebrow' => '#64748b'];
+        $headline = 'Closure and continuity posture look settled';
+        $summary = 'The inquiry closure and linked continuity posture are not in immediate tension. Use the linked record only when you need continuity detail or proof of follow-through.';
+        $cue = 'Reference posture';
+    }
+?>
+<div class="callout no-subheader" style="margin-bottom:16px;border-radius:14px;border:1px solid <?= e($tone['border']) ?>;background:<?= e($tone['bg']) ?>;box-shadow:0 4px 16px rgba(15,23,42,.04);">
+    <div class="content" style="padding:14px 16px;">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;align-items:flex-start;">
+            <div style="min-width:260px;flex:1 1 360px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:<?= e($tone['eyebrow']) ?>;margin-bottom:6px;">Closure vs continuity readiness</div>
+                <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#0f172a;line-height:1.3;"><?= e($headline) ?></h4>
+                <div style="font-size:13px;line-height:1.65;color:#475569;"><?= e($summary) ?></div>
+            </div>
+            <div style="min-width:220px;flex:0 1 280px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;">
+                <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#ffffff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:#1e293b;">Queue: <?= e($queueClosedLabel) ?></span>
+                <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#ffffff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:#1e293b;">Continuity: <?= e($loyaltyStatus) ?></span>
+                <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#ffffff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;color:#1e293b;">Stage: <?= e($loyaltyStage) ?></span>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px;">
+            <div style="background:#fff;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:11px 12px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">Queue follow-up</div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;"><?= e($queueFollowUp) ?></div>
+                <div style="margin-top:4px;font-size:12px;line-height:1.5;color:#475569;">Closed inquiries usually no longer need an active queue date unless closure evidence still needs repair.</div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:11px 12px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">Continuity next review</div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;"><?= e($nextReview) ?></div>
+                <div style="margin-top:4px;font-size:12px;line-height:1.5;color:#475569;">Use the linked record when the guest relationship continues beyond the original queue outcome.</div>
+            </div>
+            <div style="background:#fff;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:11px 12px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:4px;">Operator cue</div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;"><?= e($cue) ?></div>
+                <div style="margin-top:4px;font-size:12px;line-height:1.5;color:#475569;">Keep one clear next-step owner so the queue record and continuity record do not drift into competing narratives.</div>
+            </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linked->id) ?>" class="btn btn-default oc-icon-refresh">Open linked loyalty</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-list-ul">Open loyalty list</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '?from=closure-readiness&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $model->id)) . '&returnLabel=' . rawurlencode('Back to inquiry record') . '#help-queue-loyalty-bridge' ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+        </div>
+    </div>
+</div>

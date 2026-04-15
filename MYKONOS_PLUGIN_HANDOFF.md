@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.57.00 stale timing posture cues across inquiry and loyalty records`
+- `v6.58.00 closure versus continuity readiness cues across linked records`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades both list pages from simple helper notes into larger operator quick-start surfaces that explain the daily scan workflow, queue-to-loyalty bridge posture, and when to widen the view with List Setup or deeper docs.
+It adds one compact readiness strip on inquiry and loyalty update screens so operators can immediately see whether a closed inquiry and a live continuity record are in a healthy handoff posture or need timing clarification.
 
 ## Deployment note
 
@@ -21,21 +21,21 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue -> open an inquiry with a linked loyalty record
 - Backend -> Loyalty Continuity -> open a loyalty record with a source inquiry
-- both record screens now show a stale-timing posture strip above the main summary shell when both sides of the bridge exist
-- tabs, actions, and form behavior remain unchanged
+- both record pages now show a compact closure-versus-continuity readiness strip above the summary shell
+- form tabs, actions, notes, and workflow behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- makes queue-versus-continuity timing drift visible immediately
-- helps operators decide which lane owns the next live checkpoint
+- makes closed-queue versus live-continuity posture visible at a glance
+- reduces handoff ambiguity after a queue record is closed
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this timing-visibility pass, the next strong step should be one of:
-- add compact stale-timing cues on the linked list screens when both sides are overdue
-- add a small ownership-and-timing digest inside Workspace Docs for bridge training
-- add conservative closure-versus-continuity readiness cues when an inquiry is closed but loyalty timing remains open
+After this readiness pass, the next strong step should be one of:
+- add a compact summary of the latest continuity touchpoint on the inquiry record when continuity is active
+- add a conservative dormant-versus-finished cue on loyalty records with no next review date
+- upgrade Workspace Docs with one bridge-specific troubleshooting panel
