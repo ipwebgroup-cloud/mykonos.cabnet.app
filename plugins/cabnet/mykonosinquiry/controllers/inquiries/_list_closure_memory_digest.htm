@@ -1,0 +1,60 @@
+<?php
+$inquiry = $record ?? $model ?? null;
+
+if (!$inquiry) {
+    return;
+}
+
+$status = trim((string) ($inquiry->status ?? '')) ?: 'new';
+$closedReason = trim((string) ($inquiry->closed_reason ?? ''));
+$closedAt = $inquiry->closed_at ?? null;
+$followUp = $inquiry->follow_up_at ?? null;
+$owner = trim((string) ($inquiry->owner_name ?? $inquiry->owner?->full_name ?? '')) ?: 'Unassigned';
+$reference = trim((string) ($inquiry->request_reference ?? '')) ?: 'Inquiry';
+$loyaltyPosture = trim((string) ($inquiry->loyalty_queue_backlink_posture_label ?? ''));
+$handoffLabel = trim((string) ($inquiry->loyalty_queue_history_action_label ?? '')) ?: 'History';
+$handoffUrl = trim((string) ($inquiry->loyalty_queue_history_action_url ?? ''));
+
+$memoryTitle = 'Queue-active memory';
+$memoryBody = 'No closure or handoff memory yet.';
+$tone = ['#495057', '#f8f9fa', '#dee2e6'];
+
+if ($closedReason !== '') {
+    $memoryTitle = 'Closure memory';
+    $memoryBody = $closedReason;
+    $tone = ['#7c2d12', '#fff7ed', '#fed7aa'];
+} elseif (stripos($status, 'closed') !== false || stripos($status, 'won') !== false || stripos($status, 'lost') !== false) {
+    $memoryTitle = 'Closure posture';
+    $memoryBody = 'Closed without a written reason yet.';
+    $tone = ['#92400e', '#fffbeb', '#fde68a'];
+} elseif ($loyaltyPosture !== '') {
+    $memoryTitle = 'Handoff memory';
+    $memoryBody = $loyaltyPosture;
+    $tone = ['#0b63ce', '#eef5ff', '#cfe2ff'];
+} elseif ($followUp instanceof \DateTimeInterface) {
+    $memoryTitle = 'Next checkpoint';
+    $memoryBody = 'Follow-up set for ' . $followUp->format('Y-m-d H:i');
+    $tone = ['#0f5132', '#ecfdf3', '#b7ebc6'];
+}
+
+[$text, $bg, $border] = $tone;
+$meta = [];
+$meta[] = 'Owner: ' . $owner;
+if ($closedAt instanceof \DateTimeInterface) {
+    $meta[] = 'Closed: ' . $closedAt->format('Y-m-d H:i');
+}
+if ($loyaltyPosture !== '' && $memoryTitle !== 'Handoff memory') {
+    $meta[] = 'Bridge: ' . $loyaltyPosture;
+}
+?>
+<div style="min-width:195px; max-width:255px; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:7px 8px; line-height:1.22;">
+    <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:<?= e($text) ?>; margin-bottom:3px;"><?= e($memoryTitle) ?></div>
+    <div style="font-size:12px; font-weight:700; color:#1f2937; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($memoryBody) ?>"><?= e($memoryBody) ?></div>
+    <div style="margin-top:4px; font-size:10px; color:#667085; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e(implode(' · ', $meta)) ?>"><?= e(implode(' · ', $meta)) ?></div>
+    <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
+        <span style="display:inline-flex; align-items:center; border:1px solid <?= e($border) ?>; background:#fff; color:<?= e($text) ?>; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:700;"><?= e(strtoupper($status)) ?></span>
+        <?php if ($handoffUrl !== ''): ?>
+            <a href="<?= e($handoffUrl) ?>" style="font-size:9px; font-weight:700; color:#0b63ce; text-decoration:none; white-space:nowrap;"><?= e($handoffLabel) ?></a>
+        <?php endif; ?>
+    </div>
+</div>
