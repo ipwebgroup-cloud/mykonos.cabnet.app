@@ -10,6 +10,14 @@ columns:
         sortable: false
         searchable: false
 
+
+bridge_health_digest:
+    label: Bridge Health
+    type: partial
+    path: $/cabnet/mykonosinquiry/controllers/loyaltyrecords/_list_bridge_health_digest.htm
+    sortable: false
+    searchable: false
+
     guest_name:
         label: Guest
         searchable: true

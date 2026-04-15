@@ -22,6 +22,13 @@ columns:
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_follow_up_summary.htm
         sortable: false
         searchable: false
+
+bridge_health_digest:
+    label: Bridge Health
+    type: partial
+    path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_bridge_health_digest.htm
+    sortable: false
+    searchable: false
     loyalty_queue_actions:
         label: Loyalty Actions
         type: partial

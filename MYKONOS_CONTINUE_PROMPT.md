@@ -4,14 +4,14 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.63.00 linked-lane action memory strips`
+- `v6.64.00 bridge-health digest rows`
 
 ## Current verified development direction
 
 The current backend line is focused on:
 - keeping the Inquiry Queue usable and faster to scan
 - keeping the Loyalty Continuity Workspace readable in plain language
-- exposing queue-to-continuity bridge posture on saved record screens
+- exposing queue-to-continuity bridge posture on both record screens and list rows
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
