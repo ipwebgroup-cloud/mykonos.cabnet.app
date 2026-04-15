@@ -4,14 +4,14 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.59.00 inquiry-side latest continuity touchpoint digest`
+- `v6.60.00 loyalty-side queue memory digest`
 
 ## Current verified development direction
 
 The current backend line is focused on:
 - keeping the Inquiry Queue usable and faster to scan
 - keeping the Loyalty Continuity Workspace readable in plain language
-- surfacing bridge context directly on record screens when it improves operator clarity
+- keeping source inquiry memory visible from the continuity lane
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites

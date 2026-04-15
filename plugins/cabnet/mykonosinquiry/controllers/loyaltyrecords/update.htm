@@ -54,7 +54,8 @@
         </a>
     </div>
 
-    <?= $this->makePartial('closure_continuity_readiness_strip', ['model' => $model, 'formModel' => $formModel ?? null]) ?>
+
+    <?= $this->makePartial('queue_memory_digest_strip', ['record' => $model]) ?>
 
     <div class="layout-row">
         <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;">
