@@ -1,0 +1,103 @@
+<?php
+    $record = $record ?? ($formModel ?? $this->formGetModel());
+    $sourceInquiry = null;
+
+    if ($record && !empty($record->source_inquiry_id)) {
+        $sourceInquiry = \Cabnet\MykonosInquiry\Models\Inquiry::find($record->source_inquiry_id);
+    }
+
+    if (!$record || !$sourceInquiry) {
+        return;
+    }
+
+    $queueStatus = $sourceInquiry->status_label ?? (trim((string) $sourceInquiry->status) !== '' ? ucwords(str_replace(['_', '-'], ' ', $sourceInquiry->status)) : 'Unknown');
+    $queueOwner = trim((string) ($sourceInquiry->owner_name ?? '')) !== '' ? trim((string) $sourceInquiry->owner_name) : 'Unassigned';
+    $queuePriority = $sourceInquiry->priority_label ?? (trim((string) $sourceInquiry->priority) !== '' ? ucwords(str_replace(['_', '-'], ' ', $sourceInquiry->priority)) : 'Normal');
+    $queueClosed = method_exists($sourceInquiry, 'isClosed') ? $sourceInquiry->isClosed() : (!empty($sourceInquiry->closed_at));
+    $queueFollowUp = !empty($sourceInquiry->follow_up_at) && $sourceInquiry->follow_up_at instanceof \DateTimeInterface
+        ? $sourceInquiry->follow_up_at->format('Y-m-d H:i')
+        : 'Not scheduled';
+
+    $continuityOwner = trim((string) ($record->owner_name ?? '')) !== '' ? trim((string) $record->owner_name) : 'Unassigned';
+    $continuityStatus = $record->continuity_status_label ?? (trim((string) $record->continuity_status) !== '' ? ucwords(str_replace(['_', '-'], ' ', $record->continuity_status)) : 'Draft');
+    $loyaltyStage = $record->loyalty_stage_label ?? (trim((string) $record->loyalty_stage) !== '' ? ucwords(str_replace(['_', '-'], ' ', $record->loyalty_stage)) : 'Review');
+    $nextReviewAt = !empty($record->next_review_at) && $record->next_review_at instanceof \DateTimeInterface
+        ? \Carbon\Carbon::instance($record->next_review_at)
+        : null;
+    $nextReview = $nextReviewAt ? $nextReviewAt->format('Y-m-d H:i') : 'Not scheduled';
+
+    $now = \Carbon\Carbon::now();
+    $reviewTimingState = 'Current';
+    if (!$nextReviewAt) {
+        $reviewTimingState = 'Unscheduled';
+    } elseif ($nextReviewAt->lt($now)) {
+        $reviewTimingState = 'Stale';
+    } elseif ($nextReviewAt->diffInHours($now, false) <= 24) {
+        $reviewTimingState = 'Due soon';
+    }
+
+    if ($queueClosed && $nextReviewAt && $nextReviewAt->lt($now)) {
+        $riskHeadline = 'Closed inquiry with stale continuity review';
+        $riskTone = '#b91c1c';
+        $riskBg = '#fff1f2';
+        $operatorCue = 'Continuity is still the live lane, but the next review has drifted past due. Clarify the next touch and ownership before assuming the case is quietly complete.';
+    } elseif ($queueClosed && !$nextReviewAt) {
+        $riskHeadline = 'Closed inquiry with no continuity review scheduled';
+        $riskTone = '#b45309';
+        $riskBg = '#fffbeb';
+        $operatorCue = 'The queue has closed, but continuity does not have a visible next checkpoint. Either schedule the next review or confirm this record can sit as reference history.';
+    } elseif (!$queueClosed && $nextReviewAt && $nextReviewAt->lt($now)) {
+        $riskHeadline = 'Active queue with stale continuity timing';
+        $riskTone = '#92400e';
+        $riskBg = '#fff7ed';
+        $operatorCue = 'Both lanes are still live, but continuity timing is stale. Keep the queue side informed and refresh the next review before the handoff context drifts.';
+    } else {
+        $riskHeadline = 'Continuity timing looks workable';
+        $riskTone = '#166534';
+        $riskBg = '#f0fdf4';
+        $operatorCue = 'The continuity lane still has a visible next-step posture. Keep queue closure and continuity follow-through aligned, but no immediate escalation signal is showing here.';
+    }
+
+    $sourceUrl = \Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $sourceInquiry->id);
+    $listUrl = \Backend::url('cabnet/mykonosinquiry/inquiries');
+    $helpUrl = \Backend::url('cabnet/mykonosinquiry/helpcenter') . '#queue-loyalty-bridge';
+?>
+<div class="layout-row">
+    <div class="callout no-subheader" style="margin-bottom:18px;border-radius:14px;border:1px solid rgba(15,23,42,.08);box-shadow:0 10px 24px rgba(15,23,42,.06);background:#ffffff;overflow:hidden;">
+        <div class="content" style="padding:0;">
+            <div style="padding:14px 18px;background:<?= e($riskBg) ?>;border-bottom:1px solid rgba(15,23,42,.06);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+                <div style="min-width:260px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Follow-through risk digest</div>
+                    <h4 style="margin:0 0 6px 0;font-size:19px;font-weight:700;color:<?= e($riskTone) ?>;"><?= e($riskHeadline) ?></h4>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;"><?= e($operatorCue) ?></div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Queue: <?= e($queueStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Continuity: <?= e($continuityStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid rgba(15,23,42,.08);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#111827;">Next review: <?= e($reviewTimingState) ?></span>
+                </div>
+            </div>
+            <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Queue posture</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><?= e($queueStatus) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;">Owner <?= e($queueOwner) ?> · Follow-up <?= e($queueFollowUp) ?> · Priority <?= e($queuePriority) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Continuity posture</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><?= e($continuityStatus) ?> / <?= e($loyaltyStage) ?></div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;">Owner <?= e($continuityOwner) ?> · Next review <?= e($nextReview) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;background:#fff;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;">Operator cue</div>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Use this strip to confirm whether continuity is healthy, drifting, or still active after queue closure before you add a new touchpoint or leave the review window unchanged.</div>
+                </div>
+            </div>
+            <div style="padding:0 18px 16px 18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                <a href="<?= e($sourceUrl) ?>" class="btn btn-default oc-icon-external-link">Open source inquiry</a>
+                <a href="<?= e($listUrl) ?>" class="btn btn-default oc-icon-list-ul">Open inquiry list</a>
+                <a href="<?= e($helpUrl) ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>

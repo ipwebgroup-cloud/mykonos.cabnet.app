@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.61.00 inquiry-side continuity risk digest`
+- `v6.62.00 loyalty-side follow-through risk digest`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades the inquiry record screen so queue operators can see linked continuity risk, review timing drift, and continuity posture when a loyalty record already exists.
+It upgrades the loyalty record screen with a compact follow-through risk digest when a source inquiry exists, so continuity operators can see whether queue closure and continuity timing are aligned, stale, or missing a visible checkpoint.
 
 ## Deployment note
 
@@ -19,23 +19,23 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue -> open a record with a linked loyalty continuity record
-- the inquiry record now shows a Continuity risk digest above the main summary shell
-- Open linked loyalty and bridge help still work
-- tabs, notes, actions, and list behavior remain unchanged
+- Backend -> Loyalty Continuity -> open a record with `source_inquiry_id`
+- the new follow-through risk digest appears above the existing loyalty summary shell
+- records without source inquiry remain unchanged
+- existing actions, tabs, and workflow behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- keeps linked continuity timing and risk visible from the queue lane
-- reduces back-and-forth opening of the loyalty record
+- improves bridge visibility on the continuity side
+- exposes stale or unscheduled next-review risk without changing workflow logic
 - keeps the live /plan bridge untouched
-- keeps database and workflow behavior untouched
+- keeps database and queue behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this queue-memory digest pass, the next strong step should be one of:
-- add a loyalty-side follow-through risk digest when queue closure and continuity timing drift apart
-- expand Workspace Docs into a fuller bridge playbook dashboard
-- add list-level bridge summaries only after record-screen guidance settles
+After this continuity-risk pass, the next strong step should be one of:
+- add a compact linked-lane action memory strip on both record screens
+- add a small bridge-health digest on the queue and loyalty list rows
+- upgrade Workspace Docs with a focused bridge-risk dashboard section

@@ -4,14 +4,14 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.61.00 inquiry-side continuity risk digest`
+- `v6.62.00 loyalty-side follow-through risk digest`
 
 ## Current verified development direction
 
 The current backend line is focused on:
 - keeping the Inquiry Queue usable and faster to scan
 - keeping the Loyalty Continuity Workspace readable in plain language
-- keeping linked continuity risk visible from the inquiry lane
+- exposing queue-to-continuity bridge posture on saved record screens
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites
