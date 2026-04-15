@@ -1,0 +1,129 @@
+<?php
+    $model = $this->formGetModel();
+    $inquiryId = $model && !empty($model->id) ? (int) $model->id : null;
+
+    $linkedRecord = null;
+    $candidateTables = [
+        'cabnet_mykonos_loyalty_records',
+        'cabnet_mykonosinquiry_loyalty_records',
+    ];
+
+    if ($inquiryId) {
+        foreach ($candidateTables as $table) {
+            try {
+                if (!class_exists('Schema') || !Schema::hasTable($table)) {
+                    continue;
+                }
+
+                $query = Db::table($table)->where('source_inquiry_id', $inquiryId);
+                if (Schema::hasColumn($table, 'updated_at')) {
+                    $query->orderBy('updated_at', 'desc');
+                } elseif (Schema::hasColumn($table, 'id')) {
+                    $query->orderBy('id', 'desc');
+                }
+
+                $linkedRecord = $query->first();
+                if ($linkedRecord) {
+                    break;
+                }
+            } catch (Exception $ex) {
+                $linkedRecord = null;
+            }
+        }
+    }
+
+    if (!$linkedRecord) {
+        return;
+    }
+
+    $linkedId = !empty($linkedRecord->id) ? (int) $linkedRecord->id : null;
+    $linkedReference = !empty($linkedRecord->request_reference) ? $linkedRecord->request_reference : ('Loyalty record' . ($linkedId ? ' #' . $linkedId : ''));
+    $continuityStatus = !empty($linkedRecord->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $linkedRecord->continuity_status)) : 'Not set';
+    $loyaltyStage = !empty($linkedRecord->loyalty_stage) ? ucwords(str_replace(['_', '-'], ' ', $linkedRecord->loyalty_stage)) : 'Not set';
+    $continuityOwner = !empty($linkedRecord->owner_name) ? $linkedRecord->owner_name : 'Not assigned';
+    $nextReview = !empty($linkedRecord->next_review_at) ? date('Y-m-d H:i', strtotime($linkedRecord->next_review_at)) : 'Not scheduled';
+    $lastRetentionContact = !empty($linkedRecord->last_retention_contact_at) ? date('Y-m-d H:i', strtotime($linkedRecord->last_retention_contact_at)) : 'No retention contact logged';
+
+    $latestOutcome = !empty($linkedRecord->latest_outcome)
+        ? ucwords(str_replace(['_', '-'], ' ', $linkedRecord->latest_outcome))
+        : (!empty($linkedRecord->touchpoint_outcome) ? ucwords(str_replace(['_', '-'], ' ', $linkedRecord->touchpoint_outcome)) : 'No named outcome yet');
+
+    $latestMemory = '';
+    foreach (['latest_touchpoint_summary', 'last_touchpoint_summary', 'touchpoint_summary', 'working_summary', 'summary'] as $field) {
+        if (!empty($linkedRecord->{$field})) {
+            $latestMemory = trim((string) $linkedRecord->{$field});
+            break;
+        }
+    }
+    if ($latestMemory === '') {
+        $latestMemory = 'Continuity exists for this inquiry, but no short touchpoint digest is stored yet. Open the loyalty record if the newest retention move needs clarification.';
+    }
+    if (mb_strlen($latestMemory) > 210) {
+        $latestMemory = mb_substr($latestMemory, 0, 207) . '...';
+    }
+
+    $operatorCue = 'Continuity already exists, so the queue side should read the newest retention move before changing ownership, follow-up posture, or closure assumptions.';
+    if (stripos($continuityStatus, 'active') !== false) {
+        $operatorCue = 'Continuity is active. Use this digest to confirm the newest retention move before changing queue posture or closing the inquiry as fully complete.';
+    } elseif (stripos($continuityStatus, 'draft') !== false) {
+        $operatorCue = 'Continuity is still draft-level. Confirm whether the first real retention move happened before treating the bridge as fully live.';
+    } elseif (stripos($continuityStatus, 'watch') !== false || stripos($continuityStatus, 'dormant') !== false) {
+        $operatorCue = 'Continuity is in a lighter watch posture. Read the latest move here first, then decide whether the queue side still needs an active checkpoint.';
+    }
+
+    $helpUrl = Backend::url('cabnet/mykonosinquiry/helpcenter')
+        . '?from=inquiry-update-continuity-digest'
+        . '&return=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $model->id))
+        . '&returnLabel=' . rawurlencode('Back to inquiry record')
+        . '&returnTitle=' . rawurlencode('Return to the inquiry record after checking continuity guidance.')
+        . '&returnSummary=' . rawurlencode('This help page was opened from an inquiry that already has a linked continuity record, so the operator can compare queue posture and retention posture without losing the current screen.')
+        . '&secondary=' . rawurlencode(Backend::url('cabnet/mykonosinquiry/loyaltyrecords'))
+        . '&secondaryLabel=' . rawurlencode('Open Loyalty Continuity')
+        . '#help-form-routes';
+?>
+<div class="layout-row">
+    <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(59,130,246,.16);box-shadow:0 8px 24px rgba(15,23,42,.05);margin-bottom:18px;background:#f8fbff;">
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;">
+                <div style="min-width:260px;flex:1 1 420px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4f46e5;margin-bottom:6px;">Latest continuity touchpoint digest</div>
+                    <h4 style="margin:0 0 6px 0;font-size:18px;font-weight:700;color:#111827;line-height:1.3;">Linked loyalty activity is already live for this inquiry</h4>
+                    <div style="font-size:13px;line-height:1.7;color:#475569;max-width:900px;"><?= e($operatorCue) ?></div>
+                </div>
+                <div style="min-width:220px;flex:0 1 320px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Ref: <?= e($linkedReference) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Status: <?= e($continuityStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Stage: <?= e($loyaltyStage) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Owner: <?= e($continuityOwner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Next review: <?= e($nextReview) ?></span>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px;">
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Newest retention move</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($latestOutcome) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;"><?= e($latestMemory) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Review timing</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;"><?= e($nextReview) ?></div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;">Last retention contact: <?= e($lastRetentionContact) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 13px;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Queue-side cue</div>
+                    <div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">Read continuity before changing queue posture</div>
+                    <div style="margin-top:4px;font-size:12px;line-height:1.55;color:#475569;">This avoids duplicate next steps, conflicting owner assumptions, and premature closure decisions.</div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+                <?php if ($linkedId): ?>
+                    <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords/update/' . $linkedId) ?>" class="btn btn-default oc-icon-external-link">Open linked loyalty record</a>
+                <?php endif; ?>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh">Open loyalty list</a>
+                <a href="<?= $helpUrl ?>" class="btn btn-default oc-icon-book">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>

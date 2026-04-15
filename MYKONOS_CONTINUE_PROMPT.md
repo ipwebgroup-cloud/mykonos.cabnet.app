@@ -4,14 +4,14 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.58.00 closure versus continuity readiness cues across linked records`
+- `v6.59.00 inquiry-side latest continuity touchpoint digest`
 
 ## Current verified development direction
 
 The current backend line is focused on:
 - keeping the Inquiry Queue usable and faster to scan
 - keeping the Loyalty Continuity Workspace readable in plain language
-- keeping help/docs/glossary on the dedicated backend docs page
+- surfacing bridge context directly on record screens when it improves operator clarity
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites

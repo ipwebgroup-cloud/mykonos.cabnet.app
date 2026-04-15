@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.58.00 closure versus continuity readiness cues across linked records`
+- `v6.59.00 inquiry-side latest continuity touchpoint digest`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It adds one compact readiness strip on inquiry and loyalty update screens so operators can immediately see whether a closed inquiry and a live continuity record are in a healthy handoff posture or need timing clarification.
+It adds a compact digest strip on the inquiry update screen when a linked loyalty continuity record already exists, so queue-side operators can see the newest retention move without opening the loyalty record first.
 
 ## Deployment note
 
@@ -20,22 +20,22 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - Backend -> Inquiry Queue -> open an inquiry with a linked loyalty record
-- Backend -> Loyalty Continuity -> open a loyalty record with a source inquiry
-- both record pages now show a compact closure-versus-continuity readiness strip above the summary shell
-- form tabs, actions, notes, and workflow behavior remain unchanged
+- the inquiry record now shows a latest continuity touchpoint digest strip above the main summary shell
+- linked loyalty route buttons open correctly
+- existing tabs, actions, notes, and form behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- makes closed-queue versus live-continuity posture visible at a glance
-- reduces handoff ambiguity after a queue record is closed
+- improves queue-side visibility of continuity activity
+- reduces unnecessary back-and-forth between inquiry and loyalty records
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this readiness pass, the next strong step should be one of:
-- add a compact summary of the latest continuity touchpoint on the inquiry record when continuity is active
-- add a conservative dormant-versus-finished cue on loyalty records with no next review date
-- upgrade Workspace Docs with one bridge-specific troubleshooting panel
+After this digest layer, the next strong step should be one of:
+- add dual stale-owner-and-timing cues when both ownership and dates are drifting together
+- add a compact inquiry-side closure memory strip showing the newest close/reopen reasoning alongside continuity posture
+- upgrade the loyalty record with a matching queue-memory digest for the latest inquiry-side operator note
