@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.54.00 loyalty post-create source breadcrumbs on saved continuity records`
+- `v6.55.00 inquiry-side continuity source digest on linked records`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It adds a compact seeded-transfer breadcrumb strip on the saved loyalty record when a real `source_inquiry_id` is present, so operators can keep the source inquiry and continuity posture visible immediately after first save.
+It upgrades the inquiry update screen so operators can immediately see when a saved loyalty continuity record already exists for that inquiry.
 
 ## Deployment note
 
@@ -19,23 +19,22 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue
-- Backend -> Loyalty Continuity
-- both list pages now show a larger quick-start guidance block under the toolbar note
-- queue and loyalty actions, filters, and list behavior remain unchanged
+- Backend -> Inquiry Queue -> open an inquiry with a linked loyalty record
+- the inquiry screen now shows a linked continuity digest strip above the main summary shell
+- queue and loyalty actions, filters, and form behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves backend self-guidance
-- reduces the need to open docs blindly
+- improves queue-to-continuity awareness on the inquiry record itself
+- reduces duplicate continuity handling
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this larger operator-docs pass, the next strong step should be one of:
-- upgrade the Workspace Docs page itself into a fuller operator playbook dashboard
-- add one compact route-state summary strip above both list pages using real current filter context
-- improve list-to-record orientation cues without widening the row UI again
+After this bridge-visibility pass, the next strong step should be one of:
+- add conservative relationship breadcrumbs on the inquiry create/new flow when a continuity record already exists for a return guest pattern
+- add a compact dual-owner posture strip when inquiry owner and continuity owner differ
+- improve continuity handoff wording inside Workspace Docs without widening the live queue UI
