@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.53.00 loyalty create seeded transfer field cues`
+- `v6.54.00 loyalty post-create source breadcrumbs on saved continuity records`
 
 ## Current verified development direction
 
@@ -17,4 +17,5 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- making seeded loyalty create flows easier to verify before the first save
+
+- keeping inquiry-to-loyalty bridge context visible on saved continuity records when a real source inquiry exists

@@ -1,8 +1,3 @@
-## Latest backend continuity hint
-
-- `v6.53.00 loyalty create seeded transfer field cues`
-- plugin tracking `2.4.23`
-
 # Mykonos Cabnet OctoberCMS Inquiry Platform
 
 ## Current safe continuity hint
@@ -15,3 +10,11 @@ Included in the current safe backend polish line:
 
 ### Current plugin-tracked baseline
 - `2.4.23`
+
+
+## v6.54.00 loyalty post-create source breadcrumbs on saved continuity records
+
+- adds a compact post-create source breadcrumb strip on loyalty update when `source_inquiry_id` is present
+- backend-only
+- no schema change
+- does not touch `/plan`

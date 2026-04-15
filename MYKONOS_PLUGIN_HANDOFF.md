@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.53.00 loyalty create seeded transfer field cues`
+- `v6.54.00 loyalty post-create source breadcrumbs on saved continuity records`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It adds a compact seeded transfer checklist strip to the loyalty create route when `?source_inquiry_id=` is present so operators can confirm owner clarity, next review timing, and first-touchpoint framing before the first continuity save.
+It adds a compact seeded-transfer breadcrumb strip on the saved loyalty record when a real `source_inquiry_id` is present, so operators can keep the source inquiry and continuity posture visible immediately after first save.
 
 ## Deployment note
 
@@ -19,22 +19,23 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Loyalty Continuity -> New with a real `?source_inquiry_id=`
-- the seeded transfer checklist strip appears above the form
-- source inquiry, queue search, and bridge help links open correctly
-- create rendering without `source_inquiry_id` remains unchanged
+- Backend -> Inquiry Queue
+- Backend -> Loyalty Continuity
+- both list pages now show a larger quick-start guidance block under the toolbar note
+- queue and loyalty actions, filters, and list behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves create-route transfer discipline
+- improves backend self-guidance
+- reduces the need to open docs blindly
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this create-route guidance pass, the next strong step should be one of:
-- add conservative first-save breadcrumbs after loyalty create redirects into update
-- improve source-inquiry backlinks on seeded continuity records
-- add a compact create-route bridge state summary without widening the form shell
+After this larger operator-docs pass, the next strong step should be one of:
+- upgrade the Workspace Docs page itself into a fuller operator playbook dashboard
+- add one compact route-state summary strip above both list pages using real current filter context
+- improve list-to-record orientation cues without widening the row UI again

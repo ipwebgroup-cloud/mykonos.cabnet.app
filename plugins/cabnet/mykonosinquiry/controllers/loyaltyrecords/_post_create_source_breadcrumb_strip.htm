@@ -1,0 +1,76 @@
+<?php
+    $model = $model ?? ($formModel ?? $this->formGetModel());
+    $sourceInquiry = null;
+
+    if ($model && !empty($model->source_inquiry_id)) {
+        try {
+            $sourceInquiry = \Cabnet\MykonosInquiry\Models\Inquiry::find($model->source_inquiry_id);
+        } catch (\Throwable $e) {
+            $sourceInquiry = null;
+        }
+    }
+
+    if (!$model || !$sourceInquiry) {
+        return;
+    }
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Loyalty #' . $model->id);
+    $owner = !empty($model->owner_name) ? $model->owner_name : 'Not assigned yet';
+    $nextReview = !empty($model->next_review_at) ? $model->next_review_at->format('Y-m-d H:i') : 'Not scheduled';
+    $continuityStatus = !empty($model->continuity_status_label)
+        ? $model->continuity_status_label
+        : (!empty($model->continuity_status) ? ucwords(str_replace(['_', '-'], ' ', $model->continuity_status)) : 'Draft');
+    $loyaltyStage = !empty($model->loyalty_stage_label)
+        ? $model->loyalty_stage_label
+        : (!empty($model->loyalty_stage) ? ucwords(str_replace(['_', '-'], ' ', $model->loyalty_stage)) : 'Review');
+
+    $sourceReference = !empty($sourceInquiry->request_reference) ? $sourceInquiry->request_reference : ('Inquiry #' . $sourceInquiry->id);
+    $sourceStatus = !empty($sourceInquiry->status_label)
+        ? $sourceInquiry->status_label
+        : (!empty($sourceInquiry->status) ? ucwords(str_replace(['_', '-'], ' ', $sourceInquiry->status)) : 'New brief');
+    $sourceOwner = !empty($sourceInquiry->owner_name) ? $sourceInquiry->owner_name : 'Not assigned yet';
+    $sourceFollowUp = !empty($sourceInquiry->follow_up_at) ? $sourceInquiry->follow_up_at->format('Y-m-d H:i') : 'Not scheduled';
+?>
+
+<div class="layout-row">
+    <div class="callout callout-info no-subheader" style="border-radius:14px;border:1px solid rgba(13,110,253,.14);box-shadow:0 6px 18px rgba(15,23,42,.05);margin-bottom:18px;background:#f8fbff;">
+        <div class="content" style="padding:16px 18px;">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;">
+                <div style="min-width:280px;flex:1 1 460px;">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b6cb8;margin-bottom:6px;">Post-create source breadcrumbs</div>
+                    <h4 style="margin:0 0 8px 0;font-size:20px;font-weight:700;color:#1f2937;">This continuity record came from a live inquiry</h4>
+                    <div style="font-size:13px;line-height:1.65;color:#475569;">Use this strip as the quick bridge reminder after the first save. It keeps the source inquiry, the current continuity posture, and the next review visible without reopening queue search first.</div>
+                </div>
+                <div style="min-width:240px;flex:0 1 360px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;">
+                    <span style="display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Inquiry: <?= e($sourceReference) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Record: <?= e($reference) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Continuity: <?= e($continuityStatus) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Stage: <?= e($loyaltyStage) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Owner: <?= e($owner) ?></span>
+                    <span style="display:inline-flex;align-items:center;border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">Next review: <?= e($nextReview) ?></span>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+                <div style="background:#fff;border:1px solid #dbeafe;border-radius:12px;padding:12px 13px;">
+                    <strong style="display:block;color:#111827;margin-bottom:4px;">1. Source inquiry still visible</strong>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Source status: <?= e($sourceStatus) ?><br>Source owner: <?= e($sourceOwner) ?><br>Queue follow-up: <?= e($sourceFollowUp) ?></div>
+                </div>
+                <div style="background:#fff;border:1px solid #dbeafe;border-radius:12px;padding:12px 13px;">
+                    <strong style="display:block;color:#111827;margin-bottom:4px;">2. Continuity now owns the long arc</strong>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Keep the saved continuity posture simple: who owns it now, what stage it is in, and when it should surface next.</div>
+                </div>
+                <div style="background:#fff;border:1px solid #dbeafe;border-radius:12px;padding:12px 13px;">
+                    <strong style="display:block;color:#111827;margin-bottom:4px;">3. Use the bridge, not guesswork</strong>
+                    <div style="font-size:13px;line-height:1.6;color:#475569;">Open the source inquiry when you need queue context, return to the list when triaging, and use bridge help only when the relationship itself needs clarification.</div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries/update/' . $sourceInquiry->id) ?>" class="btn btn-default oc-icon-external-link" style="border-radius:999px;">Open source inquiry</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') . '?search=' . rawurlencode($sourceReference) ?>" class="btn btn-default oc-icon-search" style="border-radius:999px;">Back to queue search</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue-loyalty-bridge' ?>" class="btn btn-default oc-icon-book" style="border-radius:999px;">Bridge help</a>
+            </div>
+        </div>
+    </div>
+</div>
