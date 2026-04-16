@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.69.00 lane priority chips above queue and loyalty lists`
+- `v6.70.00 overdue-versus-unscheduled counters above queue and loyalty lists`
 
 ## Current verified development direction
 
@@ -17,3 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
+- making overdue work versus unscheduled work visible earlier in the list flow before operators open records

@@ -1,2 +1,8 @@
-<?= $this->makePartial('lane_priority_chips_strip') ?>
-<?= $this->listRender() ?>
+<div class="layout">
+    <div class="layout-row">
+        <?= $this->makePartial('overdue_unscheduled_counters_strip') ?>
+    </div>
+    <div class="layout-row">
+        <?= $this->listRender() ?>
+    </div>
+</div>

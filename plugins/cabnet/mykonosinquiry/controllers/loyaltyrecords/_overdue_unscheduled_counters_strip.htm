@@ -1,0 +1,66 @@
+<?php
+use Carbon\Carbon;
+
+$loyaltyModelClass = '\\Cabnet\\MykonosInquiry\\Models\\LoyaltyRecord';
+$inquiryModelClass = '\\Cabnet\\MykonosInquiry\\Models\\Inquiry';
+$today = Carbon::today();
+
+$queueOverdue = 0;
+$queueUnscheduled = 0;
+$continuityOverdue = 0;
+$continuityUnscheduled = 0;
+$workspaceReady = false;
+
+if (class_exists($inquiryModelClass)) {
+    $queueOverdue = $inquiryModelClass::query()
+        ->whereNotNull('follow_up_date')
+        ->whereDate('follow_up_date', '<', $today)
+        ->count();
+
+    $queueUnscheduled = $inquiryModelClass::query()
+        ->whereNull('follow_up_date')
+        ->count();
+}
+
+if (class_exists($loyaltyModelClass)) {
+    $workspaceReady = $loyaltyModelClass::workspaceStorageReady();
+
+    if ($workspaceReady) {
+        $continuityOverdue = $loyaltyModelClass::query()
+            ->whereNotNull('next_review_at')
+            ->where('next_review_at', '<', Carbon::now())
+            ->count();
+
+        $continuityUnscheduled = $loyaltyModelClass::query()
+            ->whereNull('next_review_at')
+            ->count();
+    }
+}
+
+$headline = 'Continuity review timing looks steady.';
+if ($continuityOverdue > 0 || $queueOverdue > 0) {
+    $headline = 'Overdue reviews or follow-ups need attention before unscheduled backlog grows.';
+} elseif ($continuityUnscheduled > 0 || $queueUnscheduled > 0) {
+    $headline = 'Nothing is overdue yet, but unscheduled review lanes are starting to accumulate.';
+}
+?>
+<style>
+.mko-counter-strip{margin:0 0 16px;padding:14px 16px;border:1px solid #d9e2ec;border-radius:12px;background:#fff}
+.mko-counter-strip h4{margin:0 0 6px;font-size:16px;font-weight:700}
+.mko-counter-strip p{margin:0 0 12px;color:#5b6572}
+.mko-counter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.mko-counter-card{padding:10px 12px;border-radius:10px;background:#f8fafc;border:1px solid #e5e7eb}
+.mko-counter-card strong{display:block;font-size:20px;line-height:1.1}
+.mko-counter-card span{display:block;margin-top:4px;font-size:12px;color:#52606d}
+@media (max-width: 900px){.mko-counter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+</style>
+<div class="mko-counter-strip">
+    <h4>Overdue vs Unscheduled Snapshot</h4>
+    <p><?= e($headline) ?></p>
+    <div class="mko-counter-grid">
+        <div class="mko-counter-card"><strong><?= (int) $continuityOverdue ?></strong><span>Continuity overdue reviews</span></div>
+        <div class="mko-counter-card"><strong><?= (int) $continuityUnscheduled ?></strong><span>Continuity unscheduled reviews</span></div>
+        <div class="mko-counter-card"><strong><?= (int) $queueOverdue ?></strong><span>Queue overdue follow-ups</span></div>
+        <div class="mko-counter-card"><strong><?= (int) $queueUnscheduled ?></strong><span>Queue unscheduled follow-ups</span></div>
+    </div>
+</div>
