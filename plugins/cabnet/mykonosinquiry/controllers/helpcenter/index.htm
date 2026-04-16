@@ -221,6 +221,72 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-quickreturn {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid #dce5f4;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(248, 250, 255, 0.96) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 10px 22px rgba(27, 49, 102, 0.05);
+}
+.myk-help-quickreturn__meta {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+.myk-help-quickreturn__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #6c7aa6;
+    margin-bottom: 4px;
+}
+.myk-help-quickreturn__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-quickreturn__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+}
+.myk-help-quickreturn__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.myk-help-quickreturn__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #d8e1f0;
+    background: #ffffff;
+    color: #2f4568;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.myk-help-quickreturn__chip:hover,
+.myk-help-quickreturn__chip:focus {
+    text-decoration: none;
+    background: #eef3ff;
+    border-color: #c8d7f4;
+    color: #213755;
+}
+@media (max-width: 860px) {
+    .myk-help-quickreturn {
+        padding: 12px;
+    }
+}
 .myk-help-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -440,79 +506,6 @@
         grid-template-columns: 1fr;
     }
 }
-
-.myk-help-docsroute {
-    margin-top: 12px;
-    padding: 12px 14px;
-    border: 1px solid #d8e2f1;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(250, 252, 255, 0.98) 0%, rgba(255, 255, 255, 0.96) 100%);
-}
-.myk-help-docsroute__eyebrow {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #6b7890;
-    margin-bottom: 8px;
-}
-.myk-help-docsroute__summary {
-    font-size: 13px;
-    line-height: 1.65;
-    color: #556577;
-    margin-bottom: 10px;
-}
-.myk-help-docsroute__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-.myk-help-docsroute__chip {
-    display: inline-flex;
-    align-items: center;
-    min-height: 28px;
-    padding: 6px 11px;
-    border-radius: 999px;
-    background: #f2f6ff;
-    border: 1px solid #d8e2f3;
-    color: #30435f;
-    font-size: 12px;
-    font-weight: 700;
-}
-.myk-help-docsroute__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-}
-.myk-help-docsroute__card {
-    min-width: 0;
-    padding: 10px 12px;
-    border: 1px solid #e0e7f2;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.92);
-}
-.myk-help-docsroute__label {
-    display: block;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    font-weight: 700;
-    color: #6d7b90;
-    margin-bottom: 5px;
-}
-.myk-help-docsroute__value {
-    display: block;
-    font-size: 13px;
-    line-height: 1.45;
-    color: #233247;
-    font-weight: 700;
-    word-break: break-word;
-}
-@media (max-width: 900px) {
-    .myk-help-docsroute__grid { grid-template-columns: 1fr; }
-}
-
 </style>
 
 <div class="myk-help-page" id="mykHelpPage">
@@ -531,27 +524,6 @@
             <span class="myk-help-origin__label">You came here from</span>
             <strong class="myk-help-origin__badge" id="mykHelpOriginBadge">Workspace Docs side menu</strong>
             <span class="myk-help-origin__summary" id="mykHelpOriginSummary">This line shows which screen opened this help page, so you can quickly tell whether you came from a list, a handoff view, or a specific record.</span>
-        </div>
-        <div class="myk-help-docsroute" id="mykHelpDocsRouteMemory" aria-live="polite">
-            <div class="myk-help-docsroute__eyebrow">Docs route memory</div>
-            <div class="myk-help-docsroute__summary" id="mykHelpDocsRouteSummary">This help page opened in a broad workspace-docs posture. When a record screen opens help with a request reference, record id, or linked source id, the exact route memory appears here so operators can confirm which saved lane sent them.</div>
-            <div class="myk-help-docsroute__chips" id="mykHelpDocsRouteChips">
-                <span class="myk-help-docsroute__chip">Baseline docs view</span>
-            </div>
-            <div class="myk-help-docsroute__grid">
-                <div class="myk-help-docsroute__card">
-                    <span class="myk-help-docsroute__label">Record path</span>
-                    <strong class="myk-help-docsroute__value" id="mykHelpDocsRouteRecord">No specific record path detected</strong>
-                </div>
-                <div class="myk-help-docsroute__card">
-                    <span class="myk-help-docsroute__label">Record memory</span>
-                    <strong class="myk-help-docsroute__value" id="mykHelpDocsRouteMemoryValue">Open this page from an inquiry or continuity help action to capture record-side route memory here.</strong>
-                </div>
-                <div class="myk-help-docsroute__card">
-                    <span class="myk-help-docsroute__label">Return hint</span>
-                    <strong class="myk-help-docsroute__value" id="mykHelpDocsRouteReturn">Use the sticky action bar below to return to the linked working lane after reviewing help.</strong>
-                </div>
-            </div>
         </div>
         <div class="myk-help-routestatus" id="mykHelpRouteStatus" aria-live="polite">
             <div class="myk-help-routestatus__item">
@@ -604,6 +576,20 @@
         <div class="myk-help-returnbar__actions">
             <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-primary oc-icon-level-up" id="mykHelpReturnPrimary">Open inquiry list</a>
             <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default oc-icon-refresh" id="mykHelpReturnSecondary">Open loyalty list</a>
+        </div>
+    </div>
+
+
+    <div class="myk-help-quickreturn" id="mykHelpQuickReturn" aria-live="polite">
+        <div class="myk-help-quickreturn__meta">
+            <div class="myk-help-quickreturn__eyebrow">Record-lane quick return</div>
+            <div class="myk-help-quickreturn__title" id="mykHelpQuickReturnTitle">Jump back to the working lane that opened this docs page.</div>
+            <div class="myk-help-quickreturn__summary" id="mykHelpQuickReturnSummary">These quick-return chips mirror the current route memory so operators can return to the exact inquiry or continuity lane without rebuilding the path manually.</div>
+        </div>
+        <div class="myk-help-quickreturn__chips">
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="myk-help-quickreturn__chip" id="mykHelpQuickReturnPrimaryChip">Open inquiry list</a>
+            <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="myk-help-quickreturn__chip" id="mykHelpQuickReturnSecondaryChip">Open loyalty list</a>
+            <a href="#help-form-routes" class="myk-help-quickreturn__chip" id="mykHelpQuickReturnDocsChip">Stay on record-screen help</a>
         </div>
     </div>
 
@@ -956,6 +942,41 @@
             secondaryLabel: 'Open loyalty list'
         }
     };
+
+
+    var quickReturnTitle = document.getElementById('mykHelpQuickReturnTitle');
+    var quickReturnSummary = document.getElementById('mykHelpQuickReturnSummary');
+    var quickReturnPrimaryChip = document.getElementById('mykHelpQuickReturnPrimaryChip');
+    var quickReturnSecondaryChip = document.getElementById('mykHelpQuickReturnSecondaryChip');
+    var quickReturnDocsChip = document.getElementById('mykHelpQuickReturnDocsChip');
+
+    function updateQuickReturnChips(returnState, originState) {
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+        var originLabel = (originState && originState.badge) || defaultOriginState.badge;
+
+        if (quickReturnTitle) {
+            quickReturnTitle.textContent = 'Jump back to ' + primaryLabel + ' or the companion lane without rebuilding the route.';
+        }
+
+        if (quickReturnSummary) {
+            quickReturnSummary.textContent = 'Opened from ' + originLabel + '. Use the quick-return chips to go straight back to ' + primaryLabel + ', switch to ' + secondaryLabel + ', or stay anchored on record-screen help.';
+        }
+
+        if (quickReturnPrimaryChip) {
+            quickReturnPrimaryChip.setAttribute('href', (returnState && returnState.primaryHref) || defaultReturnState.primaryHref);
+            quickReturnPrimaryChip.textContent = primaryLabel;
+        }
+
+        if (quickReturnSecondaryChip) {
+            quickReturnSecondaryChip.setAttribute('href', (returnState && returnState.secondaryHref) || defaultReturnState.secondaryHref);
+            quickReturnSecondaryChip.textContent = secondaryLabel;
+        }
+
+        if (quickReturnDocsChip) {
+            quickReturnDocsChip.setAttribute('href', '#help-form-routes');
+        }
+    }
 
     function normalize(value) {
         return (value || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -1531,63 +1552,10 @@
         });
     }
 
-
-    var docsRouteSummary = document.getElementById('mykHelpDocsRouteSummary');
-    var docsRouteChips = document.getElementById('mykHelpDocsRouteChips');
-    var docsRouteRecord = document.getElementById('mykHelpDocsRouteRecord');
-    var docsRouteMemoryValue = document.getElementById('mykHelpDocsRouteMemoryValue');
-    var docsRouteReturn = document.getElementById('mykHelpDocsRouteReturn');
-
-    function escapeHtml(value) {
-        return String(value || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
-
-    function applyDocsRouteMemory() {
-        if (!docsRouteSummary || !docsRouteChips || !docsRouteRecord || !docsRouteMemoryValue || !docsRouteReturn) {
-            return;
-        }
-        var params = new URLSearchParams(window.location.search || '');
-        var routeFrom = params.get('from') || params.get('origin') || '';
-        var recordId = params.get('record_id') || params.get('id') || '';
-        var requestReference = params.get('request_reference') || params.get('ref') || '';
-        var sourceInquiryId = params.get('source_inquiry_id') || '';
-        var loyaltyId = params.get('loyalty_id') || params.get('loyalty_record_id') || '';
-        var lane = params.get('lane') || '';
-        var chips = [];
-        if (routeFrom) { chips.push('From: ' + routeFrom); }
-        if (lane) { chips.push('Lane: ' + lane); }
-        if (recordId) { chips.push('Record #' + recordId); }
-        if (requestReference) { chips.push('Ref ' + requestReference); }
-        if (sourceInquiryId) { chips.push('Source inquiry #' + sourceInquiryId); }
-        if (loyaltyId) { chips.push('Loyalty #' + loyaltyId); }
-        if (!chips.length) {
-            docsRouteSummary.textContent = 'This help page opened in a broad workspace-docs posture. When a record screen opens help with a request reference, record id, or linked source id, the exact route memory appears here so operators can confirm which saved lane sent them.';
-            docsRouteChips.innerHTML = '<span class="myk-help-docsroute__chip">Baseline docs view</span>';
-            return;
-        }
-        docsRouteChips.innerHTML = chips.map(function(item) {
-            return '<span class="myk-help-docsroute__chip">' + escapeHtml(item) + '</span>';
-        }).join('');
-        docsRouteRecord.textContent = routeFrom ? routeFrom : 'Linked record help route';
-        docsRouteMemoryValue.textContent = requestReference
-            ? ('Request reference ' + requestReference + ' opened this help path' + (recordId ? ' for record #' + recordId : '') + '.')
-            : (recordId ? ('Record #' + recordId + ' opened this help path.') : 'Linked route memory detected from the working lane.');
-        docsRouteReturn.textContent = lane
-            ? ('Return to the ' + lane + ' lane after reviewing this section.')
-            : 'Use the sticky action bar below to return to the linked working lane after reviewing help.';
-        docsRouteSummary.textContent = 'This docs page was opened from a saved working route, so the chips below keep the original record-side memory visible while you review help and then return to the same lane.';
-    }
-
     window.addEventListener('hashchange', function() {
         applyTargetFromHash(true);
     });
 
-    applyDocsRouteMemory();
     applySearch();
     applyTargetFromHash(false);
 })();
