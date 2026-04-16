@@ -4,14 +4,14 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.67.00 list-level stale-timing drift cues across inquiry and loyalty`
+- `v6.68.00 bridge-status legends above queue and loyalty lists`
 
 ## Current verified development direction
 
 The current backend line is focused on:
 - keeping the Inquiry Queue usable and faster to scan
 - keeping the Loyalty Continuity Workspace readable in plain language
-- exposing queue-to-continuity ownership and timing drift before operators open records
+- keeping help/docs/glossary on the dedicated backend docs page
 - preserving render safety and business continuity
 - making changes plugin-only where possible
 - avoiding speculative architecture rewrites

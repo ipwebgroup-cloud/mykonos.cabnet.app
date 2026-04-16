@@ -1,0 +1,156 @@
+<?php
+$helpUrl = Backend::url('cabnet/mykonosinquiry/helpcenter') . '#help-queue';
+$loyaltyUrl = Backend::url('cabnet/mykonosinquiry/loyaltyrecords');
+?>
+<style>
+.bridge-status-legend {
+    margin: 0 0 14px;
+    border: 1px solid #dbe4f2;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fbfcff 0%, #ffffff 100%);
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+.bridge-status-legend__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 12px;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+.bridge-status-legend__eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #6b7a90;
+}
+.bridge-status-legend__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #22364f;
+}
+.bridge-status-legend__summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5d6d7e;
+}
+.bridge-status-legend__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+.bridge-status-legend__card {
+    border: 1px solid #e1e7f0;
+    border-radius: 14px;
+    background: #fff;
+    padding: 12px 13px;
+    min-width: 0;
+}
+.bridge-status-legend__card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #22364f;
+    margin-bottom: 6px;
+}
+.bridge-status-legend__card-copy {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5e6d7d;
+    margin: 0 0 8px;
+}
+.bridge-status-legend__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.bridge-status-legend__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid #d9e2ef;
+    background: #f8fafc;
+    color: #4f6175;
+    font-size: 11px;
+    font-weight: 600;
+}
+.bridge-status-legend__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+.bridge-status-legend__links .btn {
+    border-radius: 999px;
+}
+@media (max-width: 1200px) {
+    .bridge-status-legend__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 820px) {
+    .bridge-status-legend__grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="bridge-status-legend">
+    <div class="bridge-status-legend__head">
+        <div>
+            <div class="bridge-status-legend__eyebrow">List scan legend</div>
+            <div class="bridge-status-legend__title">How to read the queue bridge columns fast</div>
+        </div>
+        <div class="bridge-status-legend__summary">Use this legend before widening the row view. It explains the compact bridge-health, closure-memory, owner-drift, and stale-timing digests now visible on the Inquiry Queue list.</div>
+    </div>
+
+    <div class="bridge-status-legend__grid">
+        <article class="bridge-status-legend__card">
+            <div class="bridge-status-legend__card-title">Bridge health</div>
+            <p class="bridge-status-legend__card-copy">Read this first to see whether the inquiry is queue-only, draft-ready, transfer-ready, already linked, or drifting after closure.</p>
+            <div class="bridge-status-legend__chips">
+                <span class="bridge-status-legend__chip">Current</span>
+                <span class="bridge-status-legend__chip">Transfer-ready</span>
+                <span class="bridge-status-legend__chip">Closed + active continuity</span>
+            </div>
+        </article>
+
+        <article class="bridge-status-legend__card">
+            <div class="bridge-status-legend__card-title">Closure / handoff memory</div>
+            <p class="bridge-status-legend__card-copy">This shows the strongest recent reason: closure reason, handoff posture, or the next checkpoint memory when no stronger closure note exists.</p>
+            <div class="bridge-status-legend__chips">
+                <span class="bridge-status-legend__chip">Closed reason</span>
+                <span class="bridge-status-legend__chip">Handoff memory</span>
+                <span class="bridge-status-legend__chip">Next checkpoint</span>
+            </div>
+        </article>
+
+        <article class="bridge-status-legend__card">
+            <div class="bridge-status-legend__card-title">Owner drift</div>
+            <p class="bridge-status-legend__card-copy">Use this to spot whether queue and continuity ownership are aligned, split, or unassigned before opening the record.</p>
+            <div class="bridge-status-legend__chips">
+                <span class="bridge-status-legend__chip">Aligned</span>
+                <span class="bridge-status-legend__chip">Split</span>
+                <span class="bridge-status-legend__chip">Unassigned risk</span>
+            </div>
+        </article>
+
+        <article class="bridge-status-legend__card">
+            <div class="bridge-status-legend__card-title">Stale timing</div>
+            <p class="bridge-status-legend__card-copy">This compares queue follow-up and continuity next-review timing so overdue or unscheduled cases are visible in one scan pass.</p>
+            <div class="bridge-status-legend__chips">
+                <span class="bridge-status-legend__chip">Queue stale</span>
+                <span class="bridge-status-legend__chip">Continuity stale</span>
+                <span class="bridge-status-legend__chip">Both stale</span>
+            </div>
+        </article>
+    </div>
+
+    <div class="bridge-status-legend__links">
+        <a href="<?= $helpUrl ?>" class="btn btn-default oc-icon-book">Bridge legend help</a>
+        <a href="<?= $loyaltyUrl ?>" class="btn btn-default oc-icon-refresh">Open loyalty list</a>
+    </div>
+</div>
