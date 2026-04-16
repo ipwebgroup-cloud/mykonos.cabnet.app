@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.75.00 workspace docs bridge-state legend`
+- `v6.76.00 workspace docs quick glossary block`
 
 ## Current verified development direction
 

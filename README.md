@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.75.00 — Workspace Docs bridge-state legend
+### v6.76.00 — Workspace Docs quick glossary block
 Included in the current safe backend polish line:
-- bridge-state legend added to Workspace Docs
-- shared bridge language aligned across lists, record strips, and docs
+- quick glossary block added to Workspace Docs
+- shared bridge terms explained in one stable docs surface
 - plugin-only operator guidance polish without changing live workflow logic
 
 ### Current plugin-tracked baseline
