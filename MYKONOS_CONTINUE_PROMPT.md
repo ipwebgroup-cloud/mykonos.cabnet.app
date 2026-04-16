@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.74.00 workspace docs quick-return chips`
+- `v6.75.00 workspace docs bridge-state legend`
 
 ## Current verified development direction
 
