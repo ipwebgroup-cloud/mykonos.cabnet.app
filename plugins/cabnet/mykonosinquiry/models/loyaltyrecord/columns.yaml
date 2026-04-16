@@ -10,13 +10,6 @@ columns:
         sortable: false
         searchable: false
 
-    closure_memory_digest:
-        label: Closure / Handoff Memory
-        type: partial
-        path: $/cabnet/mykonosinquiry/controllers/loyaltyrecords/_list_closure_memory_digest.htm
-        sortable: false
-        searchable: false
-
     guest_name:
         label: Guest
         searchable: true
@@ -61,6 +54,12 @@ columns:
 
     owner_name:
         label: Owner
+
+    owner_drift_digest:
+        label: Owner Drift
+        type: partial
+        path: $/cabnet/mykonosinquiry/controllers/loyaltyrecords/_list_owner_drift_digest.htm
+        sortable: false
 
     updated_at:
         label: Updated At

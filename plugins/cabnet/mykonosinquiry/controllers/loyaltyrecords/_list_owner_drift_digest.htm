@@ -1,0 +1,73 @@
+<?php
+$loyalty = $record ?? $model ?? null;
+if (!$loyalty) {
+    return;
+}
+
+$source = null;
+try {
+    $source = $loyalty->source_inquiry;
+} catch (\Throwable $e) {
+    $source = null;
+}
+
+$loyaltyOwner = trim((string) ($loyalty->owner_name ?? ''));
+$loyaltyOwnerLabel = $loyaltyOwner !== '' ? $loyaltyOwner : 'Unassigned';
+$reviewLabel = ($loyalty->next_review_at ?? null) instanceof \DateTimeInterface
+    ? $loyalty->next_review_at->format('Y-m-d')
+    : 'Unscheduled';
+
+if (!$source) {
+    $title = 'Standalone';
+    $cue = 'Manual continuity record with no source inquiry.';
+    $tone = ['#5c6370', '#f3f4f6', '#d7dce2'];
+    $queueOwnerLabel = 'No source';
+    $followLabel = '—';
+} else {
+    $queueOwner = trim((string) ($source->owner_name ?? ''));
+    $queueOwnerLabel = $queueOwner !== '' ? $queueOwner : 'Unassigned';
+    $followLabel = ($source->follow_up_date ?? null) instanceof \DateTimeInterface
+        ? $source->follow_up_date->format('Y-m-d')
+        : 'Unscheduled';
+
+    if ($queueOwner !== '' && $loyaltyOwner !== '' && strcasecmp($queueOwner, $loyaltyOwner) === 0) {
+        $title = 'Aligned';
+        $cue = 'Source inquiry and continuity owners match.';
+        $tone = ['#0f5132', '#ecfdf3', '#b7ebc6'];
+    } elseif ($queueOwner === '' && $loyaltyOwner === '') {
+        $title = 'Unassigned risk';
+        $cue = 'Both lanes still need a named owner.';
+        $tone = ['#842029', '#f8d7da', '#f1aeb5'];
+    } elseif ($queueOwner === '') {
+        $title = 'Continuity-led';
+        $cue = 'Continuity has an owner but queue does not.';
+        $tone = ['#7c4a03', '#fff7e6', '#f5d08a'];
+    } elseif ($loyaltyOwner === '') {
+        $title = 'Queue-led';
+        $cue = 'Queue has an owner but continuity does not.';
+        $tone = ['#084298', '#eef5ff', '#cfe2ff'];
+    } else {
+        $title = 'Split ownership';
+        $cue = 'Queue and continuity are owned by different operators.';
+        $tone = ['#7c4a03', '#fff7e6', '#f5d08a'];
+    }
+}
+[$text, $bg, $border] = $tone;
+?>
+<div style="min-width:180px; max-width:235px; line-height:1.18; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:7px 8px;">
+    <div style="display:inline-flex; align-items:center; border:1px solid <?= e($border) ?>; background:#fff; color:<?= e($text) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; margin-bottom:6px;">
+        <?= e($title) ?>
+    </div>
+    <div style="font-size:11px; color:#334155; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($cue) ?>">
+        <?= e($cue) ?>
+    </div>
+    <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Queue owner">
+        Queue: <?= e($queueOwnerLabel) ?>
+    </div>
+    <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Continuity owner">
+        Continuity: <?= e($loyaltyOwnerLabel) ?>
+    </div>
+    <div style="font-size:10px; color:#64748b; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Timing posture">
+        Follow-up <?= e($followLabel) ?> · Review <?= e($reviewLabel) ?>
+    </div>
+</div>
