@@ -1,0 +1,37 @@
+<?php
+$inquiryModelClass = '\Cabnet\MykonosInquiry\Models\Inquiry';
+$recordCount = class_exists($inquiryModelClass) ? (int) $inquiryModelClass::count() : 0;
+$postureCounts = class_exists($inquiryModelClass) ? $inquiryModelClass::getLoyaltyQueuePostureCounts() : [];
+$transferReady = (int) ($postureCounts['transfer_ready']['value'] ?? 0);
+$draftReady = (int) ($postureCounts['draft_ready']['value'] ?? 0);
+$queueOnly = (int) ($postureCounts['queue_only']['value'] ?? 0);
+$attentionLane = max($transferReady, $draftReady, $queueOnly);
+$headline = 'Queue-only live handling is currently the largest lane.';
+if ($attentionLane === $transferReady && $transferReady > 0) {
+    $headline = 'Transfer-ready bridge work is currently the highest-priority lane.';
+} elseif ($attentionLane === $draftReady && $draftReady > 0) {
+    $headline = 'Seeded loyalty draft work is currently the highest-priority lane.';
+}
+?>
+<div class="layout-row">
+    <div class="callout fade in no-subheader" style="margin-bottom:16px; background:#0f172a; color:#e2e8f0; border-left:4px solid #38bdf8;">
+        <div class="header" style="padding-bottom:0;">
+            <i class="icon-signal"></i>
+            <h3 style="margin:0; color:#fff;">Lane Priority Snapshot</h3>
+        </div>
+        <div class="content">
+            <p style="margin:8px 0 14px 0;"><strong><?= e($headline) ?></strong></p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <span class="label label-default" style="padding:8px 12px; font-size:12px;">All queue records: <?= $recordCount ?></span>
+                <span class="label label-primary" style="padding:8px 12px; font-size:12px;">Transfer ready: <?= $transferReady ?></span>
+                <span class="label label-warning" style="padding:8px 12px; font-size:12px;">Draft ready: <?= $draftReady ?></span>
+                <span class="label label-success" style="padding:8px 12px; font-size:12px;">Queue only: <?= $queueOnly ?></span>
+            </div>
+            <p style="margin:0 0 10px 0;">Use these chips as the first scan pass before you widen the list. They summarize which queue lane deserves the next operator attention.</p>
+            <p style="margin:0;">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>" class="btn btn-default btn-sm">Open Workspace Docs</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/loyaltyrecords') ?>" class="btn btn-default btn-sm">Open Loyalty Continuity</a>
+            </p>
+        </div>
+    </div>
+</div>

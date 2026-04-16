@@ -1,0 +1,35 @@
+<?php
+$loyaltyModelClass = '\Cabnet\MykonosInquiry\Models\LoyaltyRecord';
+$inquiryModelClass = '\Cabnet\MykonosInquiry\Models\Inquiry';
+$storageReady = class_exists($loyaltyModelClass) ? $loyaltyModelClass::workspaceStorageReady() : false;
+$recordCount = $storageReady && class_exists($loyaltyModelClass) ? (int) $loyaltyModelClass::workspaceRecordCount() : 0;
+$postureCounts = class_exists($inquiryModelClass) ? $inquiryModelClass::getLoyaltyQueuePostureCounts() : [];
+$transferReady = (int) ($postureCounts['transfer_ready']['value'] ?? 0);
+$draftReady = (int) ($postureCounts['draft_ready']['value'] ?? 0);
+$queueOnly = (int) ($postureCounts['queue_only']['value'] ?? 0);
+$headline = $storageReady
+    ? 'Continuity workspace is live; use the chips below to decide whether to stay in continuity or return to queue.'
+    : 'Continuity workspace is still guarded; queue posture chips show what is waiting upstream.';
+?>
+<div class="layout-row">
+    <div class="callout fade in no-subheader" style="margin-bottom:16px; background:#111827; color:#e5e7eb; border-left:4px solid #a78bfa;">
+        <div class="header" style="padding-bottom:0;">
+            <i class="icon-tasks"></i>
+            <h3 style="margin:0; color:#fff;">Lane Priority Snapshot</h3>
+        </div>
+        <div class="content">
+            <p style="margin:8px 0 14px 0;"><strong><?= e($headline) ?></strong></p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <span class="label label-default" style="padding:8px 12px; font-size:12px;">Continuity records: <?= $recordCount ?></span>
+                <span class="label label-primary" style="padding:8px 12px; font-size:12px;">Transfer ready in queue: <?= $transferReady ?></span>
+                <span class="label label-warning" style="padding:8px 12px; font-size:12px;">Draft ready in queue: <?= $draftReady ?></span>
+                <span class="label label-success" style="padding:8px 12px; font-size:12px;">Queue only: <?= $queueOnly ?></span>
+            </div>
+            <p style="margin:0 0 10px 0;">These chips make it easier to decide whether the next action belongs in active continuity or still belongs in queue handling.</p>
+            <p style="margin:0;">
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/helpcenter') ?>" class="btn btn-default btn-sm">Open Workspace Docs</a>
+                <a href="<?= Backend::url('cabnet/mykonosinquiry/inquiries') ?>" class="btn btn-default btn-sm">Open Inquiry Queue</a>
+            </p>
+        </div>
+    </div>
+</div>

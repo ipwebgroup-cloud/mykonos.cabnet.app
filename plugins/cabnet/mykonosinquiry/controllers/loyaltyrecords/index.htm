@@ -126,14 +126,12 @@ foreach ($guardedPartials as $partialName) {
             </div>
         </div>
     <?php else: ?>
+        <?= $this->makePartial('lane_priority_chips_strip') ?>
         <?php if (!empty($emptyStateGuidance)): ?>
             <div class="layout-row">
                 <?= $this->makePartial('workspace_empty_state_guidance_panel', ['guidance' => $emptyStateGuidance]) ?>
             </div>
         <?php endif; ?>
-        <div class="layout-row">
-            <?= $this->makePartial('bridge_status_legend_strip') ?>
-        </div>
         <div class="layout-row">
             <?= $this->listRender() ?>
         </div>

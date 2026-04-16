@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.68.00 bridge-status legends above queue and loyalty lists`
+- `v6.69.00 lane priority chips above queue and loyalty lists`
 
 ## Current verified development direction
 
