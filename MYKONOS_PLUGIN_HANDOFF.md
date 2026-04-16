@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.71.00 bridge-state route pills above queue and loyalty lists`
+- `v6.72.00 workspace docs active-filter count chips`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades both list pages with compact route-state pill strips that show current lane posture, active search context, and active filter posture in plain language before operators scan the list rows.
+It upgrades the Workspace Docs page with a compact active-filter count chip strip so operators can see the current route posture and any incoming search or filter context directly on the central docs surface.
 
 ## Deployment note
 
@@ -19,22 +19,23 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- Backend -> Inquiry Queue
-- Backend -> Loyalty Continuity
-- both list pages now show a compact route-state pill strip above the list
-- search, filters, and list behavior remain unchanged
+- Backend -> Workspace Docs
+- the page now shows an active-filter count chip strip near the top
+- opening docs from filtered or searched list routes shows readable context chips
+- docs search, glossary, and return actions remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves scan orientation before row review begins
+- improves route-context awareness on the central docs surface
+- reduces confusion when opening docs from filtered list routes
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this route-state strip pass, the next strong step should be one of:
-- add compact active-filter count chips into the Workspace Docs dashboard
-- add route-aware attention headlines above the record update screens
-- improve list-to-record orientation cues without widening row actions
+After this docs-context pass, the next strong step should be one of:
+- add compact active-filter count chips to the Workspace Docs playbook dashboard metrics area
+- add a small route-state memory strip on the docs page for linked record help entries
+- improve docs-to-list return cues without widening row UI again

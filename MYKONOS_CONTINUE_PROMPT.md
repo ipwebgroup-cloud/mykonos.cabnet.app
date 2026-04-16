@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.71.00 bridge-state route pills above queue and loyalty lists`
+- `v6.72.00 workspace docs active-filter count chips`
 
 ## Current verified development direction
 
