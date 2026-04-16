@@ -1,0 +1,67 @@
+<?php
+$inquiry = $record ?? $model ?? null;
+if (!$inquiry) {
+    return;
+}
+
+$loyalty = null;
+try {
+    $loyalty = $inquiry->loyalty_record;
+} catch (\Throwable $e) {
+    $loyalty = null;
+}
+
+$today = new \DateTimeImmutable('today');
+$queueFollow = ($inquiry->follow_up_date ?? null) instanceof \DateTimeInterface ? $inquiry->follow_up_date : null;
+$queueLabel = $queueFollow ? $queueFollow->format('Y-m-d') : 'Unscheduled';
+
+if (!$loyalty) {
+    $title = 'Queue-only';
+    $cue = 'No linked continuity review yet.';
+    $tone = ['#5c6370', '#f3f4f6', '#d7dce2'];
+    $reviewLabel = '—';
+} else {
+    $review = ($loyalty->next_review_at ?? null) instanceof \DateTimeInterface ? $loyalty->next_review_at : null;
+    $reviewLabel = $review ? $review->format('Y-m-d') : 'Unscheduled';
+
+    $queueStale = $queueFollow ? ($queueFollow < $today) : null;
+    $reviewStale = $review ? ($review < $today) : null;
+
+    if (!$queueFollow && !$review) {
+        $title = 'Unscheduled';
+        $cue = 'Neither lane has a visible next checkpoint.';
+        $tone = ['#842029', '#f8d7da', '#f1aeb5'];
+    } elseif ($queueStale && $reviewStale) {
+        $title = 'Both stale';
+        $cue = 'Queue and continuity timing are both overdue.';
+        $tone = ['#842029', '#f8d7da', '#f1aeb5'];
+    } elseif ($queueStale && !$reviewStale) {
+        $title = 'Queue stale';
+        $cue = 'Queue follow-up drifted while continuity timing still looks current.';
+        $tone = ['#7c4a03', '#fff7e6', '#f5d08a'];
+    } elseif (!$queueStale && $reviewStale) {
+        $title = 'Continuity stale';
+        $cue = 'Continuity review drifted while queue timing still looks current.';
+        $tone = ['#7c4a03', '#fff7e6', '#f5d08a'];
+    } else {
+        $title = 'Current';
+        $cue = 'Both lanes still show a live visible checkpoint.';
+        $tone = ['#0f5132', '#ecfdf3', '#b7ebc6'];
+    }
+}
+[$text, $bg, $border] = $tone;
+?>
+<div style="min-width:180px; max-width:235px; line-height:1.18; border:1px solid <?= e($border) ?>; background:<?= e($bg) ?>; border-radius:10px; padding:7px 8px;">
+    <div style="display:inline-flex; align-items:center; border:1px solid <?= e($border) ?>; background:#fff; color:<?= e($text) ?>; border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; margin-bottom:6px;">
+        <?= e($title) ?>
+    </div>
+    <div style="font-size:11px; color:#334155; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?= e($cue) ?>">
+        <?= e($cue) ?>
+    </div>
+    <div style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Queue follow-up">
+        Follow-up: <?= e($queueLabel) ?>
+    </div>
+    <div style="font-size:10px; color:#64748b; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Continuity next review">
+        Review: <?= e($reviewLabel) ?>
+    </div>
+</div>

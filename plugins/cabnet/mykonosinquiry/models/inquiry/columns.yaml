@@ -22,10 +22,10 @@ columns:
         path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_follow_up_summary.htm
         sortable: false
         searchable: false
-    owner_drift_digest:
-        label: Owner Drift
+    stale_timing_drift_digest:
+        label: Stale Timing
         type: partial
-        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_owner_drift_digest.htm
+        path: $/cabnet/mykonosinquiry/controllers/inquiries/_list_stale_timing_drift_digest.htm
         sortable: false
         searchable: false
     loyalty_queue_actions:
@@ -78,7 +78,3 @@ columns:
 
     created_at:
         label: Created At
-        type: datetime
-        invisible: true
-        cssClass: queue-col-full
-        headCssClass: queue-col-full
