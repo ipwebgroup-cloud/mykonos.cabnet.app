@@ -1,0 +1,76 @@
+<?php
+$filterInput = [];
+try {
+    $filterInput = \Request::input('filter', []);
+} catch (\Throwable $e) {
+    $filterInput = [];
+}
+if (!is_array($filterInput)) {
+    $filterInput = [];
+}
+$searchTerm = trim((string) \Request::input('search', ''));
+$recognized = [
+    'status' => 'Status',
+    'priority' => 'Priority',
+    'urgency_hint' => 'Urgency',
+    'source_type' => 'Source',
+    'requested_mode' => 'Mode',
+    'owner_id' => 'Owner',
+    'queue_bucket' => 'Queue',
+];
+$chips = [];
+foreach ($recognized as $key => $label) {
+    $value = $filterInput[$key] ?? null;
+    if (is_array($value)) {
+        $value = implode(', ', array_filter(array_map('strval', $value)));
+    }
+    $value = trim((string) $value);
+    if ($value !== '') {
+        $chips[] = ['label' => $label, 'value' => $value];
+    }
+}
+$routeHeadline = 'Default queue scan posture';
+$routeBody = 'You are scanning the broad Inquiry Queue view. Add search or filter scopes only when you need to narrow action, handoff, or bridge posture.';
+if ($searchTerm !== '' && !empty($chips)) {
+    $routeHeadline = 'Filtered queue scan with keyword context';
+    $routeBody = 'This queue view is narrowed by both search and filter posture. Clear one of them if the current slice feels too narrow for daily pass work.';
+} elseif ($searchTerm !== '') {
+    $routeHeadline = 'Keyword-led queue scan';
+    $routeBody = 'This queue view is narrowed by the current search term. Clear search to return to the wider operator scan lane.';
+} elseif (!empty($chips)) {
+    $routeHeadline = 'Filtered queue scan';
+    $routeBody = 'This queue view is narrowed by active filter posture. Use it for focused work, then widen back out for the next full queue pass.';
+}
+$docsUrl = Backend::url('cabnet/mykonosinquiry/helpcenter');
+$loyaltyUrl = Backend::url('cabnet/mykonosinquiry/loyaltyrecords');
+?>
+<div class="callout fade in no-subheader" style="margin-bottom:14px; border-left:4px solid #6b7280;">
+    <div class="content">
+        <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+            <div style="min-width:280px; flex:1 1 520px;">
+                <h4 style="margin:0 0 8px 0;">Queue route-state pills</h4>
+                <p style="margin:0 0 8px 0;"><strong><?= e($routeHeadline) ?></strong></p>
+                <p style="margin:0;"><?= e($routeBody) ?></p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <a href="<?= e($docsUrl) ?>" class="btn btn-default btn-sm">Workspace Docs</a>
+                <a href="<?= e($loyaltyUrl) ?>" class="btn btn-default btn-sm">Open Loyalty Continuity</a>
+            </div>
+        </div>
+        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <span class="label label-default">Lane: Inquiry Queue</span>
+            <?php if ($searchTerm !== ''): ?>
+                <span class="label label-info">Search: <?= e(mb_strimwidth($searchTerm, 0, 40, '…')) ?></span>
+            <?php else: ?>
+                <span class="label label-default">Search: none</span>
+            <?php endif; ?>
+            <?php if (!empty($chips)): ?>
+                <?php foreach ($chips as $chip): ?>
+                    <span class="label label-warning"><?= e($chip['label']) ?>: <?= e(mb_strimwidth($chip['value'], 0, 32, '…')) ?></span>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <span class="label label-success">Filter posture: wide view</span>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

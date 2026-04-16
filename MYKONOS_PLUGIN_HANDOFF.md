@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.70.00 overdue-versus-unscheduled counters above queue and loyalty lists`
+- `v6.71.00 bridge-state route pills above queue and loyalty lists`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It adds compact timing counters above both list pages so operators can see whether overdue work or unscheduled work is currently the bigger drift risk.
+It upgrades both list pages with compact route-state pill strips that show current lane posture, active search context, and active filter posture in plain language before operators scan the list rows.
 
 ## Deployment note
 
@@ -21,21 +21,20 @@ No schema change is introduced and no plugin refresh is required for this step.
 Then verify:
 - Backend -> Inquiry Queue
 - Backend -> Loyalty Continuity
-- both list pages show a compact Overdue vs Unscheduled Snapshot above the list
-- queue and loyalty actions, filters, and list behavior remain unchanged
+- both list pages now show a compact route-state pill strip above the list
+- search, filters, and list behavior remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves first-glance timing awareness
-- helps operators separate overdue work from unscheduled backlog
+- improves scan orientation before row review begins
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this timing snapshot pass, the next strong step should be one of:
-- add compact bridge-state route pills above both lists using real current filters when present
-- add conservative row-level timing color cues only where the current list remains readable
-- expand Workspace Docs into a timing discipline playbook that explains the new counters in operator language
+After this route-state strip pass, the next strong step should be one of:
+- add compact active-filter count chips into the Workspace Docs dashboard
+- add route-aware attention headlines above the record update screens
+- improve list-to-record orientation cues without widening row actions
