@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.82.00 workspace docs handoff-readiness explainer`
+- `v6.83.00 workspace docs bridge-state examples`
 
 ## Current verified development direction
 

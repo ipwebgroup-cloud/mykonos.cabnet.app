@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.82.00 — Workspace Docs handoff-readiness explainer
+### v6.83.00 — Workspace Docs bridge-state examples
 Included in the current safe backend polish line:
-- handoff-readiness explainer block added to Workspace Docs
-- docs surface now compares lane ownership posture with transfer readiness in one stable help area
+- bridge-state examples block added to Workspace Docs
+- docs surface now mirrors the exact phrasing used in queue and loyalty list digests
 - plugin-only operator guidance polish without changing live workflow logic
 
 ### Current plugin-tracked baseline

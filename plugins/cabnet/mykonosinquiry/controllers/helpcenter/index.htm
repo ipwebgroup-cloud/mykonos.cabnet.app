@@ -221,6 +221,56 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-examples {
+    margin: 0 0 18px;
+    padding: 15px 16px;
+    border: 1px solid #dce5f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(248, 250, 255, 0.97) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 12px 26px rgba(37, 57, 110, 0.05);
+}
+.myk-help-examples__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-examples__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+    margin-bottom: 12px;
+}
+.myk-help-examples__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 10px;
+}
+.myk-help-examples__card {
+    padding: 12px 13px;
+    border-radius: 14px;
+    border: 1px solid #dbe2f0;
+    background: #fffdfa;
+}
+.myk-help-examples__term {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #38507b;
+}
+.myk-help-examples__desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #48576a;
+}
+@media (max-width: 860px) {
+    .myk-help-examples { padding: 12px; }
+    .myk-help-examples__grid { grid-template-columns: 1fr; }
+}
 .myk-help-handoff {
     margin: 0 0 18px;
     padding: 15px 16px;
@@ -1120,6 +1170,31 @@
         </div>
     </div>
 
+
+    <div class="myk-help-examples" id="mykHelpBridgeStateExamples" aria-live="polite">
+        <div class="myk-help-quickreturn__eyebrow">Bridge-state examples</div>
+        <div class="myk-help-examples__title" id="mykHelpBridgeStateExamplesTitle">Compare docs guidance against the same bridge-state language shown in the working lists.</div>
+        <div class="myk-help-examples__summary" id="mykHelpBridgeStateExamplesSummary">These examples mirror the phrasing used across queue rows and continuity rows, so operators can decode bridge-health, memory, owner drift, and stale timing with the same language before returning to the lists.</div>
+        <div class="myk-help-examples__grid">
+            <div class="myk-help-examples__card">
+                <div class="myk-help-examples__term">Bridge health looks current</div>
+                <div class="myk-help-examples__desc">The queue lane and continuity lane both show a visible next checkpoint, and neither side looks stale enough to break operator trust.</div>
+            </div>
+            <div class="myk-help-examples__card">
+                <div class="myk-help-examples__term">Closure / handoff memory visible</div>
+                <div class="myk-help-examples__desc">The row language explains why the inquiry closed, handed off, or stayed active, so operators can read the last decisive move without opening the record first.</div>
+            </div>
+            <div class="myk-help-examples__card">
+                <div class="myk-help-examples__term">Owner drift needs attention</div>
+                <div class="myk-help-examples__desc">Queue owner and continuity owner no longer point to the same decisive lane, so the next move should clarify ownership before widening the bridge.</div>
+            </div>
+            <div class="myk-help-examples__card">
+                <div class="myk-help-examples__term">Stale timing is visible</div>
+                <div class="myk-help-examples__desc">Either the queue follow-up or the continuity review is overdue or unscheduled, so the row language makes timing drift visible before operators open the record.</div>
+            </div>
+        </div>
+    </div>
+
     <div class="myk-help-controls">
         <div class="myk-help-search">
             <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
@@ -1714,6 +1789,25 @@
 
         if (helpHandoffReadinessSummary) {
             helpHandoffReadinessSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. This explainer keeps ready-to-hand-off, draft posture, stay queue-led, and clarify-ownership patterns visible from one central docs surface.';
+        }
+    }
+
+
+    var helpBridgeStateExamplesTitle = document.getElementById('mykHelpBridgeStateExamplesTitle');
+    var helpBridgeStateExamplesSummary = document.getElementById('mykHelpBridgeStateExamplesSummary');
+
+    function updateBridgeStateExamples(originState, contextState, returnState) {
+        var originBadge = (originState && originState.badge) || defaultOriginState.badge;
+        var contextBadge = (contextState && contextState.badge) || defaultContextState.badge;
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+
+        if (helpBridgeStateExamplesTitle) {
+            helpBridgeStateExamplesTitle.textContent = 'Compare docs guidance against the same bridge-state language used in ' + primaryLabel.toLowerCase() + ' and ' + secondaryLabel.toLowerCase() + '.';
+        }
+
+        if (helpBridgeStateExamplesSummary) {
+            helpBridgeStateExamplesSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. These examples mirror the bridge-health, memory, owner-drift, and stale-timing phrasing already used in the working lists.';
         }
     }
 
