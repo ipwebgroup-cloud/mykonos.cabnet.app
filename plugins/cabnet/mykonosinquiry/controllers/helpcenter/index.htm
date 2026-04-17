@@ -221,6 +221,56 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-handoff {
+    margin: 0 0 18px;
+    padding: 15px 16px;
+    border: 1px solid #dce5f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(250, 247, 255, 0.97) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 12px 26px rgba(84, 47, 111, 0.05);
+}
+.myk-help-handoff__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-handoff__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+    margin-bottom: 12px;
+}
+.myk-help-handoff__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 10px;
+}
+.myk-help-handoff__card {
+    padding: 12px 13px;
+    border-radius: 14px;
+    border: 1px solid #e7daf0;
+    background: #fffdfa;
+}
+.myk-help-handoff__term {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #6d4691;
+}
+.myk-help-handoff__desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #48576a;
+}
+@media (max-width: 860px) {
+    .myk-help-handoff { padding: 12px; }
+    .myk-help-handoff__grid { grid-template-columns: 1fr; }
+}
 .myk-help-hero-cues {
     margin: 0 0 18px;
     padding: 15px 16px;
@@ -1045,6 +1095,31 @@
         </div>
     </div>
 
+
+    <div class="myk-help-handoff" id="mykHelpHandoffReadiness" aria-live="polite">
+        <div class="myk-help-quickreturn__eyebrow">Handoff-readiness explainer</div>
+        <div class="myk-help-handoff__title" id="mykHelpHandoffReadinessTitle">Compare lane ownership posture with handoff readiness from one central docs surface.</div>
+        <div class="myk-help-handoff__summary" id="mykHelpHandoffReadinessSummary">This explainer keeps the most important handoff-readiness patterns visible so operators can tell whether a record should remain queue-led, move into continuity, or pause until the bridge posture is clearer.</div>
+        <div class="myk-help-handoff__grid">
+            <div class="myk-help-handoff__card">
+                <div class="myk-help-handoff__term">Ready to hand off</div>
+                <div class="myk-help-handoff__desc">Queue context, owner clarity, and next-step timing look strong enough for continuity to take the next decisive move safely.</div>
+            </div>
+            <div class="myk-help-handoff__card">
+                <div class="myk-help-handoff__term">Needs draft posture</div>
+                <div class="myk-help-handoff__desc">The bridge looks promising, but summary clarity, ownership, or next-step timing still needs refinement before continuity fully owns the next move.</div>
+            </div>
+            <div class="myk-help-handoff__card">
+                <div class="myk-help-handoff__term">Stay queue-led</div>
+                <div class="myk-help-handoff__desc">The inquiry lane still holds the most important unanswered work, so queue follow-up should remain primary before any real transfer happens.</div>
+            </div>
+            <div class="myk-help-handoff__card">
+                <div class="myk-help-handoff__term">Clarify ownership first</div>
+                <div class="myk-help-handoff__desc">Both lanes look active or ambiguous, so operators should resolve owner and next-checkpoint discipline before widening the bridge.</div>
+            </div>
+        </div>
+    </div>
+
     <div class="myk-help-controls">
         <div class="myk-help-search">
             <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
@@ -1620,6 +1695,25 @@
         }
         if (helpHeroLaneOwnershipChipD) {
             helpHeroLaneOwnershipChipD.textContent = primaryLabel + ' vs ' + secondaryLabel;
+        }
+    }
+
+
+    var helpHandoffReadinessTitle = document.getElementById('mykHelpHandoffReadinessTitle');
+    var helpHandoffReadinessSummary = document.getElementById('mykHelpHandoffReadinessSummary');
+
+    function updateHandoffReadinessExplainer(originState, contextState, returnState) {
+        var originBadge = (originState && originState.badge) || defaultOriginState.badge;
+        var contextBadge = (contextState && contextState.badge) || defaultContextState.badge;
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+
+        if (helpHandoffReadinessTitle) {
+            helpHandoffReadinessTitle.textContent = 'Compare ' + primaryLabel.toLowerCase() + ' posture with handoff readiness before moving into ' + secondaryLabel.toLowerCase() + '.';
+        }
+
+        if (helpHandoffReadinessSummary) {
+            helpHandoffReadinessSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. This explainer keeps ready-to-hand-off, draft posture, stay queue-led, and clarify-ownership patterns visible from one central docs surface.';
         }
     }
 
