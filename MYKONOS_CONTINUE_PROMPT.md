@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.80.00 workspace docs continuity-risk explainer`
+- `v6.81.00 workspace docs lane-ownership hero cues`
 
 ## Current verified development direction
 

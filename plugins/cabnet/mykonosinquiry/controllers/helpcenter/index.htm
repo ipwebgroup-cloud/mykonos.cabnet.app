@@ -221,6 +221,49 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-hero-cues {
+    margin: 0 0 18px;
+    padding: 15px 16px;
+    border: 1px solid #dce5f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(247, 248, 255, 0.97) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 12px 26px rgba(44, 60, 109, 0.05);
+}
+.myk-help-hero-cues__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-hero-cues__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+    margin-bottom: 12px;
+}
+.myk-help-hero-cues__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.myk-help-hero-cues__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid #d7deef;
+    background: #ffffff;
+    color: #30476d;
+    font-size: 12px;
+    font-weight: 700;
+}
+@media (max-width: 860px) {
+    .myk-help-hero-cues {
+        padding: 12px;
+    }
+}
 .myk-help-risk {
     margin: 0 0 18px;
     padding: 15px 16px;
@@ -989,6 +1032,19 @@
         </div>
     </div>
 
+
+    <div class="myk-help-hero-cues" id="mykHelpHeroLaneOwnership" aria-live="polite">
+        <div class="myk-help-quickreturn__eyebrow">Lane ownership cues</div>
+        <div class="myk-help-hero-cues__title" id="mykHelpHeroLaneOwnershipTitle">Compare queue-owned and continuity-led posture from the central docs hero area.</div>
+        <div class="myk-help-hero-cues__summary" id="mykHelpHeroLaneOwnershipSummary">These hero cues keep lane ownership posture visible alongside continuity-risk language so operators can tell whether the next decisive move still belongs to queue handling or now belongs to continuity follow-through.</div>
+        <div class="myk-help-hero-cues__chips">
+            <span class="myk-help-hero-cues__chip" id="mykHelpHeroLaneOwnershipChipA">Queue-owned posture visible</span>
+            <span class="myk-help-hero-cues__chip" id="mykHelpHeroLaneOwnershipChipB">Continuity-led posture visible</span>
+            <span class="myk-help-hero-cues__chip" id="mykHelpHeroLaneOwnershipChipC">Route-aware docs context visible</span>
+            <span class="myk-help-hero-cues__chip" id="mykHelpHeroLaneOwnershipChipD">Ownership comparison active</span>
+        </div>
+    </div>
+
     <div class="myk-help-controls">
         <div class="myk-help-search">
             <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
@@ -1528,6 +1584,42 @@
 
         if (helpContinuityRiskSummary) {
             helpContinuityRiskSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. This explainer keeps overdue review drift, unscheduled follow-through, owner ambiguity, and closed-queue / active-continuity posture visible from one central docs surface.';
+        }
+    }
+
+
+    var helpHeroLaneOwnershipTitle = document.getElementById('mykHelpHeroLaneOwnershipTitle');
+    var helpHeroLaneOwnershipSummary = document.getElementById('mykHelpHeroLaneOwnershipSummary');
+    var helpHeroLaneOwnershipChipA = document.getElementById('mykHelpHeroLaneOwnershipChipA');
+    var helpHeroLaneOwnershipChipB = document.getElementById('mykHelpHeroLaneOwnershipChipB');
+    var helpHeroLaneOwnershipChipC = document.getElementById('mykHelpHeroLaneOwnershipChipC');
+    var helpHeroLaneOwnershipChipD = document.getElementById('mykHelpHeroLaneOwnershipChipD');
+
+    function updateHeroLaneOwnership(originState, contextState, returnState) {
+        var originBadge = (originState && originState.badge) || defaultOriginState.badge;
+        var contextBadge = (contextState && contextState.badge) || defaultContextState.badge;
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+
+        if (helpHeroLaneOwnershipTitle) {
+            helpHeroLaneOwnershipTitle.textContent = 'Compare ' + primaryLabel.toLowerCase() + ' and ' + secondaryLabel.toLowerCase() + ' ownership posture from the central docs hero area.';
+        }
+
+        if (helpHeroLaneOwnershipSummary) {
+            helpHeroLaneOwnershipSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. These hero cues keep queue-owned and continuity-led posture visible alongside continuity-risk language before operators jump back into the working lanes.';
+        }
+
+        if (helpHeroLaneOwnershipChipA) {
+            helpHeroLaneOwnershipChipA.textContent = 'Queue-owned';
+        }
+        if (helpHeroLaneOwnershipChipB) {
+            helpHeroLaneOwnershipChipB.textContent = 'Continuity-led';
+        }
+        if (helpHeroLaneOwnershipChipC) {
+            helpHeroLaneOwnershipChipC.textContent = contextBadge;
+        }
+        if (helpHeroLaneOwnershipChipD) {
+            helpHeroLaneOwnershipChipD.textContent = primaryLabel + ' vs ' + secondaryLabel;
         }
     }
 
