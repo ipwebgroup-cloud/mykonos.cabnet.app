@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.79.00 — Workspace Docs route-aware attention chips
+### v6.80.00 — Workspace Docs continuity-risk explainer
 Included in the current safe backend polish line:
-- route-aware attention chips added to the Workspace Docs dashboard area
-- docs surface now keeps lane pressure and bridge posture visible deeper into the playbook page
+- continuity-risk explainer block added to Workspace Docs
+- docs surface now clarifies the main continuity drift patterns in one stable help area
 - plugin-only operator guidance polish without changing live workflow logic
 
 ### Current plugin-tracked baseline

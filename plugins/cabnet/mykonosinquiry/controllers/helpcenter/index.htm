@@ -221,6 +221,60 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-risk {
+    margin: 0 0 18px;
+    padding: 15px 16px;
+    border: 1px solid #dce5f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 247, 246, 0.97) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 12px 26px rgba(124, 62, 40, 0.05);
+}
+.myk-help-risk__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-risk__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+    margin-bottom: 12px;
+}
+.myk-help-risk__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 10px;
+}
+.myk-help-risk__card {
+    padding: 12px 13px;
+    border-radius: 14px;
+    border: 1px solid #eed8d2;
+    background: #fffdfa;
+}
+.myk-help-risk__term {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #8a4f3c;
+}
+.myk-help-risk__desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #48576a;
+}
+@media (max-width: 860px) {
+    .myk-help-risk {
+        padding: 12px;
+    }
+    .myk-help-risk__grid {
+        grid-template-columns: 1fr;
+    }
+}
 .myk-help-dashboard-attn {
     margin: 0 0 18px;
     padding: 15px 16px;
@@ -910,6 +964,31 @@
         </div>
     </div>
 
+
+    <div class="myk-help-risk" id="mykHelpContinuityRiskExplainer" aria-live="polite">
+        <div class="myk-help-quickreturn__eyebrow">Continuity-risk explainer</div>
+        <div class="myk-help-risk__title" id="mykHelpContinuityRiskTitle">Use one compact docs block to understand which continuity drift needs intervention first.</div>
+        <div class="myk-help-risk__summary" id="mykHelpContinuityRiskSummary">This explainer keeps the most important continuity-risk patterns visible from Workspace Docs so operators can tell the difference between overdue review drift, unscheduled follow-through, ownership ambiguity, and closed-queue / active-continuity posture.</div>
+        <div class="myk-help-risk__grid">
+            <div class="myk-help-risk__card">
+                <div class="myk-help-risk__term">Overdue review drift</div>
+                <div class="myk-help-risk__desc">Continuity still owns the next move, but the next review is already due or overdue, so retention follow-through is losing timing discipline.</div>
+            </div>
+            <div class="myk-help-risk__card">
+                <div class="myk-help-risk__term">Unscheduled follow-through</div>
+                <div class="myk-help-risk__desc">A continuity record exists, but no visible next review is scheduled, which makes the bridge look active without a clear next checkpoint.</div>
+            </div>
+            <div class="myk-help-risk__card">
+                <div class="myk-help-risk__term">Owner ambiguity</div>
+                <div class="myk-help-risk__desc">Queue and continuity both look active, but it is not obvious who owns the next decisive move, so handoff discipline needs clarification first.</div>
+            </div>
+            <div class="myk-help-risk__card">
+                <div class="myk-help-risk__term">Closed queue, active continuity</div>
+                <div class="myk-help-risk__desc">The inquiry lane looks closed while continuity still has active work or stale reviews, so operators should confirm whether continuity now fully owns follow-through.</div>
+            </div>
+        </div>
+    </div>
+
     <div class="myk-help-controls">
         <div class="myk-help-search">
             <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
@@ -1430,6 +1509,25 @@
         }
         if (helpDashboardAttentionChipD) {
             helpDashboardAttentionChipD.textContent = 'Bridge posture active';
+        }
+    }
+
+
+    var helpContinuityRiskTitle = document.getElementById('mykHelpContinuityRiskTitle');
+    var helpContinuityRiskSummary = document.getElementById('mykHelpContinuityRiskSummary');
+
+    function updateContinuityRiskExplainer(originState, contextState, returnState) {
+        var originBadge = (originState && originState.badge) || defaultOriginState.badge;
+        var contextBadge = (contextState && contextState.badge) || defaultContextState.badge;
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+
+        if (helpContinuityRiskTitle) {
+            helpContinuityRiskTitle.textContent = 'Understand which continuity drift needs intervention first while moving between ' + primaryLabel.toLowerCase() + ' and ' + secondaryLabel.toLowerCase() + '.';
+        }
+
+        if (helpContinuityRiskSummary) {
+            helpContinuityRiskSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. This explainer keeps overdue review drift, unscheduled follow-through, owner ambiguity, and closed-queue / active-continuity posture visible from one central docs surface.';
         }
     }
 

@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.79.00 workspace docs route-aware attention chips`
+- `v6.80.00 workspace docs continuity-risk explainer`
 
 ## Current verified development direction
 
