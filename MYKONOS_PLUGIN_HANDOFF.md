@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.78.00 workspace docs bridge-health totals`
+- `v6.79.00 workspace docs route-aware attention chips`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`.
-It upgrades Workspace Docs with a compact bridge-health totals strip so operators can compare lane pressure and bridge posture from one central docs surface before returning to queue or continuity work.
+It upgrades Workspace Docs with route-aware attention chips so operators can keep lane pressure, companion-lane posture, and bridge context visible deeper into the docs dashboard before returning to queue or continuity work.
 
 ## Deployment note
 
@@ -20,22 +20,22 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - Backend -> Workspace Docs
-- a new bridge-health totals strip appears near the top of the page
-- the totals summary adapts to the current docs route context
-- quick-return chips, route memory, bridge-state legend, quick glossary, and lane-attention headline remain unchanged
+- a new dashboard attention chips strip appears near the top of the page
+- the chips summary adapts to the current docs route context
+- quick-return chips, route memory, bridge-state legend, quick glossary, lane-attention headline, and bridge-health totals remain unchanged
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves central bridge-health awareness from the docs surface
-- keeps lane pressure and bridge posture visible together in plain language
+- improves route-aware lane guidance deeper into the docs surface
+- keeps primary and companion-lane posture visible in plain language
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays plugin-only and render-safe
 
 ## Safest next step
 
-After this docs bridge-health pass, the next strong step should be one of:
-- add compact route-aware attention chips inside the docs dashboard cards
-- add a small continuity-risk explainer block near the docs dashboard top
+After this docs attention-chips pass, the next strong step should be one of:
+- add a compact continuity-risk explainer block near the docs dashboard top
 - surface queue-only versus continuity-led posture cues inside the docs hero area
+- add a small handoff-readiness explainer strip beside the docs dashboard cards

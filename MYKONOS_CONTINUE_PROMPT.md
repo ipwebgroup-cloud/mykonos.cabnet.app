@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.78.00 workspace docs bridge-health totals`
+- `v6.79.00 workspace docs route-aware attention chips`
 
 ## Current verified development direction
 
