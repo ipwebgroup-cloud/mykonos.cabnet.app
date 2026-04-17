@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.76.00 workspace docs quick glossary block`
+- `v6.77.00 workspace docs queue-vs-continuity attention headline`
 
 ## Current verified development direction
 

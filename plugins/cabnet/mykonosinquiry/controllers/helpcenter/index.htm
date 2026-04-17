@@ -221,6 +221,49 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-attention {
+    margin: 0 0 18px;
+    padding: 15px 16px;
+    border: 1px solid #dce5f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(240, 247, 255, 0.97) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 12px 26px rgba(24, 58, 110, 0.06);
+}
+.myk-help-attention__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-attention__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+    margin-bottom: 12px;
+}
+.myk-help-attention__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.myk-help-attention__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid #d7e0ef;
+    background: #ffffff;
+    color: #31496e;
+    font-size: 12px;
+    font-weight: 700;
+}
+@media (max-width: 860px) {
+    .myk-help-attention {
+        padding: 12px;
+    }
+}
 .myk-help-glossary {
     margin: 0 0 18px;
     padding: 14px 16px;
@@ -744,6 +787,18 @@
         </div>
     </div>
 
+
+    <div class="myk-help-attention" id="mykHelpAttentionHeadline" aria-live="polite">
+        <div class="myk-help-quickreturn__eyebrow">Lane attention headline</div>
+        <div class="myk-help-attention__title" id="mykHelpAttentionTitle">Queue and continuity attention can be compared here before you jump back into the working lanes.</div>
+        <div class="myk-help-attention__summary" id="mykHelpAttentionSummary">This docs headline keeps a compact queue-versus-continuity framing visible so operators know whether today’s pressure is more about inquiry follow-up, continuity review, or mixed bridge posture.</div>
+        <div class="myk-help-attention__chips">
+            <span class="myk-help-attention__chip" id="mykHelpAttentionPrimaryChip">Queue pressure visible</span>
+            <span class="myk-help-attention__chip" id="mykHelpAttentionSecondaryChip">Continuity pressure visible</span>
+            <span class="myk-help-attention__chip" id="mykHelpAttentionContextChip">Docs route context active</span>
+        </div>
+    </div>
+
     <div class="myk-help-controls">
         <div class="myk-help-search">
             <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
@@ -1160,6 +1215,40 @@
 
         if (quickGlossarySummary) {
             quickGlossarySummary.textContent = 'Opened from ' + originBadge + '. These four bridge terms appear repeatedly across queue rows, continuity rows, record strips, and docs help, so this quick glossary keeps the language consistent.';
+        }
+    }
+
+
+    var helpAttentionTitle = document.getElementById('mykHelpAttentionTitle');
+    var helpAttentionSummary = document.getElementById('mykHelpAttentionSummary');
+    var helpAttentionPrimaryChip = document.getElementById('mykHelpAttentionPrimaryChip');
+    var helpAttentionSecondaryChip = document.getElementById('mykHelpAttentionSecondaryChip');
+    var helpAttentionContextChip = document.getElementById('mykHelpAttentionContextChip');
+
+    function updateAttentionHeadline(originState, contextState, returnState) {
+        var originBadge = (originState && originState.badge) || defaultOriginState.badge;
+        var contextBadge = (contextState && contextState.badge) || defaultContextState.badge;
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+
+        if (helpAttentionTitle) {
+            helpAttentionTitle.textContent = 'Use Workspace Docs to decide whether ' + primaryLabel.toLowerCase() + ' or ' + secondaryLabel.toLowerCase() + ' deserves attention first.';
+        }
+
+        if (helpAttentionSummary) {
+            helpAttentionSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. This headline keeps queue-versus-continuity attention visible before operators jump back into the working lanes.';
+        }
+
+        if (helpAttentionPrimaryChip) {
+            helpAttentionPrimaryChip.textContent = primaryLabel;
+        }
+
+        if (helpAttentionSecondaryChip) {
+            helpAttentionSecondaryChip.textContent = secondaryLabel;
+        }
+
+        if (helpAttentionContextChip) {
+            helpAttentionContextChip.textContent = contextBadge;
         }
     }
 
