@@ -221,6 +221,49 @@
     color: #5f6f83;
     flex: 1 1 320px;
 }
+.myk-help-health {
+    margin: 0 0 18px;
+    padding: 15px 16px;
+    border: 1px solid #dce5f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(243, 250, 247, 0.97) 0%, rgba(255, 255, 255, 0.98) 100%);
+    box-shadow: 0 12px 26px rgba(25, 87, 63, 0.05);
+}
+.myk-help-health__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #22324a;
+    margin-bottom: 4px;
+}
+.myk-help-health__summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5d6c7d;
+    margin-bottom: 12px;
+}
+.myk-help-health__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.myk-help-health__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid #d7e7df;
+    background: #ffffff;
+    color: #2f5a4a;
+    font-size: 12px;
+    font-weight: 700;
+}
+@media (max-width: 860px) {
+    .myk-help-health {
+        padding: 12px;
+    }
+}
 .myk-help-attention {
     margin: 0 0 18px;
     padding: 15px 16px;
@@ -799,6 +842,18 @@
         </div>
     </div>
 
+
+    <div class="myk-help-health" id="mykHelpBridgeHealthTotals" aria-live="polite">
+        <div class="myk-help-quickreturn__eyebrow">Bridge-health totals</div>
+        <div class="myk-help-health__title" id="mykHelpBridgeHealthTotalsTitle">Use one central docs surface to compare lane pressure and bridge health.</div>
+        <div class="myk-help-health__summary" id="mykHelpBridgeHealthTotalsSummary">These compact totals keep bridge-health thinking visible from Workspace Docs, so operators can compare list pressure, bridge posture, and route context before jumping back into queue or continuity work.</div>
+        <div class="myk-help-health__chips">
+            <span class="myk-help-health__chip" id="mykHelpBridgeHealthChipA">Bridge-health totals visible</span>
+            <span class="myk-help-health__chip" id="mykHelpBridgeHealthChipB">Lane pressure visible</span>
+            <span class="myk-help-health__chip" id="mykHelpBridgeHealthChipC">Docs route context visible</span>
+        </div>
+    </div>
+
     <div class="myk-help-controls">
         <div class="myk-help-search">
             <input type="search" id="mykHelpSearch" placeholder="Search help in plain English" aria-label="Search docs or glossary">
@@ -1249,6 +1304,40 @@
 
         if (helpAttentionContextChip) {
             helpAttentionContextChip.textContent = contextBadge;
+        }
+    }
+
+
+    var helpBridgeHealthTotalsTitle = document.getElementById('mykHelpBridgeHealthTotalsTitle');
+    var helpBridgeHealthTotalsSummary = document.getElementById('mykHelpBridgeHealthTotalsSummary');
+    var helpBridgeHealthChipA = document.getElementById('mykHelpBridgeHealthChipA');
+    var helpBridgeHealthChipB = document.getElementById('mykHelpBridgeHealthChipB');
+    var helpBridgeHealthChipC = document.getElementById('mykHelpBridgeHealthChipC');
+
+    function updateBridgeHealthTotals(originState, contextState, returnState) {
+        var originBadge = (originState && originState.badge) || defaultOriginState.badge;
+        var contextBadge = (contextState && contextState.badge) || defaultContextState.badge;
+        var primaryLabel = (returnState && returnState.primaryLabel) || defaultReturnState.primaryLabel;
+        var secondaryLabel = (returnState && returnState.secondaryLabel) || defaultReturnState.secondaryLabel;
+
+        if (helpBridgeHealthTotalsTitle) {
+            helpBridgeHealthTotalsTitle.textContent = 'Compare ' + primaryLabel.toLowerCase() + ', ' + secondaryLabel.toLowerCase() + ', and bridge health from one central docs surface.';
+        }
+
+        if (helpBridgeHealthTotalsSummary) {
+            helpBridgeHealthTotalsSummary.textContent = 'Opened from ' + originBadge + ' while viewing ' + contextBadge.toLowerCase() + '. These bridge-health totals keep lane pressure and route posture visible before operators jump back into the working lanes.';
+        }
+
+        if (helpBridgeHealthChipA) {
+            helpBridgeHealthChipA.textContent = 'Bridge-health totals';
+        }
+
+        if (helpBridgeHealthChipB) {
+            helpBridgeHealthChipB.textContent = primaryLabel + ' + ' + secondaryLabel;
+        }
+
+        if (helpBridgeHealthChipC) {
+            helpBridgeHealthChipC.textContent = contextBadge;
         }
     }
 

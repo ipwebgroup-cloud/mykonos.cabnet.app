@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.77.00 — Workspace Docs queue-vs-continuity attention headline
+### v6.78.00 — Workspace Docs bridge-health totals
 Included in the current safe backend polish line:
-- queue-vs-continuity attention headline added to Workspace Docs
-- docs surface now keeps lane pressure visible before operators jump back into working lanes
+- bridge-health totals added to Workspace Docs
+- docs surface now keeps lane pressure and bridge posture visible together
 - plugin-only operator guidance polish without changing live workflow logic
 
 ### Current plugin-tracked baseline

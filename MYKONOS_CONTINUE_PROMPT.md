@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.77.00 workspace docs queue-vs-continuity attention headline`
+- `v6.78.00 workspace docs bridge-health totals`
 
 ## Current verified development direction
 
