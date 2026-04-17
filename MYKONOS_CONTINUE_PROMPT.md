@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.83.00 workspace docs bridge-state examples`
+- `v6.85.00 branded HTML email layouts`
 
 ## Current verified development direction
 

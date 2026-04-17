@@ -122,6 +122,17 @@ class InquiryManager
         }
 
         try {
+            self::sendGuestConfirmation($inquiry);
+        } catch (\Throwable $e) {
+            \Log::warning('Mykonos inquiry guest confirmation failed', [
+                'inquiry_id' => $inquiry->id,
+                'request_reference' => $inquiry->request_reference,
+                'guest_email' => $inquiry->email,
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+        try {
             self::rememberLatestRequest($inquiry);
         } catch (\Throwable $e) {
             \Log::warning('Mykonos inquiry session persistence failed', [
@@ -266,6 +277,166 @@ class InquiryManager
             }
         });
     }
+
+    protected static function sendGuestConfirmation(Inquiry $inquiry): void
+    {
+        $guestEmail = trim((string) ($inquiry->email ?: ''));
+        if ($guestEmail === '' || !filter_var($guestEmail, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        if (!config('cabnet.mykonosinquiry::guest_confirmation_enabled', true)) {
+            return;
+        }
+
+        $subject = self::buildGuestConfirmationSubject($inquiry);
+        $body = self::buildGuestConfirmationBody($inquiry);
+
+        $htmlBody = self::buildGuestConfirmationHtml($inquiry);
+
+        Mail::send([], [], function ($message) use ($guestEmail, $subject, $inquiry, $body, $htmlBody) {
+            $message->to($guestEmail, $inquiry->full_name ?: 'Guest');
+            $message->subject($subject);
+            $message->setBody($htmlBody, 'text/html');
+            $message->addPart($body, 'text/plain');
+
+            $replyTo = config('cabnet.mykonosinquiry::notification_email', 'mykonos@cabnet.app');
+            if ($replyTo) {
+                $message->replyTo($replyTo, config('cabnet.mykonosinquiry::guest_confirmation_reply_name', 'Mykonos Luxury Tours & Concierge'));
+            }
+        });
+    }
+
+    protected static function buildGuestConfirmationSubject(Inquiry $inquiry): string
+    {
+        return 'We received your Mykonos request - ' . ($inquiry->request_reference ?: 'Mykonos Inquiry');
+    }
+
+    protected static function buildGuestConfirmationBody(Inquiry $inquiry): string
+    {
+        $services = is_array($inquiry->services_json) ? array_values(array_filter($inquiry->services_json)) : [];
+        $serviceLine = !empty($services) ? implode(', ', $services) : 'Luxury planning';
+
+        $lines = [
+            'Hello ' . ($inquiry->full_name ?: 'Guest') . ',',
+            '',
+            'Thank you for contacting Mykonos Luxury Tours & Concierge.',
+            'We have received your request and your reference is: ' . ($inquiry->request_reference ?: 'Pending'),
+            '',
+            'What happens next:',
+            '- We review the essentials first and follow up with the most useful next questions.',
+            '- If your stay is time-sensitive, reply directly to this email and we can accelerate the planning sequence.',
+            '- Your request is now visible to our operator workflow for follow-up.',
+            '',
+            'Request summary:',
+            'Reference: ' . ($inquiry->request_reference ?: ''),
+            'Planning mode: ' . ($inquiry->requested_mode ?: 'General'),
+            'Focus: ' . $serviceLine,
+            'Arrival date: ' . ($inquiry->arrival_date ?: 'Not provided'),
+            'Departure date: ' . ($inquiry->departure_date ?: 'Not provided'),
+            'Guests: ' . ($inquiry->guests ?: 'Not provided'),
+            '',
+            'Your brief:',
+            (string) ($inquiry->details ?: ''),
+            '',
+            'Direct email: ' . config('cabnet.mykonosinquiry::notification_email', 'mykonos@cabnet.app'),
+            'Location: Mykonos, Cyclades, Greece',
+            '',
+            'Thank you,',
+            config('cabnet.mykonosinquiry::guest_confirmation_reply_name', 'Mykonos Luxury Tours & Concierge'),
+        ];
+
+        return implode(PHP_EOL, $lines);
+    }
+
+
+    protected static function buildOperatorEmailHtml(Inquiry $inquiry): string
+    {
+        $summaryRows = [
+            'Reference' => $inquiry->request_reference ?: 'Pending',
+            'Status' => $inquiry->status ?: 'new',
+            'Priority' => $inquiry->priority ?: 'normal',
+            'Planning mode' => $inquiry->requested_mode ?: 'detailed',
+            'Full name' => $inquiry->full_name ?: '',
+            'Email' => $inquiry->email ?: '',
+            'Phone' => $inquiry->phone ?: '',
+            'Guests' => $inquiry->guests ?: '',
+            'Arrival date' => $inquiry->arrival_date ?: '',
+            'Departure date' => $inquiry->departure_date ?: '',
+        ];
+
+        $focus = is_array($inquiry->services_json) ? implode(', ', array_values(array_filter($inquiry->services_json))) : '';
+        if ($focus !== '') {
+            $summaryRows['Focus'] = $focus;
+        }
+
+        return self::buildEmailShell(
+            'New Mykonos Inquiry',
+            'A new inquiry has been received and saved into the operator workflow.',
+            $summaryRows,
+            [
+                'Guest brief' => nl2br(e((string) ($inquiry->details ?: ''))),
+            ]
+        );
+    }
+
+    protected static function buildGuestConfirmationHtml(Inquiry $inquiry): string
+    {
+        $focus = is_array($inquiry->services_json) ? implode(', ', array_values(array_filter($inquiry->services_json))) : 'Luxury planning';
+
+        $summaryRows = [
+            'Reference' => $inquiry->request_reference ?: 'Pending',
+            'Planning mode' => $inquiry->requested_mode ?: 'General',
+            'Focus' => $focus,
+            'Arrival date' => $inquiry->arrival_date ?: 'Not provided',
+            'Departure date' => $inquiry->departure_date ?: 'Not provided',
+            'Guests' => $inquiry->guests ?: 'Not provided',
+        ];
+
+        $nextSteps = implode('', [
+            '<li>We review the essentials first and follow up with the most useful next questions.</li>',
+            '<li>If your stay is time-sensitive, reply directly to this email and we can accelerate the planning sequence.</li>',
+            '<li>Your request is now visible to our operator workflow for follow-up.</li>',
+        ]);
+
+        return self::buildEmailShell(
+            'We received your Mykonos request',
+            'Thank you for contacting Mykonos Luxury Tours & Concierge. Your request has been received and recorded.',
+            $summaryRows,
+            [
+                'What happens next' => '<ul style="margin:0;padding-left:18px;">' . $nextSteps . '</ul>',
+                'Your brief' => nl2br(e((string) ($inquiry->details ?: ''))),
+                'Direct email' => e(config('cabnet.mykonosinquiry::notification_email', 'mykonos@cabnet.app')),
+            ],
+            'Hello ' . e($inquiry->full_name ?: 'Guest') . ','
+        );
+    }
+
+    protected static function buildEmailShell(string $title, string $intro, array $summaryRows = [], array $contentBlocks = [], string $greeting = ''): string
+    {
+        $brandName = e(config('cabnet.mykonosinquiry::guest_confirmation_reply_name', 'Mykonos Luxury Tours & Concierge'));
+        $summaryHtml = '';
+
+        foreach ($summaryRows as $label => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $summaryHtml .= '<tr><td style="padding:8px 10px;border-bottom:1px solid #edf1f7;font-weight:700;color:#20324d;width:170px;">' . e($label) . '</td><td style="padding:8px 10px;border-bottom:1px solid #edf1f7;color:#4a5c74;">' . e((string) $value) . '</td></tr>';
+        }
+
+        $blocksHtml = '';
+        foreach ($contentBlocks as $label => $content) {
+            if ($content === null || $content === '') {
+                continue;
+            }
+
+            $blocksHtml .= '<div style="margin-top:18px;"><div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a6a2d;margin-bottom:8px;">' . e($label) . '</div><div style="font-size:16px;line-height:1.65;color:#44566e;">' . $content . '</div></div>';
+        }
+
+        return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;padding:0;background:#eef2f7;font-family:Arial,sans-serif;color:#22324a;"><div style="max-width:760px;margin:0 auto;padding:28px 16px;"><div style="background:linear-gradient(135deg,#071326 0%,#0d1d39 60%,#142b52 100%);border-radius:22px 22px 0 0;padding:28px 30px;color:#fff;"><div style="font-size:12px;letter-spacing:.35em;text-transform:uppercase;color:#d8b36a;margin-bottom:12px;">Luxury services</div><div style="font-size:28px;font-weight:700;line-height:1.2;">Mykonos</div><div style="font-size:14px;line-height:1.7;color:#d8e2f0;margin-top:12px;">' . e($title) . '</div></div><div style="background:#ffffff;border-radius:0 0 22px 22px;padding:30px;box-shadow:0 20px 50px rgba(20,35,62,0.10);">' . ($greeting !== '' ? '<div style="font-size:20px;line-height:1.5;color:#22324a;margin-bottom:14px;">' . $greeting . '</div>' : '') . '<div style="font-size:16px;line-height:1.75;color:#50627a;margin-bottom:20px;">' . e($intro) . '</div><div style="border:1px solid #e9edf5;border-radius:18px;overflow:hidden;background:#fbfcfe;"><table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse:collapse;">' . $summaryHtml . '</table></div>' . $blocksHtml . '<div style="margin-top:24px;padding-top:18px;border-top:1px solid #edf1f7;font-size:14px;line-height:1.7;color:#6a7890;">Mykonos, Cyclades, Greece<br>Direct email: ' . e(config('cabnet.mykonosinquiry::notification_email', 'mykonos@cabnet.app')) . '<br>24/7 private planning support</div><div style="margin-top:18px;font-size:14px;line-height:1.7;color:#6a7890;">Thank you,<br>' . $brandName . '</div></div></div></body></html>';
+    }
+
 
     protected static function buildEmailBody(Inquiry $inquiry): string
     {

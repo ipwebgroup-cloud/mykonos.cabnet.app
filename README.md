@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.83.00 — Workspace Docs bridge-state examples
+### v6.85.00 — Branded HTML email layouts
 Included in the current safe backend polish line:
-- bridge-state examples block added to Workspace Docs
-- docs surface now mirrors the exact phrasing used in queue and loyalty list digests
-- plugin-only operator guidance polish without changing live workflow logic
+- operator inquiry notification upgraded to a cleaner branded HTML email layout
+- guest confirmation upgraded to a cleaner branded HTML email layout
+- plugin-only email polish without changing /plan storage, queue logic, or schema
 
 ### Current plugin-tracked baseline
 - `2.4.23`
