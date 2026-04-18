@@ -1,0 +1,125 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestName = trim((string) ($record->full_name ?? ''));
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $guests = trim((string) ($record->guests ?? ''));
+    $priority = trim((string) ($record->priority ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $latestInternalNote = null;
+    $latestTrailStamp = null;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote && $latestInternalNote->created_at) {
+            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+        }
+    }
+
+    $signals = [
+        ['label' => 'Guest identity visible', 'ready' => $guestName !== ''],
+        ['label' => 'Valid reply destination', 'ready' => $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL)],
+        ['label' => 'Arrival timing visible', 'ready' => $arrivalDate !== ''],
+        ['label' => 'Guest count visible', 'ready' => $guests !== ''],
+        ['label' => 'Service focus visible', 'ready' => !empty($serviceList)],
+        ['label' => 'Saved brief visible', 'ready' => $details !== ''],
+        ['label' => 'Priority visible', 'ready' => $priority !== ''],
+        ['label' => 'Internal trail visible', 'ready' => (bool) $latestTrailStamp],
+    ];
+
+    $readyCount = 0;
+    foreach ($signals as $signal) {
+        if ($signal['ready']) {
+            $readyCount++;
+        }
+    }
+
+    $headline = 'Final-readiness posture is visible';
+    $summary = 'This strip condenses the last major readiness anchors into one quick backend view so operators can judge whether the current record feels ready for a firmer next step.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+    $primaryReadiness = 'Final readiness still needs a few anchors';
+
+    if ($readyCount >= 7) {
+        $headline = 'Final-readiness posture looks strong';
+        $summary = 'The inquiry already carries most of the anchors needed for a firmer final handling line, so operators can move forward with less hesitation.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+        $primaryReadiness = 'Record looks close to final-ready';
+    } elseif ($readyCount <= 3) {
+        $headline = 'Final-readiness posture still needs caution';
+        $summary = 'The inquiry can still progress, but several anchors are still thin, so operators should keep final-readiness modest until the main gaps are closed.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+        $primaryReadiness = 'Clarify before finalizing direction';
+    }
+
+    $pillStyles = [
+        true => ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'ready'],
+        false => ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'thin'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Final readiness</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($primaryReadiness) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Final anchors: <?= e((string) $readyCount) ?>/<?= e((string) count($signals)) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Services: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($priority !== '' ? 'Priority: ' . $priority : 'Priority not set') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($status !== '' ? 'Status: ' . $status : 'Status not set') ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;margin-top:14px;">
+        <?php foreach ($signals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['ready']]; ?>
+            <div style="padding:12px 13px;border:1px solid <?= e($signal['ready'] ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
+                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($signal['label']) ?></div>
+                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
+                        <?= e($pill['label']) ?>
+                    </span>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Final-readiness recap line</div>
+        <div style="font-size:14px;line-height:1.75;color:#42546d;">
+            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?><br>
+            Priority: <?= e($priority !== '' ? $priority : 'Not set') ?><br>
+            Internal trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not finalize anything automatically. It helps the operator judge whether the current record feels strong enough for a firmer next step or still needs clarification first.
+    </div>
+</div>

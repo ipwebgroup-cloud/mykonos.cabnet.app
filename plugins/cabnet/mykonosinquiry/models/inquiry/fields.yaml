@@ -281,3 +281,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_priority_recap_strip.htm
         span: full
 
+
+    final_readiness:
+        label: Final Readiness
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_readiness_strip.htm
+        span: full
+
