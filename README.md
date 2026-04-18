@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v7.11.00 — Inquiry record operator-summary recap strip
+### v7.12.00 — Inquiry record workflow-summary strip
 Included in the current safe backend polish line:
-- operator-summary recap strip added to inquiry records
-- operators can now compare decision posture and overall operator recap posture from one backend screen
+- workflow-summary strip added to inquiry records
+- operators can now compare operator recap posture and workflow posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline

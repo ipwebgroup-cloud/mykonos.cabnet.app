@@ -267,3 +267,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_summary_recap_strip.htm
         span: full
 
+
+    workflow_summary:
+        label: Workflow Summary
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_workflow_summary_strip.htm
+        span: full
+
