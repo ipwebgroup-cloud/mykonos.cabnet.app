@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.92.00 inquiry record internal next-action strip`
+- `v6.93.00 inquiry record follow-up timing strip`
 
 ## Current verified development direction
 

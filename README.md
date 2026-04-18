@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.92.00 — Inquiry record internal next-action strip
+### v6.93.00 — Inquiry record follow-up timing strip
 Included in the current safe backend polish line:
-- internal next-action strip added to inquiry records
-- operators can now move from draft framing into a clearer operational next step from one backend screen
+- follow-up timing strip added to inquiry records
+- operators can now compare next action with timing posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline
