@@ -246,3 +246,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_response_quality_strip.htm
         span: full
 
+
+    confidence_posture:
+        label: Confidence Posture
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confidence_strip.htm
+        span: full
+

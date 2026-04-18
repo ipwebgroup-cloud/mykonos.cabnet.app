@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.08.00 inquiry record response-quality strip`
+- `v7.09.00 inquiry record confidence strip`
 - plugin tracking `2.4.23`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
-It adds a compact response-quality strip directly to the inquiry record so operators can compare request completeness and response quality posture from one backend screen.
+It adds a compact confidence strip directly to the inquiry record so operators can compare response quality and confidence posture from one backend screen.
 
 ## Deployment note
 
@@ -20,22 +20,22 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - open Backend -> Inquiries -> any real inquiry record
-- a new Response Quality strip appears on the inquiry record
-- the strip shows a primary quality posture and quality signals
-- Request Completeness, Service Shape, Stay Profile, Guest Profile, Contact Quality, Reply Channel, Proposal Delivery, Proposal Readiness, Partner Routing, Concierge Handoff, Internal Urgency, Internal Escalation, Follow-Up Readiness Recap, Follow-Up Ownership, Follow-Up Timing, Internal Next Action, Reply Draft Framing, Concierge Response Checklist, Operator Email Summary, and Guest Email Posture remain unchanged and visible
+- a new Confidence Posture strip appears on the inquiry record
+- the strip shows a confidence anchor count and confidence cards
+- Response Quality, Request Completeness, Service Shape, Stay Profile, Guest Profile, Contact Quality, Reply Channel, Proposal Delivery, Proposal Readiness, Partner Routing, Concierge Handoff, Internal Urgency, Internal Escalation, Follow-Up Readiness Recap, Follow-Up Ownership, Follow-Up Timing, Internal Next Action, Reply Draft Framing, Concierge Response Checklist, Operator Email Summary, and Guest Email Posture remain unchanged and visible
 
 ## Why this is a safe major step
 
 This is a meaningful operator-facing upgrade because it:
-- improves response-quality judgment directly inside the inquiry record
-- keeps response guidance visible without changing workflow state
+- improves operator confidence judgment directly inside the inquiry record
+- keeps confidence guidance visible without changing workflow state
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
 - stays backend-only and render-safe
 
 ## Safest next step
 
-After this backend response-quality pass, the next strong step should be one of:
+After this backend confidence pass, the next strong step should be one of:
 - add stronger hospitality tone refinement to the guest confirmation template
-- add a compact internal confidence strip to the inquiry record
+- add a compact internal decision-readiness strip to the inquiry record
 - add a lightweight backend resend action only after record-side context surfaces are fully stabilized
