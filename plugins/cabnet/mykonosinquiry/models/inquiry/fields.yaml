@@ -190,3 +190,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_readiness_strip.htm
         span: full
 
+
+    proposal_delivery:
+        label: Proposal Delivery
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_delivery_strip.htm
+        span: full
+

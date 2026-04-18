@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v7.00.00 — Inquiry record proposal-readiness strip
+### v7.01.00 — Inquiry record proposal-delivery strip
 Included in the current safe backend polish line:
-- proposal-readiness strip added to inquiry records
-- operators can now compare routing posture and proposal posture from one backend screen
+- proposal-delivery strip added to inquiry records
+- operators can now compare proposal posture and delivery posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline
