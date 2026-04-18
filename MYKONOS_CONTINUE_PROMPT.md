@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.85.00 branded HTML email layouts`
+- `v6.86.00 dedicated email view templates`
 
 ## Current verified development direction
 

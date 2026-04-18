@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.85.00 — Branded HTML email layouts
+### v6.86.00 — Dedicated email view templates
 Included in the current safe backend polish line:
-- operator inquiry notification upgraded to a cleaner branded HTML email layout
-- guest confirmation upgraded to a cleaner branded HTML email layout
-- plugin-only email polish without changing /plan storage, queue logic, or schema
+- operator inquiry email moved into a dedicated view template file
+- guest confirmation email moved into a dedicated view template file
+- plugin-only maintainability upgrade without changing /plan storage, queue logic, or schema
 
 ### Current plugin-tracked baseline
 - `2.4.23`
