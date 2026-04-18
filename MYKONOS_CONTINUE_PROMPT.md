@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.10.00 inquiry record decision-readiness strip`
+- `v7.11.00 inquiry record operator-summary recap strip`
 
 ## Current verified development direction
 

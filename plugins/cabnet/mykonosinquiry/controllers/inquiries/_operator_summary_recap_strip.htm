@@ -1,0 +1,135 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestName = trim((string) ($record->full_name ?? ''));
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $guests = trim((string) ($record->guests ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $latestInternalNote = null;
+    $latestTrailStamp = null;
+    $latestTrailExcerpt = '';
+    $noteCount = 0;
+
+    if (method_exists($record, 'notes')) {
+        $noteCount = (int) $record->notes()->count();
+
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote && $latestInternalNote->created_at) {
+            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+        }
+
+        if ($latestInternalNote) {
+            $latestTrailExcerpt = trim((string) $latestInternalNote->body);
+            if ($latestTrailExcerpt !== '' && mb_strlen($latestTrailExcerpt) > 180) {
+                $latestTrailExcerpt = mb_substr($latestTrailExcerpt, 0, 177) . '...';
+            }
+        }
+    }
+
+    $summarySignals = [
+        ['label' => 'Guest block visible', 'ready' => $guestName !== '' || $guestEmail !== ''],
+        ['label' => 'Stay block visible', 'ready' => $arrivalDate !== '' || $departureDate !== '' || $guests !== ''],
+        ['label' => 'Service block visible', 'ready' => !empty($serviceList)],
+        ['label' => 'Brief visible', 'ready' => $details !== ''],
+        ['label' => 'Internal trail visible', 'ready' => (bool) $latestTrailStamp],
+    ];
+
+    $readyCount = 0;
+    foreach ($summarySignals as $signal) {
+        if ($signal['ready']) {
+            $readyCount++;
+        }
+    }
+
+    $headline = 'Operator recap posture is visible';
+    $summary = 'This strip condenses the most useful operator-facing context into one quick recap so the record can be scanned faster before deciding the next step.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+    $primaryRecap = 'Use recap before the next move';
+
+    if ($readyCount >= 4) {
+        $headline = 'Operator recap posture looks strong';
+        $summary = 'The record already carries enough visible context that operators can rely on this recap for a faster next-step scan.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+        $primaryRecap = 'Recap is strong enough for quick scanning';
+    } elseif ($readyCount <= 2) {
+        $headline = 'Operator recap posture still needs support';
+        $summary = 'The record can still be used, but the quick recap is thinner because several major context blocks are still missing.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+        $primaryRecap = 'Scan carefully before deciding';
+    }
+
+    $travelWindow = ($arrivalDate !== '' || $departureDate !== '')
+        ? trim(($arrivalDate !== '' ? $arrivalDate : 'Open') . ' → ' . ($departureDate !== '' ? $departureDate : 'Open'))
+        : 'Not provided';
+
+    $pillStyles = [
+        true: ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'visible'],
+        false: ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'thin'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Operator summary recap</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($primaryRecap) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Guest: <?= e($guestName !== '' ? $guestName : ($guestEmail !== '' ? $guestEmail : 'Unknown')) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Travel: <?= e($travelWindow) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Services: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Notes: <?= e((string) $noteCount) ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:10px;margin-top:14px;">
+        <?php foreach ($summarySignals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['ready']]; ?>
+            <div style="padding:12px 13px;border:1px solid <?= e($signal['ready'] ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
+                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($signal['label']) ?></div>
+                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
+                        <?= e($pill['label']) ?>
+                    </span>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Latest internal recap context</div>
+        <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($latestTrailExcerpt !== '' ? $latestTrailExcerpt : 'No internal recap note saved yet.') ?></div>
+        <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?> · <?= e($status !== '' ? $status : 'Status not set') ?> · Trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?></div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not summarize or decide automatically. It helps the operator scan the most important visible context faster before the next action, reply, or decision.
+    </div>
+</div>

@@ -260,3 +260,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_decision_readiness_strip.htm
         span: full
 
+
+    operator_summary_recap:
+        label: Operator Summary Recap
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_summary_recap_strip.htm
+        span: full
+
