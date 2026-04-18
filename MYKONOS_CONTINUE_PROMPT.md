@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.03.00 inquiry record contact-quality strip`
+- `v7.04.00 inquiry record guest-profile strip`
 
 ## Current verified development direction
 

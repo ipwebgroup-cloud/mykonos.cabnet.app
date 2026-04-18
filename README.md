@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v7.03.00 — Inquiry record contact-quality strip
+### v7.04.00 — Inquiry record guest-profile strip
 Included in the current safe backend polish line:
-- contact-quality strip added to inquiry records
-- operators can now compare reply-channel posture and contact-quality posture from one backend screen
+- guest-profile strip added to inquiry records
+- operators can now compare contact-quality posture and guest-profile posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline

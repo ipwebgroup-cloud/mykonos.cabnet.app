@@ -211,3 +211,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_contact_quality_strip.htm
         span: full
 
+
+    guest_profile:
+        label: Guest Profile
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_profile_strip.htm
+        span: full
+

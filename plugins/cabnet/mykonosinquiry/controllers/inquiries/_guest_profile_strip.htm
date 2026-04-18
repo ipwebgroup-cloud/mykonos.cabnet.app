@@ -1,0 +1,128 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestName = trim((string) ($record->full_name ?? ''));
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $guestPhone = trim((string) ($record->phone ?? ''));
+    $guests = trim((string) ($record->guests ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+
+    $hasName = $guestName !== '';
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasPhone = $guestPhone !== '';
+    $hasGuests = $guests !== '';
+    $hasArrival = $arrivalDate !== '';
+    $hasDeparture = $departureDate !== '';
+    $hasBrief = $details !== '';
+
+    $profileSignals = [];
+    $primaryProfile = 'Guest profile still needs light shaping';
+    $headline = 'Guest-profile posture is visible';
+    $summary = 'This strip helps operators judge whether the guest profile is rich enough for confident handling or still needs more shape before the next concierge step.';
+
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($hasName) {
+        $profileSignals[] = ['label' => 'Guest identity is visible', 'tone' => 'positive'];
+    } else {
+        $profileSignals[] = ['label' => 'Guest identity still needs anchoring', 'tone' => 'warning'];
+        $primaryProfile = 'Confirm guest identity first';
+        $headline = 'Guest-profile posture still needs one identity anchor';
+        $summary = 'The record may still be workable, but the guest profile is not yet strong enough for confident handling until identity is clearer.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+
+    if ($hasValidEmail) {
+        $profileSignals[] = ['label' => 'Valid guest email is saved', 'tone' => 'positive'];
+    } else {
+        $profileSignals[] = ['label' => 'Guest email still needs correction', 'tone' => 'warning'];
+    }
+
+    if ($hasPhone) {
+        $profileSignals[] = ['label' => 'Phone fallback is visible', 'tone' => 'neutral'];
+    } else {
+        $profileSignals[] = ['label' => 'Phone fallback is missing', 'tone' => 'warning'];
+    }
+
+    if ($hasGuests) {
+        $profileSignals[] = ['label' => 'Guest count is visible', 'tone' => 'positive'];
+    } else {
+        $profileSignals[] = ['label' => 'Guest count still needs anchoring', 'tone' => 'warning'];
+    }
+
+    if ($hasArrival || $hasDeparture) {
+        $profileSignals[] = ['label' => 'Travel window is visible', 'tone' => 'positive'];
+    } else {
+        $profileSignals[] = ['label' => 'Travel window still needs anchoring', 'tone' => 'warning'];
+    }
+
+    if ($hasBrief) {
+        $profileSignals[] = ['label' => 'Saved brief strengthens profile context', 'tone' => 'positive'];
+        if ($hasName && $hasValidEmail && ($hasGuests || $hasArrival || $hasDeparture)) {
+            $primaryProfile = 'Guest profile looks stronger';
+            $headline = 'Guest-profile posture looks stronger';
+            $summary = 'The record already carries a stronger guest profile block and enough context to support more confident handling from the inquiry screen.';
+            $toneBg = '#f6fbf8';
+            $toneBorder = '#d8eadf';
+        }
+    } else {
+        $profileSignals[] = ['label' => 'Thin brief weakens profile context', 'tone' => 'warning'];
+    }
+
+    if ($status !== '') {
+        $profileSignals[] = ['label' => 'Status: ' . $status, 'tone' => 'neutral'];
+    }
+    if ($requestedMode !== '') {
+        $profileSignals[] = ['label' => 'Mode: ' . $requestedMode, 'tone' => 'neutral'];
+    }
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Guest profile</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary profile: <?= e($primaryProfile) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Name: <?= e($guestName !== '' ? $guestName : 'Missing') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Guests: <?= e($guests !== '' ? $guests : 'Not provided') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Travel window: <?= e(($arrivalDate !== '' || $departureDate !== '') ? trim(($arrivalDate ?: 'Open') . ' → ' . ($departureDate ?: 'Open')) : 'Not provided') ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($profileSignals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($signal['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not enrich or correct guest data automatically. It helps the operator judge whether the saved guest profile is strong enough for a clean next step or still needs shaping first.
+    </div>
+</div>
