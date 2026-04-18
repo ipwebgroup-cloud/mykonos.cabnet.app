@@ -1,0 +1,134 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $priority = trim((string) ($record->priority ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasArrival = $arrivalDate !== '';
+    $hasBrief = $details !== '';
+    $hasServiceFocus = !empty($serviceList);
+
+    $latestInternalNote = null;
+    $latestTrailStamp = null;
+    $latestTrailExcerpt = '';
+    $noteCount = 0;
+
+    if (method_exists($record, 'notes')) {
+        $noteCount = (int) $record->notes()->count();
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote && $latestInternalNote->created_at) {
+            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+        }
+
+        if ($latestInternalNote) {
+            $latestTrailExcerpt = trim((string) $latestInternalNote->body);
+            if ($latestTrailExcerpt !== '' && mb_strlen($latestTrailExcerpt) > 170) {
+                $latestTrailExcerpt = mb_substr($latestTrailExcerpt, 0, 167) . '...';
+            }
+        }
+    }
+
+    $actions = [];
+    if (!$hasValidEmail) {
+        $actions[] = ['label' => 'Correct reply destination', 'tone' => 'warning'];
+    }
+    if (!$hasArrival) {
+        $actions[] = ['label' => 'Clarify arrival timing', 'tone' => 'warning'];
+    }
+    if (!$hasServiceFocus) {
+        $actions[] = ['label' => 'Clarify service focus', 'tone' => 'warning'];
+    }
+    if (!$hasBrief) {
+        $actions[] = ['label' => 'Strengthen guest brief', 'tone' => 'warning'];
+    }
+    if (!$latestTrailStamp) {
+        $actions[] = ['label' => 'Add internal note trail', 'tone' => 'neutral'];
+    }
+
+    if (empty($actions)) {
+        $actions[] = ['label' => 'Prepare confident next reply', 'tone' => 'positive'];
+        $actions[] = ['label' => 'Log follow-through note', 'tone' => 'neutral'];
+    }
+
+    $primaryAction = $actions[0]['label'];
+    $headline = 'Operator action recap is visible';
+    $summary = 'This strip condenses the clearest next operator moves into one quick backend view so the record can move from readiness into action without widening workflow logic.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($actions[0]['tone'] === 'warning') {
+        $headline = 'Operator action recap needs one clarification pass';
+        $summary = 'The record is usable, but the clearest next move is still to close one important gap before relying on a stronger action line.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    } elseif ($actions[0]['tone'] === 'positive') {
+        $headline = 'Operator action recap looks stronger';
+        $summary = 'The inquiry already carries enough context for a more confident next operator move from the same backend screen.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    }
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Operator action recap</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary action: <?= e($primaryAction) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Services: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($priority !== '' ? 'Priority: ' . $priority : 'Priority not set') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($status !== '' ? 'Status: ' . $status : 'Status not set') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($actions as $action): ?>
+            <?php $pill = $pillStyles[$action['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($action['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Latest operator action context</div>
+        <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($latestTrailExcerpt !== '' ? $latestTrailExcerpt : 'No internal action note saved yet.') ?></div>
+        <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Notes: <?= e((string) $noteCount) ?> · Trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?></div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not change workflow state automatically. It helps the operator move from readiness into the clearest next action without leaving the inquiry screen.
+    </div>
+</div>

@@ -288,3 +288,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_readiness_strip.htm
         span: full
 
+
+    operator_action_recap:
+        label: Operator Action Recap
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_action_recap_strip.htm
+        span: full
+

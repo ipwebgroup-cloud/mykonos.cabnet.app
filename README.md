@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v7.14.00 — Inquiry record final-readiness strip
+### v7.15.00 — Inquiry record operator-action recap strip
 Included in the current safe backend polish line:
-- final-readiness strip added to inquiry records
-- operators can now compare priority posture and final-readiness posture from one backend screen
+- operator-action recap strip added to inquiry records
+- operators can now compare final-readiness posture and next-action recap posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline
