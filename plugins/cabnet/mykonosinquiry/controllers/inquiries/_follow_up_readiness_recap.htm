@@ -1,0 +1,110 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasBrief = $details !== '';
+    $hasArrival = $arrivalDate !== '';
+    $hasDeparture = $departureDate !== '';
+    $hasServiceFocus = !empty($serviceList);
+
+    $latestInternalNote = null;
+    $hasInternalTrail = false;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $hasInternalTrail = (bool) $latestInternalNote;
+    }
+
+    $signals = [
+        ['label' => 'Valid reply address', 'ready' => $hasValidEmail],
+        ['label' => 'Guest brief present', 'ready' => $hasBrief],
+        ['label' => 'Arrival timing present', 'ready' => $hasArrival],
+        ['label' => 'Departure timing present', 'ready' => $hasDeparture],
+        ['label' => 'Service focus present', 'ready' => $hasServiceFocus],
+        ['label' => 'Internal trail present', 'ready' => $hasInternalTrail],
+    ];
+
+    $readyCount = 0;
+    foreach ($signals as $signal) {
+        if ($signal['ready']) {
+            $readyCount++;
+        }
+    }
+
+    $headline = 'Follow-up readiness is visible';
+    $summary = 'This recap condenses the main readiness signals into one quick backend view so operators can compare context strength before replying or clarifying.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($readyCount >= 5) {
+        $headline = 'Follow-up readiness looks strong';
+        $summary = 'The inquiry already carries most of the signals needed for a confident next step, so operators can move forward with less uncertainty.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    } elseif ($readyCount <= 2) {
+        $headline = 'Follow-up readiness still needs structure';
+        $summary = 'The inquiry can still progress, but operators should use this recap to close the biggest missing signals first before relying on a stronger reply posture.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+
+    $recapLabel = $readyCount . '/' . count($signals) . ' readiness signals';
+    $modeLabel = $requestedMode !== '' ? $requestedMode : 'General';
+    $statusLabel = $status !== '' ? $status : 'Status not set';
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Follow-up readiness recap</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($recapLabel) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Mode: <?= e($modeLabel) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($statusLabel) ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:10px;margin-top:14px;">
+        <?php foreach ($signals as $signal): ?>
+            <?php
+                $isReady = $signal['ready'];
+                $cardBg = $isReady ? '#ffffff' : '#fffdfa';
+                $cardBorder = $isReady ? '#d8eadf' : '#f0e0bf';
+                $pillBg = $isReady ? '#e8f5ed' : '#fff2d6';
+                $pillText = $isReady ? '#25543f' : '#7a5a1e';
+            ?>
+            <div style="padding:12px 13px;border:1px solid <?= e($cardBorder) ?>;border-radius:14px;background:<?= e($cardBg) ?>;">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
+                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($signal['label']) ?></div>
+                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pillBg) ?>;color:<?= e($pillText) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
+                        <?= $isReady ? 'ready' : 'needs work' ?>
+                    </span>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This recap is guidance-only and render-safe. It does not send mail or change workflow state. It helps the operator weigh overall readiness quickly before moving into reply, clarification, or follow-through.
+    </div>
+</div>

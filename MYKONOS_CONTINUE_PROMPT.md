@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.94.00 inquiry record follow-up ownership strip`
+- `v6.95.00 inquiry record follow-up readiness recap`
 
 ## Current verified development direction
 

@@ -148,3 +148,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_ownership_strip.htm
         span: full
 
+
+    follow_up_readiness_recap:
+        label: Follow-Up Readiness Recap
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_readiness_recap.htm
+        span: full
+
