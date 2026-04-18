@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.89.00 inquiry record operator email summary card`
+- `v6.90.00 inquiry record concierge-response checklist`
 
 ## Current verified development direction
 

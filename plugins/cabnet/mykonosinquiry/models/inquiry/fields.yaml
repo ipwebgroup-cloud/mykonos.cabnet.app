@@ -113,3 +113,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_email_summary_card.htm
         span: full
 
+
+    concierge_response_checklist:
+        label: Concierge Response Checklist
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_concierge_response_checklist.htm
+        span: full
+

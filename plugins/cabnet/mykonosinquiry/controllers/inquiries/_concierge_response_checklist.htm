@@ -1,0 +1,124 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestName = trim((string) ($record->full_name ?? 'Guest'));
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $guests = trim((string) ($record->guests ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $hasDates = $arrivalDate !== '' || $departureDate !== '';
+    $hasGuestCount = $guests !== '';
+    $hasEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasBrief = $details !== '';
+    $hasServiceFocus = !empty($serviceList);
+
+    $checkItems = [
+        [
+            'title' => 'Confirm the guest identity block',
+            'status' => ($guestName !== '' && $hasEmail) ? 'ready' : 'needs attention',
+            'note' => ($guestName !== '' && $hasEmail)
+                ? 'Guest name and a valid reply email are already present for response handling.'
+                : 'Guest identity or reply email still needs confirmation before a confident concierge reply is sent.',
+        ],
+        [
+            'title' => 'Confirm dates and stay timing',
+            'status' => $hasDates ? 'ready' : 'needs attention',
+            'note' => $hasDates
+                ? 'Arrival or departure timing is already visible, so response planning can anchor around travel timing.'
+                : 'Stay timing is still thin, so operators may need to ask for arrival and departure context first.',
+        ],
+        [
+            'title' => 'Confirm guest count and service scope',
+            'status' => ($hasGuestCount && $hasServiceFocus) ? 'ready' : 'needs attention',
+            'note' => ($hasGuestCount && $hasServiceFocus)
+                ? 'Guest count and requested service focus are already visible for reply tailoring.'
+                : 'Reply posture should clarify either group size or service focus before widening the proposal.',
+        ],
+        [
+            'title' => 'Confirm the first concierge reply angle',
+            'status' => $hasBrief ? 'ready' : 'needs attention',
+            'note' => $hasBrief
+                ? 'A guest brief is already present, so operators can shape the first reply around the saved intent.'
+                : 'The record still needs more guest intent before a highly tailored concierge-style reply is sent.',
+        ],
+    ];
+
+    $readyCount = 0;
+    foreach ($checkItems as $item) {
+        if ($item['status'] === 'ready') {
+            $readyCount++;
+        }
+    }
+
+    $headline = 'Concierge reply preparation in progress';
+    $summary = 'This checklist turns inquiry context into a practical first-response posture so operators can move from record review into concierge-style reply handling without leaving the inquiry screen.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($readyCount >= 4) {
+        $headline = 'Concierge reply posture looks strong';
+        $summary = 'The inquiry already carries enough usable context for a confident first concierge reply, so operators can move from review into response with minimal clarification.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    } elseif ($readyCount <= 1) {
+        $headline = 'Concierge reply posture still needs clarification';
+        $summary = 'The inquiry still needs a little more structure before the first reply becomes highly tailored, so operators should use the checklist to guide the next questions.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Concierge response checklist</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($readyCount) ?>/<?= e((string) count($checkItems)) ?> readiness signals
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Guest: <?= e($guestName !== '' ? $guestName : 'Guest') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Focus: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:12px;margin-top:14px;">
+        <?php foreach ($checkItems as $item): ?>
+            <?php
+                $isReady = $item['status'] === 'ready';
+                $cardBorder = $isReady ? '#d8eadf' : '#f0e0bf';
+                $cardBg = $isReady ? '#ffffff' : '#fffdfa';
+                $pillBg = $isReady ? '#e8f5ed' : '#fff2d6';
+                $pillText = $isReady ? '#25543f' : '#7a5a1e';
+            ?>
+            <div style="padding:13px 14px;border:1px solid <?= e($cardBorder) ?>;border-radius:16px;background:<?= e($cardBg) ?>;">
+                <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px;">
+                    <div style="font-size:14px;font-weight:700;line-height:1.5;color:#22324a;"><?= e($item['title']) ?></div>
+                    <div style="display:inline-flex;align-items:center;min-height:28px;padding:6px 10px;border-radius:999px;background:<?= e($pillBg) ?>;color:<?= e($pillText) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
+                        <?= e($item['status']) ?>
+                    </div>
+                </div>
+                <div style="font-size:13px;line-height:1.7;color:#4b5c74;"><?= e($item['note']) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is intentionally guidance-only and render-safe. It does not send mail or alter workflow state. It helps the operator convert saved inquiry context into a stronger first concierge reply posture from the same backend record.
+    </div>
+</div>
