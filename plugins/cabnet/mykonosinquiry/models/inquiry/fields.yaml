@@ -155,3 +155,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_readiness_recap.htm
         span: full
 
+
+    internal_escalation:
+        label: Internal Escalation
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_internal_escalation_strip.htm
+        span: full
+

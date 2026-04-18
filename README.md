@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.95.00 — Inquiry record follow-up readiness recap
+### v6.96.00 — Inquiry record internal escalation strip
 Included in the current safe backend polish line:
-- follow-up readiness recap strip added to inquiry records
-- operators can now compare next action, timing posture, ownership posture, and overall readiness from one backend screen
+- internal escalation strip added to inquiry records
+- operators can now compare readiness and escalation posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline

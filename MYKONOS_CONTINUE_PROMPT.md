@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.95.00 inquiry record follow-up readiness recap`
+- `v6.96.00 inquiry record internal escalation strip`
 
 ## Current verified development direction
 
