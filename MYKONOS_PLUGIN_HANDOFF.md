@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v6.86.00 dedicated email view templates`
+- `v6.87.00 inquiry record guest-email posture panel`
 - plugin tracking `2.4.23`
 
-This patch stays plugin-only and does not touch `/plan` storage, schema, or queue logic.
-It keeps the existing operator notification email and guest confirmation flow working, but moves both branded HTML layouts into dedicated view template files so future email polish can be done without reopening the inquiry manager logic.
+This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
+It adds a guest-email posture panel directly to the inquiry record so operators can see confirmation eligibility, recipient validity, and current mail posture without leaving the backend.
 
 ## Deployment note
 
@@ -19,24 +19,23 @@ For this patch, upload the rooted files and then run:
 No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
-- submit a new `/plan` inquiry
-- backend inquiry is created normally
-- operator email still arrives at `mykonos@cabnet.app`
-- guest confirmation email still arrives at the submitted guest email address
-- both emails still render correctly after the view-file split
+- open Backend -> Inquiries -> any real inquiry record
+- a new Guest Email Posture panel appears on the inquiry record
+- records with valid guest emails show eligibility clearly
+- records with missing or invalid emails show warning posture clearly
 
 ## Why this is a safe major step
 
-This is a meaningful maintainability upgrade because it:
-- keeps email presentation separate from core inquiry handling
-- preserves the working SMTP and autoresponder flow
+This is a meaningful operator-facing upgrade because it:
+- improves backend visibility around guest confirmation readiness
+- keeps email posture visible without opening mailbox tabs first
 - keeps the live /plan bridge untouched
 - keeps database and workflow behavior untouched
-- stays plugin-only and render-safe
+- stays backend-only and render-safe
 
 ## Safest next step
 
-After this template split, the next strong step should be one of:
-- add a backend-visible flag showing whether guest confirmation was attempted
-- add lighter summary cards and stronger grouping to the operator email view
-- add a more guest-facing hospitality tone to the guest confirmation view
+After this backend posture pass, the next strong step should be one of:
+- add a lightweight persisted guest-confirmation attempt note on submission
+- add a compact operator email summary card inside the inquiry record
+- add a more hospitality-focused guest confirmation template split refinement

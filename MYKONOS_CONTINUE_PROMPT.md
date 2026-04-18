@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.86.00 dedicated email view templates`
+- `v6.87.00 inquiry record guest-email posture panel`
 
 ## Current verified development direction
 

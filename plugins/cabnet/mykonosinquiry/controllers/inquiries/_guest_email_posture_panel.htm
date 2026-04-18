@@ -1,0 +1,77 @@
+<?php
+    $record = $this->formGetModel();
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $guestName = trim((string) ($record->full_name ?? 'Guest'));
+    $guestConfirmationEnabled = (bool) config('cabnet.mykonosinquiry::guest_confirmation_enabled', true);
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $notificationMailbox = trim((string) config('cabnet.mykonosinquiry::notification_email', 'mykonos@cabnet.app'));
+
+    $sourceType = trim((string) ($record->source_type ?? ''));
+    $requestReference = trim((string) ($record->request_reference ?? ''));
+    $looksLikePublicPlanFlow = $requestReference !== '';
+
+    $statusTone = 'neutral';
+    $statusLabel = 'Visibility only';
+    $statusMessage = 'This backend panel shows guest confirmation posture and submission eligibility. Mailbox delivery remains the source of truth until a persistent delivery log is introduced.';
+
+    if (!$guestConfirmationEnabled) {
+        $statusTone = 'critical';
+        $statusLabel = 'Guest confirmation disabled';
+        $statusMessage = 'Guest confirmation is currently disabled in plugin configuration, so no guest confirmation email will be attempted on submission.';
+    } elseif (!$hasValidEmail) {
+        $statusTone = 'warning';
+        $statusLabel = 'Guest email missing or invalid';
+        $statusMessage = 'This record does not currently hold a valid guest email address, so guest confirmation cannot be attempted until the email is corrected.';
+    } elseif ($looksLikePublicPlanFlow) {
+        $statusTone = 'positive';
+        $statusLabel = 'Guest confirmation eligible on public submission';
+        $statusMessage = 'This inquiry has a valid guest email and a saved request reference, so the public submission flow is configured to attempt guest confirmation automatically.';
+    } else {
+        $statusTone = 'warning';
+        $statusLabel = 'Manual or imported posture';
+        $statusMessage = 'This record has a valid guest email, but the current backend does not persist a send-attempt log for manual or imported records. Use mailbox evidence as the final source of truth.';
+    }
+
+    $toneStyles = [
+        'positive' => ['border' => '#d8eadf', 'bg' => '#f6fbf8', 'text' => '#25543f', 'chip' => '#e8f5ed'],
+        'warning' => ['border' => '#f0e0bf', 'bg' => '#fffaf1', 'text' => '#7a5a1e', 'chip' => '#fff2d6'],
+        'critical' => ['border' => '#efd7d2', 'bg' => '#fff7f5', 'text' => '#8b4638', 'chip' => '#fde7e2'],
+        'neutral' => ['border' => '#dce5f4', 'bg' => '#f8fbff', 'text' => '#31496e', 'chip' => '#edf3fb'],
+    ];
+    $tone = $toneStyles[$statusTone] ?? $toneStyles['neutral'];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($tone['border']) ?>;border-radius:18px;background:<?= e($tone['bg']) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Guest email posture</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($statusLabel) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($statusMessage) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($tone['chip']) ?>;color:<?= e($tone['text']) ?>;font-size:12px;font-weight:800;">
+            <?= e(ucfirst($statusTone)) ?> posture
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Guest: <?= e($guestName !== '' ? $guestName : 'Guest') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Email: <?= e($guestEmail !== '' ? $guestEmail : 'Missing') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Confirmation enabled: <?= $guestConfirmationEnabled ? 'Yes' : 'No' ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Valid recipient: <?= $hasValidEmail ? 'Yes' : 'No' ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Operator mailbox: <?= e($notificationMailbox !== '' ? $notificationMailbox : 'Not set') ?>
+        </span>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($tone['border']) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Important:</strong>
+        This panel is intentionally render-safe and schema-free. It helps operators judge guest confirmation readiness and submission posture from the record itself, but it does not claim a persisted delivery receipt. Until a delivery-attempt log is added, the mailbox remains the final confirmation source.
+    </div>
+</div>
