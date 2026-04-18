@@ -1,0 +1,119 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $guestPhone = trim((string) ($record->phone ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasPhone = $guestPhone !== '';
+    $hasBrief = $details !== '';
+
+    $latestInternalNote = null;
+    $latestTrailStamp = null;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote && $latestInternalNote->created_at) {
+            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+        }
+    }
+
+    $channelSignals = [];
+    $primaryChannel = 'Email-led reply channel';
+    $headline = 'Reply-channel posture is visible';
+    $summary = 'This strip helps operators judge whether the current reply path is strong enough for normal handling or still needs clarification before a cleaner response flow can continue.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($hasValidEmail) {
+        $channelSignals[] = ['label' => 'Valid guest email is available', 'tone' => 'positive'];
+    } else {
+        $channelSignals[] = ['label' => 'Guest email still needs correction', 'tone' => 'warning'];
+        $primaryChannel = 'Clarify reply email first';
+        $headline = 'Reply-channel posture still needs one gate cleared';
+        $summary = 'The record may still be workable, but the main reply channel is not yet stable enough for a confident email-led response flow.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+
+    if ($hasPhone) {
+        $channelSignals[] = ['label' => 'Phone fallback is visible', 'tone' => 'neutral'];
+    } else {
+        $channelSignals[] = ['label' => 'No phone fallback is saved', 'tone' => 'warning'];
+    }
+
+    if ($hasBrief) {
+        $channelSignals[] = ['label' => 'Reply context supports the channel', 'tone' => 'positive'];
+    } else {
+        $channelSignals[] = ['label' => 'Thin brief weakens reply-channel confidence', 'tone' => 'warning'];
+    }
+
+    if ($latestTrailStamp) {
+        $channelSignals[] = ['label' => 'Internal trail supports reply continuity', 'tone' => 'neutral'];
+    } else {
+        $channelSignals[] = ['label' => 'No internal reply trail yet', 'tone' => 'warning'];
+    }
+
+    if ($status !== '') {
+        $channelSignals[] = ['label' => 'Status: ' . $status, 'tone' => 'neutral'];
+    }
+    if ($requestedMode !== '') {
+        $channelSignals[] = ['label' => 'Mode: ' . $requestedMode, 'tone' => 'neutral'];
+    }
+
+    if ($hasValidEmail && $hasBrief) {
+        $headline = 'Reply-channel posture looks stronger';
+        $summary = 'The record already carries a usable reply path and enough context to support a cleaner email-led next step from the inquiry screen.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    }
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Reply channel</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary channel: <?= e($primaryChannel) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Email: <?= e($guestEmail !== '' ? $guestEmail : 'Missing') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Phone: <?= e($guestPhone !== '' ? $guestPhone : 'Not provided') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Internal trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($channelSignals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($signal['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not send messages or change workflow state. It helps the operator judge whether the current response path is strong enough for a normal email-led flow or still needs channel clarification first.
+    </div>
+</div>

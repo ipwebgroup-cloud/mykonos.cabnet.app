@@ -197,3 +197,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_delivery_strip.htm
         span: full
 
+
+    reply_channel:
+        label: Reply Channel
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_channel_strip.htm
+        span: full
+

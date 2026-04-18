@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.01.00 inquiry record proposal-delivery strip`
+- `v7.02.00 inquiry record reply-channel strip`
 
 ## Current verified development direction
 
