@@ -169,3 +169,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_internal_urgency_strip.htm
         span: full
 
+
+    concierge_handoff:
+        label: Concierge Handoff
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_concierge_handoff_strip.htm
+        span: full
+

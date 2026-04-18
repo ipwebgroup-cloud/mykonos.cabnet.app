@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.97.00 inquiry record internal urgency strip`
+- `v6.98.00 inquiry record concierge-handoff strip`
 
 ## Current verified development direction
 

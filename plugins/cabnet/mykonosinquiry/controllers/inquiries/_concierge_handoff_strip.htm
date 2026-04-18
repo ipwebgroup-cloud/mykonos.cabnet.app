@@ -1,0 +1,126 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasBrief = $details !== '';
+    $hasArrival = $arrivalDate !== '';
+    $hasServiceFocus = !empty($serviceList);
+
+    $latestInternalNote = null;
+    $latestTrailStamp = null;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote && $latestInternalNote->created_at) {
+            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+        }
+    }
+
+    $handoffSignals = [];
+    $primaryHandoff = 'Stay on current operator line';
+    $headline = 'Concierge handoff posture is visible';
+    $summary = 'This strip helps operators judge whether the inquiry should stay on the current handling line or is structured enough for a cleaner concierge-style handoff posture.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($hasValidEmail) {
+        $handoffSignals[] = ['label' => 'Reply channel is usable', 'tone' => 'positive'];
+    } else {
+        $handoffSignals[] = ['label' => 'Reply channel still blocks handoff', 'tone' => 'warning'];
+        $primaryHandoff = 'Clarify reply channel before handoff';
+        $headline = 'Concierge handoff still needs one gate cleared';
+        $summary = 'The inquiry may become handoff-ready, but the reply channel still needs clarification before operators rely on a smoother concierge-style transfer posture.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+
+    if ($hasArrival) {
+        $handoffSignals[] = ['label' => 'Travel timing is visible', 'tone' => 'positive'];
+    } else {
+        $handoffSignals[] = ['label' => 'Travel timing still needs anchoring', 'tone' => 'warning'];
+        if ($primaryHandoff === 'Stay on current operator line') {
+            $primaryHandoff = 'Timing-led clarification before handoff';
+        }
+    }
+
+    if ($hasBrief and $hasServiceFocus) {
+        $handoffSignals[] = ['label' => 'Guest intent is shaped enough', 'tone' => 'positive'];
+        if ($primaryHandoff === 'Stay on current operator line' && $hasValidEmail && $hasArrival) {
+            $primaryHandoff = 'Concierge-style handoff looks viable';
+            $headline = 'Concierge handoff posture looks stronger';
+            $summary = 'The record already carries enough usable context that a concierge-style handoff posture is easier to support from the inquiry screen.';
+            $toneBg = '#f6fbf8';
+            $toneBorder = '#d8eadf';
+        }
+    } else {
+        $handoffSignals[] = ['label' => 'Intent still needs shaping before handoff', 'tone' => 'warning'];
+    }
+
+    if ($latestTrailStamp) {
+        $handoffSignals[] = ['label' => 'Internal trail supports continuity', 'tone' => 'neutral'];
+    } else {
+        $handoffSignals[] = ['label' => 'No internal continuity trail yet', 'tone' => 'warning'];
+        if ($primaryHandoff === 'Stay on current operator line') {
+            $primaryHandoff = 'Log internal context before handoff';
+        }
+    }
+
+    if ($status !== '') {
+        $handoffSignals[] = ['label' => 'Status: ' . $status, 'tone' => 'neutral'];
+    }
+    if ($requestedMode !== '') {
+        $handoffSignals[] = ['label' => 'Mode: ' . $requestedMode, 'tone' => 'neutral'];
+    }
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Concierge handoff</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary handoff: <?= e($primaryHandoff) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Focus: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Internal trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($handoffSignals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($signal['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not perform a handoff or change workflow state. It helps the operator judge whether the inquiry is still best handled on the current line or is structured enough for a smoother concierge-style handoff posture.
+    </div>
+</div>
