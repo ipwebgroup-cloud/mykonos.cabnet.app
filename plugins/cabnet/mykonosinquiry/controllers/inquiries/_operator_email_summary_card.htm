@@ -1,0 +1,96 @@
+<?php
+    $record = $this->formGetModel();
+
+    $notificationMailbox = trim((string) config('cabnet.mykonosinquiry::notification_email', 'mykonos@cabnet.app'));
+    $requestReference = trim((string) ($record->request_reference ?? ''));
+    $guestName = trim((string) ($record->full_name ?? 'Guest'));
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $guestPhone = trim((string) ($record->phone ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+    $noteCount = method_exists($record, 'notes') ? (int) $record->notes()->count() : 0;
+
+    $latestInternalNote = null;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
+
+    $latestInternalStamp = $latestInternalNote && $latestInternalNote->created_at ? $latestInternalNote->created_at->format('Y-m-d H:i') : null;
+    $latestInternalExcerpt = $latestInternalNote ? trim((string) $latestInternalNote->body) : '';
+    if ($latestInternalExcerpt !== '' && mb_strlen($latestInternalExcerpt) > 180) {
+        $latestInternalExcerpt = mb_substr($latestInternalExcerpt, 0, 177) . '...';
+    }
+
+    $summaryLabel = 'Operator mailbox context visible';
+    $summaryMessage = 'This backend card keeps the operator mailbox target, guest contact basics, service focus, and latest internal response context visible without opening the outbound mailbox first.';
+
+    if ($requestReference !== '') {
+        $summaryLabel = 'Operator response context ready';
+        $summaryMessage = 'This inquiry already carries a request reference and operator mailbox target, so operators can compare guest trace, contact detail, and internal response posture from one backend screen.';
+    }
+
+    $briefExcerpt = $details !== '' ? $details : 'No guest brief saved yet.';
+    if ($briefExcerpt !== '' && mb_strlen($briefExcerpt) > 220) {
+        $briefExcerpt = mb_substr($briefExcerpt, 0, 217) . '...';
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid #dce5f4;border-radius:18px;background:#f8fbff;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Operator email summary</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($summaryLabel) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summaryMessage) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Mailbox-facing summary
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid #dce5f4;font-size:12px;font-weight:700;color:#31496e;">
+            Reference: <?= e($requestReference !== '' ? $requestReference : 'Not yet assigned') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid #dce5f4;font-size:12px;font-weight:700;color:#31496e;">
+            Operator mailbox: <?= e($notificationMailbox !== '' ? $notificationMailbox : 'Not set') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid #dce5f4;font-size:12px;font-weight:700;color:#31496e;">
+            Notes: <?= e((string) $noteCount) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid #dce5f4;font-size:12px;font-weight:700;color:#31496e;">
+            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Guest contact</div>
+            <div style="font-size:14px;line-height:1.75;color:#42546d;">
+                <strong style="color:#22324a;">Name:</strong> <?= e($guestName !== '' ? $guestName : 'Guest') ?><br>
+                <strong style="color:#22324a;">Email:</strong> <?= e($guestEmail !== '' ? $guestEmail : 'Missing') ?><br>
+                <strong style="color:#22324a;">Phone:</strong> <?= e($guestPhone !== '' ? $guestPhone : 'Not provided') ?>
+            </div>
+        </div>
+
+        <div style="padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Service focus</div>
+            <div style="font-size:14px;line-height:1.75;color:#42546d;">
+                <strong style="color:#22324a;">Focus:</strong> <?= e($serviceSummary) ?><br>
+                <strong style="color:#22324a;">Brief:</strong> <?= e($briefExcerpt) ?>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Latest internal response context</div>
+        <div style="font-size:14px;line-height:1.75;color:#42546d;">
+            <strong style="color:#22324a;">Latest internal note:</strong>
+            <?= e($latestInternalExcerpt !== '' ? $latestInternalExcerpt : 'No internal note saved yet.') ?><br>
+            <strong style="color:#22324a;">Stamp:</strong> <?= e($latestInternalStamp ?: 'Not yet recorded') ?>
+        </div>
+    </div>
+</div>

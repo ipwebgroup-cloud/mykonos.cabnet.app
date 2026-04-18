@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.88.00 guest-confirmation attempt trace`
+- `v6.89.00 inquiry record operator email summary card`
 
 ## Current verified development direction
 

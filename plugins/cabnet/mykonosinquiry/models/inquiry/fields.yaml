@@ -76,14 +76,6 @@ fields:
         label: Phone
         span: left
 
-
-    guest_email_posture:
-        label: Guest Email Posture
-        type: partial
-        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_email_posture_panel.htm
-        span: full
-
-
     country:
         label: Country
         span: right
@@ -113,3 +105,11 @@ fields:
         label: Guest Brief
         type: textarea
         size: giant
+
+
+    operator_email_summary:
+        label: Operator Email Summary
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_email_summary_card.htm
+        span: full
+

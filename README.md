@@ -2,11 +2,11 @@
 
 ## Current safe continuity hint
 
-### v6.88.00 — Guest-confirmation attempt trace
+### v6.89.00 — Inquiry record operator email summary card
 Included in the current safe backend polish line:
-- guest confirmation now writes a lightweight persisted system note after the mail step is reached
-- inquiry guest-email posture panel now shows the latest saved attempt trace
-- backend-only trace upgrade without changing /plan, queue logic, or schema
+- operator email summary card added to inquiry records
+- operators can now compare guest trace, mailbox target, and latest internal response context from one backend screen
+- backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline
 - `2.4.23`
