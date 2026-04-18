@@ -274,3 +274,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_workflow_summary_strip.htm
         span: full
 
+
+    operator_priority_recap:
+        label: Operator Priority Recap
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_priority_recap_strip.htm
+        span: full
+

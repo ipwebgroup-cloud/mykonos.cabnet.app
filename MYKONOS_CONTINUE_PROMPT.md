@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.12.00 inquiry record workflow-summary strip`
+- `v7.13.00 inquiry record operator-priority recap strip`
 
 ## Current verified development direction
 
