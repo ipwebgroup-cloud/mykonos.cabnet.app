@@ -176,3 +176,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_concierge_handoff_strip.htm
         span: full
 
+
+    partner_routing:
+        label: Partner Routing
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_routing_strip.htm
+        span: full
+
