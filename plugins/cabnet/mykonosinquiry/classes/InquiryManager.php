@@ -122,7 +122,13 @@ class InquiryManager
         }
 
         try {
-            self::sendGuestConfirmation($inquiry);
+            $guestConfirmationResult = self::sendGuestConfirmation($inquiry);
+
+            self::recordGuestConfirmationAttempt(
+                $inquiry,
+                $guestConfirmationResult,
+                self::buildGuestConfirmationAttemptMessage($inquiry, $guestConfirmationResult)
+            );
         } catch (\Throwable $e) {
             \Log::warning('Mykonos inquiry guest confirmation failed', [
                 'inquiry_id' => $inquiry->id,
@@ -130,6 +136,12 @@ class InquiryManager
                 'guest_email' => $inquiry->email,
                 'message' => $e->getMessage(),
             ]);
+
+            self::recordGuestConfirmationAttempt(
+                $inquiry,
+                'failed',
+                self::buildGuestConfirmationFailureMessage($inquiry, $e)
+            );
         }
 
         try {
@@ -278,15 +290,15 @@ class InquiryManager
         });
     }
 
-    protected static function sendGuestConfirmation(Inquiry $inquiry): void
+    protected static function sendGuestConfirmation(Inquiry $inquiry): string
     {
         $guestEmail = trim((string) ($inquiry->email ?: ''));
         if ($guestEmail === '' || !filter_var($guestEmail, FILTER_VALIDATE_EMAIL)) {
-            return;
+            return 'skipped_invalid_email';
         }
 
         if (!config('cabnet.mykonosinquiry::guest_confirmation_enabled', true)) {
-            return;
+            return 'skipped_disabled';
         }
 
         $subject = self::buildGuestConfirmationSubject($inquiry);
@@ -305,6 +317,8 @@ class InquiryManager
                 $message->replyTo($replyTo, config('cabnet.mykonosinquiry::guest_confirmation_reply_name', 'Mykonos Luxury Tours & Concierge'));
             }
         });
+
+        return 'attempted';
     }
 
     protected static function buildGuestConfirmationSubject(Inquiry $inquiry): string

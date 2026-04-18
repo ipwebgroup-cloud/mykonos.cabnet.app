@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.87.00 inquiry record guest-email posture panel`
+- `v6.88.00 guest-confirmation attempt trace`
 
 ## Current verified development direction
 

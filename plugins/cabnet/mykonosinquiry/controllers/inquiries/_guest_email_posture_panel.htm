@@ -10,9 +10,46 @@
     $requestReference = trim((string) ($record->request_reference ?? ''));
     $looksLikePublicPlanFlow = $requestReference !== '';
 
+    $latestGuestConfirmationNote = null;
+    if ($record && method_exists($record, 'notes')) {
+        $latestGuestConfirmationNote = $record->notes()
+            ->where('note_type', 'system')
+            ->where('body', 'like', 'Guest confirmation status:%')
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
+
+    $latestAttemptLabel = 'No persisted attempt note yet';
+    $latestAttemptSummary = 'This record does not yet show a saved guest-confirmation attempt note. New public submissions will add one when the mail step is reached.';
+    $latestAttemptTone = 'neutral';
+    $latestAttemptStamp = null;
+
+    if ($latestGuestConfirmationNote) {
+        $noteBody = trim((string) $latestGuestConfirmationNote->body);
+        $latestAttemptStamp = optional($latestGuestConfirmationNote->created_at)->format('Y-m-d H:i');
+
+        if (stripos($noteBody, 'status: attempted') !== false) {
+            $latestAttemptLabel = 'Latest attempt note: attempted';
+            $latestAttemptSummary = $noteBody;
+            $latestAttemptTone = 'positive';
+        } elseif (stripos($noteBody, 'status: failed') !== false) {
+            $latestAttemptLabel = 'Latest attempt note: failed';
+            $latestAttemptSummary = $noteBody;
+            $latestAttemptTone = 'critical';
+        } elseif (stripos($noteBody, 'status: skipped') !== false) {
+            $latestAttemptLabel = 'Latest attempt note: skipped';
+            $latestAttemptSummary = $noteBody;
+            $latestAttemptTone = 'warning';
+        } else {
+            $latestAttemptLabel = 'Latest attempt note: saved';
+            $latestAttemptSummary = $noteBody;
+            $latestAttemptTone = 'neutral';
+        }
+    }
+
     $statusTone = 'neutral';
     $statusLabel = 'Visibility only';
-    $statusMessage = 'This backend panel shows guest confirmation posture and submission eligibility. Mailbox delivery remains the source of truth until a persistent delivery log is introduced.';
+    $statusMessage = 'This backend panel now shows both guest confirmation posture and the latest persisted guest-confirmation attempt note. Mailbox delivery remains the final source of truth.';
 
     if (!$guestConfirmationEnabled) {
         $statusTone = 'critical';
@@ -29,7 +66,13 @@
     } else {
         $statusTone = 'warning';
         $statusLabel = 'Manual or imported posture';
-        $statusMessage = 'This record has a valid guest email, but the current backend does not persist a send-attempt log for manual or imported records. Use mailbox evidence as the final source of truth.';
+        $statusMessage = 'This record has a valid guest email, but a send-attempt note may only exist if the record passed through the public submission flow after the lightweight trace patch was applied. Use mailbox evidence as the final source of truth.';
+    }
+
+    if ($latestGuestConfirmationNote) {
+        $statusLabel = $latestAttemptLabel;
+        $statusMessage = $latestAttemptSummary;
+        $statusTone = $latestAttemptTone;
     }
 
     $toneStyles = [
@@ -70,8 +113,17 @@
         </span>
     </div>
 
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Latest note: <?= e($latestAttemptLabel) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Attempt stamp: <?= e($latestAttemptStamp ?: 'Not yet recorded') ?>
+        </span>
+    </div>
+
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($tone['border']) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
         <strong style="color:#22324a;">Important:</strong>
-        This panel is intentionally render-safe and schema-free. It helps operators judge guest confirmation readiness and submission posture from the record itself, but it does not claim a persisted delivery receipt. Until a delivery-attempt log is added, the mailbox remains the final confirmation source.
+        This panel is intentionally render-safe and schema-free. It now surfaces the latest persisted guest-confirmation attempt note from the inquiry notes table, but mailbox delivery still remains the final confirmation source.
     </div>
 </div>
