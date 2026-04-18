@@ -232,3 +232,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_shape_strip.htm
         span: full
 
+
+    request_completeness:
+        label: Request Completeness
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_request_completeness_strip.htm
+        span: full
+

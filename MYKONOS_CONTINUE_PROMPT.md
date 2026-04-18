@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.06.00 inquiry record service-shape strip`
+- `v7.07.00 inquiry record request-completeness strip`
 
 ## Current verified development direction
 
