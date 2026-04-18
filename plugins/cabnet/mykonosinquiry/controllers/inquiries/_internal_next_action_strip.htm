@@ -1,0 +1,109 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $latestInternalNote = null;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
+
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasDates = $arrivalDate !== '' || $departureDate !== '';
+    $hasBrief = $details !== '';
+    $hasServiceFocus = !empty($serviceList);
+    $hasInternalNote = (bool) $latestInternalNote;
+
+    $actions = [];
+    if (!$hasValidEmail) {
+        $actions[] = ['label' => 'Confirm reply address first', 'tone' => 'warning'];
+    }
+    if (!$hasDates) {
+        $actions[] = ['label' => 'Ask for travel timing', 'tone' => 'warning'];
+    }
+    if (!$hasServiceFocus) {
+        $actions[] = ['label' => 'Clarify service scope', 'tone' => 'warning'];
+    }
+    if (!$hasBrief) {
+        $actions[] = ['label' => 'Collect guest intent', 'tone' => 'warning'];
+    }
+    if (!$hasInternalNote) {
+        $actions[] = ['label' => 'Add first internal operator note', 'tone' => 'neutral'];
+    }
+
+    if (empty($actions)) {
+        $actions[] = ['label' => 'Prepare first concierge reply', 'tone' => 'positive'];
+        $actions[] = ['label' => 'Log operator follow-through note', 'tone' => 'neutral'];
+    }
+
+    $primaryAction = $actions[0]['label'];
+    $summary = 'This strip turns the current inquiry context into a simple internal next-action recommendation so operators can move from framing into the next concrete step without leaving the inquiry record.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+    $headline = 'Internal next action is ready to choose';
+
+    if ($actions[0]['tone'] === 'warning') {
+        $headline = 'Internal next action needs a small clarification pass';
+        $summary = 'The record is usable, but the next best move is to close a small information gap before the first concierge reply becomes fully confident.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    } elseif ($actions[0]['tone'] === 'positive') {
+        $headline = 'Internal next action is reply-led';
+        $summary = 'The inquiry already carries enough context for a confident next step, so the team can move from review into reply handling and follow-through logging.';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    }
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Internal next action</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary action: <?= e($primaryAction) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Focus: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Internal note present: <?= $hasInternalNote ? 'Yes' : 'No' ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($actions as $action): ?>
+            <?php $pill = $pillStyles[$action['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($action['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not send mail or change workflow state. It helps the operator see the clearest next internal move after reading the record, the checklist, and the reply framing strips.
+    </div>
+</div>

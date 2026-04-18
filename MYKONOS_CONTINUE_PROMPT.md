@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.91.00 inquiry record reply-draft framing strip`
+- `v6.92.00 inquiry record internal next-action strip`
 
 ## Current verified development direction
 

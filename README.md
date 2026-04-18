@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.91.00 — Inquiry record reply-draft framing strip
+### v6.92.00 — Inquiry record internal next-action strip
 Included in the current safe backend polish line:
-- reply-draft framing strip added to inquiry records
-- operators can now move from checklist readiness into a clearer first-response structure from one backend screen
+- internal next-action strip added to inquiry records
+- operators can now move from draft framing into a clearer operational next step from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline
