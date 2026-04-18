@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.07.00 inquiry record request-completeness strip`
+- `v7.08.00 inquiry record response-quality strip`
 
 ## Current verified development direction
 

@@ -239,3 +239,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_request_completeness_strip.htm
         span: full
 
+
+    response_quality:
+        label: Response Quality
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_response_quality_strip.htm
+        span: full
+
