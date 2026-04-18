@@ -295,3 +295,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_operator_action_recap_strip.htm
         span: full
 
+
+    closure_readiness:
+        label: Closure Readiness
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_readiness_strip.htm
+        span: full
+

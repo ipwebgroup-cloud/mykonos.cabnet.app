@@ -496,3 +496,9 @@
 - added a dedicated **Scheduling** tab to the inquiry update screen
 - introduced **Scheduling Workspace**, **Timing Coordination Blueprint**, and **Scheduling Risk Guardrails** panels
 - gives operators a backend-only space to coordinate timing, checkpoints, and service cadence without mixing scheduling posture into supplier prep or guest-facing promise language
+
+
+## v7.16.00 — Inquiry Record Closure-Readiness Strip
+- added a compact read-only **Closure Readiness** strip to the inquiry record
+- surfaces owner/reference context, closure evidence, last guest touch, and a simple operator cue before leaving a record closed
+- keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
