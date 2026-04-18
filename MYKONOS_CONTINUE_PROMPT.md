@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.02.00 inquiry record reply-channel strip`
+- `v7.03.00 inquiry record contact-quality strip`
 
 ## Current verified development direction
 

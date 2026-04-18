@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v7.02.00 — Inquiry record reply-channel strip
+### v7.03.00 — Inquiry record contact-quality strip
 Included in the current safe backend polish line:
-- reply-channel strip added to inquiry records
-- operators can now compare delivery posture and reply-channel posture from one backend screen
+- contact-quality strip added to inquiry records
+- operators can now compare reply-channel posture and contact-quality posture from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline

@@ -204,3 +204,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_channel_strip.htm
         span: full
 
+
+    contact_quality:
+        label: Contact Quality
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_contact_quality_strip.htm
+        span: full
+
