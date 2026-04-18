@@ -218,3 +218,17 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_guest_profile_strip.htm
         span: full
 
+
+    stay_profile:
+        label: Stay Profile
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_stay_profile_strip.htm
+        span: full
+
+
+    service_shape:
+        label: Service Shape
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_service_shape_strip.htm
+        span: full
+

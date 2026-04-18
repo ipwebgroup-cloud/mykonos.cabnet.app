@@ -1,0 +1,122 @@
+<?php
+    $record = $this->formGetModel();
+
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $guests = trim((string) ($record->guests ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $hasArrival = $arrivalDate !== '';
+    $hasDeparture = $departureDate !== '';
+    $hasGuests = $guests !== '';
+    $hasBrief = $details !== '';
+    $hasServiceFocus = !empty($serviceList);
+
+    $staySignals = [];
+    $primaryStay = 'Stay profile still needs shaping';
+    $headline = 'Stay-profile posture is visible';
+    $summary = 'This strip helps operators judge whether the saved stay context is strong enough for confident handling or still needs more structure before the next concierge step.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($hasArrival) {
+        $staySignals[] = ['label' => 'Arrival timing is visible', 'tone' => 'positive'];
+    } else {
+        $staySignals[] = ['label' => 'Arrival timing still needs anchoring', 'tone' => 'warning'];
+        $primaryStay = 'Clarify arrival timing first';
+        $headline = 'Stay-profile posture still needs one timing anchor';
+        $summary = 'The inquiry may still be workable, but the stay profile is not yet strong enough for confident handling until arrival timing is clearer.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+
+    if ($hasDeparture) {
+        $staySignals[] = ['label' => 'Departure timing is visible', 'tone' => 'positive'];
+    } else {
+        $staySignals[] = ['label' => 'Departure timing is still open', 'tone' => 'neutral'];
+    }
+
+    if ($hasGuests) {
+        $staySignals[] = ['label' => 'Guest count supports stay planning', 'tone' => 'positive'];
+    } else {
+        $staySignals[] = ['label' => 'Guest count still needs anchoring', 'tone' => 'warning'];
+    }
+
+    if ($hasServiceFocus) {
+        $staySignals[] = ['label' => 'Service focus supports stay structure', 'tone' => 'positive'];
+    } else {
+        $staySignals[] = ['label' => 'Service focus is still thin', 'tone' => 'warning'];
+    }
+
+    if ($hasBrief) {
+        $staySignals[] = ['label' => 'Saved brief strengthens stay context', 'tone' => 'positive'];
+        if ($hasArrival && ($hasDeparture || $hasGuests) && $hasServiceFocus) {
+            $primaryStay = 'Stay profile looks stronger';
+            $headline = 'Stay-profile posture looks stronger';
+            $summary = 'The record already carries a stronger stay profile and enough context to support more confident handling from the inquiry screen.';
+            $toneBg = '#f6fbf8';
+            $toneBorder = '#d8eadf';
+        }
+    } else {
+        $staySignals[] = ['label' => 'Thin brief weakens stay context', 'tone' => 'warning'];
+    }
+
+    if ($status !== '') {
+        $staySignals[] = ['label' => 'Status: ' . $status, 'tone' => 'neutral'];
+    }
+    if ($requestedMode !== '') {
+        $staySignals[] = ['label' => 'Mode: ' . $requestedMode, 'tone' => 'neutral'];
+    }
+
+    $travelWindow = ($arrivalDate !== '' || $departureDate !== '')
+        ? trim(($arrivalDate !== '' ? $arrivalDate : 'Open') . ' → ' . ($departureDate !== '' ? $departureDate : 'Open'))
+        : 'Not provided';
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Stay profile</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary stay: <?= e($primaryStay) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Travel window: <?= e($travelWindow) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Guests: <?= e($guests !== '' ? $guests : 'Not provided') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Focus: <?= e($serviceSummary) ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($staySignals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($signal['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not change travel data automatically. It helps the operator judge whether the saved stay profile is strong enough for a clean next step or still needs shaping first.
+    </div>
+</div>
