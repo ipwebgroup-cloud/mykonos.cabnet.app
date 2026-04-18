@@ -183,3 +183,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_partner_routing_strip.htm
         span: full
 
+
+    proposal_readiness:
+        label: Proposal Readiness
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proposal_readiness_strip.htm
+        span: full
+

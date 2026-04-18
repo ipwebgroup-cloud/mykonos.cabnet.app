@@ -1,0 +1,136 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $guests = trim((string) ($record->guests ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $status = trim((string) ($record->status ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
+    $hasBrief = $details !== '';
+    $hasArrival = $arrivalDate !== '';
+    $hasDeparture = $departureDate !== '';
+    $hasGuests = $guests !== '';
+    $hasServiceFocus = !empty($serviceList);
+
+    $latestInternalNote = null;
+    $latestTrailStamp = null;
+    if (method_exists($record, 'notes')) {
+        $latestInternalNote = $record->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote && $latestInternalNote->created_at) {
+            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+        }
+    }
+
+    $proposalSignals = [];
+    $primaryProposal = 'Proposal still needs shaping';
+    $headline = 'Proposal posture is visible';
+    $summary = 'This strip helps operators judge whether the inquiry is still in clarification mode or already structured enough for a cleaner proposal-style response posture.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($hasValidEmail) {
+        $proposalSignals[] = ['label' => 'Reply channel is usable', 'tone' => 'positive'];
+    } else {
+        $proposalSignals[] = ['label' => 'Reply channel still blocks proposal flow', 'tone' => 'warning'];
+        $primaryProposal = 'Clarify reply channel before proposal';
+        $headline = 'Proposal posture still needs one gate cleared';
+        $summary = 'The inquiry may later support a proposal-style reply, but the response channel still needs clarification before operators widen the proposal posture.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+
+    if ($hasArrival || $hasDeparture) {
+        $proposalSignals[] = ['label' => 'Travel window is visible', 'tone' => 'positive'];
+    } else {
+        $proposalSignals[] = ['label' => 'Travel window still needs anchoring', 'tone' => 'warning'];
+        if ($primaryProposal === 'Proposal still needs shaping') {
+            $primaryProposal = 'Timing clarification before proposal';
+        }
+    }
+
+    if ($hasGuests) {
+        $proposalSignals[] = ['label' => 'Guest count is visible', 'tone' => 'positive'];
+    } else {
+        $proposalSignals[] = ['label' => 'Guest count still needs anchoring', 'tone' => 'warning'];
+    }
+
+    if ($hasBrief && $hasServiceFocus) {
+        $proposalSignals[] = ['label' => 'Intent and service focus support proposal flow', 'tone' => 'positive'];
+        if ($hasValidEmail && ($hasArrival || $hasDeparture) && $hasGuests) {
+            $primaryProposal = 'Proposal-style reply looks viable';
+            $headline = 'Proposal posture looks stronger';
+            $summary = 'The record already carries enough usable context that operators can frame a clearer proposal-style reply from the inquiry screen.';
+            $toneBg = '#f6fbf8';
+            $toneBorder = '#d8eadf';
+        }
+    } else {
+        $proposalSignals[] = ['label' => 'Intent still needs shaping before proposal', 'tone' => 'warning'];
+    }
+
+    if ($latestTrailStamp) {
+        $proposalSignals[] = ['label' => 'Internal trail supports proposal continuity', 'tone' => 'neutral'];
+    } else {
+        $proposalSignals[] = ['label' => 'No internal proposal trail yet', 'tone' => 'warning'];
+        if ($primaryProposal === 'Proposal still needs shaping') {
+            $primaryProposal = 'Log internal context before proposal';
+        }
+    }
+
+    if ($status !== '') {
+        $proposalSignals[] = ['label' => 'Status: ' . $status, 'tone' => 'neutral'];
+    }
+    if ($requestedMode !== '') {
+        $proposalSignals[] = ['label' => 'Mode: ' . $requestedMode, 'tone' => 'neutral'];
+    }
+
+    $pillStyles = [
+        'positive' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+        'warning' => ['bg' => '#fff2d6', 'text' => '#7a5a1e'],
+        'neutral' => ['bg' => '#edf3fb', 'text' => '#31496e'],
+    ];
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Proposal readiness</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Primary proposal: <?= e($primaryProposal) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Focus: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Internal trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?>
+        </span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">
+        <?php foreach ($proposalSignals as $signal): ?>
+            <?php $pill = $pillStyles[$signal['tone']] ?? $pillStyles['neutral']; ?>
+            <span style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:800;">
+                <?= e($signal['label']) ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not build a proposal automatically or change workflow state. It helps the operator judge whether the record is still in clarification mode or is structured enough for a more proposal-style reply posture.
+    </div>
+</div>
