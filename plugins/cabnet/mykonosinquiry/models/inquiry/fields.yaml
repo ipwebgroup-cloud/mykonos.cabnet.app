@@ -141,3 +141,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_timing_strip.htm
         span: full
 
+
+    follow_up_ownership:
+        label: Follow-Up Ownership
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_follow_up_ownership_strip.htm
+        span: full
+
