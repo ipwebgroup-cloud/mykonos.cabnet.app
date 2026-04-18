@@ -253,3 +253,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_confidence_strip.htm
         span: full
 
+
+    decision_readiness:
+        label: Decision Readiness
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_decision_readiness_strip.htm
+        span: full
+
