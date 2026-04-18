@@ -2,10 +2,10 @@
 
 ## Current safe continuity hint
 
-### v6.90.00 — Inquiry record concierge-response checklist
+### v6.91.00 — Inquiry record reply-draft framing strip
 Included in the current safe backend polish line:
-- concierge-response checklist strip added to inquiry records
-- operators can now move from email context into concrete first-reply handling from one backend screen
+- reply-draft framing strip added to inquiry records
+- operators can now move from checklist readiness into a clearer first-response structure from one backend screen
 - backend-only guidance upgrade without changing /plan, queue logic, or schema
 
 ### Current plugin-tracked baseline

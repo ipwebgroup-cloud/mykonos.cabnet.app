@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v6.90.00 inquiry record concierge-response checklist`
+- `v6.91.00 inquiry record reply-draft framing strip`
 
 ## Current verified development direction
 

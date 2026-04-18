@@ -1,0 +1,95 @@
+<?php
+    $record = $this->formGetModel();
+
+    $guestName = trim((string) ($record->full_name ?? 'Guest'));
+    $guestEmail = trim((string) ($record->email ?? ''));
+    $requestedMode = trim((string) ($record->requested_mode ?? ''));
+    $details = trim((string) ($record->details ?? ''));
+    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
+    $departureDate = trim((string) ($record->departure_date ?? ''));
+    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
+
+    $opener = 'Thank you for contacting Mykonos Luxury Tours & Concierge.';
+    if ($guestName !== '' && $guestName !== 'Guest') {
+        $opener = 'Hello ' . $guestName . ', thank you for contacting Mykonos Luxury Tours & Concierge.';
+    }
+
+    $availabilityAngle = 'We are reviewing the essentials of your request and preparing the most useful next steps for your stay.';
+    if ($arrivalDate !== '' || $departureDate !== '') {
+        $availabilityAngle = 'We are reviewing your travel timing and service priorities so the next reply can align around your stay dates.';
+    }
+
+    $clarifier = 'To shape the best next proposal, we may confirm a few details around arrival timing, guest count, and service priorities.';
+    if ($details !== '' && !empty($serviceList)) {
+        $clarifier = 'Your saved brief already points toward ' . $serviceSummary . ', so the next reply can stay focused while clarifying only the most important missing details.';
+    }
+
+    $closeLine = 'You can reply directly to this email and our team will continue the planning flow from there.';
+    if ($guestEmail === '' || !filter_var($guestEmail, FILTER_VALIDATE_EMAIL)) {
+        $closeLine = 'Before sending a real reply, confirm the guest email address so the response channel is clearly valid.';
+    }
+
+    $draftHeadline = 'First-reply framing is ready';
+    $draftSummary = 'This strip converts inquiry context into a practical hospitality-style reply frame so operators can move from checklist readiness into a cleaner first draft without leaving the inquiry record.';
+    $toneBg = '#f8fbff';
+    $toneBorder = '#dce5f4';
+
+    if ($details === '' || empty($serviceList)) {
+        $draftHeadline = 'First-reply framing still needs a little guidance';
+        $draftSummary = 'The inquiry can still be answered, but operators should use the frame below to acknowledge the request and then ask for the most useful clarifying detail first.';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Reply draft framing</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($draftHeadline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($draftSummary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            Draft-ready guidance
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Guest: <?= e($guestName !== '' ? $guestName : 'Guest') ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Focus: <?= e($serviceSummary) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Opening line</div>
+            <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($opener) ?></div>
+        </div>
+
+        <div style="padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Availability angle</div>
+            <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($availabilityAngle) ?></div>
+        </div>
+
+        <div style="padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Clarifying bridge</div>
+            <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($clarifier) ?></div>
+        </div>
+
+        <div style="padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Closing direction</div>
+            <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($closeLine) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not send mail or create a reply automatically. It helps operators shape a stronger first draft from the saved inquiry context before replying through their mailbox workflow.
+    </div>
+</div>

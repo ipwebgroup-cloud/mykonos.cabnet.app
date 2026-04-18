@@ -120,3 +120,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_concierge_response_checklist.htm
         span: full
 
+
+    reply_draft_framing:
+        label: Reply Draft Framing
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reply_draft_framing_strip.htm
+        span: full
+
