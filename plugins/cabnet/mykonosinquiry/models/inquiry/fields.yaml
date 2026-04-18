@@ -162,3 +162,10 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_internal_escalation_strip.htm
         span: full
 
+
+    internal_urgency:
+        label: Internal Urgency
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_internal_urgency_strip.htm
+        span: full
+
