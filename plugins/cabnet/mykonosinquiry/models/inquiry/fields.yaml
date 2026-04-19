@@ -316,3 +316,11 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_readiness_evidence_strip.htm
         span: full
+
+
+    closure_to_reopen_decision:
+        label: Closure to Reopen Decision
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_to_reopen_decision_strip.htm
+        span: full
+

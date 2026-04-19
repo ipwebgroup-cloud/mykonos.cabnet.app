@@ -4,7 +4,7 @@
 
 The latest delivered continuity hint to verify is approximately:
 
-- `v7.18.00 inquiry record reopen-readiness evidence strip`
+- `v7.19.00 inquiry record closure-to-reopen decision strip`
 
 ## Current verified development direction
 
@@ -17,4 +17,4 @@ The current backend line is focused on:
 - avoiding speculative architecture rewrites
 - improving operator self-guidance in larger safe steps when requested
 - keeping major updates away from the live /plan bridge unless a real public fix is needed
-- strengthening closure, continuity, and reopen review from the inquiry record before adding new workflow actions
+- strengthening closure, continuity, reopen review, and decision posture from the inquiry record before adding new workflow actions

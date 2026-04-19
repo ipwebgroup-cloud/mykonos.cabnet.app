@@ -1,3 +1,9 @@
+## v7.19.00 — Inquiry Record Closure-to-Reopen Decision Strip
+- adds a compact **Closure to Reopen Decision** strip directly to the backend inquiry record
+- compares closure evidence against current reopen signals and gives one concise operator decision layer
+- helps operators choose whether to stay active, remain closed, or reopen deliberately from the same screen
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v7.18.00 — Inquiry Record Reopen Readiness Evidence Strip
 - adds a compact **Reopen Readiness Evidence** strip directly to the backend inquiry record
 - compares closure trail, latest internal note cue, ownership, and next checkpoint before a record is returned to active handling
