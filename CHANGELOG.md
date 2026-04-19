@@ -604,3 +604,10 @@
 - translates the recommended queue move into a timing verdict: timely, conditionally timely, or too early
 - surfaces timing window, watch-before-moving guidance, and next timing checkpoint
 - backend-only, render-only, no schema change, no /plan behavior change
+
+
+## v7.32.00 - inquiry record queue action timing recap strip
+- added Queue Action Timing Recap strip to the inquiry record
+- combines recommended queue move, risk posture, and safest timing into one end-of-chain operator recap
+- surfaces why the move matters, operator cue, and final continuity snapshot
+- backend-only, render-only, no schema change, no /plan behavior change

@@ -1,0 +1,138 @@
+<?php
+$record = $formModel ?? $model ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string)($record->status ?? '')));
+$priority = strtolower(trim((string)($record->priority ?? '')));
+$owner = trim((string)($record->owner_name ?? $record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string)($record->closed_reason ?? ''));
+
+$noteText = '';
+if (method_exists($record, 'notes') && $record->notes()) {
+    $latestNote = $record->notes()->orderBy('created_at', 'desc')->first();
+    if ($latestNote) {
+        $noteText = trim((string)($latestNote->note ?? $latestNote->body ?? ''));
+    }
+}
+
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosureReason = $closedReason !== '';
+$hasClosureTrail = !empty($closedAt) || $hasClosureReason;
+$hasNote = $noteText !== '';
+
+$isClosed = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true) || !empty($closedAt);
+$isUrgent = in_array($priority, ['high', 'urgent', 'critical'], true);
+
+$queueAction = 'Keep active and enrich continuity first';
+if ($isClosed && $hasClosureTrail && !$hasNote) {
+    $queueAction = 'Remain closed and document the closure memory';
+} elseif ($isClosed && $hasClosureTrail && $hasNote && ($hasOwner || $hasLastContacted)) {
+    $queueAction = 'Reopen deliberately only if a real next move exists';
+} elseif (!$isClosed && $hasOwner && ($hasFollowUp || $hasLastContacted)) {
+    $queueAction = 'Proceed with the active queue move';
+}
+
+$risk = 'Moderate';
+$riskReason = 'The recommended move still depends on one more visible continuity anchor before it is fully settled.';
+$timing = 'Not yet';
+$timingWindow = 'Stabilize one more continuity anchor before taking the recommended move.';
+$operatorCue = 'Treat the next documented touchpoint as the gate for moving the record.';
+$recap = 'Pause the move, stabilize the next visible anchor, then re-check the queue posture.';
+
+if ($queueAction === 'Keep active and enrich continuity first') {
+    $risk = 'Medium';
+    $riskReason = 'Moving the record too assertively can hide that continuity is still thin.';
+    $timing = 'Too early';
+    $timingWindow = $hasOwner ? 'Wait until the next note or dated checkpoint is visible.' : 'Wait until ownership is visible first.';
+    $operatorCue = 'Keep the record active, but use the next continuity anchor as the true timing gate.';
+    $recap = 'Do not escalate the queue move yet; strengthen continuity first.';
+} elseif ($queueAction === 'Remain closed and document the closure memory') {
+    $risk = $hasClosureReason ? 'Low to medium' : 'High';
+    $riskReason = $hasClosureReason ? 'Closing is mostly safe, but closure memory still needs one readable note.' : 'Closing can create future confusion when the closure reason is still thin.';
+    $timing = $hasClosureReason ? 'Almost timely' : 'Premature';
+    $timingWindow = $hasClosureReason ? 'Timely after one final closure note.' : 'Capture the closure reason before treating the record as settled.';
+    $operatorCue = 'Preserve a readable closure trail before considering the queue move complete.';
+    $recap = 'Keep the record closed, but finish the closure memory before considering it safely settled.';
+} elseif ($queueAction === 'Reopen deliberately only if a real next move exists') {
+    $risk = ($hasFollowUp || $hasLastContacted) ? 'Moderate' : 'High';
+    $riskReason = ($hasFollowUp || $hasLastContacted) ? 'Reopening is viable only while the next touchpoint is still grounded and dated.' : 'Reopening can be arbitrary when no live next move is visible.';
+    $timing = ($hasFollowUp || $hasLastContacted) ? 'Conditionally timely' : 'Too early';
+    $timingWindow = ($hasFollowUp || $hasLastContacted) ? 'Timely only if the next active touch remains real.' : 'Set the next real touchpoint before reopening.';
+    $operatorCue = 'Reopen only when the next move is documented, not implied.';
+    $recap = 'Do not reopen on memory alone; reopen only against a visible next touchpoint.';
+} elseif ($queueAction === 'Proceed with the active queue move') {
+    $risk = $isUrgent ? 'Moderate' : 'Low';
+    $riskReason = $isUrgent ? 'The move is timely, but urgency can cause the next checkpoint to be skipped.' : 'The move is safe as long as continuity stays visible after acting.';
+    $timing = $isUrgent ? 'Timely but watch closely' : 'Timely now';
+    $timingWindow = $hasFollowUp ? 'Timely because ownership and the next checkpoint are both visible.' : 'Timely now, but add the next checkpoint immediately after acting.';
+    $operatorCue = 'Act now, then preserve the next continuity checkpoint immediately.';
+    $recap = 'Proceed with the queue move now, but keep the next checkpoint visible so continuity stays intact.';
+}
+
+$pillBg = '#eff6ff';
+$pillColor = '#1d4ed8';
+if (stripos($timing, 'Timely') !== false && stripos($timing, 'Too early') === false) {
+    $pillBg = '#ecfdf5';
+    $pillColor = '#166534';
+} elseif (stripos($timing, 'Premature') !== false || stripos($timing, 'Too early') !== false) {
+    $pillBg = '#fff7ed';
+    $pillColor = '#92400e';
+}
+
+$anchorStates = [
+    'Queue action' => $queueAction,
+    'Risk level' => $risk,
+    'Timing verdict' => $timing,
+    'Owner visible' => $hasOwner ? 'Yes' : 'No',
+    'Next checkpoint' => $hasFollowUp ? 'Visible' : 'Missing',
+];
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3ea;border-radius:14px;padding:18px 20px;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);box-shadow:0 10px 24px rgba(15,23,42,.05);margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Queue Action Timing Recap</div>
+                <h4 style="margin:6px 0 0;font-size:20px;line-height:1.25;color:#0f172a;font-weight:700;">One final summary of queue move, risk, and timing</h4>
+            </div>
+            <div style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:<?= e($pillBg) ?>;color:<?= e($pillColor) ?>;font-size:12px;font-weight:700;">
+                <?= e($timing) ?>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px;">
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Recommended queue move</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#0f172a;"><?= e($queueAction) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Risk and timing</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><strong><?= e($risk) ?></strong> risk &middot; <?= e($timingWindow) ?></div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Why this matters</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#7c2d12;"><?= e($riskReason) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Operator cue</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($operatorCue) ?></div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">End-of-chain recap</div>
+            <div style="margin-top:8px;font-size:15px;line-height:1.75;color:#0f172a;"><?= e($recap) ?></div>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px;">
+                <?php foreach ($anchorStates as $label => $value): ?>
+                    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;background:#f8fafc;">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;"><?= e($label) ?></div>
+                        <div style="margin-top:6px;font-size:13px;font-weight:700;color:#0f172a;"><?= e($value) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

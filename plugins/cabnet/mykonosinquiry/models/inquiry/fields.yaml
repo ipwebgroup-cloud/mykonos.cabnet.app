@@ -396,3 +396,10 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_safest_queue_action_timing_strip.htm
         span: full
+
+
+    queue_action_timing_recap:
+        label: Queue Action Timing Recap
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_queue_action_timing_recap_strip.htm
+        span: full
