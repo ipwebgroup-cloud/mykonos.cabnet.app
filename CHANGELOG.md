@@ -559,3 +559,11 @@
 - no theme import required
 - no /plan behavior change
 
+
+## v7.26.00 inquiry record why pause first strip
+- added a backend-only Why Pause First strip
+- explains the shortest route back to a safe proceed state when the record still fails the minimum-evidence threshold
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

@@ -360,3 +360,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proceed_or_pause_recommendation_strip.htm
         span: full
+
+    why_pause_first:
+        label: Why Pause First
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_why_pause_first_strip.htm
+        span: full

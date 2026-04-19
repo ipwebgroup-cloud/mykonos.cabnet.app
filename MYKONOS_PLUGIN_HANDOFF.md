@@ -4,8 +4,8 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.24.00 inquiry record minimum evidence to proceed strip`
-- plugin tracking `2.4.32`
+- `v7.26.00 inquiry record why pause first strip`
+- plugin tracking `2.4.34`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
 It adds a compact Minimum Evidence to Proceed strip directly to the inquiry record so operators can quickly see whether the smallest acceptable anchor set for the current posture is already visible before they act.
@@ -28,3 +28,6 @@ Then verify:
 - Latest patch line: v7.25.00 inquiry record proceed-or-pause recommendation strip
 - New record strip added after Minimum Evidence to Proceed: Proceed or Pause Recommendation
 
+
+- Latest patch line: v7.26.00 inquiry record why pause first strip
+- New record strip added after Proceed or Pause Recommendation: Why Pause First

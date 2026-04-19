@@ -1,7 +1,7 @@
 # Mykonos Cabnet
 
 Latest rooted patch prepared in this line:
-- `v7.24.00 inquiry record minimum evidence to proceed strip`
+- `v7.26.00 inquiry record why pause first strip`
 
 This patch is backend-only, render-safe, and adds one more inquiry-record guidance strip without changing schema, `/plan`, SMTP, or queue logic.
 
@@ -26,3 +26,5 @@ Deployment:
 - run `php artisan cache:clear`
 
 - v7.25.00 adds a backend-only Proceed or Pause Recommendation strip after Minimum Evidence to Proceed.
+
+- v7.26.00 adds a backend-only Why Pause First strip after Proceed or Pause Recommendation.
