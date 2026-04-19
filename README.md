@@ -1,10 +1,10 @@
 # Mykonos Cabnet Inquiry Patch Line
 
 Latest rooted patch prepared in this workspace:
-- `v7.20.00 inquiry record closure-decision audit strip`
+- `v7.21.00 inquiry record next best action after decision strip`
 
 This patch is backend-only and render-safe.
-It adds a compact Closure Decision Audit strip to the inquiry record so operators can see why the current record posture reads as active, remain closed, document before reopen, or reopen deliberately.
+It adds a compact Next Best Action After Decision strip to the inquiry record so operators can see the single safest immediate move after the closure-versus-reopen posture has already been assessed.
 
 Operational posture:
 - no schema change

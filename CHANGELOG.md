@@ -525,3 +525,9 @@
 - added a compact read-only **Closure Decision Audit** strip to the inquiry record
 - explains in plain operator language why the current posture reads as stay active, remain closed, document before reopen, or reopen deliberately
 - keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
+
+
+## v7.21.00 — Inquiry Record Next Best Action After Decision Strip
+- added a compact read-only **Next Best Action After Decision** strip to the inquiry record
+- turns the current closure-versus-reopen posture into one safest immediate move, including do-now, avoid-now, and operator-cue guidance
+- keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
