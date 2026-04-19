@@ -30,3 +30,8 @@ Default next step if no live bug is shown:
 - continue backend-only inquiry record scanability and operator guidance
 - prefer one small render-only strip at a time
 - avoid duplicate panels and avoid touching stable public flows
+
+
+- Latest verified patch line: v7.25.00 inquiry record proceed-or-pause recommendation strip
+- Latest added record strip: Proceed or Pause Recommendation
+

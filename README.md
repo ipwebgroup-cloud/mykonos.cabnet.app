@@ -24,3 +24,5 @@ Operational posture:
 Deployment:
 - upload rooted files preserving `mykonos.cabnet.app/...`
 - run `php artisan cache:clear`
+
+- v7.25.00 adds a backend-only Proceed or Pause Recommendation strip after Minimum Evidence to Proceed.

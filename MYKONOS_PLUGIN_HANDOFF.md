@@ -23,3 +23,8 @@ Then verify:
 - a new Evidence Gap Priority strip appears on the inquiry record
 - the strip shows the threshold count, missing essentials, and anchor set based on the current posture
 - Minimum Evidence to Proceed, Evidence Gap Priority, Action Confidence Check, Next Best Action After Decision, Closure Decision Audit, Closure to Reopen Decision, Reopen Readiness Evidence, Closure History Evidence, Closure Readiness, Operator Action Recap, Final Readiness, Operator Priority Recap, Workflow Summary, Operator Summary Recap, and earlier strips remain visible
+
+
+- Latest patch line: v7.25.00 inquiry record proceed-or-pause recommendation strip
+- New record strip added after Minimum Evidence to Proceed: Proceed or Pause Recommendation
+

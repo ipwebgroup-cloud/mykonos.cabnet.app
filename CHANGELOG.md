@@ -549,3 +549,13 @@
 - added a compact read-only **Evidence Gap Priority** strip to the inquiry record
 - identifies the single missing continuity anchor that would most improve confidence first, plus the next-most-useful gap
 - keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
+
+
+## v7.25.00 inquiry record proceed-or-pause recommendation strip
+- added a backend-only Proceed or Pause Recommendation strip
+- converts the current posture and minimum-evidence threshold into one clear operator recommendation
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change
+

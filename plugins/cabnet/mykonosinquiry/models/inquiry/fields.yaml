@@ -354,3 +354,9 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_minimum_evidence_to_proceed_strip.htm
         span: full
 
+
+    proceed_or_pause_recommendation:
+        label: Proceed or Pause Recommendation
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proceed_or_pause_recommendation_strip.htm
+        span: full
