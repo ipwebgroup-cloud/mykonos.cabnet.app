@@ -302,3 +302,17 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_readiness_strip.htm
         span: full
 
+
+    closure_history_evidence:
+        label: Closure History Evidence
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_history_evidence_strip.htm
+        span: full
+
+
+
+    reopen_readiness_evidence:
+        label: Reopen Readiness Evidence
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_reopen_readiness_evidence_strip.htm
+        span: full

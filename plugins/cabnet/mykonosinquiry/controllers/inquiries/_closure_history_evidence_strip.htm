@@ -1,0 +1,129 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $closedAt = !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Not closed';
+    $lastContacted = !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : 'No contact logged';
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $followUp = !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+    $noteCount = 0;
+
+    if (method_exists($model, 'notes')) {
+        $noteCount = (int) $model->notes()->count();
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 220) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 217) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasClosedReason = $closedReason !== '';
+    $hasInternalEvidence = $latestNoteBody !== '';
+    $hasTouchEvidence = !empty($model->last_contacted_at);
+
+    $evidenceCount = 0;
+    foreach ([$hasClosedReason, $hasInternalEvidence, $hasTouchEvidence] as $flag) {
+        if ($flag) {
+            $evidenceCount++;
+        }
+    }
+
+    $headline = 'Closure evidence is visible enough to scan quickly.';
+    $summary = 'This strip compares closure reason, latest internal note, and latest touchpoint so the operator can tell whether the closure memory is still readable without opening the full timeline first.';
+    $cue = 'Evidence scan first';
+    $tone = ['bg' => '#f8fbff', 'border' => '#dce5f4', 'eyebrow' => '#51627f'];
+
+    if ($isClosed && $hasClosedReason && $hasInternalEvidence) {
+        $headline = 'Closure evidence looks anchored.';
+        $summary = 'The record already carries a visible closure reason and an internal note trail, so future review is less likely to depend on operator memory alone.';
+        $cue = 'Closure memory is readable';
+        $tone = ['bg' => '#f6fbf8', 'border' => '#d8eadf', 'eyebrow' => '#25543f'];
+    } elseif ($isClosed && !$hasClosedReason && !$hasInternalEvidence) {
+        $headline = 'Closed posture exists, but closure memory is too thin.';
+        $summary = 'The queue can read as closed while the underlying why is still missing. Add one closure reason or one internal note before this record fades into guesswork.';
+        $cue = 'Add explicit closure memory';
+        $tone = ['bg' => '#fffaf1', 'border' => '#f0e0bf', 'eyebrow' => '#7a5a1e'];
+    } elseif (!$isClosed) {
+        $headline = 'This record is still active, so closure evidence is only preparatory.';
+        $summary = 'Keep using this strip as a future closure checkpoint. For now it mainly shows whether the current trail will still make sense later if the inquiry pauses, closes, or reopens.';
+        $cue = 'Keep active trail readable';
+        $tone = ['bg' => '#f8fafc', 'border' => '#cbd5e1', 'eyebrow' => '#475569'];
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($tone['border']) ?>;border-radius:18px;background:<?= e($tone['bg']) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($tone['eyebrow']) ?>;margin-bottom:6px;">Closure history evidence</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($cue) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Evidence anchors: <?= e((string) $evidenceCount) ?>/3
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Status: <?= e($statusLabel) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Owner: <?= e($owner) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Ref: <?= e($reference) ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($hasClosedReason ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Closure reason</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($hasClosedReason ? $closedReason : 'No closure reason is saved on the record yet.') ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Closed at: <?= e($closedAt) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($hasInternalEvidence ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Latest internal note</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($hasInternalEvidence ? $latestNoteBody : 'No internal note excerpt is available yet for future closure review.') ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Trail: <?= e($latestNoteStamp) ?> · Notes: <?= e((string) $noteCount) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($hasTouchEvidence ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Touchpoint memory</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;">Last contacted: <?= e($lastContacted) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Follow-up: <?= e($followUp) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($tone['border']) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not close, reopen, or rewrite the record. It helps the operator compare the closure reason, latest internal note, and latest touchpoint before trusting the record to sit closed or to be reopened later.
+    </div>
+</div>

@@ -1,3 +1,15 @@
+## v7.18.00 — Inquiry Record Reopen Readiness Evidence Strip
+- adds a compact **Reopen Readiness Evidence** strip directly to the backend inquiry record
+- compares closure trail, latest internal note cue, ownership, and next checkpoint before a record is returned to active handling
+- helps operators avoid reopening an inquiry on guesswork alone
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
+## v7.17.00 — Inquiry Record Closure History Evidence Strip
+- adds a compact **Closure History Evidence** strip directly to the backend inquiry record
+- compares closure reason, latest internal note trail, and latest guest-touch memory from one screen
+- helps operators judge whether a closed or paused record will still make sense later without opening the full timeline first
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v5.7.0 — Referral Readiness Workspace
 - adds a new **Referrals** tab to the backend inquiry update screen
 - introduces a composite **Referral Readiness Workspace** panel for turning trusted service continuity into readable referral readiness instead of leaving network-fit logic buried in retrospective memory
