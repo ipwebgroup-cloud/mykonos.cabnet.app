@@ -1,7 +1,7 @@
 # Mykonos Cabnet
 
 Latest rooted patch prepared in this workspace:
-- `v7.29.00 inquiry record recommended queue action summary strip`
+- `v7.30.00 inquiry record queue move risk summary strip`
 
 This patch is backend-only, render-safe, and adds one more inquiry-record guidance strip without changing schema, `/plan`, SMTP, or queue logic.
 
@@ -17,10 +17,12 @@ Deployment:
 - upload rooted files preserving `mykonos.cabnet.app/...`
 - run `php artisan cache:clear`
 
-## v7.29.00 inquiry record recommended queue action summary strip
+## v7.30.00 inquiry record queue move risk summary strip
 - added backend-only render-safe guidance strip: Recommended Queue Action Summary
 - translates the end-of-chain proceed readiness recap into the single safest queue-handling move
 - no schema change
 - no plugin refresh required
 - no theme import required
 - no /plan behavior change
+
+- Queue Move Risk Summary

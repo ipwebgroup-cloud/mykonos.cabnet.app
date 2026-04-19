@@ -22,3 +22,5 @@ When continuing:
 2. verify the latest strip line already present
 3. recommend the smallest safe next backend-only step
 4. produce a rooted zip patch only for that next step
+
+- Queue Move Risk Summary

@@ -591,3 +591,9 @@
 - no plugin refresh required
 - no theme import required
 - no /plan behavior change
+
+## v7.30.00 - inquiry record queue move risk summary strip
+- added Queue Move Risk Summary strip to the inquiry record
+- translates the recommended queue action into the main early-move risk
+- surfaces avoid-now guidance, risk reduction cue, and anchor visibility
+- backend-only, render-only, no schema change, no /plan behavior change

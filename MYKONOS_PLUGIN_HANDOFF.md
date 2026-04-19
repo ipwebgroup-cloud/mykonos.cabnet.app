@@ -4,7 +4,7 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.29.00 inquiry record recommended queue action summary strip`
+- `v7.30.00 inquiry record queue move risk summary strip`
 - plugin tracking `2.4.37`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
@@ -23,3 +23,5 @@ Then verify:
 - a new Recommended Queue Action Summary strip appears on the inquiry record after Proceed Readiness Summary
 - the strip shows queue action, why this queue move, avoid-now guidance, and required anchors
 - earlier closure/reopen guidance strips remain visible
+
+- Queue Move Risk Summary

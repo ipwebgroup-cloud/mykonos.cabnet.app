@@ -384,3 +384,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recommended_queue_action_summary_strip.htm
         span: full
+
+    queue_move_risk_summary:
+        label: Queue Move Risk Summary
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_queue_move_risk_summary_strip.htm
+        span: full
