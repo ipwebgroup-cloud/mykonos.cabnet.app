@@ -1,0 +1,170 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $priorityLabel = !empty($model->priority_label)
+        ? $model->priority_label
+        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $closedAt = !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Not closed';
+    $lastContacted = !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : 'No contact logged';
+    $followUp = !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+    $hasClosedReason = $closedReason !== '';
+    $hasOwner = $owner !== 'Not assigned';
+    $hasRecentTouch = !empty($model->last_contacted_at);
+    $hasFollowUp = !empty($model->follow_up_date);
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+
+    if (method_exists($model, 'notes')) {
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 140) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 137) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasInternalCue = $latestNoteBody !== '';
+    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+
+    $closureEvidenceScore = 0;
+    foreach ([$hasClosedReason, $hasInternalCue, $hasRecentTouch] as $flag) {
+        if ($flag) {
+            $closureEvidenceScore++;
+        }
+    }
+
+    $reopenSignalScore = 0;
+    foreach ([$hasOwner, $hasFollowUp, $hasRecentTouch, $hasLinkedLoyalty] as $flag) {
+        if ($flag) {
+            $reopenSignalScore++;
+        }
+    }
+
+    $decision = 'Stay active';
+    if ($isClosed) {
+        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
+            $decision = 'Reopen deliberately';
+        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
+            $decision = 'Remain closed';
+        } else {
+            $decision = 'Document before reopen';
+        }
+    }
+
+    $confidenceScore = 0;
+    foreach ([$hasOwner, $hasInternalCue, $hasRecentTouch, $hasFollowUp] as $flag) {
+        if ($flag) {
+            $confidenceScore++;
+        }
+    }
+    if ($isClosed && $hasClosedReason) {
+        $confidenceScore++;
+    }
+    if ($hasLinkedLoyalty) {
+        $confidenceScore++;
+    }
+
+    $confidenceLabel = 'Fragile';
+    if ($confidenceScore >= 5) {
+        $confidenceLabel = 'Strong';
+    } elseif ($confidenceScore >= 3) {
+        $confidenceLabel = 'Moderate';
+    }
+
+    $eyebrow = '#c2410c';
+    $toneBg = '#fff7ed';
+    $toneBorder = '#fed7aa';
+    $confidenceSummary = 'The current recommended move is still lightly supported, so one missing anchor could change the posture quickly.';
+    $stabilityLine = 'Add the missing owner, note, or dated checkpoint before treating the current recommendation as reliable.';
+    $watchLine = 'Watch for missing ownership, weak note memory, or an undated next step.';
+
+    if ($confidenceLabel === 'Moderate') {
+        $eyebrow = '#7a5a1e';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0e0bf';
+        $confidenceSummary = 'The current recommended move has usable support, but one or two anchors still matter if the record is revisited later.';
+        $stabilityLine = 'Keep the visible cues intact so the recommendation still makes sense when another operator opens the file later.';
+        $watchLine = 'Watch for drift between status, latest note, owner visibility, and the next dated checkpoint.';
+    } elseif ($confidenceLabel === 'Strong') {
+        $eyebrow = '#25543f';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+        $confidenceSummary = 'The current recommended move is well supported by visible continuity cues on the record.';
+        $stabilityLine = 'Preserve the same visible anchors and the recommended move should remain stable even if handling changes hands.';
+        $watchLine = 'Watch mainly for new guest signals or deliberate state changes rather than basic continuity gaps.';
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($eyebrow) ?>;margin-bottom:6px;">Action confidence check</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($confidenceLabel) ?> support for the current next move</div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($confidenceSummary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($decision) ?> · <?= e($confidenceLabel) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Status: <?= e($statusLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Priority: <?= e($priorityLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Ref: <?= e($reference) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Owner: <?= e($owner) ?></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Support level</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($stabilityLine) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Follow-up: <?= e($followUp) ?> · Last contacted: <?= e($lastContacted) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Watch next</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($watchLine) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Closed at: <?= e($closedAt) ?><?= $closedReason !== '' ? ' · Reason: ' . e($closedReason) : '' ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Visible anchors</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;">
+                <?= e($hasOwner ? 'Owner visible.' : 'Owner missing.') ?>
+                <?= e($hasInternalCue ? 'Internal note visible.' : 'Internal note thin or missing.') ?>
+                <?= e($hasFollowUp ? 'Dated checkpoint visible.' : 'No dated checkpoint visible.') ?>
+            </div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;"><?= e($hasInternalCue ? $latestNoteBody : 'No concise internal note is visible yet.') ?> · Note: <?= e($latestNoteStamp) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not change status, reopen the inquiry, close it, or write notes. It only shows how strongly the currently recommended next move is supported by visible continuity anchors on the record.
+        <?= $hasLinkedLoyalty ? ' A linked loyalty record is visible, which slightly strengthens continuity confidence for future handling.' : ' No linked loyalty record is visible here, so inquiry-side continuity anchors carry more weight.' ?>
+    </div>
+</div>

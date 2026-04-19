@@ -3,7 +3,7 @@
 You are continuing development of the Mykonos Cabnet OctoberCMS inquiry project from the latest verified backend-only strip line.
 
 Latest verified rooted patch line:
-- `v7.21.00 inquiry record next best action after decision strip`
+- `v7.22.00 inquiry record action confidence check strip`
 
 Current posture:
 - backend-only render-safe operator guidance
@@ -22,6 +22,7 @@ Already present near the end of the inquiry record sequence:
 - Closure to Reopen Decision
 - Closure Decision Audit
 - Next Best Action After Decision
+- Action Confidence Check
 
 Default next step if no live bug is shown:
 - continue backend-only inquiry record scanability and operator guidance

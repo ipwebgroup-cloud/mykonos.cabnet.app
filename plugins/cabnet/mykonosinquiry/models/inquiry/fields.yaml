@@ -336,3 +336,9 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_next_best_action_after_decision_strip.htm
         span: full
 
+    action_confidence_check:
+        label: Action Confidence Check
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_action_confidence_check_strip.htm
+        span: full
+

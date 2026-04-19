@@ -1,10 +1,10 @@
 # Mykonos Cabnet Inquiry Patch Line
 
 Latest rooted patch prepared in this workspace:
-- `v7.21.00 inquiry record next best action after decision strip`
+- `v7.22.00 inquiry record action confidence check strip`
 
 This patch is backend-only and render-safe.
-It adds a compact Next Best Action After Decision strip to the inquiry record so operators can see the single safest immediate move after the closure-versus-reopen posture has already been assessed.
+It adds a compact Action Confidence Check strip to the inquiry record so operators can quickly see whether the current recommended next move is strongly supported or still fragile.
 
 Operational posture:
 - no schema change

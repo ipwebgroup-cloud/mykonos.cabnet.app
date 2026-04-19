@@ -1,3 +1,9 @@
+## v7.22.00 — Inquiry Record Action Confidence Check Strip
+- adds a compact **Action Confidence Check** strip directly to the backend inquiry record
+- shows whether the currently recommended next move is strongly supported, moderately supported, or still fragile
+- helps operators judge whether the visible owner, note, dated checkpoint, and closure context are strong enough to trust the current posture
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v7.19.00 — Inquiry Record Closure-to-Reopen Decision Strip
 - adds a compact **Closure to Reopen Decision** strip directly to the backend inquiry record
 - compares closure evidence against current reopen signals and gives one concise operator decision layer

@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.21.00 inquiry record next best action after decision strip`
-- plugin tracking `2.4.29`
+- `v7.22.00 inquiry record action confidence check strip`
+- plugin tracking `2.4.30`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
-It adds a compact Next Best Action After Decision strip directly to the inquiry record so operators can see the single safest immediate move after the current closure-versus-reopen posture is already visible.
+It adds a compact Action Confidence Check strip directly to the inquiry record so operators can quickly see whether the currently recommended next move is strongly supported or still fragile.
 
 ## Deployment note
 
@@ -20,6 +20,6 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - open Backend -> Inquiries -> any real inquiry record
-- a new Next Best Action After Decision strip appears on the inquiry record
-- the strip shows a do-now move, avoid-now caution, and operator cue based on the current posture
-- Closure Decision Audit, Closure to Reopen Decision, Reopen Readiness Evidence, Closure History Evidence, Closure Readiness, Operator Action Recap, Final Readiness, Operator Priority Recap, Workflow Summary, Operator Summary Recap, and earlier strips remain visible
+- a new Action Confidence Check strip appears on the inquiry record
+- the strip shows a confidence label, support guidance, and visible anchor check based on the current posture
+- Next Best Action After Decision, Closure Decision Audit, Closure to Reopen Decision, Reopen Readiness Evidence, Closure History Evidence, Closure Readiness, Operator Action Recap, Final Readiness, Operator Priority Recap, Workflow Summary, Operator Summary Recap, and earlier strips remain visible
