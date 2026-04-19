@@ -1,0 +1,223 @@
+<?php
+$record = $formModel ?? $model ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string)($record->status ?? '')));
+$priority = strtolower(trim((string)($record->priority ?? '')));
+$owner = trim((string)($record->owner_name ?? $record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string)($record->closed_reason ?? ''));
+$arrivalDate = $record->arrival_date ?? null;
+$departureDate = $record->departure_date ?? null;
+
+$noteText = '';
+if (method_exists($record, 'notes') && $record->notes()) {
+    $latestNote = $record->notes()->orderBy('created_at', 'desc')->first();
+    if ($latestNote) {
+        $noteText = trim((string)($latestNote->note ?? $latestNote->body ?? ''));
+    }
+}
+
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosureReason = $closedReason !== '';
+$hasClosureTrail = !empty($closedAt) || $hasClosureReason;
+$hasNote = $noteText !== '';
+$hasTripDates = !empty($arrivalDate) || !empty($departureDate);
+
+$isClosed = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true) || !empty($closedAt);
+$isUrgent = in_array($priority, ['high', 'urgent', 'critical'], true);
+
+$queueAction = 'Keep active and enrich continuity first';
+if ($isClosed && $hasClosureTrail && !$hasNote) {
+    $queueAction = 'Remain closed and document the closure memory';
+} elseif ($isClosed && $hasClosureTrail && $hasNote && ($hasOwner || $hasLastContacted)) {
+    $queueAction = 'Reopen deliberately only if a real next move exists';
+} elseif (!$isClosed && $hasOwner && ($hasFollowUp || $hasLastContacted)) {
+    $queueAction = 'Proceed with the active queue move';
+}
+
+$anchors = [
+    'Owner visibility' => $hasOwner,
+    'Internal note memory' => $hasNote,
+    'Next checkpoint' => $hasFollowUp,
+    'Last contact anchor' => $hasLastContacted,
+    'Closure trail' => $hasClosureTrail,
+    'Trip dates' => $hasTripDates,
+];
+
+$topGap = 'Internal note memory';
+$secondaryGap = $hasOwner ? 'Next checkpoint' : 'Owner visibility';
+$scoreLift = 18;
+$recoverFirst = 'Add a concise internal note that explains the current reality of the inquiry.';
+$whyItMatters = 'A readable note makes the recommended queue move more trustworthy for the next operator.';
+
+if (!$hasOwner) {
+    $topGap = 'Owner visibility';
+    $secondaryGap = $hasNote ? 'Next checkpoint' : 'Internal note memory';
+    $scoreLift = 22;
+    $recoverFirst = 'Assign visible ownership before trusting any active queue move.';
+    $whyItMatters = 'Accountability is the biggest missing anchor when ownership is still invisible.';
+} elseif (!$hasNote) {
+    $topGap = 'Internal note memory';
+    $secondaryGap = !$hasFollowUp ? 'Next checkpoint' : 'Last contact anchor';
+    $scoreLift = 18;
+    $recoverFirst = 'Add a short note that states what changed, what is true now, and what should happen next.';
+    $whyItMatters = 'The narrative anchor is still too thin for the current queue recommendation.';
+} elseif ($queueAction === 'Proceed with the active queue move' && !$hasFollowUp) {
+    $topGap = 'Next checkpoint';
+    $secondaryGap = !$hasLastContacted ? 'Last contact anchor' : 'Trip dates';
+    $scoreLift = 16;
+    $recoverFirst = 'Add the next dated follow-up checkpoint before or immediately after acting.';
+    $whyItMatters = 'A visible dated checkpoint is the fastest way to stabilize an active move.';
+} elseif ($queueAction === 'Reopen deliberately only if a real next move exists' && !$hasLastContacted) {
+    $topGap = 'Last contact anchor';
+    $secondaryGap = !$hasFollowUp ? 'Next checkpoint' : 'Trip dates';
+    $scoreLift = 15;
+    $recoverFirst = 'Record the last real guest or partner touchpoint before reopening.';
+    $whyItMatters = 'A reopen move is still thin without a visible touchpoint supporting it.';
+} elseif ($queueAction === 'Remain closed and document the closure memory' && !$hasClosureReason) {
+    $topGap = 'Closure trail';
+    $secondaryGap = !$hasNote ? 'Internal note memory' : 'Owner visibility';
+    $scoreLift = 20;
+    $recoverFirst = 'Document the closure reason in plain operator language.';
+    $whyItMatters = 'The closure move remains fragile if the reason cannot be read later.';
+} elseif (!$hasTripDates && !$isClosed) {
+    $topGap = 'Trip dates';
+    $secondaryGap = !$hasFollowUp ? 'Next checkpoint' : 'Last contact anchor';
+    $scoreLift = 10;
+    $recoverFirst = 'Add at least one trip timing anchor so the next move has a clearer planning horizon.';
+    $whyItMatters = 'Timing anchors are the fastest remaining way to reduce avoidable guesswork.';
+}
+
+$currentScore = 28;
+if ($hasOwner) { $currentScore += 16; }
+if ($hasNote) { $currentScore += 18; }
+if ($hasFollowUp) { $currentScore += 14; }
+if ($hasLastContacted) { $currentScore += 12; }
+if ($hasClosureTrail) { $currentScore += 10; }
+if ($hasTripDates) { $currentScore += 8; }
+if ($queueAction === 'Proceed with the active queue move') { $currentScore += 6; }
+if ($isUrgent && !$hasFollowUp) { $currentScore -= 6; }
+$currentScore = max(0, min(100, $currentScore));
+$projectedOneFixScore = max(0, min(100, $currentScore + $scoreLift));
+
+$readyAfterOneFix = false;
+if ($projectedOneFixScore >= 72) {
+    if ($queueAction === 'Proceed with the active queue move') {
+        $readyAfterOneFix = $hasOwner && $hasNote && ($hasFollowUp || $topGap === 'Next checkpoint') && ($hasLastContacted || $hasFollowUp || $topGap === 'Last contact anchor');
+    } elseif ($queueAction === 'Reopen deliberately only if a real next move exists') {
+        $readyAfterOneFix = $hasNote && $hasClosureTrail && ($hasLastContacted || $topGap === 'Last contact anchor') && ($hasOwner || $topGap === 'Owner visibility');
+    } elseif ($queueAction === 'Remain closed and document the closure memory') {
+        $readyAfterOneFix = ($hasClosureReason || $topGap === 'Closure trail') && ($hasNote || $topGap === 'Internal note memory');
+    } else {
+        $readyAfterOneFix = $hasOwner || $topGap === 'Owner visibility';
+    }
+}
+
+if ($readyAfterOneFix) {
+    return;
+}
+
+$liftByGap = [
+    'Owner visibility' => 16,
+    'Internal note memory' => 18,
+    'Next checkpoint' => 14,
+    'Last contact anchor' => 12,
+    'Closure trail' => 10,
+    'Trip dates' => 8,
+];
+$secondaryLift = $liftByGap[$secondaryGap] ?? 10;
+$projectedTwoFixScore = max(0, min(100, $projectedOneFixScore + $secondaryLift));
+
+$secondFixAction = [
+    'Owner visibility' => 'Make ownership explicit on the record.',
+    'Internal note memory' => 'Add a concise internal note describing the current state and next move.',
+    'Next checkpoint' => 'Add a dated follow-up checkpoint the next operator can trust.',
+    'Last contact anchor' => 'Record the last real touchpoint with the guest or partner.',
+    'Closure trail' => 'Write the closure reason in plain operator language.',
+    'Trip dates' => 'Add at least one travel timing anchor to reduce guesswork.',
+];
+
+$secondFix = $secondFixAction[$secondaryGap] ?? 'Add the next missing continuity anchor.';
+$twoFixVerdict = $projectedTwoFixScore >= 72 ? 'Two fixes should make the move ready' : 'Even after two fixes, re-check before acting';
+$verdictBg = $projectedTwoFixScore >= 72 ? '#ecfdf5' : '#fff7ed';
+$verdictColor = $projectedTwoFixScore >= 72 ? '#166534' : '#9a3412';
+
+$whyOneFixFails = 'The top recovery gap matters, but the record is still missing a second anchor that supports trust in the recommended queue move.';
+if (!$hasOwner && !$hasNote) {
+    $whyOneFixFails = 'Ownership and narrative memory are both still missing, so one correction alone would leave the move too thin.';
+} elseif (!$hasFollowUp && !$hasLastContacted && !$isClosed) {
+    $whyOneFixFails = 'The active move still lacks both a next checkpoint and a recent touchpoint anchor, so one fix alone is not enough.';
+} elseif ($isClosed && !$hasClosureReason && !$hasNote) {
+    $whyOneFixFails = 'The closure posture still lacks both readable reason and readable memory, so one fix cannot safely carry the record.';
+}
+
+$afterFirstFix = 'Resolve “' . $topGap . '” first, then immediately address “' . $secondaryGap . '” before executing the queue move.';
+$watchUntilReady = $projectedTwoFixScore >= 72
+    ? 'After the second fix, confirm the queue recommendation still matches the current inquiry reality.'
+    : 'After the second fix, reassess the record because another missing anchor may still be limiting trust.';
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3ea;border-radius:14px;padding:18px 20px;background:linear-gradient(180deg,#fff 0%,#fffaf5 100%);box-shadow:0 10px 24px rgba(15,23,42,.05);margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Not Ready After One Fix</div>
+                <h4 style="margin:6px 0 0;font-size:20px;line-height:1.25;color:#0f172a;font-weight:700;">If one fix is not enough, what is the shortest two-step recovery path?</h4>
+            </div>
+            <div style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:<?= e($verdictBg) ?>;color:<?= e($verdictColor) ?>;font-size:12px;font-weight:700;">
+                <?= e($twoFixVerdict) ?> · <?= e($projectedTwoFixScore) ?>/100
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px;">
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Why one fix still fails</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($whyOneFixFails) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Current queue move</div>
+                <div style="margin-top:6px;font-size:14px;font-weight:700;color:#0f172a;"><?= e($queueAction) ?></div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Fix 1</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#7c2d12;"><?= e($topGap) ?></div>
+                <div style="margin-top:8px;font-size:14px;line-height:1.65;color:#334155;"><?= e($recoverFirst) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Projected score</div>
+                <div style="margin-top:6px;font-size:14px;font-weight:700;color:#0f172a;"><?= e($currentScore) ?>/100 → <?= e($projectedOneFixScore) ?>/100</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Fix 2</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#0f172a;"><?= e($secondaryGap) ?></div>
+                <div style="margin-top:8px;font-size:14px;line-height:1.65;color:#334155;"><?= e($secondFix) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Projected two-fix score</div>
+                <div style="margin-top:6px;font-size:14px;font-weight:700;color:#166534;"><?= e($projectedTwoFixScore) ?>/100</div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;">
+                <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f8fafc;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;">After first fix</div>
+                    <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($afterFirstFix) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f8fafc;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;">Why this path</div>
+                    <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($whyItMatters) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f8fafc;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;">Watch until ready</div>
+                    <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($watchUntilReady) ?></div>
+                </div>
+                <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f8fafc;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;">Anchors already visible</div>
+                    <div style="margin-top:6px;font-size:14px;font-weight:700;color:#0f172a;"><?= count(array_filter($anchors)) ?>/<?= count($anchors) ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

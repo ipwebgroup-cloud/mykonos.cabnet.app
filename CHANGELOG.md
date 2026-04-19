@@ -1,3 +1,7 @@
+
+## v7.36.00 inquiry record not ready after one fix strip
+- added `Not Ready After One Fix` to show the shortest two-step recovery path when one fix alone is still not enough to safely execute the recommended queue move.
+
 ## v7.24.00 — Inquiry Record Minimum Evidence to Proceed Strip
 - adds a compact **Minimum Evidence to Proceed** strip directly to the backend inquiry record
 - shows whether the smallest acceptable anchor set for the current closure/reopen posture is already visible

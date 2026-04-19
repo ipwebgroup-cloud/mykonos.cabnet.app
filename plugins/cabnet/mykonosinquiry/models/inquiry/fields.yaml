@@ -421,3 +421,10 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_ready_after_one_fix_strip.htm
         span: full
+
+
+    not_ready_after_one_fix:
+        label: Not Ready After One Fix
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_not_ready_after_one_fix_strip.htm
+        span: full

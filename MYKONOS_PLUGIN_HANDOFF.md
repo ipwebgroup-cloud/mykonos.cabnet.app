@@ -44,3 +44,5 @@ Then verify:
 - no plugin refresh required
 - no theme import required
 - no /plan behavior change
+
+- Latest patch line: `v7.36.00 inquiry record not ready after one fix strip`
