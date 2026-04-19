@@ -26,3 +26,12 @@ Deployment:
 - no /plan behavior change
 
 - Queue Move Risk Summary
+
+
+## v7.31.00 inquiry record safest queue action timing strip
+- added backend-only render-safe guidance strip: Safest Queue Action Timing
+- translates the recommended queue move into the safest timing verdict for the operator
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

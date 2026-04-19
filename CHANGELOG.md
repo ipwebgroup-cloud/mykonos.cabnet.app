@@ -597,3 +597,10 @@
 - translates the recommended queue action into the main early-move risk
 - surfaces avoid-now guidance, risk reduction cue, and anchor visibility
 - backend-only, render-only, no schema change, no /plan behavior change
+
+
+## v7.31.00 - inquiry record safest queue action timing strip
+- added Safest Queue Action Timing strip to the inquiry record
+- translates the recommended queue move into a timing verdict: timely, conditionally timely, or too early
+- surfaces timing window, watch-before-moving guidance, and next timing checkpoint
+- backend-only, render-only, no schema change, no /plan behavior change

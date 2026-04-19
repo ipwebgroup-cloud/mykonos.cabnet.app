@@ -5,7 +5,7 @@ You are continuing development of the **Mykonos Cabnet OctoberCMS inquiry projec
 Treat the latest uploaded files in the chat as the primary source of truth.
 
 Latest verified rooted patch line:
-- `v7.28.00 inquiry record proceed readiness summary strip`
+- `v7.31.00 inquiry record safest queue action timing strip`
 
 Current safe direction:
 - backend-only operator productivity
@@ -23,4 +23,10 @@ When continuing:
 3. recommend the smallest safe next backend-only step
 4. produce a rooted zip patch only for that next step
 
-- Queue Move Risk Summary
+## v7.31.00 inquiry record safest queue action timing strip
+- added backend-only render-safe guidance strip: Safest Queue Action Timing
+- translates the recommended queue move into the safest timing verdict for the operator
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

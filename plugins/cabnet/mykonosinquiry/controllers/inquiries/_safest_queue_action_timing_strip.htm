@@ -1,0 +1,127 @@
+<?php
+$record = $formModel ?? $model ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string)($record->status ?? '')));
+$priority = strtolower(trim((string)($record->priority ?? '')));
+$owner = trim((string)($record->owner_name ?? $record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string)($record->closed_reason ?? ''));
+
+$noteText = '';
+if (method_exists($record, 'notes') && $record->notes()) {
+    $latestNote = $record->notes()->orderBy('created_at', 'desc')->first();
+    if ($latestNote) {
+        $noteText = trim((string)($latestNote->note ?? $latestNote->body ?? ''));
+    }
+}
+
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosureReason = $closedReason !== '';
+$hasClosureTrail = !empty($closedAt) || $hasClosureReason;
+$hasNote = $noteText !== '';
+
+$isClosed = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true) || !empty($closedAt);
+$isUrgent = in_array($priority, ['high', 'urgent', 'critical'], true);
+
+$queueAction = 'Keep active and enrich continuity first';
+if ($isClosed && $hasClosureTrail && !$hasNote) {
+    $queueAction = 'Remain closed and document the closure memory';
+} elseif ($isClosed && $hasClosureTrail && $hasNote && ($hasOwner || $hasLastContacted)) {
+    $queueAction = 'Reopen deliberately only if a real next move exists';
+} elseif (!$isClosed && $hasOwner && ($hasFollowUp || $hasLastContacted)) {
+    $queueAction = 'Proceed with the active queue move';
+}
+
+$timing = 'Not yet';
+$window = 'Stabilize one more continuity anchor before taking the recommended move.';
+$watch = 'Watch whether the next operator touch is still being inferred instead of documented.';
+$nextCheckpoint = $hasFollowUp ? 'Use the current follow-up checkpoint as the next timing gate.' : 'Add a dated follow-up checkpoint before treating this move as timely.';
+
+if ($queueAction === 'Keep active and enrich continuity first') {
+    $timing = 'Too early';
+    $window = $hasOwner ? ($hasNote ? 'Wait until a dated contact or follow-up checkpoint is visible.' : 'Wait until a concise internal note is visible.') : 'Wait until ownership is visible first.';
+    $watch = 'The record can look active while still lacking enough continuity to support a real queue move.';
+    $nextCheckpoint = $hasFollowUp ? 'Re-check timing at the next follow-up checkpoint.' : 'Create the next checkpoint first, then re-evaluate timing.';
+} elseif ($queueAction === 'Remain closed and document the closure memory') {
+    $timing = $hasClosureReason ? 'Close-safe after one last note' : 'Premature to treat as settled';
+    $window = $hasClosureReason ? 'This move is timely once the closure memory is preserved in one final readable note.' : 'Capture the closure reason before treating the record as safely settled.';
+    $watch = 'A closed record without readable closure memory can still create future queue confusion.';
+    $nextCheckpoint = 'Re-check timing after the closure memory is fully documented.';
+} elseif ($queueAction === 'Reopen deliberately only if a real next move exists') {
+    $timing = ($hasFollowUp || $hasLastContacted) ? 'Conditionally timely' : 'Too early to reopen';
+    $window = ($hasFollowUp || $hasLastContacted) ? 'The move is timely only if the next live touch is still real and dated.' : 'Set a concrete next touchpoint before reopening.';
+    $watch = 'Reopening can be premature when the record is being revisited without a grounded next action.';
+    $nextCheckpoint = $hasFollowUp ? 'Treat the current follow-up date as the reopen timing gate.' : 'Set the reopen checkpoint first, then re-evaluate.';
+} elseif ($queueAction === 'Proceed with the active queue move') {
+    $timing = $isUrgent ? 'Timely but watch closely' : 'Timely now';
+    $window = $hasFollowUp ? 'The move is timely because the record has an owner and a visible next checkpoint.' : 'The move is timely, but add the next checkpoint immediately after acting.';
+    $watch = 'Moving too fast without preserving the next checkpoint can weaken continuity for the next touch.';
+    $nextCheckpoint = $hasFollowUp ? 'Current follow-up remains the timing anchor.' : 'Create the next checkpoint as part of the move.';
+}
+
+$timingColor = '#92400e';
+$timingBg = '#fff7ed';
+if (stripos($timing, 'Timely') !== false) {
+    $timingColor = '#166534';
+    $timingBg = '#ecfdf5';
+} elseif (stripos($timing, 'Conditionally') !== false || stripos($timing, 'watch') !== false || stripos($timing, 'Close-safe') !== false) {
+    $timingColor = '#1d4ed8';
+    $timingBg = '#eff6ff';
+}
+
+$anchors = [
+    'Owner' => $hasOwner ? 'Ready' : 'Missing',
+    'Internal note' => $hasNote ? 'Ready' : 'Missing',
+    'Follow-up' => $hasFollowUp ? 'Ready' : 'Missing',
+    'Last contacted' => $hasLastContacted ? 'Ready' : 'Missing',
+    'Closure trail' => $hasClosureTrail ? 'Ready' : 'Missing',
+];
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3ea;border-radius:14px;padding:18px 20px;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);box-shadow:0 10px 24px rgba(15,23,42,.05);margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Safest Queue Action Timing</div>
+                <h4 style="margin:6px 0 0;font-size:20px;line-height:1.25;color:#0f172a;font-weight:700;">When the recommended queue move is timely versus premature</h4>
+            </div>
+            <div style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:<?= e($timingBg) ?>;color:<?= e($timingColor) ?>;font-size:12px;font-weight:700;">
+                <?= e($timing) ?>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px;">
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Recommended queue action</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#0f172a;"><?= e($queueAction) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Timing window</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($window) ?></div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Watch before moving</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#7c2d12;"><?= e($watch) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Next timing checkpoint</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($nextCheckpoint) ?></div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Timing anchor readiness</div>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px;">
+                <?php foreach ($anchors as $label => $state): ?>
+                    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;background:#f8fafc;">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;"><?= e($label) ?></div>
+                        <div style="margin-top:6px;font-size:13px;font-weight:700;color:<?= $state === 'Ready' ? '#166534' : '#92400e' ?>;"><?= e($state) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

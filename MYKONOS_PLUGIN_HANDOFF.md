@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.30.00 inquiry record queue move risk summary strip`
-- plugin tracking `2.4.37`
+- `v7.31.00 inquiry record safest queue action timing strip`
+- plugin tracking `2.4.38`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
-It adds a compact Recommended Queue Action Summary strip directly to the inquiry record so operators can convert the full readiness recap into the safest queue-handling move.
+It adds a compact Safest Queue Action Timing strip directly to the inquiry record so operators can judge when the recommended queue move is timely versus premature.
 
 ## Deployment note
 
@@ -20,8 +20,6 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - open Backend -> Inquiries -> any real inquiry record
-- a new Recommended Queue Action Summary strip appears on the inquiry record after Proceed Readiness Summary
-- the strip shows queue action, why this queue move, avoid-now guidance, and required anchors
+- a new Safest Queue Action Timing strip appears on the inquiry record after Queue Move Risk Summary
+- the strip shows a timing verdict, timing window, watch-before-moving guidance, next timing checkpoint, and timing anchor readiness
 - earlier closure/reopen guidance strips remain visible
-
-- Queue Move Risk Summary

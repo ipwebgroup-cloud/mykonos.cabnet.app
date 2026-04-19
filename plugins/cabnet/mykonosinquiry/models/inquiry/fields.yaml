@@ -390,3 +390,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_queue_move_risk_summary_strip.htm
         span: full
+
+    safest_queue_action_timing:
+        label: Safest Queue Action Timing
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_safest_queue_action_timing_strip.htm
+        span: full
