@@ -342,3 +342,9 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_action_confidence_check_strip.htm
         span: full
 
+    evidence_gap_priority:
+        label: Evidence Gap Priority
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_evidence_gap_priority_strip.htm
+        span: full
+

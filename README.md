@@ -1,10 +1,10 @@
 # Mykonos Cabnet Inquiry Patch Line
 
 Latest rooted patch prepared in this workspace:
-- `v7.22.00 inquiry record action confidence check strip`
+- `v7.23.00 inquiry record evidence gap priority strip`
 
 This patch is backend-only and render-safe.
-It adds a compact Action Confidence Check strip to the inquiry record so operators can quickly see whether the current recommended next move is strongly supported or still fragile.
+It adds a compact Evidence Gap Priority strip to the inquiry record so operators can quickly see which single missing continuity anchor would most improve confidence first.
 
 Operational posture:
 - no schema change

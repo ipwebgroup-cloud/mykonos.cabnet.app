@@ -1,0 +1,210 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $priorityLabel = !empty($model->priority_label)
+        ? $model->priority_label
+        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $hasOwner = $owner !== 'Not assigned';
+    $hasClosedReason = $closedReason !== '';
+    $hasLastContacted = !empty($model->last_contacted_at);
+    $hasFollowUp = !empty($model->follow_up_date);
+    $hasEmail = trim((string) ($model->email ?? '')) !== '';
+    $hasArrival = !empty($model->arrival_date);
+
+    $lastContacted = $hasLastContacted ? $model->last_contacted_at->format('Y-m-d H:i') : 'No contact logged';
+    $followUp = $hasFollowUp ? $model->follow_up_date->format('Y-m-d') : 'No dated follow-up';
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+
+    if (method_exists($model, 'notes')) {
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 140) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 137) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasInternalCue = $latestNoteBody !== '';
+    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+
+    $decision = 'Stay active';
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+    $closureEvidenceScore = 0;
+    foreach ([$hasClosedReason, $hasInternalCue, $hasLastContacted] as $flag) {
+        if ($flag) {
+            $closureEvidenceScore++;
+        }
+    }
+    $reopenSignalScore = 0;
+    foreach ([$hasOwner, $hasFollowUp, $hasLastContacted, $hasLinkedLoyalty] as $flag) {
+        if ($flag) {
+            $reopenSignalScore++;
+        }
+    }
+    if ($isClosed) {
+        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
+            $decision = 'Reopen deliberately';
+        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
+            $decision = 'Remain closed';
+        } else {
+            $decision = 'Document before reopen';
+        }
+    }
+
+    $gaps = [];
+    if (!$hasOwner) {
+        $gaps[] = [
+            'title' => 'Owner visibility',
+            'why' => 'The record still lacks a visible assignee, so the next move can drift between operators.',
+            'gain' => 'Adding an owner immediately improves action confidence and handoff clarity.',
+            'hint' => 'Set a named owner before treating the current recommendation as stable.',
+            'weight' => 95,
+        ];
+    }
+    if (!$hasInternalCue) {
+        $gaps[] = [
+            'title' => 'Internal note memory',
+            'why' => 'There is no concise internal note explaining the latest operator reasoning.',
+            'gain' => 'A short internal note makes the decision trail readable when the record is reopened later.',
+            'hint' => 'Save a brief internal note that explains the current posture and why it was chosen.',
+            'weight' => 92,
+        ];
+    }
+    if (!$hasFollowUp) {
+        $gaps[] = [
+            'title' => 'Dated checkpoint',
+            'why' => 'The record has no dated follow-up anchor, so timing posture remains vague.',
+            'gain' => 'A dated checkpoint turns the current plan into an accountable next step.',
+            'hint' => 'Add a follow-up date if this inquiry is still active or may reopen soon.',
+            'weight' => 88,
+        ];
+    }
+    if ($isClosed && !$hasClosedReason) {
+        $gaps[] = [
+            'title' => 'Closure reason',
+            'why' => 'The inquiry looks closed but the closure reason is still thin or missing.',
+            'gain' => 'Adding a closure reason reduces unnecessary reopening and protects later review.',
+            'hint' => 'Record the closure reason before leaving the record settled.',
+            'weight' => 90,
+        ];
+    }
+    if (!$hasLastContacted) {
+        $gaps[] = [
+            'title' => 'Last-contact anchor',
+            'why' => 'No last-contact timestamp is visible, so recent guest touch is unclear.',
+            'gain' => 'A last-contact anchor helps timing, recovery, and reopen decisions stay grounded.',
+            'hint' => 'Update last contacted when a real guest touch has happened.',
+            'weight' => 84,
+        ];
+    }
+    if (!$hasLinkedLoyalty) {
+        $gaps[] = [
+            'title' => 'Loyalty continuity link',
+            'why' => 'No linked loyalty continuity is visible from this record.',
+            'gain' => 'A linked loyalty trail can strengthen confidence when repeat handling matters.',
+            'hint' => 'Use this only when a real continuity relationship exists; do not force it.',
+            'weight' => 52,
+        ];
+    }
+    if (!$hasEmail || !$hasArrival) {
+        $gaps[] = [
+            'title' => 'Core travel basics',
+            'why' => 'One or more basic guest anchors are still thin, which can weaken planning confidence.',
+            'gain' => 'Solid basics reduce ambiguity before shaping the next operator move.',
+            'hint' => 'Keep identity and trip anchors clean before escalating confidence.',
+            'weight' => 60,
+        ];
+    }
+
+    usort($gaps, function ($a, $b) {
+        return $b['weight'] <=> $a['weight'];
+    });
+
+    $topGap = $gaps[0] ?? null;
+    $secondaryGap = $gaps[1] ?? null;
+
+    $eyebrow = '#8a5a12';
+    $toneBg = '#fffaf1';
+    $toneBorder = '#f0dfbf';
+    $summary = 'One missing continuity anchor still matters more than the others. Resolve it first before chasing lower-value polish.';
+
+    if (!$topGap) {
+        $eyebrow = '#25543f';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+        $summary = 'The most important continuity anchors are already visible on the record, so there is no single obvious evidence gap dominating the posture.';
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($eyebrow) ?>;margin-bottom:6px;">Evidence gap priority</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($topGap ? $topGap['title'] . ' is the highest-value missing anchor' : 'No dominant evidence gap is visible right now') ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($decision) ?> · <?= e($statusLabel) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Ref: <?= e($reference) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Priority: <?= e($priorityLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Owner: <?= e($owner) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Follow-up: <?= e($followUp) ?></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Top gap</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($topGap ? $topGap['why'] : 'The record already shows the main continuity anchors that support closure, reopen, and next-action decisions.') ?></div>
+            <?php if ($topGap): ?>
+                <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Impact: <?= e($topGap['gain']) ?></div>
+            <?php else: ?>
+                <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Last contacted: <?= e($lastContacted) ?> · Note: <?= e($latestNoteStamp) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Resolve first</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($topGap ? $topGap['hint'] : 'Preserve the current anchors and only add more context when the live handling actually changes.') ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Latest note: <?= e($hasInternalCue ? $latestNoteBody : 'No concise internal note is visible yet.') ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Secondary gap</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($secondaryGap ? $secondaryGap['title'] . ': ' . $secondaryGap['why'] : 'No secondary gap clearly outranks the rest right now.') ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;"><?= e($secondaryGap ? $secondaryGap['hint'] : 'This suggests the record can be left as-is unless a real state change occurs.') ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not assign owners, add notes, set follow-up dates, reopen the inquiry, or change closure state. It only shows which visible continuity gap would most improve confidence first.
+        <?= $hasLinkedLoyalty ? ' A linked loyalty record is visible, so loyalty continuity is not treated as the main gap here unless stronger inquiry-side anchors are already present.' : ' No linked loyalty record is visible here, so inquiry-side anchors remain the main continuity source.' ?>
+    </div>
+</div>

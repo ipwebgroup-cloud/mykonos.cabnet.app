@@ -537,3 +537,9 @@
 - added a compact read-only **Next Best Action After Decision** strip to the inquiry record
 - turns the current closure-versus-reopen posture into one safest immediate move, including do-now, avoid-now, and operator-cue guidance
 - keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
+
+
+## v7.23.00 — Inquiry Record Evidence Gap Priority Strip
+- added a compact read-only **Evidence Gap Priority** strip to the inquiry record
+- identifies the single missing continuity anchor that would most improve confidence first, plus the next-most-useful gap
+- keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
