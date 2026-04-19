@@ -409,3 +409,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_queue_action_readiness_score_strip.htm
         span: full
+
+    score_recovery_priority:
+        label: Score Recovery Priority
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_score_recovery_priority_strip.htm
+        span: full

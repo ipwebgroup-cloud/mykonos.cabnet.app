@@ -33,3 +33,12 @@ When continuing:
 
 
 - v7.33.00 inquiry record queue action readiness score strip
+
+
+## v7.34.00 inquiry record score recovery priority strip
+- added backend-only render-safe guidance strip: Score Recovery Priority
+- identifies the single fastest missing anchor that would lift queue-action readiness next
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

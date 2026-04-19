@@ -4,8 +4,8 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.32.00 inquiry record queue action timing recap strip`
-- plugin tracking `2.4.39`
+- `v7.34.00 inquiry record score recovery priority strip`
+- plugin tracking `2.4.40`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
 It adds a compact Queue Action Timing Recap strip directly to the inquiry record so operators get one final summary combining the recommended queue move, main risk posture, and safest timing window.
@@ -26,3 +26,12 @@ Then verify:
 
 
 - v7.33.00 inquiry record queue action readiness score strip
+
+
+## v7.34.00 inquiry record score recovery priority strip
+- added backend-only render-safe guidance strip: Score Recovery Priority
+- identifies the single fastest missing anchor that would lift the queue-action readiness score next
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

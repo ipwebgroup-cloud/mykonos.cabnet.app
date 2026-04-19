@@ -1,0 +1,157 @@
+<?php
+$record = $formModel ?? $model ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string)($record->status ?? '')));
+$priority = strtolower(trim((string)($record->priority ?? '')));
+$owner = trim((string)($record->owner_name ?? $record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string)($record->closed_reason ?? ''));
+$arrivalDate = $record->arrival_date ?? null;
+$departureDate = $record->departure_date ?? null;
+
+$noteText = '';
+if (method_exists($record, 'notes') && $record->notes()) {
+    $latestNote = $record->notes()->orderBy('created_at', 'desc')->first();
+    if ($latestNote) {
+        $noteText = trim((string)($latestNote->note ?? $latestNote->body ?? ''));
+    }
+}
+
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosureReason = $closedReason !== '';
+$hasClosureTrail = !empty($closedAt) || $hasClosureReason;
+$hasNote = $noteText !== '';
+$hasTripDates = !empty($arrivalDate) || !empty($departureDate);
+
+$isClosed = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true) || !empty($closedAt);
+$isUrgent = in_array($priority, ['high', 'urgent', 'critical'], true);
+
+$queueAction = 'Keep active and enrich continuity first';
+if ($isClosed && $hasClosureTrail && !$hasNote) {
+    $queueAction = 'Remain closed and document the closure memory';
+} elseif ($isClosed && $hasClosureTrail && $hasNote && ($hasOwner || $hasLastContacted)) {
+    $queueAction = 'Reopen deliberately only if a real next move exists';
+} elseif (!$isClosed && $hasOwner && ($hasFollowUp || $hasLastContacted)) {
+    $queueAction = 'Proceed with the active queue move';
+}
+
+$anchors = [
+    'Owner visibility' => $hasOwner,
+    'Internal note memory' => $hasNote,
+    'Next checkpoint' => $hasFollowUp,
+    'Last contact anchor' => $hasLastContacted,
+    'Closure trail' => $hasClosureTrail,
+    'Trip dates' => $hasTripDates,
+];
+
+$topGap = 'Internal note memory';
+$priorityReason = 'Without a readable note, the operator has to infer too much from field state alone.';
+$scoreLift = '+18 readiness points';
+$doFirst = 'Add a concise internal note that explains the current reality of the inquiry.';
+$secondaryGap = $hasOwner ? 'Next checkpoint' : 'Owner visibility';
+
+if (!$hasOwner) {
+    $topGap = 'Owner visibility';
+    $priorityReason = 'A recommended move is still fragile if accountability is not visible on the record.';
+    $scoreLift = '+22 readiness points';
+    $doFirst = 'Assign visible ownership before trusting any active queue move.';
+    $secondaryGap = $hasNote ? 'Next checkpoint' : 'Internal note memory';
+} elseif (!$hasNote) {
+    $topGap = 'Internal note memory';
+    $priorityReason = 'The record needs a readable narrative anchor before the move can be trusted by the next operator.';
+    $scoreLift = '+18 readiness points';
+    $doFirst = 'Add a short note that states what changed, what is true now, and what should happen next.';
+    $secondaryGap = !$hasFollowUp ? 'Next checkpoint' : 'Last contact anchor';
+} elseif ($queueAction === 'Proceed with the active queue move' && !$hasFollowUp) {
+    $topGap = 'Next checkpoint';
+    $priorityReason = 'An active queue move gains most of its reliability from a visible dated next checkpoint.';
+    $scoreLift = '+16 readiness points';
+    $doFirst = 'Add the next dated follow-up checkpoint before or immediately after acting.';
+    $secondaryGap = !$hasLastContacted ? 'Last contact anchor' : 'Trip dates';
+} elseif ($queueAction === 'Reopen deliberately only if a real next move exists' && !$hasLastContacted) {
+    $topGap = 'Last contact anchor';
+    $priorityReason = 'Reopening is less credible when there is no visible recent touchpoint supporting the move.';
+    $scoreLift = '+15 readiness points';
+    $doFirst = 'Record the last real guest or partner touchpoint before reopening.';
+    $secondaryGap = !$hasFollowUp ? 'Next checkpoint' : 'Trip dates';
+} elseif ($queueAction === 'Remain closed and document the closure memory' && !$hasClosureReason) {
+    $topGap = 'Closure trail';
+    $priorityReason = 'A closed record is still weak if the closure reason is not readable later.';
+    $scoreLift = '+20 readiness points';
+    $doFirst = 'Document the closure reason in plain operator language.';
+    $secondaryGap = !$hasNote ? 'Internal note memory' : 'Owner visibility';
+} elseif (!$hasTripDates && !$isClosed) {
+    $topGap = 'Trip dates';
+    $priorityReason = 'Travel timing anchors improve the believability of the next move and reduce avoidable guesswork.';
+    $scoreLift = '+10 readiness points';
+    $doFirst = 'Add at least one trip timing anchor so the next move has a clearer planning horizon.';
+    $secondaryGap = !$hasFollowUp ? 'Next checkpoint' : 'Last contact anchor';
+}
+
+$readinessBand = 'Recover first';
+$bandBg = '#fff7ed';
+$bandColor = '#9a3412';
+if ($scoreLift === '+10 readiness points' || $scoreLift === '+15 readiness points') {
+    $readinessBand = 'Recover soon';
+    $bandBg = '#eff6ff';
+    $bandColor = '#1d4ed8';
+} elseif ($queueAction === 'Proceed with the active queue move' && $hasOwner && $hasNote && ($hasFollowUp || $hasLastContacted)) {
+    $readinessBand = 'Already close';
+    $bandBg = '#ecfdf5';
+    $bandColor = '#166534';
+}
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3ea;border-radius:14px;padding:18px 20px;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);box-shadow:0 10px 24px rgba(15,23,42,.05);margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Score Recovery Priority</div>
+                <h4 style="margin:6px 0 0;font-size:20px;line-height:1.25;color:#0f172a;font-weight:700;">The single fastest way to improve queue-action readiness</h4>
+            </div>
+            <div style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:<?= e($bandBg) ?>;color:<?= e($bandColor) ?>;font-size:12px;font-weight:700;">
+                <?= e($readinessBand) ?> · <?= e($scoreLift) ?>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px;">
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Recover first</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#0f172a;"><?= e($topGap) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Why this gap matters most</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($priorityReason) ?></div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Do this next</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#7c2d12;"><?= e($doFirst) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Then address</div>
+                <div style="margin-top:6px;font-size:14px;font-weight:700;color:#0f172a;"><?= e($secondaryGap) ?></div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Current queue move</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#0f172a;"><?= e($queueAction) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Estimated score lift</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#166534;"><?= e($scoreLift) ?></div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Recovery anchors</div>
+            <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:12px;">
+                <?php foreach ($anchors as $label => $ok): ?>
+                    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;background:#f8fafc;">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;"><?= e($label) ?></div>
+                        <div style="margin-top:6px;font-size:13px;font-weight:700;color:<?= $ok ? '#166534' : '#92400e' ?>;"><?= $ok ? 'Visible' : 'Missing' ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

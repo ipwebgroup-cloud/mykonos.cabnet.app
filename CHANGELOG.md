@@ -614,3 +614,10 @@
 
 
 - v7.33.00 inquiry record queue action readiness score strip
+
+
+## v7.34.00 - inquiry record score recovery priority strip
+- added Score Recovery Priority strip to the inquiry record
+- identifies the single fastest missing anchor that would lift queue-action readiness next
+- surfaces the top recovery gap, why it matters most, the next best fix, and the estimated score lift
+- backend-only, render-only, no schema change, no /plan behavior change

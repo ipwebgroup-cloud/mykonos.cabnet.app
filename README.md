@@ -47,3 +47,6 @@ Deployment:
 
 
 - v7.33.00 inquiry record queue action readiness score strip
+
+
+- v7.34.00 inquiry record score recovery priority strip
