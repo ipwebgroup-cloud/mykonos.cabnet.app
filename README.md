@@ -28,3 +28,10 @@ Deployment:
 - v7.25.00 adds a backend-only Proceed or Pause Recommendation strip after Minimum Evidence to Proceed.
 
 - v7.26.00 adds a backend-only Why Pause First strip after Proceed or Pause Recommendation.
+
+## v7.27.00 inquiry record fastest path to proceed strip
+- added backend-only render-safe guidance strip: Fastest Path to Proceed
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

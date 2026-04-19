@@ -366,3 +366,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_why_pause_first_strip.htm
         span: full
+
+    fastest_path_to_proceed:
+        label: Fastest Path to Proceed
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fastest_path_to_proceed_strip.htm
+        span: full

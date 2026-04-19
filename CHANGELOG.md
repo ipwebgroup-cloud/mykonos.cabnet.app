@@ -567,3 +567,10 @@
 - no plugin refresh required
 - no theme import required
 - no /plan behavior change
+
+## v7.27.00 inquiry record fastest path to proceed strip
+- added backend-only render-safe guidance strip: Fastest Path to Proceed
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change
