@@ -611,3 +611,6 @@
 - combines recommended queue move, risk posture, and safest timing into one end-of-chain operator recap
 - surfaces why the move matters, operator cue, and final continuity snapshot
 - backend-only, render-only, no schema change, no /plan behavior change
+
+
+- v7.33.00 inquiry record queue action readiness score strip

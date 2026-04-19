@@ -23,3 +23,6 @@ Then verify:
 - a new Queue Action Timing Recap strip appears on the inquiry record after Safest Queue Action Timing
 - the strip shows recommended queue move, risk and timing summary, why it matters, operator cue, and an end-of-chain recap
 - earlier closure/reopen guidance strips remain visible
+
+
+- v7.33.00 inquiry record queue action readiness score strip

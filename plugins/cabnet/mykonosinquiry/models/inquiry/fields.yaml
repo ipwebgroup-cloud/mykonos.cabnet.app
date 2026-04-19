@@ -403,3 +403,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_queue_action_timing_recap_strip.htm
         span: full
+
+    queue_action_readiness_score:
+        label: Queue Action Readiness Score
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_queue_action_readiness_score_strip.htm
+        span: full

@@ -1,0 +1,142 @@
+<?php
+$record = $formModel ?? $model ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string)($record->status ?? '')));
+$priority = strtolower(trim((string)($record->priority ?? '')));
+$owner = trim((string)($record->owner_name ?? $record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string)($record->closed_reason ?? ''));
+
+$noteText = '';
+if (method_exists($record, 'notes') && $record->notes()) {
+    $latestNote = $record->notes()->orderBy('created_at', 'desc')->first();
+    if ($latestNote) {
+        $noteText = trim((string)($latestNote->note ?? $latestNote->body ?? ''));
+    }
+}
+
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosureReason = $closedReason !== '';
+$hasClosureTrail = !empty($closedAt) || $hasClosureReason;
+$hasNote = $noteText !== '';
+
+$isClosed = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true) || !empty($closedAt);
+$isUrgent = in_array($priority, ['high', 'urgent', 'critical'], true);
+
+$queueAction = 'Keep active and enrich continuity first';
+if ($isClosed && $hasClosureTrail && !$hasNote) {
+    $queueAction = 'Remain closed and document the closure memory';
+} elseif ($isClosed && $hasClosureTrail && $hasNote && ($hasOwner || $hasLastContacted)) {
+    $queueAction = 'Reopen deliberately only if a real next move exists';
+} elseif (!$isClosed && $hasOwner && ($hasFollowUp || $hasLastContacted)) {
+    $queueAction = 'Proceed with the active queue move';
+}
+
+$score = 46;
+$scoreLabel = 'Borderline';
+$scoreReason = 'The recommended move is partially supported, but one or two continuity anchors still need to be visible.';
+$nextLift = 'Add the next missing anchor before acting with more confidence.';
+
+if ($queueAction === 'Keep active and enrich continuity first') {
+    $score = 38;
+    $scoreLabel = 'Low readiness';
+    $scoreReason = 'The queue move is still early because continuity is not yet strong enough to support a more decisive action.';
+    $nextLift = $hasOwner ? 'Add a note or dated checkpoint next.' : 'Make ownership visible first.';
+} elseif ($queueAction === 'Remain closed and document the closure memory') {
+    $score = $hasClosureReason ? 63 : 34;
+    $scoreLabel = $hasClosureReason ? 'Moderate readiness' : 'Low readiness';
+    $scoreReason = $hasClosureReason
+        ? 'The record is mostly ready to stay settled, but closure memory still needs a readable note.'
+        : 'The closure posture is too thin to trust without a readable closure reason.';
+    $nextLift = $hasClosureReason ? 'Add a concise closure note.' : 'Document the closure reason before treating the record as safely settled.';
+} elseif ($queueAction === 'Reopen deliberately only if a real next move exists') {
+    $score = ($hasFollowUp || $hasLastContacted) ? 61 : 36;
+    $scoreLabel = ($hasFollowUp || $hasLastContacted) ? 'Conditional readiness' : 'Low readiness';
+    $scoreReason = ($hasFollowUp || $hasLastContacted)
+        ? 'Reopening is viable, but only while the next active touchpoint is still visible and believable.'
+        : 'Reopening would still be guesswork because no active next move is visible.';
+    $nextLift = ($hasFollowUp || $hasLastContacted) ? 'Keep the next touchpoint visible after reopening.' : 'Document the next live touchpoint before reopening.';
+} elseif ($queueAction === 'Proceed with the active queue move') {
+    $score = $isUrgent ? 74 : 86;
+    $scoreLabel = $isUrgent ? 'Strong but watchful' : 'High readiness';
+    $scoreReason = $isUrgent
+        ? 'The move is ready, but urgency increases the risk of skipping the next checkpoint.'
+        : 'The move is well supported by visible continuity anchors and can proceed with confidence.';
+    $nextLift = $hasFollowUp ? 'Preserve the next checkpoint after acting.' : 'Add the next dated checkpoint immediately after acting.';
+}
+
+$anchorChecks = [
+    'Owner visible' => $hasOwner,
+    'Internal note visible' => $hasNote,
+    'Next checkpoint visible' => $hasFollowUp,
+    'Last contact visible' => $hasLastContacted,
+    'Closure trail visible' => $hasClosureTrail,
+];
+
+$solidCount = 0;
+foreach ($anchorChecks as $ok) {
+    if ($ok) {
+        $solidCount++;
+    }
+}
+
+$pillBg = '#fff7ed';
+$pillColor = '#9a3412';
+if ($score >= 80) {
+    $pillBg = '#ecfdf5';
+    $pillColor = '#166534';
+} elseif ($score >= 60) {
+    $pillBg = '#eff6ff';
+    $pillColor = '#1d4ed8';
+}
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3ea;border-radius:14px;padding:18px 20px;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);box-shadow:0 10px 24px rgba(15,23,42,.05);margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Queue Action Readiness Score</div>
+                <h4 style="margin:6px 0 0;font-size:20px;line-height:1.25;color:#0f172a;font-weight:700;">How ready the recommended queue move is right now</h4>
+            </div>
+            <div style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:<?= e($pillBg) ?>;color:<?= e($pillColor) ?>;font-size:12px;font-weight:700;">
+                <?= e($scoreLabel) ?> · <?= e((string)$score) ?>/100
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px;">
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Recommended move</div>
+                <div style="margin-top:6px;font-size:16px;font-weight:700;color:#0f172a;"><?= e($queueAction) ?></div>
+                <div style="margin-top:12px;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Anchor support</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e((string)$solidCount) ?> of <?= e((string)count($anchorChecks)) ?> visible anchors currently support the move.</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Why this score</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#7c2d12;"><?= e($scoreReason) ?></div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Lift the score</div>
+                <div style="margin-top:6px;font-size:14px;line-height:1.65;color:#334155;"><?= e($nextLift) ?></div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;">Readiness anchors</div>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px;">
+                <?php foreach ($anchorChecks as $label => $ok): ?>
+                    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;background:#f8fafc;">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:700;"><?= e($label) ?></div>
+                        <div style="margin-top:6px;font-size:13px;font-weight:700;color:<?= $ok ? '#166534' : '#92400e' ?>;"><?= $ok ? 'Visible' : 'Missing' ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
