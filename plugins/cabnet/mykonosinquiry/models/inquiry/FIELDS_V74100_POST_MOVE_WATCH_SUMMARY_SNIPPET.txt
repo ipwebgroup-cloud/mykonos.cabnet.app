@@ -1,0 +1,6 @@
+post_move_watch_summary_strip:
+    type: partial
+    tab: Internal
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_move_watch_summary_strip.htm
+    span: full
+    commentAbove: Post-move watch summary strip (v7.41.00). Mount this directly after Final Queue Move Confirmation.

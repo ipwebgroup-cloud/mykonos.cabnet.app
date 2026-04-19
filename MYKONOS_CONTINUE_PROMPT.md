@@ -1,12 +1,10 @@
-Continue from the real live Mykonos plugin state.
+Continue from the real live project state.
 
-Current safe additive line:
-- v7.40.00 inquiry record final queue move confirmation strip
+Latest prepared additive patch line:
+- v7.41.00 inquiry record post-move watch summary strip
 
 Rules:
-- backend-only
-- render-safe
-- additive
-- no blind overwrite of live fields.yaml
-- no /plan changes
-- no schema changes
+- inspect first
+- keep backend-only unless a real public bug exists
+- prefer render-safe additive patches
+- avoid blind overwrite of live `fields.yaml`

@@ -1,0 +1,108 @@
+<?php
+$record = $this->formGetModel();
+if (!$record) {
+    return;
+}
+
+$priority = strtolower((string) ($record->priority ?? ''));
+$status = strtolower((string) ($record->status ?? ''));
+$owner = trim((string) ($record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$note = trim((string) ($record->internal_note ?? ''));
+$hasNote = $note !== '';
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosedReason = $closedReason !== '';
+$closed = !empty($closedAt) || in_array($status, ['closed', 'won', 'lost'], true);
+
+$watchItem = 'Watch for the next visible operator checkpoint after the queue move.';
+$whyItMatters = 'A clean post-move watch point keeps the record from drifting after action is taken.';
+$timingCue = 'Review the record after the next expected operator touchpoint.';
+$driftRisk = 'Do not leave the record without a visible owner, note trail, or follow-up cue.';
+
+if ($closed) {
+    $watchItem = 'Watch for a fresh inbound guest signal before reopening the record.';
+    $whyItMatters = 'Closed records should stay settled unless a new guest cue or internal escalation appears.';
+    $timingCue = 'Check again only if a new contact event, message, or escalation appears.';
+    $driftRisk = 'Avoid reopening the record on assumption alone.';
+} elseif (!$hasFollowUp && $hasOwner) {
+    $watchItem = 'Set and watch the next dated follow-up checkpoint.';
+    $whyItMatters = 'A live owner without a dated checkpoint can still drift after the move.';
+    $timingCue = 'Review again as soon as the next follow-up date is visible.';
+    $driftRisk = 'Avoid assuming the move is complete without a dated next touchpoint.';
+} elseif (!$hasOwner && $hasFollowUp) {
+    $watchItem = 'Watch for ownership clarity after the queue move.';
+    $whyItMatters = 'A dated checkpoint helps, but the record still needs visible ownership to stay accountable.';
+    $timingCue = 'Review again once the next owner is explicitly visible.';
+    $driftRisk = 'Avoid leaving the record floating between operators.';
+} elseif ($hasOwner && $hasFollowUp) {
+    $watchItem = 'Watch the next owner-led follow-up checkpoint.';
+    $whyItMatters = 'The move is strongest when the next owner and next checkpoint are both visible.';
+    $timingCue = 'Review again at the next scheduled follow-up or after the next guest touch.';
+    $driftRisk = 'Avoid letting the note trail fall behind the real operator action.';
+}
+
+if ($priority === 'high' || $priority === 'urgent') {
+    $timingCue = 'Review earlier than normal because the record priority is elevated.';
+}
+
+$watchAnchors = [];
+foreach ([
+    'Owner visible' => $hasOwner,
+    'Internal note visible' => $hasNote,
+    'Follow-up visible' => $hasFollowUp,
+    'Last contacted visible' => $hasLastContacted,
+    'Closed reason visible' => $hasClosedReason,
+] as $label => $ok) {
+    $watchAnchors[] = ['label' => $label, 'ok' => $ok];
+}
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3f0;border-radius:14px;padding:18px;background:#ffffff;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div>
+                <h4 style="margin:0 0 6px;font-weight:700;">Post-Move Watch Summary</h4>
+                <p style="margin:0;color:#526173;">Single most important thing to monitor immediately after the queue move is taken.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:#eef3fb;color:#2d4f7c;font-weight:700;">
+                Watch next
+            </span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px;">
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Primary watch item</strong>
+                <span><?= e($watchItem) ?></span>
+            </div>
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Why it matters</strong>
+                <span><?= e($whyItMatters) ?></span>
+            </div>
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Timing cue</strong>
+                <span><?= e($timingCue) ?></span>
+            </div>
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Drift risk</strong>
+                <span><?= e($driftRisk) ?></span>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;">
+            <strong style="display:block;margin-bottom:8px;">Watch anchors</strong>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;">
+                <?php foreach ($watchAnchors as $item): ?>
+                    <div style="border:1px solid #e6edf5;border-radius:10px;padding:10px;background:<?= $item['ok'] ? '#f4fbf6' : '#fffaf2' ?>;">
+                        <span style="display:block;font-weight:600;"><?= e($item['label']) ?></span>
+                        <span style="color:#526173;"><?= $item['ok'] ? 'Visible' : 'Missing' ?></span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

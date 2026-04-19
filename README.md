@@ -1,10 +1,5 @@
-# Mykonos Cabnet
+# Mykonos Cabnet Patch v7.41.00
 
-## v7.40.00 inquiry record final queue move confirmation strip
+Backend-only additive patch for the inquiry operator workflow.
 
-Backend-only additive patch.
-
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no `/plan` behavior change
+This package adds the render-safe **Post-Move Watch Summary** strip and an install snippet for mounting it in the live inquiry `fields.yaml` without blindly replacing the current production file.
