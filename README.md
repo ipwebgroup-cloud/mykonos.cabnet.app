@@ -1,3 +1,10 @@
+# Mykonos Cabnet
+
+Latest rooted patch prepared in this line:
+- `v7.24.00 inquiry record minimum evidence to proceed strip`
+
+This patch is backend-only, render-safe, and adds one more inquiry-record guidance strip without changing schema, `/plan`, SMTP, or queue logic.
+
 # Mykonos Cabnet Inquiry Patch Line
 
 Latest rooted patch prepared in this workspace:

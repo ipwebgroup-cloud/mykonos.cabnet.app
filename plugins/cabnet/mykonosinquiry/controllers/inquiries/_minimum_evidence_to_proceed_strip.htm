@@ -1,0 +1,191 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $priorityLabel = !empty($model->priority_label)
+        ? $model->priority_label
+        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $hasOwner = $owner !== 'Not assigned';
+    $hasEmail = trim((string) ($model->email ?? '')) !== '';
+    $hasArrival = !empty($model->arrival_date);
+    $hasFollowUp = !empty($model->follow_up_date);
+    $hasLastContacted = !empty($model->last_contacted_at);
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $hasClosedReason = $closedReason !== '';
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+
+    if (method_exists($model, 'notes')) {
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 140) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 137) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasInternalCue = $latestNoteBody !== '';
+    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+
+    $decision = 'Stay active';
+    $closureEvidenceScore = 0;
+    foreach ([$hasClosedReason, $hasInternalCue, $hasLastContacted] as $flag) {
+        if ($flag) {
+            $closureEvidenceScore++;
+        }
+    }
+    $reopenSignalScore = 0;
+    foreach ([$hasOwner, $hasFollowUp, $hasLastContacted, $hasLinkedLoyalty] as $flag) {
+        if ($flag) {
+            $reopenSignalScore++;
+        }
+    }
+    if ($isClosed) {
+        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
+            $decision = 'Reopen deliberately';
+        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
+            $decision = 'Remain closed';
+        } else {
+            $decision = 'Document before reopen';
+        }
+    }
+
+    $requiredAnchors = [];
+    if ($decision === 'Stay active') {
+        $requiredAnchors = [
+            'Visible owner' => $hasOwner,
+            'Dated checkpoint' => $hasFollowUp,
+            'Contact path' => $hasEmail,
+            'Trip anchor' => $hasArrival,
+            'Internal note cue' => $hasInternalCue,
+        ];
+        $eyebrow = '#1f4f80';
+        $toneBg = '#f5f9ff';
+        $toneBorder = '#dbe8f7';
+        $summary = 'Active handling does not need everything, but it should not proceed without visible ownership, a dated checkpoint, and enough brief memory to avoid drift.';
+    } elseif ($decision === 'Reopen deliberately') {
+        $requiredAnchors = [
+            'Visible owner' => $hasOwner,
+            'Closure reason' => $hasClosedReason,
+            'Last-contact anchor' => $hasLastContacted,
+            'Dated checkpoint' => $hasFollowUp,
+            'Internal note cue' => $hasInternalCue,
+        ];
+        $eyebrow = '#7b4a12';
+        $toneBg = '#fff9f2';
+        $toneBorder = '#f0dfbf';
+        $summary = 'Reopening needs a readable bridge from why the record settled to why it is moving again. Do not reopen on momentum alone.';
+    } elseif ($decision === 'Remain closed') {
+        $requiredAnchors = [
+            'Closure reason' => $hasClosedReason,
+            'Internal note cue' => $hasInternalCue,
+            'Last-contact anchor' => $hasLastContacted,
+        ];
+        $eyebrow = '#25543f';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+        $summary = 'A closed posture needs enough closure memory to remain understandable later, even if no new action happens now.';
+    } else {
+        $requiredAnchors = [
+            'Closure reason' => $hasClosedReason,
+            'Internal note cue' => $hasInternalCue,
+            'Last-contact anchor' => $hasLastContacted,
+            'Visible owner' => $hasOwner,
+        ];
+        $eyebrow = '#8a5a12';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0dfbf';
+        $summary = 'Before acting further, the record needs the minimum anchors that explain what happened and who should own the next move.';
+    }
+
+    $metCount = 0;
+    $missingTitles = [];
+    foreach ($requiredAnchors as $title => $met) {
+        if ($met) {
+            $metCount++;
+        } else {
+            $missingTitles[] = $title;
+        }
+    }
+
+    $requiredCount = count($requiredAnchors);
+    $thresholdMet = $metCount >= $requiredCount;
+
+    $minimumLabel = $thresholdMet
+        ? 'Minimum evidence is present'
+        : 'Minimum evidence is still thin';
+
+    $proceedNow = $thresholdMet
+        ? 'The record has the smallest acceptable anchor set for the current posture.'
+        : 'One or more essential anchors are still missing, so acting now would lean on memory instead of the visible record.';
+
+    $missingList = !empty($missingTitles)
+        ? implode(' · ', $missingTitles)
+        : 'No essential anchors are missing right now.';
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($eyebrow) ?>;margin-bottom:6px;">Minimum evidence to proceed</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($minimumLabel) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($decision) ?> · <?= e($statusLabel) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Ref: <?= e($reference) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Priority: <?= e($priorityLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Owner: <?= e($owner) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Threshold: <?= e($metCount . '/' . $requiredCount) ?></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Proceed now</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($proceedNow) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Latest note stamp: <?= e($latestNoteStamp) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Missing first</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($missingList) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;"><?= e(!$thresholdMet ? 'Add the missing essentials before trusting the current recommendation as stable.' : 'No essential gap blocks the current posture right now.') ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Anchor set</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e(implode(' · ', array_keys($requiredAnchors))) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Loyalty continuity <?= $hasLinkedLoyalty ? 'is visible' : 'is not visible' ?>, but it is treated as supportive context rather than a hard requirement here.</div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not reopen the inquiry, set follow-up dates, add notes, assign an owner, or change closure state. It only shows whether the smallest acceptable evidence set for the current posture is already visible on the record.
+    </div>
+</div>

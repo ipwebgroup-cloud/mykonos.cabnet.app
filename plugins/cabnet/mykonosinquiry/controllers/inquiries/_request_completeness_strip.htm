@@ -53,8 +53,8 @@
     $recapLabel = $readyCount . '/' . count($checks) . ' core fields present';
 
     $pillStyles = [
-        True: ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'ready'],
-        False: ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'missing'],
+        true => ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'ready'],
+        false => ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'missing'],
     ];
 ?>
 <div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">

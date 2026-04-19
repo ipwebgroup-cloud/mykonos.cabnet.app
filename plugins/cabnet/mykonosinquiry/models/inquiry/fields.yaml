@@ -348,3 +348,9 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_evidence_gap_priority_strip.htm
         span: full
 
+    minimum_evidence_to_proceed:
+        label: Minimum Evidence to Proceed
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_minimum_evidence_to_proceed_strip.htm
+        span: full
+

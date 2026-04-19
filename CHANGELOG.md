@@ -1,3 +1,9 @@
+## v7.24.00 — Inquiry Record Minimum Evidence to Proceed Strip
+- adds a compact **Minimum Evidence to Proceed** strip directly to the backend inquiry record
+- shows whether the smallest acceptable anchor set for the current closure/reopen posture is already visible
+- helps operators avoid acting on memory alone when one or more essential anchors are still missing
+- keeps the update backend-only with no schema, backend list, quick-action, or public `/plan` change
+
 ## v7.22.00 — Inquiry Record Action Confidence Check Strip
 - adds a compact **Action Confidence Check** strip directly to the backend inquiry record
 - shows whether the currently recommended next move is strongly supported, moderately supported, or still fragile
