@@ -1,24 +1,19 @@
-# README
+# Mykonos Cabnet Inquiry Patch Line
 
-## Latest backend patch line
-- `v7.19.00 inquiry record closure-to-reopen decision strip`
-- plugin tracking `2.4.27`
+Latest rooted patch prepared in this workspace:
+- `v7.20.00 inquiry record closure-decision audit strip`
 
-# Mykonos Cabnet OctoberCMS Inquiry Platform
+This patch is backend-only and render-safe.
+It adds a compact Closure Decision Audit strip to the inquiry record so operators can see why the current record posture reads as active, remain closed, document before reopen, or reopen deliberately.
 
-## Current safe continuity hint
+Operational posture:
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no `/plan` behavior change
+- no queue logic change
+- no SMTP change
 
-### v7.19.00 — Inquiry record closure-to-reopen decision strip
-Included in the current safe backend polish line:
-- closure-to-reopen decision strip added to inquiry records
-- operators can now compare closure memory against current reopen signals and get one concise decision layer from the same record
-- backend-only guidance upgrade without changing /plan, queue logic, or schema
-
-### v7.17.00 — Inquiry record closure-history evidence strip
-Included in the current safe backend polish line:
-- closure-history evidence strip added to inquiry records
-- operators can now compare closure reason, latest internal note trail, and latest touchpoint memory before trusting a record to sit closed
-- backend-only guidance upgrade without changing /plan, queue logic, or schema
-
-### Current plugin-tracked baseline
-- `2.4.26`
+Deployment:
+- upload rooted files preserving `mykonos.cabnet.app/...`
+- run `php artisan cache:clear`

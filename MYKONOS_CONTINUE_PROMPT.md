@@ -1,20 +1,28 @@
 # MYKONOS_CONTINUE_PROMPT.md
 
-## Current known line to verify
+You are continuing development of the Mykonos Cabnet OctoberCMS inquiry project from the latest verified backend-only strip line.
 
-The latest delivered continuity hint to verify is approximately:
+Latest verified rooted patch line:
+- `v7.20.00 inquiry record closure-decision audit strip`
 
-- `v7.19.00 inquiry record closure-to-reopen decision strip`
+Current posture:
+- backend-only render-safe operator guidance
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change
+- no queue logic change
+- no SMTP change
 
-## Current verified development direction
+Already present near the end of the inquiry record sequence:
+- Operator Action Recap
+- Closure Readiness
+- Closure History Evidence
+- Reopen Readiness Evidence
+- Closure to Reopen Decision
+- Closure Decision Audit
 
-The current backend line is focused on:
-- keeping the Inquiry Queue usable and faster to scan
-- keeping the Loyalty Continuity Workspace readable in plain language
-- keeping help/docs/glossary on the dedicated backend docs page
-- preserving render safety and business continuity
-- making changes plugin-only where possible
-- avoiding speculative architecture rewrites
-- improving operator self-guidance in larger safe steps when requested
-- keeping major updates away from the live /plan bridge unless a real public fix is needed
-- strengthening closure, continuity, reopen review, and decision posture from the inquiry record before adding new workflow actions
+Default next step if no live bug is shown:
+- continue backend-only inquiry record scanability and operator guidance
+- prefer one small render-only strip at a time
+- avoid duplicate panels and avoid touching stable public flows

@@ -324,3 +324,9 @@ fields:
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_to_reopen_decision_strip.htm
         span: full
 
+    closure_decision_audit:
+        label: Closure Decision Audit
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_closure_decision_audit_strip.htm
+        span: full
+

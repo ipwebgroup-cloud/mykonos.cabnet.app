@@ -1,0 +1,165 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $priorityLabel = !empty($model->priority_label)
+        ? $model->priority_label
+        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $closedAt = !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Not closed';
+    $lastContacted = !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : 'No contact logged';
+    $followUp = !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
+
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+    $hasClosedReason = $closedReason !== '';
+    $hasOwner = $owner !== 'Not assigned';
+    $hasRecentTouch = !empty($model->last_contacted_at);
+    $hasFollowUp = !empty($model->follow_up_date);
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+
+    if (method_exists($model, 'notes')) {
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 170) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 167) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasInternalCue = $latestNoteBody !== '';
+    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+
+    $closureEvidenceScore = 0;
+    foreach ([$hasClosedReason, $hasInternalCue, $hasRecentTouch] as $flag) {
+        if ($flag) {
+            $closureEvidenceScore++;
+        }
+    }
+
+    $reopenSignalScore = 0;
+    foreach ([$hasOwner, $hasFollowUp, $hasRecentTouch, $hasLinkedLoyalty] as $flag) {
+        if ($flag) {
+            $reopenSignalScore++;
+        }
+    }
+
+    $decision = 'Stay active';
+    $auditHeadline = 'The record is still active, so keep the next move visible instead of forcing a closure verdict.';
+    $auditSummary = 'This audit explains why the current posture reads as active, closed, or reopen-worthy using only what is already visible on the record.';
+    $tone = ['bg' => '#f8fafc', 'border' => '#cbd5e1', 'eyebrow' => '#475569'];
+    $reasonOne = 'The current status is not in a closed family, so active continuity still outranks closure interpretation.';
+    $reasonTwo = 'A live landing point is more useful than a closure verdict while ownership and next-step context are still in motion.';
+    $reasonThree = 'The operator should preserve the visible owner, follow-up, and communication trail before making any close-versus-reopen decision.';
+
+    if ($isClosed) {
+        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
+            $decision = 'Reopen deliberately';
+            $auditHeadline = 'The current posture reads as reopen-capable because both the closure story and the active landing point are usable.';
+            $tone = ['bg' => '#f6fbf8', 'border' => '#d8eadf', 'eyebrow' => '#25543f'];
+            $reasonOne = $hasClosedReason
+                ? 'The record carries a readable closure reason, so the closed posture is understandable instead of implied.'
+                : 'The closure story is supported by note and contact context even though the explicit closure reason is still thin.';
+            $reasonTwo = ($hasOwner || $hasFollowUp)
+                ? 'A visible owner or follow-up anchor gives the record a real landing point if it returns to active handling.'
+                : 'The record still needs a slightly stronger owner or follow-up anchor, but it already has enough motion to justify a careful reopen.';
+            $reasonThree = $hasLinkedLoyalty
+                ? 'A linked loyalty record strengthens relationship continuity, so reopening can happen without losing guest context.'
+                : 'Even without a linked loyalty record, the inquiry itself now carries enough readable context to support an intentional reopen.';
+        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
+            $decision = 'Remain closed';
+            $auditHeadline = 'The current posture reads as correctly closed because the closure story is stronger than the active reopen signals.';
+            $tone = ['bg' => '#fffaf1', 'border' => '#f0e0bf', 'eyebrow' => '#7a5a1e'];
+            $reasonOne = 'The record already explains enough of the closure outcome to remain trustworthy in a closed state.';
+            $reasonTwo = 'Current reopen signals are still too light, so reopening would create motion before a clear landing point exists.';
+            $reasonThree = 'The safest operator choice is to preserve the closure and wait for a real guest trigger, ownership decision, or dated follow-up reason.';
+        } else {
+            $decision = 'Document before reopen';
+            $auditHeadline = 'The current posture reads as under-documented because the closure story is still too thin for a confident reopen decision.';
+            $tone = ['bg' => '#fff7ed', 'border' => '#fed7aa', 'eyebrow' => '#c2410c'];
+            $reasonOne = 'The closed posture is visible, but the file still lacks enough readable evidence to explain what happened cleanly.';
+            $reasonTwo = 'Thin closure memory makes any reopen feel reactive instead of deliberate.';
+            $reasonThree = 'Add one concise internal note or closure reason first so the next operator can understand the file before it returns to active handling.';
+        }
+    }
+
+    $evidenceLabel = $closureEvidenceScore >= 3 ? 'Strong closure memory' : ($closureEvidenceScore >= 2 ? 'Usable closure memory' : 'Thin closure memory');
+    $signalLabel = $reopenSignalScore >= 3 ? 'Strong reopen signals' : ($reopenSignalScore >= 2 ? 'Usable reopen signals' : 'Light reopen signals');
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($tone['border']) ?>;border-radius:18px;background:<?= e($tone['bg']) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($tone['eyebrow']) ?>;margin-bottom:6px;">Closure decision audit</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($auditHeadline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($auditSummary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($decision) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Status: <?= e($statusLabel) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Priority: <?= e($priorityLabel) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            Ref: <?= e($reference) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($evidenceLabel) ?>
+        </span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($tone['border']) ?>;font-size:12px;font-weight:700;color:#31496e;">
+            <?= e($signalLabel) ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($tone['border']) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Why this posture</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($reasonOne) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Closed at: <?= e($closedAt) ?> · Last contacted: <?= e($lastContacted) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($tone['border']) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Evidence balance</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($reasonTwo) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Owner: <?= e($owner) ?> · Follow-up: <?= e($followUp) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($tone['border']) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Operator guidance</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($reasonThree) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;"><?= e($hasInternalCue ? $latestNoteBody : 'No concise internal note is visible yet.') ?> · Note: <?= e($latestNoteStamp) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($tone['border']) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not change status, reopen the record, or write notes. It explains in plain language why the current decision posture reads as active, remain closed, document before reopen, or reopen deliberately after the earlier closure and reopen strips.
+        <?= $hasClosedReason ? ' A visible closure reason is already present, which makes the decision posture easier to trust.' : ' No explicit closure reason is visible yet, so the operator should rely more carefully on notes, touchpoints, and follow-up posture before changing state.' ?>
+    </div>
+</div>

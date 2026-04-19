@@ -520,3 +520,8 @@
 - added a compact read-only **Closure Readiness** strip to the inquiry record
 - surfaces owner/reference context, closure evidence, last guest touch, and a simple operator cue before leaving a record closed
 - keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
+
+## v7.20.00 — Inquiry Record Closure-Decision Audit Strip
+- added a compact read-only **Closure Decision Audit** strip to the inquiry record
+- explains in plain operator language why the current posture reads as stay active, remain closed, document before reopen, or reopen deliberately
+- keeps the upgrade backend-only without changing /plan, queue logic, schema, or SMTP
