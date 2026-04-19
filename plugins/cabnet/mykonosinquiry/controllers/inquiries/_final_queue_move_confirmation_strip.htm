@@ -1,0 +1,112 @@
+<?php
+$record = $this->formGetModel();
+if (!$record) {
+    return;
+}
+
+$priority = strtolower((string) ($record->priority ?? ''));
+$status = strtolower((string) ($record->status ?? ''));
+$owner = trim((string) ($record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$note = trim((string) ($record->internal_note ?? ''));
+$hasNote = $note !== '';
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContacted = !empty($lastContacted);
+$hasClosedReason = $closedReason !== '';
+$closed = !empty($closedAt) || in_array($status, ['closed', 'won', 'lost'], true);
+
+$anchors = [
+    'owner' => $hasOwner,
+    'note' => $hasNote,
+    'follow_up' => $hasFollowUp,
+    'last_contacted' => $hasLastContacted,
+    'closed_reason' => $hasClosedReason,
+];
+$anchorCount = count(array_filter($anchors));
+
+$verdict = 'Hold';
+$reason = 'Visible continuity is still too thin for a confident queue move.';
+$doNow = 'Strengthen the next missing operational anchor before moving the record.';
+$watchFirst = 'Avoid moving the queue on memory alone.';
+
+if ($closed && $hasClosedReason && ($hasOwner || $hasLastContacted)) {
+    $verdict = 'Confirm closed posture';
+    $reason = 'Closure evidence is visible enough to support keeping the current closed direction.';
+    $doNow = 'Leave the record settled unless a new guest signal reopens the conversation.';
+    $watchFirst = 'Watch for a fresh inbound guest cue before changing status.';
+} elseif (!$closed && $anchorCount >= 3) {
+    $verdict = 'Move now';
+    $reason = 'The record has enough visible anchors to support the recommended queue move.';
+    $doNow = 'Take the recommended queue action and keep the note trail aligned with the move.';
+    $watchFirst = 'Watch the next follow-up checkpoint after moving the record.';
+} elseif (!$closed && $anchorCount >= 2) {
+    $verdict = 'Conditional hold';
+    $reason = 'The record is close, but one more visible anchor would make the move safer.';
+    $doNow = 'Add the strongest missing anchor, then move the queue.';
+    $watchFirst = 'Watch for owner clarity, note clarity, or timing clarity before acting.';
+}
+
+$anchorSummary = [];
+foreach ([
+    'Owner' => $hasOwner,
+    'Internal note' => $hasNote,
+    'Follow-up' => $hasFollowUp,
+    'Last contacted' => $hasLastContacted,
+    'Closed reason' => $hasClosedReason,
+] as $label => $ok) {
+    $anchorSummary[] = ['label' => $label, 'ok' => $ok];
+}
+
+$palette = [
+    'Move now' => ['bg' => '#e8f5ed', 'text' => '#25543f'],
+    'Conditional hold' => ['bg' => '#fff6e8', 'text' => '#8a5a12'],
+    'Hold' => ['bg' => '#fdecec', 'text' => '#8c2f39'],
+    'Confirm closed posture' => ['bg' => '#eef3fb', 'text' => '#2d4f7c'],
+];
+$style = $palette[$verdict] ?? $palette['Hold'];
+?>
+
+<div class="form-group span-full">
+    <div style="border:1px solid #d9e3f0;border-radius:14px;padding:18px;background:#ffffff;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div>
+                <h4 style="margin:0 0 6px;font-weight:700;">Final Queue Move Confirmation</h4>
+                <p style="margin:0;color:#526173;">Last confirmation layer before the operator acts on the recommended queue move.</p>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:<?= e($style['bg']) ?>;color:<?= e($style['text']) ?>;font-weight:700;">
+                <?= e($verdict) ?>
+            </span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px;">
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Verdict reason</strong>
+                <span><?= e($reason) ?></span>
+            </div>
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Do now</strong>
+                <span><?= e($doNow) ?></span>
+            </div>
+            <div style="border:1px solid #e6edf5;border-radius:12px;padding:12px;">
+                <strong style="display:block;margin-bottom:6px;">Watch first</strong>
+                <span><?= e($watchFirst) ?></span>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;">
+            <strong style="display:block;margin-bottom:8px;">Anchor summary</strong>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;">
+                <?php foreach ($anchorSummary as $item): ?>
+                    <div style="border:1px solid #e6edf5;border-radius:10px;padding:10px;background:<?= $item['ok'] ? '#f4fbf6' : '#fffaf2' ?>;">
+                        <span style="display:block;font-weight:600;"><?= e($item['label']) ?></span>
+                        <span style="color:#526173;"><?= $item['ok'] ? 'Visible' : 'Missing' ?></span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

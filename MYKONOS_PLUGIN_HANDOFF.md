@@ -1,10 +1,4 @@
-# MYKONOS_PLUGIN_HANDOFF.md
+# MYKONOS_PLUGIN_HANDOFF
 
-Latest safe additive patch line:
-- v7.39.00 inquiry record move now or hold strip
-
-Current posture:
-- backend-only
-- render-safe additive work
-- do not blindly overwrite live fields.yaml
-- add new strips via snippet blocks matched to the current real live file
+Current additive line: v7.40.00 inquiry record final queue move confirmation strip.
+Continue with backend-only, render-safe, additive record-level guidance. Do not blindly overwrite the live fields.yaml; use snippet-based mounting until the live strip line is fully normalized.

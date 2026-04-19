@@ -1,6 +1,10 @@
 # Mykonos Cabnet
 
-Latest additive patch:
-- v7.39.00 inquiry record move now or hold strip
+## v7.40.00 inquiry record final queue move confirmation strip
 
-This patch adds a backend-only render-safe strip that gives the operator a final plain-language verdict after the recovery completion check.
+Backend-only additive patch.
+
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no `/plan` behavior change

@@ -1,0 +1,6 @@
+final_queue_move_confirmation_strip:
+    type: partial
+    tab: Internal
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_final_queue_move_confirmation_strip.htm
+    span: full
+    commentAbove: Final queue move confirmation strip (v7.40.00). Mount this directly after Move Now or Hold.

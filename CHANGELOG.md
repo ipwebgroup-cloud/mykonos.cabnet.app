@@ -1,5 +1,6 @@
 # CHANGELOG
 
-## v7.39.00
-- added Move Now or Hold strip for final plain-language queue verdict after the recovery completion check
-- packaged as render-safe additive patch with fields.yaml snippet instead of full replacement
+## v7.40.00 - inquiry record final queue move confirmation strip
+- added Final Queue Move Confirmation strip
+- added snippet for safe manual mounting in live fields.yaml
+- backend-only, render-safe, additive patch
