@@ -1,0 +1,7 @@
+Add this block under the same form tab/area where the late-stage queue-readiness strips are mounted, after the "Two Fix Recovery Summary" partial.
+
+v73800_recovery_completion_check:
+    label: Recovery Completion Check
+    type: partial
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recovery_completion_check_strip.htm
+    tab: Internal

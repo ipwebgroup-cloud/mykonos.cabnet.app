@@ -1,11 +1,6 @@
-Mykonos Cabnet OctoberCMS inquiry project
+# Mykonos Cabnet
 
-Current patch line prepared in this package:
-- v7.37.00 inquiry record two fix recovery summary strip
+## Current safe patch line
+- v7.38.00 inquiry record recovery completion check strip
 
-Post-hotfix direction:
-- backend-only render-safe enhancements
-- no schema change
-- no /plan change
-- no SMTP change
-- no queue mechanic widening
+This package continues the backend-only operator-guidance line with a render-safe strip that checks whether both recovery fixes are now complete enough to proceed with the current queue move.

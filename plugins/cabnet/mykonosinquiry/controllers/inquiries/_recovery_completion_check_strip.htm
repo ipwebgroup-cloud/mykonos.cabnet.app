@@ -1,0 +1,156 @@
+<?php
+$record = $formModel ?? $this->formGetModel() ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? '')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? $record->owner ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContactedAt = trim((string) ($record->last_contacted_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$internalNotes = trim((string) ($record->internal_notes ?? $record->notes ?? ''));
+$requestReference = trim((string) ($record->request_reference ?? $record->reference ?? ''));
+
+$anchors = [
+    'owner' => $owner !== '',
+    'follow_up' => $followUpDate !== '',
+    'last_contacted' => $lastContactedAt !== '',
+    'closed_reason' => $closedReason !== '',
+    'notes' => $internalNotes !== '',
+    'reference' => $requestReference !== '',
+];
+
+$missing = array_keys(array_filter($anchors, static function ($present) {
+    return !$present;
+}));
+
+$needsClosureContext = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true);
+$highPressure = in_array($priority, ['high', 'urgent', 'vip'], true);
+
+$fix1Key = !$anchors['notes'] ? 'notes' : (!$anchors['owner'] ? 'owner' : (!$anchors['follow_up'] ? 'follow_up' : ($needsClosureContext && !$anchors['closed_reason'] ? 'closed_reason' : (!$anchors['last_contacted'] ? 'last_contacted' : 'notes'))));
+$fix2Key = !$anchors['notes'] && !$anchors['owner'] ? 'owner' : (!$anchors['follow_up'] ? 'follow_up' : (!$anchors['notes'] ? 'notes' : ($needsClosureContext && !$anchors['closed_reason'] ? 'closed_reason' : (!$anchors['last_contacted'] ? 'last_contacted' : 'reference'))));
+
+$fixLabels = [
+    'notes' => 'dated internal note',
+    'owner' => 'owner anchor',
+    'follow_up' => 'follow-up checkpoint',
+    'closed_reason' => 'closure reason',
+    'last_contacted' => 'last-contacted timestamp',
+    'reference' => 'request reference',
+];
+
+$fix1Done = isset($anchors[$fix1Key]) ? $anchors[$fix1Key] : true;
+$fix2Done = isset($anchors[$fix2Key]) ? $anchors[$fix2Key] : true;
+$bothDone = $fix1Done && $fix2Done;
+
+$completionLabel = 'Recovery still incomplete';
+$completionBg = '#fff4f1';
+$completionBorder = '#f0c1b5';
+$completionText = '#8c3f29';
+
+if ($bothDone) {
+    $completionLabel = 'Both recovery fixes are visible';
+    $completionBg = '#edf8f0';
+    $completionBorder = '#c4e1cb';
+    $completionText = '#25543f';
+} elseif ($fix1Done || $fix2Done) {
+    $completionLabel = 'One recovery fix is visible';
+    $completionBg = '#fff8ec';
+    $completionBorder = '#f2d59b';
+    $completionText = '#7b5a12';
+}
+
+$readyNow = $bothDone;
+if ($highPressure && count($missing) > 0) {
+    $readyNow = false;
+}
+if ($needsClosureContext && !$anchors['closed_reason']) {
+    $readyNow = false;
+}
+
+$readyBadge = $readyNow ? 'ready' : 'not yet';
+$readyBg = $readyNow ? '#e8f5ed' : '#fff2d6';
+$readyText = $readyNow ? '#25543f' : '#7a5a1e';
+$readyBorder = $readyNow ? '#bfdcc8' : '#ecd9a2';
+
+$whatStillBlocks = [];
+if (!$fix1Done) {
+    $whatStillBlocks[] = 'Fix 1 is still missing: '.($fixLabels[$fix1Key] ?? str_replace('_', ' ', $fix1Key)).'.';
+}
+if (!$fix2Done && $fix2Key !== $fix1Key) {
+    $whatStillBlocks[] = 'Fix 2 is still missing: '.($fixLabels[$fix2Key] ?? str_replace('_', ' ', $fix2Key)).'.';
+}
+if ($needsClosureContext && !$anchors['closed_reason']) {
+    $whatStillBlocks[] = 'Closed posture still lacks a visible closure reason.';
+}
+if ($highPressure && count($missing) > 0) {
+    $whatStillBlocks[] = 'High-priority posture still needs fully visible anchors before moving.';
+}
+if (!$whatStillBlocks) {
+    $whatStillBlocks[] = 'The visible recovery anchors now support the current queue move.';
+}
+
+$nextMove = $readyNow
+    ? 'Proceed with the current recommended queue move and re-check timing once after the move is made.'
+    : 'Pause the queue move and finish the remaining recovery anchor before acting.';
+
+$anchorSummary = [];
+foreach ($anchors as $key => $present) {
+    $anchorSummary[] = [
+        'label' => ucwords(str_replace('_', ' ', $key)),
+        'present' => $present,
+    ];
+}
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($completionBorder) ?>;border-radius:18px;background:<?= e($completionBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.06);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5f6f92;">Recovery Completion Check</div>
+            <h3 style="margin:6px 0 0;font-size:18px;line-height:1.35;color:#183153;">Have both recovery fixes been completed clearly enough to move?</h3>
+        </div>
+        <span style="display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;border:1px solid <?= e($readyBorder) ?>;background:<?= e($readyBg) ?>;color:<?= e($readyText) ?>;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">
+            <?= e($readyBadge) ?>
+        </span>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:#ffffff;border:1px solid rgba(24,49,83,0.08);">
+        <div style="font-size:13px;font-weight:700;color:#183153;">Completion state</div>
+        <div style="margin-top:6px;font-size:14px;line-height:1.6;color:#42506b;"><?= e($completionLabel) ?></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:13px 14px;border-radius:14px;background:#fff;border:1px solid rgba(24,49,83,0.08);">
+            <div style="font-size:12px;font-weight:700;color:#5f6f92;text-transform:uppercase;letter-spacing:.05em;">Fix 1</div>
+            <div style="margin-top:6px;font-size:14px;line-height:1.6;color:#183153;"><?= e($fixLabels[$fix1Key] ?? str_replace('_', ' ', $fix1Key)) ?></div>
+            <div style="margin-top:8px;font-size:12px;font-weight:700;color:<?= $fix1Done ? '#25543f' : '#8c3f29' ?>;"><?= $fix1Done ? 'Completed' : 'Still missing' ?></div>
+        </div>
+        <div style="padding:13px 14px;border-radius:14px;background:#fff;border:1px solid rgba(24,49,83,0.08);">
+            <div style="font-size:12px;font-weight:700;color:#5f6f92;text-transform:uppercase;letter-spacing:.05em;">Fix 2</div>
+            <div style="margin-top:6px;font-size:14px;line-height:1.6;color:#183153;"><?= e($fixLabels[$fix2Key] ?? str_replace('_', ' ', $fix2Key)) ?></div>
+            <div style="margin-top:8px;font-size:12px;font-weight:700;color:<?= $fix2Done ? '#25543f' : '#8c3f29' ?>;"><?= $fix2Done ? 'Completed' : 'Still missing' ?></div>
+        </div>
+        <div style="padding:13px 14px;border-radius:14px;background:#fff;border:1px solid rgba(24,49,83,0.08);">
+            <div style="font-size:12px;font-weight:700;color:#5f6f92;text-transform:uppercase;letter-spacing:.05em;">Next move</div>
+            <div style="margin-top:6px;font-size:14px;line-height:1.6;color:#183153;"><?= e($nextMove) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding:13px 14px;border-radius:14px;background:#fff;border:1px solid rgba(24,49,83,0.08);">
+        <div style="font-size:12px;font-weight:700;color:#5f6f92;text-transform:uppercase;letter-spacing:.05em;">What still blocks readiness</div>
+        <ul style="margin:8px 0 0 18px;padding:0;color:#42506b;font-size:14px;line-height:1.7;">
+            <?php foreach ($whatStillBlocks as $item): ?>
+                <li><?= e($item) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+        <?php foreach ($anchorSummary as $anchor): ?>
+            <span style="display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;border:1px solid <?= $anchor['present'] ? '#bfdcc8' : '#ecd9a2' ?>;background:<?= $anchor['present'] ? '#e8f5ed' : '#fff2d6' ?>;color:<?= $anchor['present'] ? '#25543f' : '#7a5a1e' ?>;font-size:12px;font-weight:700;">
+                <?= e($anchor['label']) ?> · <?= $anchor['present'] ? 'visible' : 'missing' ?>
+            </span>
+        <?php endforeach; ?>
+    </div>
+</div>

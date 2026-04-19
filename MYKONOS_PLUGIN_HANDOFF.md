@@ -3,8 +3,8 @@
 Current safe line after consolidated render stabilization:
 - v7.36.12 inquiry strip consolidated render hotfix
 
-Next prepared major update in this package:
-- v7.37.00 inquiry record two fix recovery summary strip
+Prepared major update in this package:
+- v7.38.00 inquiry record recovery completion check strip
 
 Safe direction:
 - backend-only
