@@ -1,47 +1,24 @@
 # MYKONOS_CONTINUE_PROMPT.md
 
-You are continuing development of the Mykonos Cabnet OctoberCMS inquiry project from the latest verified backend-only strip line.
+You are continuing development of the **Mykonos Cabnet OctoberCMS inquiry project**.
+
+Treat the latest uploaded files in the chat as the primary source of truth.
 
 Latest verified rooted patch line:
-- `v7.26.00 inquiry record why pause first strip`
+- `v7.28.00 inquiry record proceed readiness summary strip`
 
-Current posture:
-- backend-only render-safe operator guidance
+Current safe direction:
+- backend-only operator productivity
+- render-safe inquiry-record guidance improvements
 - no schema change
-- no plugin refresh required
+- no plugin refresh required unless a future patch explicitly says so
 - no theme import required
-- no /plan behavior change
-- no queue logic change
+- no `/plan` behavior change
 - no SMTP change
+- no queue workflow widening
 
-Already present near the end of the inquiry record sequence:
-- Operator Action Recap
-- Closure Readiness
-- Closure History Evidence
-- Reopen Readiness Evidence
-- Closure to Reopen Decision
-- Closure Decision Audit
-- Next Best Action After Decision
-- Action Confidence Check
-- Evidence Gap Priority
-- Minimum Evidence to Proceed
-
-Default next step if no live bug is shown:
-- continue backend-only inquiry record scanability and operator guidance
-- prefer one small render-only strip at a time
-- avoid duplicate panels and avoid touching stable public flows
-
-
-- Latest verified patch line: v7.25.00 inquiry record proceed-or-pause recommendation strip
-- Latest added record strip: Proceed or Pause Recommendation
-
-
-- Latest verified patch line: v7.26.00 inquiry record why pause first strip
-- Latest added record strip: Why Pause First
-
-## v7.27.00 inquiry record fastest path to proceed strip
-- added backend-only render-safe guidance strip: Fastest Path to Proceed
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no /plan behavior change
+When continuing:
+1. inspect the real uploaded files first
+2. verify the latest strip line already present
+3. recommend the smallest safe next backend-only step
+4. produce a rooted zip patch only for that next step

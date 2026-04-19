@@ -1,0 +1,212 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $priorityLabel = !empty($model->priority_label)
+        ? $model->priority_label
+        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $hasOwner = $owner !== 'Not assigned';
+    $hasEmail = trim((string) ($model->email ?? '')) !== '';
+    $hasArrival = !empty($model->arrival_date);
+    $hasFollowUp = !empty($model->follow_up_date);
+    $hasLastContacted = !empty($model->last_contacted_at);
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $hasClosedReason = $closedReason !== '';
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+
+    if (method_exists($model, 'notes')) {
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 150) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 147) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasInternalCue = $latestNoteBody !== '';
+    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+
+    $decision = 'Stay active';
+    $closureEvidenceScore = 0;
+    foreach ([$hasClosedReason, $hasInternalCue, $hasLastContacted] as $flag) {
+        if ($flag) {
+            $closureEvidenceScore++;
+        }
+    }
+    $reopenSignalScore = 0;
+    foreach ([$hasOwner, $hasFollowUp, $hasLastContacted, $hasLinkedLoyalty] as $flag) {
+        if ($flag) {
+            $reopenSignalScore++;
+        }
+    }
+    if ($isClosed) {
+        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
+            $decision = 'Reopen deliberately';
+        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
+            $decision = 'Remain closed';
+        } else {
+            $decision = 'Document before reopen';
+        }
+    }
+
+    if ($decision === 'Stay active') {
+        $requiredAnchors = [
+            'Visible owner' => $hasOwner,
+            'Dated checkpoint' => $hasFollowUp,
+            'Contact path' => $hasEmail,
+            'Trip anchor' => $hasArrival,
+            'Internal note cue' => $hasInternalCue,
+        ];
+        $eyebrow = '#1f4f80';
+        $toneBg = '#f5f9ff';
+        $toneBorder = '#dbe8f7';
+    } elseif ($decision === 'Reopen deliberately') {
+        $requiredAnchors = [
+            'Visible owner' => $hasOwner,
+            'Closure reason' => $hasClosedReason,
+            'Last-contact anchor' => $hasLastContacted,
+            'Dated checkpoint' => $hasFollowUp,
+            'Internal note cue' => $hasInternalCue,
+        ];
+        $eyebrow = '#7b4a12';
+        $toneBg = '#fff9f2';
+        $toneBorder = '#f0dfbf';
+    } elseif ($decision === 'Remain closed') {
+        $requiredAnchors = [
+            'Closure reason' => $hasClosedReason,
+            'Internal note cue' => $hasInternalCue,
+            'Last-contact anchor' => $hasLastContacted,
+        ];
+        $eyebrow = '#25543f';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    } else {
+        $requiredAnchors = [
+            'Closure reason' => $hasClosedReason,
+            'Internal note cue' => $hasInternalCue,
+            'Last-contact anchor' => $hasLastContacted,
+            'Visible owner' => $hasOwner,
+        ];
+        $eyebrow = '#8a5a12';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0dfbf';
+    }
+
+    $metCount = 0;
+    $missingTitles = [];
+    foreach ($requiredAnchors as $title => $met) {
+        if ($met) {
+            $metCount++;
+        } else {
+            $missingTitles[] = $title;
+        }
+    }
+
+    $thresholdMet = empty($missingTitles);
+    $confidenceLabel = 'Fragile';
+    if ($metCount >= max(1, count($requiredAnchors) - 1)) {
+        $confidenceLabel = $thresholdMet ? 'Strong' : 'Moderate';
+    }
+
+    if ($thresholdMet) {
+        $recommendation = 'Proceed';
+        $headline = 'Proceed readiness is visible end to end';
+        $summary = 'The current decision posture, evidence threshold, and action path line up cleanly enough for the next operator move.';
+        $doNow = 'Use the Proceed recommendation confidently and keep the next move narrow, explicit, and time-anchored.';
+        $watchItem = 'Avoid adding noise to a record that is already self-explanatory. Update only what changes the operational truth.';
+        $recoveryPath = 'No recovery path is needed right now.';
+    } else {
+        $recommendation = 'Pause';
+        $headline = 'Proceed readiness is not complete yet';
+        $summary = 'The record still lacks one or more anchors required for the current posture, so pausing remains safer than acting on memory.';
+        $firstGap = $missingTitles[0] ?? 'missing anchor';
+        $secondGap = $missingTitles[1] ?? null;
+        $doNow = 'Pause first and restore ' . strtolower($firstGap) . ($secondGap ? ', then ' . strtolower($secondGap) : '') . ' before trusting the proceed path.';
+        $watchItem = 'Do not treat a plausible story as a settled record. The next move should wait until the missing anchors are visible.';
+        $recoveryPath = implode(' → ', $missingTitles);
+    }
+
+    $anchorSummary = [];
+    foreach ($requiredAnchors as $title => $met) {
+        $anchorSummary[] = $title . ': ' . ($met ? 'ready' : 'missing');
+    }
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($eyebrow) ?>;margin-bottom:6px;">Proceed readiness summary</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($recommendation . ' · ' . $confidenceLabel . ' confidence') ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Ref: <?= e($reference) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Status: <?= e($statusLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Priority: <?= e($priorityLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Decision: <?= e($decision) ?></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Recommendation</div>
+            <div style="font-size:15px;font-weight:700;line-height:1.6;color:#22324a;"><?= e($recommendation) ?></div>
+            <div style="margin-top:8px;font-size:13px;line-height:1.7;color:#54657d;"><?= e($doNow) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Threshold</div>
+            <div style="font-size:15px;font-weight:700;line-height:1.6;color:#22324a;"><?= e($metCount . ' / ' . count($requiredAnchors) . ' anchors ready') ?></div>
+            <div style="margin-top:8px;font-size:13px;line-height:1.7;color:#54657d;"><?= e(implode(' · ', $anchorSummary)) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Watch item</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($watchItem) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Latest note stamp: <?= e($latestNoteStamp) ?></div>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Recovery path</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($recoveryPath) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Continuity anchors</div>
+            <div style="font-size:13px;line-height:1.7;color:#54657d;">Owner <?= $hasOwner ? 'visible' : 'missing' ?> · Follow-up <?= $hasFollowUp ? 'set' : 'missing' ?> · Last contacted <?= $hasLastContacted ? 'visible' : 'missing' ?> · Closure reason <?= $hasClosedReason ? 'visible' : 'missing' ?> · Loyalty <?= $hasLinkedLoyalty ? 'linked' : 'not linked' ?>.</div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not change the inquiry. It compresses the full closure/reopen chain into one end-of-sequence recap so the operator can confirm whether the record is truly ready to proceed or still safer to pause.
+    </div>
+</div>

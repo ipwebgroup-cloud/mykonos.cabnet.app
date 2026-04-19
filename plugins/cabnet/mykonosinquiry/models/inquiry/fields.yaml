@@ -372,3 +372,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_fastest_path_to_proceed_strip.htm
         span: full
+
+    proceed_readiness_summary:
+        label: Proceed Readiness Summary
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proceed_readiness_summary_strip.htm
+        span: full
