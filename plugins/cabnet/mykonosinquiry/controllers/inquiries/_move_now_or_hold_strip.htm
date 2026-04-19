@@ -1,0 +1,88 @@
+<?php
+$inquiry = $formModel ?? $model ?? null;
+
+$status = trim((string) ($inquiry->status ?? ''));
+$priority = trim((string) ($inquiry->priority ?? ''));
+$owner = trim((string) ($inquiry->owner ?? $inquiry->assigned_to ?? ''));
+$lastContacted = trim((string) ($inquiry->last_contacted_at ?? ''));
+$followUpDate = trim((string) ($inquiry->follow_up_at ?? $inquiry->follow_up_date ?? ''));
+$closedAt = trim((string) ($inquiry->closed_at ?? ''));
+$closedReason = trim((string) ($inquiry->closed_reason ?? ''));
+$internalNote = trim((string) ($inquiry->internal_note ?? $inquiry->operator_note ?? ''));
+
+$hasOwner = $owner !== '';
+$hasLastContacted = $lastContacted !== '';
+$hasFollowUp = $followUpDate !== '';
+$hasClosureContext = $closedReason !== '' || $closedAt !== '';
+$hasNote = $internalNote !== '';
+
+$readinessCount = 0;
+foreach ([$hasOwner, $hasLastContacted, $hasFollowUp, $hasClosureContext, $hasNote] as $flag) {
+    if ($flag) {
+        $readinessCount++;
+    }
+}
+
+$moveNow = false;
+$holdReason = 'Add visible anchors before moving.';
+$moveLabel = 'Hold';
+$moveToneBg = '#fff4e8';
+$moveToneText = '#8a4b14';
+$moveToneBorder = '#f4d2b8';
+
+if ($readinessCount >= 4) {
+    $moveNow = true;
+    $moveLabel = 'Move now';
+    $holdReason = 'Visible anchors are strong enough for a deliberate queue move.';
+    $moveToneBg = '#edf8f1';
+    $moveToneText = '#25543f';
+    $moveToneBorder = '#cfe8d7';
+} elseif ($readinessCount === 3) {
+    $moveLabel = 'Conditional hold';
+    $holdReason = 'One more anchor would make the move meaningfully safer.';
+}
+
+$nextMove = $moveNow
+    ? 'Proceed with the current recommended queue action and keep the next checkpoint explicit.'
+    : 'Hold the queue move until the thinnest missing anchor is made visible on the record.';
+
+$watchItem = !$hasOwner ? 'Owner visibility'
+    : (!$hasLastContacted ? 'Last-contact evidence'
+    : (!$hasFollowUp ? 'Next checkpoint date'
+    : (!$hasClosureContext ? 'Closure context'
+    : (!$hasNote ? 'Short internal note memory'
+    : 'Anchor consistency'))));
+
+$anchorSummary = $readinessCount . ' / 5 visible anchors ready';
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($moveToneBorder) ?>;border-radius:18px;background:<?= e($moveToneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.06);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Move Now or Hold</div>
+            <h4 style="margin:6px 0 4px;font-size:18px;line-height:1.25;color:#14213d;">Final queue-move verdict</h4>
+            <div style="font-size:13px;color:#5b6475;">Plain operator guidance after the recovery completion check.</div>
+        </div>
+        <span style="display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#fff;color:<?= e($moveToneText) ?>;border:1px solid <?= e($moveToneBorder) ?>;font-size:12px;font-weight:700;">
+            <?= e($moveLabel) ?>
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:12px 13px;border-radius:14px;background:#fff;border:1px solid rgba(20,33,61,0.08);">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7b8190;font-weight:700;">Verdict reason</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2937;font-weight:600;"><?= e($holdReason) ?></div>
+        </div>
+        <div style="padding:12px 13px;border-radius:14px;background:#fff;border:1px solid rgba(20,33,61,0.08);">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7b8190;font-weight:700;">Do now</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2937;font-weight:600;"><?= e($nextMove) ?></div>
+        </div>
+        <div style="padding:12px 13px;border-radius:14px;background:#fff;border:1px solid rgba(20,33,61,0.08);">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7b8190;font-weight:700;">Watch first</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2937;font-weight:600;"><?= e($watchItem) ?></div>
+        </div>
+        <div style="padding:12px 13px;border-radius:14px;background:#fff;border:1px solid rgba(20,33,61,0.08);">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7b8190;font-weight:700;">Anchor summary</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2937;font-weight:600;"><?= e($anchorSummary) ?></div>
+        </div>
+    </div>
+</div>

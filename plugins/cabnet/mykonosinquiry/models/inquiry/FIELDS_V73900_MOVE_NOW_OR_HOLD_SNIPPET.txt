@@ -1,0 +1,7 @@
+move_now_or_hold_strip:
+    label: Move Now or Hold
+    type: partial
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_move_now_or_hold_strip.htm
+    tab: Internal
+    span: full
+    comment: Final plain-language verdict after the recovery completion check.

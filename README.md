@@ -1,6 +1,6 @@
 # Mykonos Cabnet
 
-## Current safe patch line
-- v7.38.00 inquiry record recovery completion check strip
+Latest additive patch:
+- v7.39.00 inquiry record move now or hold strip
 
-This package continues the backend-only operator-guidance line with a render-safe strip that checks whether both recovery fixes are now complete enough to proceed with the current queue move.
+This patch adds a backend-only render-safe strip that gives the operator a final plain-language verdict after the recovery completion check.

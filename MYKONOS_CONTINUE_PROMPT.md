@@ -1,14 +1,14 @@
 # MYKONOS_CONTINUE_PROMPT.md
 
-Continue from the latest real uploaded project state.
+Continue from the real live project state.
 
-Latest prepared major update in this package:
-- v7.38.00 inquiry record recovery completion check strip
+Latest additive strip line:
+- v7.39.00 inquiry record move now or hold strip
 
-Rules:
-- inspect real files first
-- keep patch scope minimal
-- backend-only unless a real public bug requires otherwise
-- no schema change unless explicitly necessary
-- no /plan behavior change unless explicitly necessary
-- prefer render-safe additions over large rewrites
+Safe direction:
+- backend-only
+- render-safe additive enhancements
+- no schema change
+- no /plan change
+- no loyalty-method assumptions
+- use snippet-based fields.yaml mounting unless the exact live file has been re-baselined
