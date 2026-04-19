@@ -1,102 +1,84 @@
 <?php
-    $record = $this->formGetModel();
+$record = $this->formGetModel();
 
-    $guestName = trim((string) ($record->full_name ?? ''));
-    $guestEmail = trim((string) ($record->email ?? ''));
-    $guestPhone = trim((string) ($record->phone ?? ''));
-    $guests = trim((string) ($record->guests ?? ''));
-    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
-    $departureDate = trim((string) ($record->departure_date ?? ''));
-    $requestedMode = trim((string) ($record->requested_mode ?? ''));
-    $status = trim((string) ($record->status ?? ''));
-    $details = trim((string) ($record->details ?? ''));
-    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+$fullName = trim((string) ($record->full_name ?? ''));
+$email = trim((string) ($record->email ?? ''));
+$details = trim((string) ($record->details ?? ''));
+$arrivalDate = trim((string) ($record->arrival_date ?? ''));
+$guests = trim((string) ($record->guests ?? ''));
+$requestedMode = trim((string) ($record->requested_mode ?? ''));
+$serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
 
-    $checks = [
-        ['label' => 'Guest identity', 'ready' => $guestName !== ''],
-        ['label' => 'Valid email', 'ready' => $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL)],
-        ['label' => 'Phone fallback', 'ready' => $guestPhone !== ''],
-        ['label' => 'Guest count', 'ready' => $guests !== ''],
-        ['label' => 'Arrival timing', 'ready' => $arrivalDate !== ''],
-        ['label' => 'Departure timing', 'ready' => $departureDate !== ''],
-        ['label' => 'Service focus', 'ready' => !empty($serviceList)],
-        ['label' => 'Saved brief', 'ready' => $details !== ''],
-    ];
+$checks = [
+    ['label' => 'Guest name', 'ready' => $fullName !== ''],
+    ['label' => 'Reply email', 'ready' => $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)],
+    ['label' => 'Trip brief', 'ready' => $details !== ''],
+    ['label' => 'Arrival date', 'ready' => $arrivalDate !== ''],
+    ['label' => 'Guest count', 'ready' => $guests !== ''],
+    ['label' => 'Requested mode', 'ready' => $requestedMode !== ''],
+    ['label' => 'Service focus', 'ready' => !empty($serviceList)],
+];
 
-    $readyCount = 0;
-    foreach ($checks as $check) {
-        if ($check['ready']) {
-            $readyCount++;
-        }
+$readyCount = 0;
+foreach ($checks as $check) {
+    if (!empty($check['ready'])) {
+        $readyCount++;
     }
+}
 
-    $headline = 'Request completeness is visible';
-    $summary = 'This strip condenses the main request inputs into one quick backend view so operators can judge how complete the inquiry already is before the next step.';
-    $toneBg = '#f8fbff';
-    $toneBorder = '#dce5f4';
-    $primaryCompleteness = 'Request still needs a few anchors';
+$headline = 'Request completeness is workable';
+$summary = 'This strip helps the operator see whether the core trip anchors are already visible or whether the request still needs clarification before the next move feels safe.';
+$toneBg = '#f8fbff';
+$toneBorder = '#dce5f4';
+$primaryCompleteness = 'Clarify a few anchors';
 
-    if ($readyCount >= 7) {
-        $headline = 'Request completeness looks strong';
-        $summary = 'The inquiry already carries most of the key fields needed for a confident next step, so operators can move forward with less guesswork.';
-        $toneBg = '#f6fbf8';
-        $toneBorder = '#d8eadf';
-        $primaryCompleteness = 'Request is close to operator-ready';
-    } elseif ($readyCount <= 3) {
-        $headline = 'Request completeness still needs structure';
-        $summary = 'The inquiry can still progress, but several key anchors are still missing, so operators should clarify the biggest gaps first.';
-        $toneBg = '#fffaf1';
-        $toneBorder = '#f0e0bf';
-        $primaryCompleteness = 'Clarify missing anchors first';
-    }
+if ($readyCount >= 6) {
+    $headline = 'Request completeness looks strong';
+    $summary = 'Most of the core request anchors are already present, so the operator can move with less back-and-forth.';
+    $toneBg = '#f6fbf8';
+    $toneBorder = '#d8eadf';
+    $primaryCompleteness = 'Ready to progress';
+} elseif ($readyCount <= 3) {
+    $headline = 'Request completeness still needs work';
+    $summary = 'Several core request anchors are still missing, so the next action should focus on clarification before deeper handling.';
+    $toneBg = '#fffaf1';
+    $toneBorder = '#f0e0bf';
+    $primaryCompleteness = 'Clarify missing anchors first';
+}
 
-    $recapLabel = $readyCount . '/' . count($checks) . ' core fields present';
-
-    $pillStyles = [
-        true => ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'ready'],
-        false => ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'missing'],
-    ];
+$pillStyles = [
+    true => ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'ready'],
+    false => ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'missing'],
+];
 ?>
-<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.06);">
     <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
         <div>
-            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Request completeness</div>
-            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
-            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:700;">Request completeness</div>
+            <h4 style="margin:6px 0 8px;font-size:20px;line-height:1.25;color:#1f2937;"><?= e($headline) ?></h4>
+            <p style="margin:0;color:#4b5563;max-width:920px;line-height:1.6;"><?= e($summary) ?></p>
         </div>
-        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+        <div style="padding:9px 12px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-weight:700;color:#1f2937;white-space:nowrap;">
             <?= e($primaryCompleteness) ?>
         </div>
     </div>
 
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            <?= e($recapLabel) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            <?= e($status !== '' ? 'Status: ' . $status : 'Status not set') ?>
-        </span>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <div style="padding:8px 10px;border-radius:12px;background:#fff;border:1px solid <?= e($toneBorder) ?>;"><strong><?= (int) $readyCount ?></strong> / <?= count($checks) ?> core fields present</div>
+        <div style="padding:8px 10px;border-radius:12px;background:#fff;border:1px solid <?= e($toneBorder) ?>;">Requested mode: <?= e($requestedMode !== '' ? $requestedMode : 'Not yet visible') ?></div>
+        <div style="padding:8px 10px;border-radius:12px;background:#fff;border:1px solid <?= e($toneBorder) ?>;">Services: <?= e(!empty($serviceList) ? implode(', ', $serviceList) : 'Not yet visible') ?></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;margin-top:14px;">
-        <?php foreach ($checks as $check): ?>
-            <?php $pill = $pillStyles[$check['ready']]; ?>
-            <div style="padding:12px 13px;border:1px solid <?= e($check['ready'] ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
-                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($check['label']) ?></div>
-                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
-                        <?= e($pill['label']) ?>
-                    </span>
-                </div>
+    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+        <?php foreach ($checks as $check): $style = $pillStyles[(bool) $check['ready']]; ?>
+            <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid <?= e($toneBorder) ?>;display:flex;justify-content:space-between;gap:10px;align-items:center;">
+                <span style="color:#374151;"><?= e($check['label']) ?></span>
+                <span style="padding:4px 10px;border-radius:999px;background:<?= e($style['bg']) ?>;color:<?= e($style['text']) ?>;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;"><?= e($style['label']) ?></span>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
-        <strong style="color:#22324a;">Operator use:</strong>
-        This strip is guidance-only and render-safe. It does not fill or validate fields automatically. It helps the operator judge overall request completeness before moving into reply, clarification, proposal, or handoff handling.
-    </div>
+    <p style="margin:14px 0 0;color:#6b7280;font-size:12px;line-height:1.6;">
+        Operator use: This strip is guidance-only and render-safe. It helps the operator see whether the request is already complete enough to progress or whether missing anchors should be clarified first.
+    </p>
 </div>

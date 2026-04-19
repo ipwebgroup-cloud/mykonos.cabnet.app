@@ -1,169 +1,83 @@
 <?php
-    $model = $model ?? $this->formGetModel();
+$record = $formModel ?? $this->formGetModel();
 
-    if (!$model) {
-        return;
-    }
+$status = trim((string) ($record->status ?? ''));
+$priority = trim((string) ($record->priority ?? ''));
+$owner = trim((string) ($record->owner_name ?? ($record->owner ?? '')));
+$followUpAt = trim((string) ($record->follow_up_at ?? ''));
+$lastContactedAt = trim((string) ($record->last_contacted_at ?? ''));
+$closedAt = trim((string) ($record->closed_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
 
-    $status = (string) ($model->status ?? 'new');
-    $statusLabel = !empty($model->status_label)
-        ? $model->status_label
-        : ucwords(str_replace(['_', '-'], ' ', $status));
+$isClosed = $closedAt !== '' || in_array(strtolower($status), ['closed', 'won', 'lost', 'cancelled', 'canceled'], true);
+$hasOwner = $owner !== '';
+$hasFollowUp = $followUpAt !== '';
+$hasLastContact = $lastContactedAt !== '';
+$hasClosureReason = $closedReason !== '';
 
-    $priorityLabel = !empty($model->priority_label)
-        ? $model->priority_label
-        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+$actionLabel = 'Clarify before acting';
+$actionText = 'Add the missing operator anchors before widening the workflow or changing queue posture.';
+$avoidText = 'Avoid escalating the record on memory alone.';
+$cueText = 'Check owner, contact trail, follow-up timing, and closure context first.';
+$stoneBg = '#fffaf1';
+$stoneBorder = '#f0e0bf';
 
-    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
-    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
-    $closedReason = trim((string) ($model->closed_reason ?? ''));
-    $closedAt = !empty($model->closed_at) ? $model->closed_at->format('Y-m-d H:i') : 'Not closed';
-    $lastContacted = !empty($model->last_contacted_at) ? $model->last_contacted_at->format('Y-m-d H:i') : 'No contact logged';
-    $followUp = !empty($model->follow_up_date) ? $model->follow_up_date->format('Y-m-d') : 'Not scheduled';
+if ($isClosed && $hasClosureReason && ($hasLastContact || $hasFollowUp)) {
+    $actionLabel = 'Remain closed';
+    $actionText = 'Keep the record closed and preserve the closure trail as the reference posture.';
+    $avoidText = 'Avoid reopening without a fresh guest signal or a new delivery reason.';
+    $cueText = 'Closure context is already readable enough to support the current state.';
+    $stoneBg = '#f7faf7';
+    $stoneBorder = '#d9eadb';
+} elseif (!$isClosed && $hasOwner && ($hasLastContact || $hasFollowUp)) {
+    $actionLabel = 'Proceed with active handling';
+    $actionText = 'The record has enough visible anchors to continue normal operator handling.';
+    $avoidText = 'Avoid widening the workflow before the next meaningful checkpoint.';
+    $cueText = 'Use the existing owner and timing anchors as the next action basis.';
+    $stoneBg = '#f5fbff';
+    $stoneBorder = '#d7e7f3';
+} elseif ($isClosed && !$hasClosureReason) {
+    $actionLabel = 'Document before reopen';
+    $actionText = 'Strengthen the closure explanation before deciding whether the record should move again.';
+    $avoidText = 'Avoid reopening a thinly documented closure trail.';
+    $cueText = 'A missing closure reason is the main gap right now.';
+}
 
-    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
-    $hasClosedReason = $closedReason !== '';
-    $hasOwner = $owner !== 'Not assigned';
-    $hasRecentTouch = !empty($model->last_contacted_at);
-    $hasFollowUp = !empty($model->follow_up_date);
-
-    $latestInternalNote = null;
-    $latestNoteBody = '';
-    $latestNoteStamp = 'No internal note saved';
-
-    if (method_exists($model, 'notes')) {
-        $latestInternalNote = $model->notes()
-            ->where('is_internal', true)
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if ($latestInternalNote) {
-            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
-            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 150) {
-                $latestNoteBody = mb_substr($latestNoteBody, 0, 147) . '...';
-            }
-            if ($latestInternalNote->created_at) {
-                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
-            }
-        }
-    }
-
-    $hasInternalCue = $latestNoteBody !== '';
-    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
-
-    $closureEvidenceScore = 0;
-    foreach ([$hasClosedReason, $hasInternalCue, $hasRecentTouch] as $flag) {
-        if ($flag) {
-            $closureEvidenceScore++;
-        }
-    }
-
-    $reopenSignalScore = 0;
-    foreach ([$hasOwner, $hasFollowUp, $hasRecentTouch, $hasLinkedLoyalty] as $flag) {
-        if ($flag) {
-            $reopenSignalScore++;
-        }
-    }
-
-    $decision = 'Stay active';
-    if ($isClosed) {
-        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
-            $decision = 'Reopen deliberately';
-        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
-            $decision = 'Remain closed';
-        } else {
-            $decision = 'Document before reopen';
-        }
-    }
-
-    $eyebrow = '#475569';
-    $toneBg = '#f8fafc';
-    $toneBorder = '#cbd5e1';
-    $actionLabel = 'Keep the active landing point visible';
-    $actionSummary = 'The safest next move is to preserve ownership, follow-up posture, and the next guest-facing step rather than forcing closure language.';
-    $doNow = 'Confirm the owner, preserve the next dated checkpoint, and make sure the latest note explains what should happen next.';
-    $avoidNow = 'Do not close or reopen this file just to make the board look tidy while the active path is still forming.';
-    $operatorCue = 'Use the existing queue posture and next-action strips as the working surface. This strip only names the safest immediate move after the decision layer.';
-
-    if ($decision === 'Reopen deliberately') {
-        $eyebrow = '#25543f';
-        $toneBg = '#f6fbf8';
-        $toneBorder = '#d8eadf';
-        $actionLabel = 'Reopen with a visible owner and dated landing point';
-        $actionSummary = 'The safest next move is to reopen deliberately only after preserving one clear ownership cue and one dated next step on the record.';
-        $doNow = $hasOwner
-            ? 'Keep the current owner visible and convert the reopen into a dated next step, not a vague return to motion.'
-            : 'Assign ownership first, then reopen with a dated next step so the record does not drift back into unowned motion.';
-        $avoidNow = 'Do not reopen on sentiment alone. The record should reopen because the visible evidence supports a controlled return to active handling.';
-        $operatorCue = $hasFollowUp
-            ? 'A follow-up date is already visible, so the reopen can anchor to a real checkpoint.'
-            : 'Add or confirm a dated follow-up checkpoint so the reopen lands somewhere concrete.';
-    } elseif ($decision === 'Remain closed') {
-        $eyebrow = '#7a5a1e';
-        $toneBg = '#fffaf1';
-        $toneBorder = '#f0e0bf';
-        $actionLabel = 'Preserve the closure and wait for a real trigger';
-        $actionSummary = 'The safest next move is to keep the file closed and readable until a genuine guest signal, ownership change, or dated reason to reopen appears.';
-        $doNow = 'Make sure the closure reason and last meaningful touchpoint remain readable so the file can be trusted later without reopening it prematurely.';
-        $avoidNow = 'Do not manufacture motion by reopening a record that already has a stronger closure story than active restart signals.';
-        $operatorCue = $hasClosedReason
-            ? 'A visible closure reason already supports the closed posture.'
-            : 'A concise closure note would still strengthen the file, but the posture is currently better closed than reopened.';
-    } elseif ($decision === 'Document before reopen') {
-        $eyebrow = '#c2410c';
-        $toneBg = '#fff7ed';
-        $toneBorder = '#fed7aa';
-        $actionLabel = 'Add one clean note before changing state';
-        $actionSummary = 'The safest next move is to improve the closure memory first so any later reopen decision is based on readable context instead of reconstruction.';
-        $doNow = 'Add one concise internal note or closure clarification that explains what happened, what is missing, and what would justify future motion.';
-        $avoidNow = 'Do not reopen yet and do not leave the file frozen in ambiguity. Capture the missing explanation first.';
-        $operatorCue = $hasInternalCue
-            ? 'A note exists, but the total closure story is still too thin to support a confident state change.'
-            : 'No internal note is visible yet, so one clean note is the highest-value next action.';
-    }
+$priorityLabel = $priority !== '' ? ucfirst($priority) : 'Unspecified';
+$ownerLabel = $hasOwner ? $owner : 'Unassigned';
+$timingLabel = $hasFollowUp ? $followUpAt : ($hasLastContact ? $lastContactedAt : 'No dated timing anchor');
 ?>
-<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($stoneBorder) ?>;border-radius:18px;background:<?= e($stoneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,.06);">
     <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
         <div>
-            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($eyebrow) ?>;margin-bottom:6px;">Next best action after decision</div>
-            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($actionLabel) ?></div>
-            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($actionSummary) ?></div>
+            <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7b8aa0;font-weight:700;">Next Best Action After Decision</div>
+            <h4 style="margin:6px 0 0;font-size:20px;line-height:1.25;color:#1f2d3d;"><?= e($actionLabel) ?></h4>
         </div>
-        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
-            <?= e($decision) ?>
-        </div>
-    </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Status: <?= e($statusLabel) ?></span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Priority: <?= e($priorityLabel) ?></span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Ref: <?= e($reference) ?></span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Owner: <?= e($owner) ?></span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
-        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
-            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Do now</div>
-            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($doNow) ?></div>
-            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Follow-up: <?= e($followUp) ?> · Last contacted: <?= e($lastContacted) ?></div>
-        </div>
-
-        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
-            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Avoid now</div>
-            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($avoidNow) ?></div>
-            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Closed at: <?= e($closedAt) ?><?= $closedReason !== '' ? ' · Reason: ' . e($closedReason) : '' ?></div>
-        </div>
-
-        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
-            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Operator cue</div>
-            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($operatorCue) ?></div>
-            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;"><?= e($hasInternalCue ? $latestNoteBody : 'No concise internal note is visible yet.') ?> · Note: <?= e($latestNoteStamp) ?></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eef3f8;color:#35506b;font-size:12px;font-weight:700;">Priority: <?= e($priorityLabel) ?></span>
+            <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eef3f8;color:#35506b;font-size:12px;font-weight:700;">Owner: <?= e($ownerLabel) ?></span>
         </div>
     </div>
 
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
-        <strong style="color:#22324a;">Operator use:</strong>
-        This strip is guidance-only and render-safe. It does not change status, write notes, reopen the inquiry, or close it. It simply names the safest next move after the current closure-versus-reopen decision posture.
-        <?= $hasLinkedLoyalty ? ' A linked loyalty record is visible, which can help preserve relationship continuity if the inquiry returns to active handling.' : ' No linked loyalty record is visible here, so inquiry-side notes and ownership cues matter more for continuity.' ?>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e6edf5;">
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a97a8;font-weight:700;">Do now</div>
+            <div style="margin-top:6px;font-size:14px;line-height:1.55;color:#243447;"><?= e($actionText) ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e6edf5;">
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a97a8;font-weight:700;">Avoid now</div>
+            <div style="margin-top:6px;font-size:14px;line-height:1.55;color:#243447;"><?= e($avoidText) ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e6edf5;">
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a97a8;font-weight:700;">Operator cue</div>
+            <div style="margin-top:6px;font-size:14px;line-height:1.55;color:#243447;"><?= e($cueText) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:12px;padding:12px 14px;border-radius:14px;background:#ffffff;border:1px dashed #d8e3ee;font-size:13px;color:#486176;">
+        <strong>Timing anchor:</strong> <?= e($timingLabel) ?>
+        <?php if ($hasClosureReason): ?>
+            &nbsp;•&nbsp;<strong>Closure reason:</strong> <?= e($closedReason) ?>
+        <?php endif; ?>
     </div>
 </div>

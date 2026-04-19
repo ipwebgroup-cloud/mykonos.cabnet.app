@@ -1,128 +1,83 @@
 <?php
-    $record = $this->formGetModel();
+$record = $formModel ?? $model ?? null;
 
-    $status = trim((string) ($record->status ?? ''));
-    $priority = trim((string) ($record->priority ?? ''));
-    $requestedMode = trim((string) ($record->requested_mode ?? ''));
-    $requestReference = trim((string) ($record->request_reference ?? ''));
-    $guestEmail = trim((string) ($record->email ?? ''));
-    $details = trim((string) ($record->details ?? ''));
-    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
+$status = trim((string)($record->status ?? ''));
+$priority = trim((string)($record->priority ?? ''));
+$owner = trim((string)($record->owner_name ?? $record->owner ?? ''));
+$followUpRaw = (string)($record->follow_up_at ?? $record->followup_at ?? '');
+$closedAtRaw = (string)($record->closed_at ?? '');
+$lastContactedRaw = (string)($record->last_contacted_at ?? '');
 
-    $hasValidEmail = $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL);
-    $hasBrief = $details !== '';
-    $hasServiceFocus = !empty($serviceList);
-    $hasReference = $requestReference !== '';
+$hasOwner = $owner !== '';
+$hasFollowUp = trim($followUpRaw) !== '';
+$isClosed = $closedAtRaw !== '' || in_array(strtolower($status), ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true);
+$hasLastContact = trim($lastContactedRaw) !== '';
 
-    $noteCount = 0;
-    $latestInternalNote = null;
-    $latestTrailStamp = null;
+$workflowTone = '#f7f6f3';
+$workflowBorder = '#d9d3c7';
+$headline = 'Add structure before widening workflow';
+$summary = 'The record is still building a stable operator path.';
 
-    if (method_exists($record, 'notes')) {
-        $noteCount = (int) $record->notes()->count();
-        $latestInternalNote = $record->notes()
-            ->where('is_internal', true)
-            ->orderBy('created_at', 'desc')
-            ->first();
+if ($isClosed) {
+    $workflowTone = '#f3f7f4';
+    $workflowBorder = '#c9ddcf';
+    $headline = 'Closed workflow visible';
+    $summary = 'The record already carries a closure signal.';
+} elseif ($hasOwner && $hasFollowUp && $hasLastContact) {
+    $workflowTone = '#eef6ff';
+    $workflowBorder = '#c8d9f0';
+    $headline = 'Structured workflow visible';
+    $summary = 'Owner, follow-up, and contact trail are visible.';
+} elseif ($hasOwner || $hasFollowUp || $hasLastContact) {
+    $workflowTone = '#fff8ec';
+    $workflowBorder = '#ead8b0';
+    $headline = 'Partial workflow visible';
+    $summary = 'Some workflow anchors are present, but the handoff picture is still thin.';
+}
 
-        if ($latestInternalNote && $latestInternalNote->created_at) {
-            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
-        }
-    }
-
-    $workflowSignals = [
-        ['label' => 'Request reference visible', 'ready' => $hasReference],
-        ['label' => 'Reply destination usable', 'ready' => $hasValidEmail],
-        ['label' => 'Service focus visible', 'ready' => $hasServiceFocus],
-        ['label' => 'Brief visible', 'ready' => $hasBrief],
-        ['label' => 'Internal trail visible', 'ready' => (bool) $latestTrailStamp],
-        ['label' => 'Notes present', 'ready' => $noteCount > 0],
-    ];
-
-    $readyCount = 0;
-    foreach ($workflowSignals as $signal) {
-        if ($signal['ready']) {
-            $readyCount++;
-        }
-    }
-
-    $headline = 'Workflow posture is visible';
-    $summary = 'This strip condenses the most useful workflow cues into one quick backend view so operators can judge how orderly the current handling line already is before the next step.';
-    $toneBg = '#f8fbff';
-    $toneBorder = '#dce5f4';
-    $primaryWorkflow = 'Workflow still needs light structuring';
-
-    if ($readyCount >= 5) {
-        $headline = 'Workflow posture looks stronger';
-        $summary = 'The record already carries enough visible workflow anchors that operators can move through the next step with a clearer handling line.';
-        $toneBg = '#f6fbf8';
-        $toneBorder = '#d8eadf';
-        $primaryWorkflow = 'Workflow looks well-anchored';
-    } elseif ($readyCount <= 2) {
-        $headline = 'Workflow posture still needs support';
-        $summary = 'The inquiry can still progress, but several workflow anchors are still thin, so operators should keep the next step simple and structured.';
-        $toneBg = '#fffaf1';
-        $toneBorder = '#f0e0bf';
-        $primaryWorkflow = 'Add structure before widening workflow';
-    }
-
-    $pillStyles = [
-        true: ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'visible'],
-        false: ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'thin'],
-    ];
+$pillStyles = [
+    true => ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'visible'],
+    false => ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'thin'],
+];
 ?>
-<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($workflowBorder) ?>;border-radius:18px;background:<?= e($workflowTone) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.06);">
     <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
         <div>
-            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Workflow summary</div>
-            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
-            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7b7162;font-weight:700;">Workflow Summary</div>
+            <h4 style="margin:6px 0 4px;font-size:20px;line-height:1.2;color:#1f2a44;"><?= e($headline) ?></h4>
+            <div style="font-size:13px;line-height:1.6;color:#5c6476;max-width:780px;"><?= e($summary) ?></div>
         </div>
-        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
-            <?= e($primaryWorkflow) ?>
-        </div>
-    </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Workflow anchors: <?= e((string) $readyCount) ?>/<?= e((string) count($workflowSignals)) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            <?= e($status !== '' ? 'Status: ' . $status : 'Status not set') ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            <?= e($priority !== '' ? 'Priority: ' . $priority : 'Priority not set') ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?>
-        </span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:10px;margin-top:14px;">
-        <?php foreach ($workflowSignals as $signal): ?>
-            <?php $pill = $pillStyles[$signal['ready']]; ?>
-            <div style="padding:12px 13px;border:1px solid <?= e($signal['ready'] ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
-                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($signal['label']) ?></div>
-                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
-                        <?= e($pill['label']) ?>
-                    </span>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <div style="margin-top:14px;padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
-        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Workflow recap line</div>
-        <div style="font-size:14px;line-height:1.75;color:#42546d;">
-            Reference: <?= e($requestReference !== '' ? $requestReference : 'Not yet assigned') ?><br>
-            Notes: <?= e((string) $noteCount) ?><br>
-            Internal trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <?php foreach ([
+                'Owner' => $hasOwner,
+                'Follow-up' => $hasFollowUp,
+                'Contact trail' => $hasLastContact,
+                'Closure state' => $isClosed,
+            ] as $label => $isReady):
+                $pill = $pillStyles[$isReady]; ?>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:12px;font-weight:700;">
+                    <?= e($label) ?> · <?= e($pill['label']) ?>
+                </span>
+            <?php endforeach; ?>
         </div>
     </div>
 
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
-        <strong style="color:#22324a;">Operator use:</strong>
-        This strip is guidance-only and render-safe. It does not change workflow state automatically. It helps the operator judge how orderly the current handling line already is before the next action, reply, or handoff.
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #ece7dd;">
+            <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7f70;font-weight:700;">Status</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#22304d;"><?= e($status !== '' ? $status : 'Open / not clarified') ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #ece7dd;">
+            <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7f70;font-weight:700;">Priority</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#22304d;"><?= e($priority !== '' ? $priority : 'Not set') ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #ece7dd;">
+            <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7f70;font-weight:700;">Owner</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#22304d;"><?= e($hasOwner ? $owner : 'Unassigned') ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #ece7dd;">
+            <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7f70;font-weight:700;">Next follow-up</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#22304d;"><?= e($hasFollowUp ? $followUpRaw : 'Not scheduled') ?></div>
+        </div>
     </div>
 </div>

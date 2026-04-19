@@ -49,7 +49,7 @@
     }
 
     $hasInternalCue = $latestNoteBody !== '';
-    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+    $hasLinkedLoyalty = false;
 
     $closureEvidenceScore = 0;
     foreach ([$hasClosedReason, $hasInternalCue, $hasRecentTouch] as $flag) {

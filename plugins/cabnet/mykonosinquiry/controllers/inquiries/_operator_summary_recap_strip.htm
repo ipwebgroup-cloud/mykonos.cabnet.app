@@ -1,135 +1,111 @@
 <?php
-    $record = $this->formGetModel();
+$model = $formModel ?? ($this->formGetModel() ?? null);
+if (!$model) {
+    return;
+}
 
-    $guestName = trim((string) ($record->full_name ?? ''));
-    $guestEmail = trim((string) ($record->email ?? ''));
-    $guests = trim((string) ($record->guests ?? ''));
-    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
-    $departureDate = trim((string) ($record->departure_date ?? ''));
-    $requestedMode = trim((string) ($record->requested_mode ?? ''));
-    $status = trim((string) ($record->status ?? ''));
-    $details = trim((string) ($record->details ?? ''));
-    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
-    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
-
-    $latestInternalNote = null;
-    $latestTrailStamp = null;
-    $latestTrailExcerpt = '';
-    $noteCount = 0;
-
-    if (method_exists($record, 'notes')) {
-        $noteCount = (int) $record->notes()->count();
-
-        $latestInternalNote = $record->notes()
-            ->where('is_internal', true)
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if ($latestInternalNote && $latestInternalNote->created_at) {
-            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
-        }
-
-        if ($latestInternalNote) {
-            $latestTrailExcerpt = trim((string) $latestInternalNote->body);
-            if ($latestTrailExcerpt !== '' && mb_strlen($latestTrailExcerpt) > 180) {
-                $latestTrailExcerpt = mb_substr($latestTrailExcerpt, 0, 177) . '...';
-            }
-        }
+$get = static function ($obj, string $key, $default = null) {
+    if (!$obj) {
+        return $default;
     }
+    return isset($obj->$key) && $obj->$key !== null && $obj->$key !== '' ? $obj->$key : $default;
+};
 
-    $summarySignals = [
-        ['label' => 'Guest block visible', 'ready' => $guestName !== '' || $guestEmail !== ''],
-        ['label' => 'Stay block visible', 'ready' => $arrivalDate !== '' || $departureDate !== '' || $guests !== ''],
-        ['label' => 'Service block visible', 'ready' => !empty($serviceList)],
-        ['label' => 'Brief visible', 'ready' => $details !== ''],
-        ['label' => 'Internal trail visible', 'ready' => (bool) $latestTrailStamp],
-    ];
-
-    $readyCount = 0;
-    foreach ($summarySignals as $signal) {
-        if ($signal['ready']) {
-            $readyCount++;
-        }
+$payload = [];
+$rawPayload = $get($model, 'payload', []);
+if (is_array($rawPayload)) {
+    $payload = $rawPayload;
+} elseif (is_string($rawPayload) && $rawPayload !== '') {
+    $decoded = json_decode($rawPayload, true);
+    if (is_array($decoded)) {
+        $payload = $decoded;
     }
+}
 
-    $headline = 'Operator recap posture is visible';
-    $summary = 'This strip condenses the most useful operator-facing context into one quick recap so the record can be scanned faster before deciding the next step.';
-    $toneBg = '#f8fbff';
-    $toneBorder = '#dce5f4';
-    $primaryRecap = 'Use recap before the next move';
+$guestName = trim((string)($get($model, 'guest_name', '') ?: ($payload['guest_name'] ?? '')));
+$guestEmail = trim((string)($get($model, 'guest_email', '') ?: ($payload['guest_email'] ?? '')));
+$guestPhone = trim((string)($get($model, 'guest_phone', '') ?: ($payload['guest_phone'] ?? '')));
+$status = (string)$get($model, 'status', 'new');
+$priority = (string)$get($model, 'priority', 'normal');
+$owner = trim((string)$get($model, 'owner_name', $get($model, 'owner', 'Unassigned')));
+$reference = trim((string)$get($model, 'request_reference', $get($model, 'reference', '')));
+$arrivalDate = trim((string)($get($model, 'arrival_date', '') ?: ($payload['arrival_date'] ?? '')));
+$departureDate = trim((string)($get($model, 'departure_date', '') ?: ($payload['departure_date'] ?? '')));
+$followUpOn = trim((string)$get($model, 'follow_up_on', ''));
+$closedReason = trim((string)$get($model, 'closed_reason', ''));
 
-    if ($readyCount >= 4) {
-        $headline = 'Operator recap posture looks strong';
-        $summary = 'The record already carries enough visible context that operators can rely on this recap for a faster next-step scan.';
-        $toneBg = '#f6fbf8';
-        $toneBorder = '#d8eadf';
-        $primaryRecap = 'Recap is strong enough for quick scanning';
-    } elseif ($readyCount <= 2) {
-        $headline = 'Operator recap posture still needs support';
-        $summary = 'The record can still be used, but the quick recap is thinner because several major context blocks are still missing.';
-        $toneBg = '#fffaf1';
-        $toneBorder = '#f0e0bf';
-        $primaryRecap = 'Scan carefully before deciding';
+$requestedServices = $get($model, 'requested_services', $payload['requested_services'] ?? []);
+if (is_string($requestedServices) && $requestedServices !== '') {
+    $decoded = json_decode($requestedServices, true);
+    if (is_array($decoded)) {
+        $requestedServices = $decoded;
     }
+}
+if (!is_array($requestedServices)) {
+    $requestedServices = $requestedServices ? [(string)$requestedServices] : [];
+}
+$serviceNames = [];
+foreach ($requestedServices as $item) {
+    if (is_array($item)) {
+        $serviceNames[] = trim((string)($item['label'] ?? $item['name'] ?? $item['title'] ?? reset($item) ?: ''));
+    } else {
+        $serviceNames[] = trim((string)$item);
+    }
+}
+$serviceNames = array_values(array_filter(array_unique($serviceNames)));
+$serviceSummary = $serviceNames ? implode(', ', array_slice($serviceNames, 0, 4)) : 'No service summary yet';
+if (count($serviceNames) > 4) {
+    $serviceSummary .= ' +' . (count($serviceNames) - 4) . ' more';
+}
 
-    $travelWindow = ($arrivalDate !== '' || $departureDate !== '')
-        ? trim(($arrivalDate !== '' ? $arrivalDate : 'Open') . ' → ' . ($departureDate !== '' ? $departureDate : 'Open'))
-        : 'Not provided';
+$travelWindow = ($arrivalDate || $departureDate)
+    ? trim(($arrivalDate ?: 'Open') . ' → ' . ($departureDate ?: 'Open'))
+    : 'Not provided';
 
-    $pillStyles = [
-        true: ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'visible'],
-        false: ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'thin'],
-    ];
+$anchorCount = 0;
+foreach ([$guestName, $guestEmail, $status, $priority, $serviceSummary !== 'No service summary yet' ? '1' : '', $followUpOn ?: $reference] as $value) {
+    if ($value) {
+        $anchorCount++;
+    }
+}
+$summaryTone = $anchorCount >= 5 ? 'well-anchored' : ($anchorCount >= 3 ? 'usable' : 'thin');
+$stoneBg = $anchorCount >= 5 ? '#f6fbf7' : ($anchorCount >= 3 ? '#fffaf0' : '#fff8f8');
+$stoneBorder = $anchorCount >= 5 ? '#d7eadb' : ($anchorCount >= 3 ? '#edd9a6' : '#efcaca');
 ?>
-<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($stoneBorder) ?>;border-radius:18px;background:<?= e($stoneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,.06);">
     <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
         <div>
-            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Operator summary recap</div>
-            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
-            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a869a;">Operator Summary Recap</div>
+            <h4 style="margin:6px 0 0;font-size:18px;line-height:1.35;color:#1f2a44;">Quick operator recap for the current inquiry</h4>
         </div>
-        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
-            <?= e($primaryRecap) ?>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:#ffffff;border:1px solid <?= e($stoneBorder) ?>;font-size:12px;color:#44506b;">
+            <strong style="color:#1f2a44;">Summary:</strong> <?= e(ucfirst($summaryTone)) ?>
         </div>
     </div>
 
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Guest: <?= e($guestName !== '' ? $guestName : ($guestEmail !== '' ? $guestEmail : 'Unknown')) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Travel: <?= e($travelWindow) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Services: <?= e($serviceSummary) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Notes: <?= e((string) $noteCount) ?>
-        </span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:10px;margin-top:14px;">
-        <?php foreach ($summarySignals as $signal): ?>
-            <?php $pill = $pillStyles[$signal['ready']]; ?>
-            <div style="padding:12px 13px;border:1px solid <?= e($signal['ready'] ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
-                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($signal['label']) ?></div>
-                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
-                        <?= e($pill['label']) ?>
-                    </span>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <div style="margin-top:14px;padding:13px 14px;border:1px solid #e4ebf7;border-radius:16px;background:#fff;">
-        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Latest internal recap context</div>
-        <div style="font-size:14px;line-height:1.75;color:#42546d;"><?= e($latestTrailExcerpt !== '' ? $latestTrailExcerpt : 'No internal recap note saved yet.') ?></div>
-        <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Mode: <?= e($requestedMode !== '' ? $requestedMode : 'General') ?> · <?= e($status !== '' ? $status : 'Status not set') ?> · Trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?></div>
-    </div>
-
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
-        <strong style="color:#22324a;">Operator use:</strong>
-        This strip is guidance-only and render-safe. It does not summarize or decide automatically. It helps the operator scan the most important visible context faster before the next action, reply, or decision.
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Guest</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;"><strong><?= e($guestName ?: 'Name not provided') ?></strong></div>
+            <div style="margin-top:4px;font-size:13px;color:#5a6478;"><?= e($guestEmail ?: 'Email not provided') ?></div>
+            <div style="margin-top:2px;font-size:13px;color:#5a6478;"><?= e($guestPhone ?: 'Phone not provided') ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Workflow</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;"><strong>Status:</strong> <?= e($status) ?></div>
+            <div style="margin-top:4px;font-size:13px;color:#5a6478;"><strong>Priority:</strong> <?= e($priority) ?></div>
+            <div style="margin-top:4px;font-size:13px;color:#5a6478;"><strong>Owner:</strong> <?= e($owner ?: 'Unassigned') ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Travel & Reference</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;"><strong>Window:</strong> <?= e($travelWindow) ?></div>
+            <div style="margin-top:4px;font-size:13px;color:#5a6478;"><strong>Reference:</strong> <?= e($reference ?: 'Pending') ?></div>
+            <div style="margin-top:4px;font-size:13px;color:#5a6478;"><strong>Follow-up:</strong> <?= e($followUpOn ?: 'Not scheduled') ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Service Shape</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;"><?= e($serviceSummary) ?></div>
+            <div style="margin-top:4px;font-size:13px;color:#5a6478;"><strong>Closure note:</strong> <?= e($closedReason ?: 'No closure reason recorded') ?></div>
+        </div>
     </div>
 </div>

@@ -49,7 +49,7 @@
     }
 
     $hasInternalCue = $latestNoteBody !== '';
-    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+    $hasLinkedLoyalty = false;
 
     $decision = 'Stay active';
     $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);

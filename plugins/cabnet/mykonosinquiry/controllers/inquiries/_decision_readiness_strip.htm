@@ -1,109 +1,96 @@
 <?php
-    $record = $this->formGetModel();
+$model = $formModel ?? ($this->formGetModel() ?? null);
+if (!$model) {
+    return;
+}
 
-    $guestEmail = trim((string) ($record->email ?? ''));
-    $details = trim((string) ($record->details ?? ''));
-    $arrivalDate = trim((string) ($record->arrival_date ?? ''));
-    $guests = trim((string) ($record->guests ?? ''));
-    $requestedMode = trim((string) ($record->requested_mode ?? ''));
-    $status = trim((string) ($record->status ?? ''));
-    $serviceList = is_array($record->services_json ?? null) ? array_values(array_filter($record->services_json)) : [];
-    $serviceSummary = !empty($serviceList) ? implode(', ', $serviceList) : 'Luxury planning';
-
-    $latestInternalNote = null;
-    $latestTrailStamp = null;
-    if (method_exists($record, 'notes')) {
-        $latestInternalNote = $record->notes()
-            ->where('is_internal', true)
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if ($latestInternalNote && $latestInternalNote->created_at) {
-            $latestTrailStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
-        }
+$get = static function ($obj, string $key, $default = null) {
+    if (!$obj) {
+        return $default;
     }
+    return isset($obj->$key) && $obj->$key !== null && $obj->$key !== '' ? $obj->$key : $default;
+};
 
-    $signals = [
-        ['label' => 'Valid reply destination', 'ready' => $guestEmail !== '' && filter_var($guestEmail, FILTER_VALIDATE_EMAIL)],
-        ['label' => 'Saved brief available', 'ready' => $details !== ''],
-        ['label' => 'Arrival timing visible', 'ready' => $arrivalDate !== ''],
-        ['label' => 'Guest count visible', 'ready' => $guests !== ''],
-        ['label' => 'Service focus visible', 'ready' => !empty($serviceList)],
-        ['label' => 'Internal trail visible', 'ready' => (bool) $latestTrailStamp],
-    ];
-
-    $readyCount = 0;
-    foreach ($signals as $signal) {
-        if ($signal['ready']) {
-            $readyCount++;
-        }
+$payload = [];
+$rawPayload = $get($model, 'payload', []);
+if (is_array($rawPayload)) {
+    $payload = $rawPayload;
+} elseif (is_string($rawPayload) && $rawPayload !== '') {
+    $decoded = json_decode($rawPayload, true);
+    if (is_array($decoded)) {
+        $payload = $decoded;
     }
+}
 
-    $headline = 'Decision-readiness posture is visible';
-    $summary = 'This strip helps operators judge whether the current record is strong enough to support a cleaner internal decision posture or whether more clarification is still safer first.';
-    $toneBg = '#f8fbff';
-    $toneBorder = '#dce5f4';
-    $primaryDecision = 'Decision still needs a few anchors';
-
-    if ($readyCount >= 5) {
-        $headline = 'Decision-readiness posture looks strong';
-        $summary = 'The inquiry already carries most of the anchors needed for a firmer next decision, so operators can move forward with less hesitation.';
-        $toneBg = '#f6fbf8';
-        $toneBorder = '#d8eadf';
-        $primaryDecision = 'Record looks decision-ready';
-    } elseif ($readyCount <= 2) {
-        $headline = 'Decision-readiness still needs caution';
-        $summary = 'The inquiry can still progress, but several anchors are still missing, so operators should keep decisions light until the main gaps are clarified.';
-        $toneBg = '#fffaf1';
-        $toneBorder = '#f0e0bf';
-        $primaryDecision = 'Clarify before deciding';
+$status = (string)$get($model, 'status', 'new');
+$priority = (string)$get($model, 'priority', 'normal');
+$owner = (string)$get($model, 'owner_name', $get($model, 'owner', ''));
+$followUpOn = (string)$get($model, 'follow_up_on', '');
+$lastContacted = (string)$get($model, 'last_contacted_at', '');
+$closedReason = (string)$get($model, 'closed_reason', '');
+$requestedServices = $get($model, 'requested_services', $payload['requested_services'] ?? []);
+if (is_string($requestedServices) && $requestedServices !== '') {
+    $decoded = json_decode($requestedServices, true);
+    if (is_array($decoded)) {
+        $requestedServices = $decoded;
     }
+}
+$serviceCount = is_array($requestedServices) ? count($requestedServices) : ($requestedServices ? 1 : 0);
 
-    $pillStyles = [
-        true: ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'ready'],
-        false: ['bg' => '#fff2d6', 'text' => '#7a5a1e', 'label' => 'thin'],
-    ];
+$score = 0;
+if ($status) $score++;
+if ($priority) $score++;
+if ($owner) $score++;
+if ($followUpOn) $score++;
+if ($lastContacted) $score++;
+if ($serviceCount > 0) $score++;
+
+if (in_array($status, ['won','closed_won','closed_lost','closed'], true) && !$closedReason) {
+    $score = max(0, $score - 1);
+}
+
+if ($score >= 5) {
+    $label = 'Ready to decide';
+    $bg = '#f6fbf7';
+    $border = '#d7eadb';
+    $cue = 'The record has enough visible anchors for an operator decision.';
+} elseif ($score >= 3) {
+    $label = 'Almost ready';
+    $bg = '#fffaf0';
+    $border = '#edd9a6';
+    $cue = 'One more anchor would make the decision posture more trustworthy.';
+} else {
+    $label = 'Clarify before deciding';
+    $bg = '#fff8f8';
+    $border = '#efcaca';
+    $cue = 'Pause and add more visible anchors before treating this as decision-ready.';
+}
+
+$nextFix = !$owner ? 'Assign ownership' : (!$followUpOn ? 'Set a follow-up date' : (!$lastContacted ? 'Record last contact' : (!$serviceCount ? 'Confirm requested services' : 'Document decision context')));
 ?>
-<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($border) ?>;border-radius:18px;background:<?= e($bg) ?>;box-shadow:0 10px 24px rgba(27,49,102,.06);">
     <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
         <div>
-            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b7a97;margin-bottom:6px;">Decision readiness</div>
-            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;"><?= e($headline) ?></div>
-            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($summary) ?></div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a869a;">Decision Readiness</div>
+            <h4 style="margin:6px 0 0;font-size:18px;line-height:1.35;color:#1f2a44;"><?= e($label) ?></h4>
         </div>
-        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
-            <?= e($primaryDecision) ?>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:#ffffff;border:1px solid <?= e($border) ?>;font-size:12px;color:#44506b;">
+            <strong style="color:#1f2a44;">Readiness score:</strong> <?= e((string)$score) ?>/6
         </div>
     </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Decision anchors: <?= e((string) $readyCount) ?>/<?= e((string) count($signals)) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Services: <?= e($serviceSummary) ?>
-        </span>
-        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">
-            Internal trail: <?= e($latestTrailStamp ?: 'Not yet recorded') ?>
-        </span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:10px;margin-top:14px;">
-        <?php foreach ($signals as $signal): ?>
-            <?php $pill = $pillStyles[$signal['ready']]; ?>
-            <div style="padding:12px 13px;border:1px solid <?= e($signal['ready'] ? '#d8eadf' : '#f0e0bf') ?>;border-radius:14px;background:#fff;">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
-                    <div style="font-size:13px;font-weight:700;line-height:1.55;color:#22324a;"><?= e($signal['label']) ?></div>
-                    <span style="display:inline-flex;align-items:center;min-height:26px;padding:5px 9px;border-radius:999px;background:<?= e($pill['bg']) ?>;color:<?= e($pill['text']) ?>;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap;">
-                        <?= e($pill['label']) ?>
-                    </span>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
-        <strong style="color:#22324a;">Operator use:</strong>
-        This strip is guidance-only and render-safe. It does not decide automatically. It helps the operator judge whether the current record is strong enough to support a firmer next decision or whether more clarification is still safer.
+    <div style="margin-top:12px;font-size:14px;color:#44506b;"><?= e($cue) ?></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Visible anchors</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;">Status, priority, owner, follow-up, contact trail, service shape</div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Next fix</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;"><?= e($nextFix) ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e8edf5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7a869a;">Closure context</div>
+            <div style="margin-top:6px;font-size:14px;color:#1f2a44;"><?= e($closedReason ?: 'No closure reason recorded') ?></div>
+        </div>
     </div>
 </div>
