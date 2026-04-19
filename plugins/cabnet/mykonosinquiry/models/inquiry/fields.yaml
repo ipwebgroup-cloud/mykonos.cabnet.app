@@ -378,3 +378,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_proceed_readiness_summary_strip.htm
         span: full
+
+    recommended_queue_action_summary:
+        label: Recommended Queue Action Summary
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_recommended_queue_action_summary_strip.htm
+        span: full

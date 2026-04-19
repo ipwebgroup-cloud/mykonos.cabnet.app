@@ -1,0 +1,228 @@
+<?php
+    $model = $model ?? $this->formGetModel();
+
+    if (!$model) {
+        return;
+    }
+
+    $status = (string) ($model->status ?? 'new');
+    $statusLabel = !empty($model->status_label)
+        ? $model->status_label
+        : ucwords(str_replace(['_', '-'], ' ', $status));
+
+    $priorityLabel = !empty($model->priority_label)
+        ? $model->priority_label
+        : (!empty($model->priority) ? ucwords(str_replace(['_', '-'], ' ', $model->priority)) : 'Normal');
+
+    $reference = !empty($model->request_reference) ? $model->request_reference : ('Inquiry #' . $model->id);
+    $owner = trim((string) ($model->owner_name ?? '')) ?: 'Not assigned';
+    $hasOwner = $owner !== 'Not assigned';
+    $hasEmail = trim((string) ($model->email ?? '')) !== '';
+    $hasArrival = !empty($model->arrival_date);
+    $hasFollowUp = !empty($model->follow_up_date);
+    $hasLastContacted = !empty($model->last_contacted_at);
+    $closedReason = trim((string) ($model->closed_reason ?? ''));
+    $hasClosedReason = $closedReason !== '';
+
+    $latestInternalNote = null;
+    $latestNoteBody = '';
+    $latestNoteStamp = 'No internal note saved';
+
+    if (method_exists($model, 'notes')) {
+        $latestInternalNote = $model->notes()
+            ->where('is_internal', true)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestInternalNote) {
+            $latestNoteBody = trim((string) ($latestInternalNote->body ?? ''));
+            if ($latestNoteBody !== '' && mb_strlen($latestNoteBody) > 150) {
+                $latestNoteBody = mb_substr($latestNoteBody, 0, 147) . '...';
+            }
+            if ($latestInternalNote->created_at) {
+                $latestNoteStamp = $latestInternalNote->created_at->format('Y-m-d H:i');
+            }
+        }
+    }
+
+    $hasInternalCue = $latestNoteBody !== '';
+    $hasLinkedLoyalty = method_exists($model, 'getLinkedLoyaltyRecord') && $model->getLinkedLoyaltyRecord();
+    $isClosed = in_array($status, ['closed_won', 'closed_lost', 'closed', 'spam'], true) || !empty($model->closed_at);
+
+    $decision = 'Stay active';
+    $closureEvidenceScore = 0;
+    foreach ([$hasClosedReason, $hasInternalCue, $hasLastContacted] as $flag) {
+        if ($flag) {
+            $closureEvidenceScore++;
+        }
+    }
+    $reopenSignalScore = 0;
+    foreach ([$hasOwner, $hasFollowUp, $hasLastContacted, $hasLinkedLoyalty] as $flag) {
+        if ($flag) {
+            $reopenSignalScore++;
+        }
+    }
+    if ($isClosed) {
+        if ($closureEvidenceScore >= 2 && $reopenSignalScore >= 2) {
+            $decision = 'Reopen deliberately';
+        } elseif ($closureEvidenceScore >= 2 && $reopenSignalScore < 2) {
+            $decision = 'Remain closed';
+        } else {
+            $decision = 'Document before reopen';
+        }
+    }
+
+    if ($decision === 'Stay active') {
+        $requiredAnchors = [
+            'Visible owner' => $hasOwner,
+            'Dated checkpoint' => $hasFollowUp,
+            'Contact path' => $hasEmail,
+            'Trip anchor' => $hasArrival,
+            'Internal note cue' => $hasInternalCue,
+        ];
+        $eyebrow = '#1f4f80';
+        $toneBg = '#f5f9ff';
+        $toneBorder = '#dbe8f7';
+    } elseif ($decision === 'Reopen deliberately') {
+        $requiredAnchors = [
+            'Visible owner' => $hasOwner,
+            'Closure reason' => $hasClosedReason,
+            'Last-contact anchor' => $hasLastContacted,
+            'Dated checkpoint' => $hasFollowUp,
+            'Internal note cue' => $hasInternalCue,
+        ];
+        $eyebrow = '#7b4a12';
+        $toneBg = '#fff9f2';
+        $toneBorder = '#f0dfbf';
+    } elseif ($decision === 'Remain closed') {
+        $requiredAnchors = [
+            'Closure reason' => $hasClosedReason,
+            'Internal note cue' => $hasInternalCue,
+            'Last-contact anchor' => $hasLastContacted,
+        ];
+        $eyebrow = '#25543f';
+        $toneBg = '#f6fbf8';
+        $toneBorder = '#d8eadf';
+    } else {
+        $requiredAnchors = [
+            'Closure reason' => $hasClosedReason,
+            'Internal note cue' => $hasInternalCue,
+            'Last-contact anchor' => $hasLastContacted,
+            'Visible owner' => $hasOwner,
+        ];
+        $eyebrow = '#8a5a12';
+        $toneBg = '#fffaf1';
+        $toneBorder = '#f0dfbf';
+    }
+
+    $metCount = 0;
+    $missingTitles = [];
+    foreach ($requiredAnchors as $title => $met) {
+        if ($met) {
+            $metCount++;
+        } else {
+            $missingTitles[] = $title;
+        }
+    }
+
+    $thresholdMet = empty($missingTitles);
+    $confidenceLabel = 'Fragile';
+    if ($metCount >= max(1, count($requiredAnchors) - 1)) {
+        $confidenceLabel = $thresholdMet ? 'Strong' : 'Moderate';
+    }
+
+    if ($thresholdMet) {
+        if ($decision === 'Stay active') {
+            $queueAction = 'Keep active';
+            $actionSummary = 'The record has enough visible continuity to stay live in the active queue with a narrow next step.';
+            $doNow = $hasFollowUp
+                ? 'Keep the record active and work toward the next dated checkpoint without widening the task.'
+                : 'Keep the record active and add the next dated checkpoint so the queue remains explicit.';
+            $avoidNow = 'Do not close a record that still has a live operating path.';
+        } elseif ($decision === 'Reopen deliberately') {
+            $queueAction = 'Reopen deliberately';
+            $actionSummary = 'Closure memory and reopen signals are both visible, so a controlled return to the live queue is justified.';
+            $doNow = 'Move the record back into active handling with a clear owner and next dated checkpoint.';
+            $avoidNow = 'Do not reopen casually without preserving why the record came back into motion.';
+        } elseif ($decision === 'Remain closed') {
+            $queueAction = 'Keep closed';
+            $actionSummary = 'The closure trail is visible enough to leave the record settled and out of the active queue.';
+            $doNow = 'Leave the record closed and only reopen if a real new operating signal appears.';
+            $avoidNow = 'Do not create queue churn by reopening a record that is already well-documented.';
+        } else {
+            $queueAction = 'Document, then review';
+            $actionSummary = 'The record is close to being actionable again, but it still needs a better closure-to-reopen bridge.';
+            $doNow = 'Finish the missing closure bridge first, then review whether a reopen step is truly warranted.';
+            $avoidNow = 'Do not treat partial closure memory as the same thing as a safe reopen path.';
+        }
+    } else {
+        $firstGap = $missingTitles[0] ?? 'missing anchor';
+        $secondGap = $missingTitles[1] ?? null;
+        $queueAction = 'Pause in queue';
+        $actionSummary = 'The current queue action should stay paused because the minimum visible evidence is still incomplete.';
+        $doNow = 'Resolve ' . strtolower($firstGap) . ($secondGap ? ', then ' . strtolower($secondGap) : '') . ' before trusting the next queue move.';
+        $avoidNow = 'Do not push the record forward in the queue while the required anchors are still missing.';
+    }
+
+    $anchorSummary = [];
+    foreach ($requiredAnchors as $title => $met) {
+        $anchorSummary[] = $title . ': ' . ($met ? 'ready' : 'missing');
+    }
+
+    $operatorCue = $queueAction . ' · ' . $confidenceLabel . ' confidence';
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($toneBorder) ?>;border-radius:18px;background:<?= e($toneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.05);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:<?= e($eyebrow) ?>;margin-bottom:6px;">Recommended queue action summary</div>
+            <div style="font-size:18px;font-weight:700;line-height:1.35;color:#22324a;margin-bottom:6px;">Queue handling can be read in one operator line</div>
+            <div style="font-size:14px;line-height:1.7;color:#54657d;max-width:980px;"><?= e($actionSummary) ?></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#edf3fb;color:#31496e;font-size:12px;font-weight:800;">
+            <?= e($operatorCue) ?>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Ref: <?= e($reference) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Status: <?= e($statusLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Priority: <?= e($priorityLabel) ?></span>
+        <span style="display:inline-flex;align-items:center;min-height:32px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid <?= e($toneBorder) ?>;font-size:12px;font-weight:700;color:#31496e;">Decision: <?= e($decision) ?></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Queue action</div>
+            <div style="font-size:15px;font-weight:700;line-height:1.6;color:#22324a;"><?= e($queueAction) ?></div>
+            <div style="margin-top:8px;font-size:13px;line-height:1.7;color:#54657d;"><?= e($doNow) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Why this queue move</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($actionSummary) ?></div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.6;color:#6b7a97;">Latest note stamp: <?= e($latestNoteStamp) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Avoid now</div>
+            <div style="font-size:14px;line-height:1.7;color:#42546d;"><?= e($avoidNow) ?></div>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;">
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Required anchors</div>
+            <div style="font-size:13px;line-height:1.7;color:#54657d;"><?= e(implode(' · ', $anchorSummary)) ?></div>
+        </div>
+
+        <div style="padding:12px 13px;border:1px solid <?= e($toneBorder) ?>;border-radius:14px;background:#fff;">
+            <div style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7d8cab;margin-bottom:8px;">Continuity state</div>
+            <div style="font-size:13px;line-height:1.7;color:#54657d;">Owner <?= $hasOwner ? 'visible' : 'missing' ?> · Follow-up <?= $hasFollowUp ? 'set' : 'missing' ?> · Last contacted <?= $hasLastContacted ? 'visible' : 'missing' ?> · Closure reason <?= $hasClosedReason ? 'visible' : 'missing' ?> · Loyalty <?= $hasLinkedLoyalty ? 'linked' : 'not linked' ?>.</div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid <?= e($toneBorder) ?>;font-size:13px;line-height:1.75;color:#5f6e84;">
+        <strong style="color:#22324a;">Operator use:</strong>
+        This strip is guidance-only and render-safe. It does not change the inquiry. It translates the end-of-chain proceed readiness recap into the single safest queue-handling move for the record right now.
+    </div>
+</div>

@@ -4,11 +4,11 @@
 
 Latest known rooted patch prepared for deployment:
 
-- `v7.28.00 inquiry record proceed readiness summary strip`
-- plugin tracking `2.4.36`
+- `v7.29.00 inquiry record recommended queue action summary strip`
+- plugin tracking `2.4.37`
 
 This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
-It adds a compact Proceed Readiness Summary strip directly to the inquiry record so operators can confirm the full closure/reopen sequence in one end-of-chain recap.
+It adds a compact Recommended Queue Action Summary strip directly to the inquiry record so operators can convert the full readiness recap into the safest queue-handling move.
 
 ## Deployment note
 
@@ -20,6 +20,6 @@ No schema change is introduced and no plugin refresh is required for this step.
 
 Then verify:
 - open Backend -> Inquiries -> any real inquiry record
-- a new Proceed Readiness Summary strip appears on the inquiry record after Fastest Path to Proceed
-- the strip shows recommendation, threshold state, watch item, recovery path, and continuity anchors
+- a new Recommended Queue Action Summary strip appears on the inquiry record after Proceed Readiness Summary
+- the strip shows queue action, why this queue move, avoid-now guidance, and required anchors
 - earlier closure/reopen guidance strips remain visible
