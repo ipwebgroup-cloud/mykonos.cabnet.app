@@ -1,0 +1,7 @@
+Add this block under the same form tab/area where the late-stage queue-readiness strips are mounted, after the "Not Ready After One Fix" partial.
+
+v73700_two_fix_recovery_summary:
+    label: Two Fix Recovery Summary
+    type: partial
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_two_fix_recovery_summary_strip.htm
+    tab: Internal

@@ -1,55 +1,13 @@
-# MYKONOS_CONTINUE_PROMPT.md
+Continue development of the Mykonos Cabnet OctoberCMS inquiry project from the real live state.
 
-You are continuing development of the **Mykonos Cabnet OctoberCMS inquiry project**.
+Current verified posture:
+- live backend strip chain required multiple render-safe hotfixes
+- latest consolidated hotfix line: v7.36.12
+- next prepared major update: v7.37.00 two fix recovery summary strip
 
-Treat the latest uploaded files in the chat as the primary source of truth.
-
-Latest verified rooted patch line:
-- `v7.32.00 inquiry record queue action timing recap strip`
-
-Current safe direction:
-- backend-only operator productivity
-- render-safe inquiry-record guidance improvements
-- no schema change
-- no plugin refresh required unless a future patch explicitly says so
-- no theme import required
-- no `/plan` behavior change
-- no SMTP change
-- no queue workflow widening
-
-When continuing:
-1. inspect the real uploaded files first
-2. verify the latest strip line already present
-3. recommend the smallest safe next backend-only step
-4. produce a rooted zip patch only for that next step
-
-## v7.32.00 inquiry record queue action timing recap strip
-- added backend-only render-safe guidance strip: Queue Action Timing Recap
-- combines the recommended queue move, risk posture, and timing verdict into one final operator summary
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no /plan behavior change
-
-
-- v7.33.00 inquiry record queue action readiness score strip
-
-
-## v7.34.00 inquiry record score recovery priority strip
-- added backend-only render-safe guidance strip: Score Recovery Priority
-- identifies the single fastest missing anchor that would lift queue-action readiness next
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no /plan behavior change
-
-
-## v7.35.00 — Ready After One Fix
-- added a backend-only read-only strip to the inquiry record
-- shows whether resolving the top recovery gap alone is enough to make the recommended queue move safely executable
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no /plan behavior change
-
-- Latest known patch line: `v7.36.00 inquiry record not ready after one fix strip`
+Working rules:
+- inspect real live files first
+- preserve working routes and workflows
+- prefer backend-only render-safe additions
+- avoid schema changes unless a real need exists
+- avoid touching /plan unless there is a real public bug

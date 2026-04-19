@@ -1,48 +1,16 @@
 # MYKONOS_PLUGIN_HANDOFF.md
 
-## Latest applied patch line
+Current safe line after consolidated render stabilization:
+- v7.36.12 inquiry strip consolidated render hotfix
 
-Latest known rooted patch prepared for deployment:
+Next prepared major update in this package:
+- v7.37.00 inquiry record two fix recovery summary strip
 
-- `v7.34.00 inquiry record score recovery priority strip`
-- plugin tracking `2.4.40`
+Safe direction:
+- backend-only
+- render-safe additions
+- do not widen workflow logic
+- do not touch /plan unless a real live bug requires it
 
-This patch stays backend-only and does not touch `/plan`, SMTP, schema, or queue logic.
-It adds a compact Queue Action Timing Recap strip directly to the inquiry record so operators get one final summary combining the recommended queue move, main risk posture, and safest timing window.
-
-## Deployment note
-
-For this patch, upload the rooted files and then run:
-
-- `php artisan cache:clear`
-
-No schema change is introduced and no plugin refresh is required for this step.
-
-Then verify:
-- open Backend -> Inquiries -> any real inquiry record
-- a new Queue Action Timing Recap strip appears on the inquiry record after Safest Queue Action Timing
-- the strip shows recommended queue move, risk and timing summary, why it matters, operator cue, and an end-of-chain recap
-- earlier closure/reopen guidance strips remain visible
-
-
-- v7.33.00 inquiry record queue action readiness score strip
-
-
-## v7.34.00 inquiry record score recovery priority strip
-- added backend-only render-safe guidance strip: Score Recovery Priority
-- identifies the single fastest missing anchor that would lift the queue-action readiness score next
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no /plan behavior change
-
-
-## v7.35.00 — Ready After One Fix
-- added a backend-only read-only strip to the inquiry record
-- shows whether resolving the top recovery gap alone is enough to make the recommended queue move safely executable
-- no schema change
-- no plugin refresh required
-- no theme import required
-- no /plan behavior change
-
-- Latest patch line: `v7.36.00 inquiry record not ready after one fix strip`
+Important note:
+This package does not blindly replace the live fields.yaml because the production line has been stabilized with targeted strip hotfixes. It includes the exact YAML mount snippet so the next strip can be added without overwriting unknown live field ordering.

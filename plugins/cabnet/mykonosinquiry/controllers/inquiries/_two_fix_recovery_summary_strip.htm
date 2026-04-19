@@ -1,0 +1,131 @@
+<?php
+$record = $formModel ?? $this->formGetModel() ?? null;
+if (!$record) {
+    return;
+}
+
+$status = strtolower(trim((string) ($record->status ?? '')));
+$priority = strtolower(trim((string) ($record->priority ?? 'normal')));
+$owner = trim((string) ($record->owner_name ?? $record->owner ?? ''));
+$followUpDate = trim((string) ($record->follow_up_date ?? ''));
+$lastContactedAt = trim((string) ($record->last_contacted_at ?? ''));
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+$internalNotes = trim((string) ($record->internal_notes ?? $record->notes ?? ''));
+$requestReference = trim((string) ($record->request_reference ?? $record->reference ?? ''));
+
+$anchors = [
+    'owner' => $owner !== '',
+    'follow_up' => $followUpDate !== '',
+    'last_contacted' => $lastContactedAt !== '',
+    'closed_reason' => $closedReason !== '',
+    'notes' => $internalNotes !== '',
+    'reference' => $requestReference !== '',
+];
+
+$missing = array_keys(array_filter($anchors, static function ($present) {
+    return !$present;
+}));
+
+$needsClosureContext = in_array($status, ['closed', 'closed_won', 'closed_lost', 'won', 'lost'], true);
+$highPressure = in_array($priority, ['high', 'urgent', 'vip'], true);
+
+$fix1 = 'Add a dated internal note that explains the current operator posture.';
+$fix2 = 'Assign a follow-up or ownership anchor so the next move is visible.';
+
+if (!$anchors['notes']) {
+    $fix1 = 'Add a dated internal note that explains the current operator posture.';
+    $fix2 = !$anchors['owner']
+        ? 'Assign record ownership so the recovery path has a visible operator.'
+        : 'Set the next follow-up checkpoint so timing is visible.';
+} elseif (!$anchors['owner']) {
+    $fix1 = 'Assign record ownership so the recovery path has a visible operator.';
+    $fix2 = !$anchors['follow_up']
+        ? 'Set the next follow-up checkpoint so timing is visible.'
+        : 'Add a short dated note confirming the next move.';
+} elseif (!$anchors['follow_up']) {
+    $fix1 = 'Set the next follow-up checkpoint so timing is visible.';
+    $fix2 = 'Add a short dated note confirming the next move.';
+} elseif ($needsClosureContext && !$anchors['closed_reason']) {
+    $fix1 = 'Add the closure reason so the closed posture is documented.';
+    $fix2 = 'Add a dated note explaining reopen or stay-closed logic.';
+} elseif (!$anchors['last_contacted']) {
+    $fix1 = 'Set the last-contacted timestamp so recency is visible.';
+    $fix2 = 'Add a short note confirming whether the guest is still warm or drifting.';
+}
+
+$summaryVerdict = 'Two fixes should make the recovery path readable.';
+$summaryToneBg = '#fff8ec';
+$summaryToneBorder = '#f2d59b';
+$summaryToneText = '#7b5a12';
+
+if (count($missing) <= 1) {
+    $summaryVerdict = 'Only a light two-step tidy-up is needed.';
+    $summaryToneBg = '#eef7ff';
+    $summaryToneBorder = '#bfdaf5';
+    $summaryToneText = '#25507a';
+} elseif ($highPressure) {
+    $summaryVerdict = 'Two visible fixes are needed before a high-pressure move is safe.';
+    $summaryToneBg = '#fff4f1';
+    $summaryToneBorder = '#f1c2b5';
+    $summaryToneText = '#8c3f29';
+}
+
+$projectedScore = max(52, 72 - (max(0, count($missing) - 2) * 5));
+if ($highPressure) {
+    $projectedScore -= 4;
+}
+if ($needsClosureContext && !$anchors['closed_reason']) {
+    $projectedScore -= 4;
+}
+$projectedScore = max(48, min(84, $projectedScore));
+
+$watchAfterFixes = $highPressure
+    ? 'After both fixes, confirm the move is still timely for a high-priority record.'
+    : 'After both fixes, confirm the queue move still matches the current guest posture.';
+
+$anchorSummary = [];
+foreach ($anchors as $key => $present) {
+    $anchorSummary[] = [
+        'label' => ucwords(str_replace('_', ' ', $key)),
+        'present' => $present,
+    ];
+}
+?>
+<div style="margin:0 0 18px;padding:16px 18px;border:1px solid <?= e($summaryToneBorder) ?>;border-radius:18px;background:<?= e($summaryToneBg) ?>;box-shadow:0 10px 24px rgba(27,49,102,0.06);">
+    <div style="display:flex;justify-content:space-between;gap:12px 16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6b7a90;font-weight:700;">Two Fix Recovery Summary</div>
+            <h4 style="margin:6px 0 4px;font-size:18px;line-height:1.3;color:#20324d;"><?= e($summaryVerdict) ?></h4>
+            <div style="font-size:13px;color:#5d6c80;max-width:840px;">This strip condenses the shortest two-step recovery path when the record is still not ready after one improvement alone.</div>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid <?= e($summaryToneBorder) ?>;font-size:12px;font-weight:700;color:<?= e($summaryToneText) ?>;">
+            Projected score after 2 fixes: <?= e((string) $projectedScore) ?>/100
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #dfe7f1;">
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7c8ca1;font-weight:700;">Fix 1</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#20324d;"><?= e($fix1) ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #dfe7f1;">
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7c8ca1;font-weight:700;">Fix 2</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#20324d;"><?= e($fix2) ?></div>
+        </div>
+        <div style="padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #dfe7f1;">
+            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7c8ca1;font-weight:700;">Watch after both fixes</div>
+            <div style="margin-top:6px;font-size:14px;font-weight:700;color:#20324d;"><?= e($watchAfterFixes) ?></div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #dfe7f1;">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7c8ca1;font-weight:700;">Recovery anchors</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+            <?php foreach ($anchorSummary as $item): ?>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid <?= $item['present'] ? '#cfe6d4' : '#eed3ae' ?>;background:<?= $item['present'] ? '#edf8ef' : '#fff6e8' ?>;color:<?= $item['present'] ? '#2d6942' : '#8b6321' ?>;font-size:12px;font-weight:700;">
+                    <?= e($item['label']) ?> · <?= $item['present'] ? 'visible' : 'missing' ?>
+                </span>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
