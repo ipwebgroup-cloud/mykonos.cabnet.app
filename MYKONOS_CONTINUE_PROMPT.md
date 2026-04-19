@@ -42,3 +42,12 @@ When continuing:
 - no plugin refresh required
 - no theme import required
 - no /plan behavior change
+
+
+## v7.35.00 — Ready After One Fix
+- added a backend-only read-only strip to the inquiry record
+- shows whether resolving the top recovery gap alone is enough to make the recommended queue move safely executable
+- no schema change
+- no plugin refresh required
+- no theme import required
+- no /plan behavior change

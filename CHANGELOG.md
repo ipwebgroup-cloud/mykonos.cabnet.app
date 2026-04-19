@@ -621,3 +621,10 @@
 - identifies the single fastest missing anchor that would lift queue-action readiness next
 - surfaces the top recovery gap, why it matters most, the next best fix, and the estimated score lift
 - backend-only, render-only, no schema change, no /plan behavior change
+
+
+## v7.35.00 - inquiry record ready after one fix strip
+- added Ready After One Fix strip to the inquiry record
+- shows whether resolving the top recovery gap alone is enough to make the recommended queue move safely executable
+- surfaces the projected readiness score, why the one-fix verdict was reached, and what still needs watching after the first fix
+- backend-only, render-only, no schema change, no /plan behavior change

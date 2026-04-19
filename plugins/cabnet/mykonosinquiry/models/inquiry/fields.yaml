@@ -415,3 +415,9 @@ fields:
         type: partial
         path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_score_recovery_priority_strip.htm
         span: full
+
+    ready_after_one_fix:
+        label: Ready After One Fix
+        type: partial
+        path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_ready_after_one_fix_strip.htm
+        span: full
