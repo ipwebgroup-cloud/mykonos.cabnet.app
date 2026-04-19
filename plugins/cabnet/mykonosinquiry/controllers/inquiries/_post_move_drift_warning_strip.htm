@@ -1,0 +1,101 @@
+<?php
+$record = $this->formGetModel();
+if (!$record) {
+    return;
+}
+
+$status = strtolower((string) ($record->status ?? ''));
+$priority = strtolower((string) ($record->priority ?? ''));
+$owner = trim((string) ($record->owner ?? ''));
+$followUp = $record->follow_up_at ?? null;
+$lastContacted = $record->last_contacted_at ?? null;
+$closedAt = $record->closed_at ?? null;
+$closedReason = trim((string) ($record->closed_reason ?? ''));
+
+$hasOwner = $owner !== '';
+$hasFollowUp = !empty($followUp);
+$hasLastContact = !empty($lastContacted);
+$hasClosedContext = !empty($closedAt) || $closedReason !== '';
+$isClosed = in_array($status, ['closed','closed_won','closed_lost','won','lost'], true);
+$isHighPriority = in_array($priority, ['high','urgent','critical'], true);
+
+$driftLevel = 'low';
+$primaryRisk = 'Record is unlikely to drift immediately if the current queue move is respected.';
+$timingCue = 'Watch the next normal touchpoint and confirm the record remains aligned.';
+$operatorCue = 'Keep the summary anchors visible and avoid silent status drift.';
+
+if (!$hasOwner || (!$isClosed && !$hasFollowUp) || (!$isClosed && !$hasLastContact)) {
+    $driftLevel = 'high';
+    $primaryRisk = 'This record can drift quickly because ownership or the next dated checkpoint is still too thin.';
+    $timingCue = 'Recheck after the next operator touch, follow-up date, or queue move.';
+    $operatorCue = 'Do not assume the move will hold without an owner, fresh touchpoint, and dated next step.';
+} elseif ($isClosed && !$hasClosedContext) {
+    $driftLevel = 'elevated';
+    $primaryRisk = 'The record may reopen or confuse the queue later because closure context is still too light.';
+    $timingCue = 'Recheck before treating the record as fully settled.';
+    $operatorCue = 'Add closure context before trusting the closed posture long-term.';
+} elseif ($isHighPriority && !$hasFollowUp) {
+    $driftLevel = 'elevated';
+    $primaryRisk = 'Priority is higher than the visible next step, so the record may drift between operators.';
+    $timingCue = 'Recheck within the next short queue review window.';
+    $operatorCue = 'Anchor priority to a dated next step so the move remains trustworthy.';
+}
+
+$palette = [
+    'low' => ['bg' => '#e8f5ed', 'text' => '#25543f', 'label' => 'Low drift risk'],
+    'elevated' => ['bg' => '#fff4de', 'text' => '#7a5a1e', 'label' => 'Elevated drift risk'],
+    'high' => ['bg' => '#fdecec', 'text' => '#7d2d2d', 'label' => 'High drift risk'],
+];
+$style = $palette[$driftLevel] ?? $palette['elevated'];
+
+$anchors = [
+    'Owner' => $hasOwner ? $owner : 'Missing',
+    'Follow-up' => $hasFollowUp ? 'Visible' : 'Missing',
+    'Last contact' => $hasLastContact ? 'Visible' : 'Missing',
+    'Closure context' => $hasClosedContext ? 'Visible' : 'Thin',
+];
+?>
+
+<div class="form-group">
+    <div style="padding:16px 18px;border:1px solid #d9e1ea;border-radius:12px;background:#ffffff;box-shadow:0 1px 2px rgba(16,24,40,.04);margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7b8794;margin-bottom:6px;">Post-Move Drift Warning</div>
+                <h4 style="margin:0;font-size:18px;line-height:1.25;color:#1f2933;">Main way this record could slip after the queue move</h4>
+            </div>
+            <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:<?= e($style['bg']) ?>;color:<?= e($style['text']) ?>;font-size:12px;font-weight:700;">
+                <?= e($style['label']) ?>
+            </span>
+        </div>
+
+        <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+            <div style="padding:12px;border-radius:10px;background:#f8fafc;border:1px solid #e5edf5;">
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7b8794;margin-bottom:6px;">Primary drift risk</div>
+                <div style="font-size:14px;color:#243b53;line-height:1.5;">
+                    <?= e($primaryRisk) ?>
+                </div>
+            </div>
+            <div style="padding:12px;border-radius:10px;background:#f8fafc;border:1px solid #e5edf5;">
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7b8794;margin-bottom:6px;">Timing cue</div>
+                <div style="font-size:14px;color:#243b53;line-height:1.5;">
+                    <?= e($timingCue) ?>
+                </div>
+            </div>
+            <div style="padding:12px;border-radius:10px;background:#f8fafc;border:1px solid #e5edf5;">
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7b8794;margin-bottom:6px;">Operator cue</div>
+                <div style="font-size:14px;color:#243b53;line-height:1.5;">
+                    <?= e($operatorCue) ?>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+            <?php foreach ($anchors as $label => $value): ?>
+                <div style="padding:10px 12px;border-radius:10px;background:#fff;border:1px solid #e6ebf1;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7b8794;margin-bottom:4px;"><?= e($label) ?></div>
+                    <div style="font-size:13px;color:#243b53;font-weight:600;"><?= e($value) ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+post_move_drift_warning_strip:
+    type: partial
+    tab: Internal
+    path: ~/plugins/cabnet/mykonosinquiry/controllers/inquiries/_post_move_drift_warning_strip.htm
+    span: full
+    comment: 'Post-Move Drift Warning'
